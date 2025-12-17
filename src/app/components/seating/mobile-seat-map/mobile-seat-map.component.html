@@ -1,0 +1,128 @@
+<div class="mobile-seat-map-container">
+  
+  <!-- Section Selector View -->
+  <div *ngIf="currentView === 'sections'">
+    <!-- Header for sections view -->
+    <header class="mobile-header">
+      <button class="back-button" routerLink="/events">
+        ‹
+      </button>
+      <div class="header-title">
+        <h1>Select Section</h1>
+        <p class="event-title">{{ event.title }}</p>
+      </div>
+      <button class="cart-button" routerLink="/cart">
+        🛒
+      </button>
+    </header>
+
+    <!-- Section selector child component -->
+    <app-mobile-section-selector 
+      [venueData]="venueData"
+      (sectionSelected)="onSectionSelected($event)">
+    </app-mobile-section-selector>
+  </div>
+
+  <!-- Seat Selector View -->
+  <div *ngIf="currentView === 'seats' && selectedSection">
+    <!-- Header for seats view -->
+    <header class="mobile-header">
+      <button class="back-button" (click)="onBackToSections()">
+        ‹
+      </button>
+      <div class="header-title">
+        <h2>{{ selectedSection.sectionLabel || selectedSection.name }}</h2>
+        <p *ngIf="selectedSeats.length > 0" class="selected-count">
+          {{ selectedSeats.length }} seat{{ selectedSeats.length > 1 ? 's' : '' }} selected
+        </p>
+      </div>
+      <button class="cart-button" routerLink="/cart">
+        🛒
+      </button>
+    </header>
+
+    <!-- Seat selector child component -->
+    <app-mobile-seat-selector 
+      [venueData]="venueData"
+      [section]="selectedSection"
+      [selectedSeats]="selectedSeats"
+      (seatsUpdated)="onSeatsUpdated($event)"
+      (back)="onBackToSections()">
+    </app-mobile-seat-selector>
+
+    <!-- Floating action button for mobile -->
+    <div *ngIf="selectedSeats.length > 0" class="floating-action">
+      <button class="fab" (click)="goToSummary()">
+        <span class="seat-count">{{ selectedSeats.length }}</span>
+        <span class="fab-text">Review {{ formatPrice(getTotalPrice()) }}</span>
+        <span class="fab-arrow">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary View -->
+  <div *ngIf="currentView === 'summary'">
+    <!-- Header for summary view -->
+    <header class="mobile-header">
+      <button class="back-button" (click)="goBackToSeats()">
+        ‹
+      </button>
+      <div class="header-title">
+        <h2>Review Order</h2>
+        <p class="event-title">{{ selectedSection?.sectionLabel || selectedSection?.name }}</p>
+      </div>
+      <div class="header-spacer"></div>
+    </header>
+
+    <!-- Summary content -->
+    <div class="summary-content">
+      <div class="summary-header">
+        <h3>Selected Seats</h3>
+        <button class="clear-btn" (click)="clearSelection(); goBackToSeats()">
+          Clear All
+        </button>
+      </div>
+
+      <div class="seats-list">
+        <div *ngFor="let seat of selectedSeats" class="seat-item">
+          <div class="seat-info">
+            <div class="seat-location">
+              <span class="row">{{ seat.row }}</span>
+              <span class="seat-number">Seat {{ seat.number }}</span>
+            </div>
+            <div class="seat-tier" [style.color]="seat.tier.color">
+              {{ seat.tier.name }}
+            </div>
+          </div>
+          <div class="seat-price">
+            {{ formatPrice(seat.price) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="total-section">
+        <div class="total-line">
+          <span>Subtotal</span>
+          <span>{{ formatPrice(getTotalPrice()) }}</span>
+        </div>
+        <div class="total-line">
+          <span>Booking Fee</span>
+          <span>{{ formatPrice(2.50) }}</span>
+        </div>
+        <div class="total-line final">
+          <span>Total</span>
+          <span>{{ formatPrice(getTotalPrice() + 2.50) }}</span>
+        </div>
+      </div>
+
+      <div class="summary-actions">
+        <button class="btn-primary" (click)="addToCart()">
+          Add to Cart - {{ formatPrice(getTotalPrice() + 2.50) }}
+        </button>
+        <button class="btn-secondary" (click)="goBackToSeats()">
+          Select More Seats
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

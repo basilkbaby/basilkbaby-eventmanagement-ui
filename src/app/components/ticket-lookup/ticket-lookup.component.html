@@ -1,0 +1,157 @@
+<div class="ticket-lookup-container">
+  <div class="lookup-card">
+    <div class="card-header">
+      <h1>Find Your Tickets</h1>
+      <p>Enter your order reference and last name to retrieve your tickets</p>
+    </div>
+
+    <!-- Only show form if no order found yet -->
+    <div *ngIf="!order">
+      <form [formGroup]="lookupForm" (ngSubmit)="onSubmit()" class="lookup-form">
+        <div class="form-group">
+          <label for="orderRef">Order Reference *</label>
+          <input
+            id="orderRef"
+            type="text"
+            formControlName="orderRef"
+            placeholder="e.g., ORD-123456-ABC"
+            [class.invalid]="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched"
+          >
+          <div class="error-message" *ngIf="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched">
+            Order reference is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Enter your last name"
+            [class.invalid]="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched"
+          >
+          <div class="error-message" *ngIf="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched">
+            Last name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address (Optional)</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email for verification"
+          >
+          <small class="help-text">Provide email for additional verification</small>
+        </div>
+
+        <button 
+          type="submit" 
+          class="find-tickets-btn"
+          [disabled]="lookupForm.invalid || loading"
+        >
+          <span *ngIf="!loading">
+            {{ autoNavigate ? 'Find & View Tickets' : 'Find Tickets' }}
+          </span>
+          <span *ngIf="loading" class="loading-text">
+            <div class="spinner"></div>
+            {{ autoNavigate ? 'Redirecting to tickets...' : 'Searching...' }}
+          </span>
+        </button>
+
+        <div class="help-links">
+          <a href="#" (click)="contactSupport()">Contact Support</a>
+          <a href="#" (click)="goHome()">Back to Home</a>
+        </div>
+      </form>
+
+      <!-- Error Message -->
+      <div class="error-alert" *ngIf="errorMessage">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="2"/>
+          <path d="M12 8v4M12 16h.01" stroke="#ef4444" stroke-width="2"/>
+        </svg>
+        <div>
+          <strong>Order Not Found</strong>
+          <p>{{ errorMessage }}</p>
+          <button class="retry-btn" (click)="newSearch()">Try Again</button>
+          <button class="alt-btn" (click)="contactSupport()">Contact Support</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Only show tickets if auto-navigate is disabled -->
+    <div class="tickets-display" *ngIf="order && tickets.length > 0 && !autoNavigate">
+      <div class="display-header">
+        <h2>Tickets Found</h2>
+        <div class="header-actions">
+          <button class="view-confirmation-btn" (click)="viewOrderConfirmation()">
+            View Full Confirmation
+          </button>
+          <button class="new-search-btn" (click)="newSearch()">
+            New Search
+          </button>
+        </div>
+      </div>
+
+      <div class="order-info">
+        <div class="info-item">
+          <span class="label">Order Reference:</span>
+          <span class="value">{{ order.reference }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Customer:</span>
+          <span class="value">{{ order.customer.firstName }} {{ order.customer.lastName }}</span>
+        </div>
+      </div>
+
+      <div class="tickets-list">
+        <div *ngFor="let ticket of tickets" class="ticket-item">
+          <div class="ticket-header">
+            <h3>{{ ticket.eventTitle }}</h3>
+            <div class="ticket-meta">
+              <span class="date">{{ formatDateTime(ticket.eventDate) }}</span>
+              <span class="venue">{{ ticket.venue }}</span>
+            </div>
+          </div>
+          
+          <div class="ticket-details">
+            <div class="detail">
+              <span class="label">Ticket Type:</span>
+              <span class="value">{{ ticket.type }}</span>
+            </div>
+            <div class="detail" *ngIf="ticket.seatInfo">
+              <span class="label">Seat:</span>
+              <span class="value">
+                {{ ticket.seatInfo.section }} - Row {{ ticket.seatInfo.row }}, Seat {{ ticket.seatInfo.number }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="display-actions">
+        <button class="view-confirmation-btn primary" (click)="viewOrderConfirmation()">
+          View Complete Order Confirmation
+        </button>
+        <button class="home-btn" (click)="goHome()">
+          Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay for auto-navigation -->
+  <div class="loading-overlay" *ngIf="loading && autoNavigate">
+    <div class="loading-content">
+      <div class="spinner-large"></div>
+      <h3>Order Found!</h3>
+      <p>Redirecting to your tickets...</p>
+      <button class="cancel-btn" (click)="loading = false; autoNavigate = false;">
+        Stay on this page
+      </button>
+    </div>
+  </div>
+</div>

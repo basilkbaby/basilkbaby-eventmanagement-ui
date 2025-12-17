@@ -1,0 +1,287 @@
+.mobile-section-selector {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f5;
+  overflow: hidden;
+  touch-action: none; // Disable browser touch actions
+  
+  .simple-header {
+    flex-shrink: 0;
+    background: white;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 10;
+    
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #333;
+      text-align: center;
+    }
+    
+    .instructions {
+      margin: 0;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+  }
+  
+  .zoom-controls {
+    position: absolute;
+    bottom: 100px;
+    right: 16px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    .zoom-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #4a8bc9;
+      color: #4a8bc9;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      touch-action: manipulation; // Better touch on buttons
+      
+      &:active {
+        background: #f0f7ff;
+        transform: scale(0.95);
+        transition: transform 0.1s;
+      }
+    }
+  }
+  
+  .svg-container {
+position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  
+  /* Prevent momentum scrolling on iOS */
+  -webkit-overflow-scrolling: auto;
+  
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+    
+    .svg-wrapper {
+      position: absolute;
+      transform-origin: 0 0;
+      will-change: transform; // Optimize for animation
+  transition: transform 0.1s ease-out;
+
+      .venue-svg {
+        display: block;
+        user-select: none; // Prevent text selection
+        
+        .section-block {
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+          }
+          
+          &.selected {
+            stroke: #4CAF50;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+            animation: pulse 2s infinite;
+          }
+        }
+      }
+    }
+  }
+  
+  .selected-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    padding: 20px;
+    transform: translateY(0);
+    animation: slideUp 0.3s ease;
+    
+    .info-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      
+      .section-color-indicator {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .section-details {
+        flex: 1;
+        
+        h3 {
+          margin: 0 0 8px 0;
+          font-size: 20px;
+          font-weight: 700;
+          color: #333;
+        }
+        
+        .section-meta {
+          display: flex;
+          gap: 16px;
+          
+          .meta-item {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+            padding: 4px 8px;
+            background: #f5f5f5;
+            border-radius: 6px;
+          }
+        }
+      }
+      
+      .section-price {
+        font-size: 22px;
+        font-weight: 700;
+        color: #4a8bc9;
+        flex-shrink: 0;
+        background: #f0f7ff;
+        padding: 8px 12px;
+        border-radius: 10px;
+      }
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      
+      .btn-back,
+      .btn-select {
+        flex: 1;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        touch-action: manipulation;
+        transition: all 0.2s ease;
+        
+        &:active {
+          transform: translateY(2px);
+        }
+      }
+      
+      .btn-back {
+        background: #f5f5f5;
+        color: #666;
+        
+        &:active {
+          background: #e0e0e0;
+        }
+      }
+      
+      .btn-select {
+        background: #4a8bc9;
+        color: white;
+        box-shadow: 0 3px 10px rgba(74, 139, 201, 0.3);
+        
+        &:active {
+          background: #3a7bb9;
+          box-shadow: 0 1px 5px rgba(74, 139, 201, 0.3);
+        }
+      }
+    }
+  }
+  
+  .quick-legend {
+    position: absolute;
+    bottom: 180px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .legend-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(76, 175, 80, 0.7));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+  }
+}
+
+:host {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}

@@ -1,0 +1,100 @@
+<div class="mobile-seat-selector">
+  <!-- Header -->
+  <header class="mobile-header">
+    <button class="back-button" (click)="goBack()">‹</button>
+    <div class="header-title">
+      <h1>{{ section.sectionLabel || section.name }}</h1>
+      <p class="available-count">{{ getAvailableSeatsCount() }} seats available</p>
+    </div>
+    <button class="cart-button" (click)="goToCart()">🛒</button>
+  </header>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="selectionError">
+    {{ selectionError }}
+  </div>
+
+  <!-- Stage Indicator -->
+  <div class="stage-indicator">
+    <div class="stage-line"></div>
+    <div class="stage-label">STAGE</div>
+    <div class="view-direction">Looking towards stage</div>
+  </div>
+
+  <!-- Seat Grid -->
+  <div class="seat-grid">
+    <div class="grid-container">
+      <!-- Row header with seat numbers -->
+      <div class="row-header">
+        <div class="row-label">Row</div>
+        <div class="seat-numbers">
+          <span *ngFor="let num of getSeatNumbers()" class="seat-number">{{ num }}</span>
+        </div>
+      </div>
+      
+      <!-- Seat rows -->
+      <div *ngFor="let row of rows" class="seat-row">
+        <div class="row-letter">{{ row.letter }}</div>
+        
+        <div class="seats-container">
+          <div *ngFor="let seat of row.seats" 
+               class="seat"
+               [class]="'seat-' + seat.status.toLowerCase()"
+               [style.background-color]="getSeatColor(seat)"
+               (click)="toggleSeatSelection(seat)"
+               [title]="getSeatStatusText(seat) + ' - £' + seat.price">
+            
+            <div class="seat-number">{{ seat.seatNumber }}</div>
+            
+            <!-- Status indicator -->
+            <div class="seat-status" *ngIf="seat.status !== SeatStatus.AVAILABLE && seat.status !== SeatStatus.SELECTED">
+              {{ getSeatStatusText(seat).charAt(0) }}
+            </div>
+            
+            <!-- Selected checkmark -->
+            <div class="seat-selected" *ngIf="seat.status === SeatStatus.SELECTED">
+              ✓
+            </div>
+          </div>
+        </div>
+        
+        <!-- Row info -->
+        <div class="row-info">
+          <span class="ticket-type">{{ row.ticketType }}</span>
+          <span class="row-price">{{ formatPrice(row.price) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selection Summary -->
+  <div class="selection-summary" *ngIf="selectedSeats.length > 0">
+    <div class="summary-header">
+      <h3>{{ selectedSeats.length }} Seat{{ selectedSeats.length > 1 ? 's' : '' }} Selected</h3>
+      <button class="btn-clear" (click)="clearSelection()">Clear All</button>
+    </div>
+    
+    <div class="selected-seats">
+      <div *ngFor="let seat of selectedSeats" class="selected-seat-item">
+        <div class="seat-details">
+          <span class="seat-location">{{ seat.row }}{{ seat.number }}</span>
+          <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
+        </div>
+        <div class="seat-price">{{ formatPrice(seat.price) }}</div>
+      </div>
+    </div>
+    
+    <div class="summary-total">
+      <span>Total:</span>
+      <span class="total-amount">{{ formatPrice(getTotalPrice()) }}</span>
+    </div>
+    
+    <div class="summary-actions">
+        <button class="btn-primary" (click)="addToCart()">
+          Add to Cart - {{ formatPrice(getTotalPrice() + 2.50) }}
+        </button>
+    </div>
+  </div>
+
+
+</div>

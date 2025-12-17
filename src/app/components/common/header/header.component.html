@@ -1,0 +1,219 @@
+<header class="header" [class]="getHeaderClass()">
+  <div class="header-container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo">
+        <a routerLink="/" class="logo-link">
+          <img 
+            src="assets/images/logo/logo.webp" 
+            alt="V4 Entertainment Logo"
+            class="logo-image"
+            width="303"
+            height="104">
+        </a>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+
+
+    <!-- User Actions -->
+    <div class="user-actions" *ngIf="config">
+      <!-- Contact Info as Icon -->
+
+
+      <!-- Search and Cart -->
+      <div class="action-group" *ngIf="config.features.enableSearch || config.features.enableCart">
+        
+        <nav class="nav-desktop" *ngIf="config">
+          <ul class="nav-list">
+            <li class="nav-item" *ngFor="let item of config.navigation.menuItems">
+              <a 
+                [routerLink]="item.routerLink" 
+                class="nav-link" 
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}">
+                {{ item.label }}
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <button 
+          class="icon-btn search-btn" 
+          aria-label="Search"
+          *ngIf="config.features.enableSearch">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+        </button>
+
+
+        <div class="contact-info-icon dropdown" *ngIf="config.features.showContactInfo">
+        <button class="icon-btn contact-btn" 
+                aria-label="Contact Information"
+                (click)="toggleContactDropdown()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </button>
+        <div class="contact-dropdown" [class.open]="contactDropdownOpen">
+          <div class="dropdown-item" 
+               [class.copied]="phoneCopied"
+               (click)="copyToClipboard(getContactInfo().phone, 'phone')">
+            <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            <div class="item-text">
+              <div class="item-label">Phone</div>
+              <div class="item-value">{{ getContactInfo().phone }}</div>
+            </div>
+            <div class="copy-hint">Copy</div>
+          </div>
+          <div class="dropdown-item" 
+               [class.copied]="emailCopied"
+               (click)="copyToClipboard(getContactInfo().email, 'email')">
+            <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <div class="item-text">
+              <div class="item-label">Email</div>
+              <div class="item-value">{{ getContactInfo().email }}</div>
+            </div>
+            <div class="copy-hint">Copy</div>
+          </div>
+        </div>
+        </div>
+                
+        <a 
+          class="icon-btn cart-btn" 
+          routerLink="/cart" 
+          aria-label="Shopping Cart"
+          *ngIf="config.features.enableCart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+          <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+      </div>
+
+      <!-- Auth and Tickets Buttons -->
+      <div class="auth-section" *ngIf="config.features.enableAuth">
+        <!-- <button class="auth-btn primary">Sign In</button> -->
+        <!-- <button class="auth-btn tickets-btn">View Ticket</button> -->
+        <button class="auth-btn tickets-btn" (click)="navigateToTicketLookup()">
+  View Tickets
+</button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="menu-toggle" 
+            [class.active]="isMenuOpen" 
+            (click)="toggleMenu()" 
+            aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <nav class="nav-mobile" [class.active]="isMenuOpen" *ngIf="config">
+    <div class="nav-content">
+      <!-- Mobile Contact Info -->
+      <div class="contact-mobile" *ngIf="config.features.showContactInfo">
+        <div class="contact-item" 
+             [class.copied]="phoneCopied"
+             (click)="copyToClipboard(getContactInfo().phone, 'phone')">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+          {{ getContactInfo().phone }}
+        </div>
+        <div class="contact-item" 
+             [class.copied]="emailCopied"
+             (click)="copyToClipboard(getContactInfo().email, 'email')">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          {{ getContactInfo().email }}
+        </div>
+      </div>
+
+      <ul class="nav-list-mobile">
+        <li *ngFor="let item of config.navigation.menuItems">
+          <a 
+            [routerLink]="item.routerLink" 
+            (click)="toggleMenu()" 
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: false}">
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+
+      <div class="mobile-actions" *ngIf="config.features.enableAuth">
+        <button class="auth-btn primary" (click)="toggleMenu()">Sign In</button>
+        <button class="auth-btn tickets-btn" (click)="toggleMenu()">Get Tickets</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Footer Menu (App-like) -->
+  <nav class="mobile-footer-menu" *ngIf="config">
+    <ul class="footer-nav">
+      <li class="nav-item">
+        <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Home</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/events" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Events</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/cart" class="nav-link cart-link" routerLinkActive="active">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Cart</span>
+          <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/search" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Search</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a (click)="toggleMenu()" class="nav-link">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Menu</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>

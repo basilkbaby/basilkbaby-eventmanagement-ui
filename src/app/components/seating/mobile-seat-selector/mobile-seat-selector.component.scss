@@ -1,0 +1,554 @@
+// mobile-seat-selector.component.scss
+.mobile-seat-selector {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fa;
+  overflow: hidden;
+  
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    
+    .back-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #495057;
+      padding: 8px;
+      cursor: pointer;
+      min-width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:active {
+        background: #f1f3f5;
+        border-radius: 8px;
+      }
+    }
+    
+    .header-title {
+      flex: 1;
+      text-align: center;
+      
+      h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #212529;
+        line-height: 1.2;
+      }
+      
+      .available-count {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: #6c757d;
+      }
+    }
+    
+    .cart-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #495057;
+      padding: 8px;
+      cursor: pointer;
+      min-width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:active {
+        background: #f1f3f5;
+        border-radius: 8px;
+      }
+    }
+  }
+  
+  .error-message {
+    background: #fff3cd;
+    color: #856404;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #ffeaa7;
+    animation: slideIn 0.3s ease;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .stage-indicator {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 16px;
+    position: relative;
+    overflow: hidden;
+    
+    .stage-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .stage-label {
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    
+    .view-direction {
+      font-size: 12px;
+      opacity: 0.9;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      
+      &::before {
+        content: "↓";
+        font-size: 16px;
+        animation: pointDown 2s infinite;
+      }
+    }
+  }
+  
+  @keyframes pointDown {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+  
+  .seat-grid {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+    
+    .grid-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      
+      .row-header {
+        display: flex;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e9ecef;
+        
+        .row-label {
+          width: 50px;
+          font-weight: 600;
+          color: #495057;
+          display: flex;
+          align-items: center;
+        }
+        
+        .seat-numbers {
+          flex: 1;
+          display: flex;
+          justify-content: space-around;
+          gap: 8px;
+          
+          .seat-number {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .seat-row {
+        display: flex;
+        margin-bottom: 20px;
+        align-items: center;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .row-letter {
+          width: 50px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          color: #212529;
+          background: #f8f9fa;
+          border-radius: 8px;
+          margin-right: 12px;
+          font-size: 14px;
+        }
+        
+        .seats-container {
+          flex: 1;
+          display: flex;
+          justify-content: space-around;
+          gap: 8px;
+          
+          .seat {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            border: 2px solid transparent;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+            
+            &:active {
+              transform: scale(0.95);
+            }
+            
+            &.seat-available {
+              &:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+              }
+            }
+            
+            &.seat-selected {
+              border-color: white;
+              box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+              animation: pulseSelected 1.5s infinite;
+            }
+            
+            &.seat-sold, &.seat-reserved, &.seat-blocked {
+              cursor: not-allowed;
+              opacity: 0.7;
+            }
+            
+            .seat-number {
+              font-size: 11px;
+              font-weight: 600;
+            }
+            
+            .seat-status {
+              position: absolute;
+              top: -6px;
+              right: -6px;
+              background: rgba(0, 0, 0, 0.7);
+              color: white;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 10px;
+              font-weight: bold;
+            }
+            
+            .seat-selected {
+              position: absolute;
+              top: -8px;
+              right: -8px;
+              background: #4CAF50;
+              color: white;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 12px;
+              font-weight: bold;
+              animation: bounce 0.5s;
+            }
+          }
+        }
+        
+        .row-info {
+          width: 80px;
+          margin-left: 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 4px;
+          
+          .ticket-type {
+            font-size: 11px;
+            font-weight: 600;
+            color: #495057;
+            text-align: right;
+          }
+          
+          .row-price {
+            font-size: 12px;
+            font-weight: 600;
+            color: #28a745;
+          }
+        }
+      }
+    }
+  }
+  
+  @keyframes pulseSelected {
+    0%, 100% {
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.1);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+  
+  .selection-summary {
+    background: white;
+    border-top: 1px solid #e9ecef;
+    padding: 16px;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+    
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #212529;
+      }
+      
+      .btn-clear {
+        background: none;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        
+        &:active {
+          background: #dc3545;
+          color: white;
+        }
+      }
+    }
+    
+    .selected-seats {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      
+      .selected-seat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .seat-details {
+          .seat-location {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 2px;
+          }
+          
+          .seat-tier {
+            font-size: 12px;
+            font-weight: 500;
+          }
+        }
+        
+        .seat-price {
+          font-size: 14px;
+          font-weight: 600;
+          color: #28a745;
+        }
+      }
+    }
+    
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #e9ecef;
+      border-bottom: 1px solid #e9ecef;
+      margin-bottom: 16px;
+      
+      span {
+        font-size: 15px;
+        color: #495057;
+      }
+      
+      .total-amount {
+        font-size: 18px;
+        font-weight: 700;
+        color: #212529;
+      }
+    }
+    
+    .summary-actions {
+      .btn-primary {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        
+        &:active {
+          transform: scale(0.98);
+          opacity: 0.9;
+        }
+        
+        &::after {
+          content: "→";
+          font-size: 18px;
+        }
+      }
+    }
+  }
+  
+  .floating-action {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    
+    .fab {
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+      animation: float 3s infinite ease-in-out;
+      
+      &:active {
+        transform: scale(0.95);
+      }
+      
+      .seat-count {
+        background: white;
+        color: #4CAF50;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      
+      .fab-text {
+        white-space: nowrap;
+      }
+      
+      .fab-arrow {
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .mobile-seat-selector {
+    .seat-grid {
+      padding: 12px;
+      
+      .grid-container {
+        padding: 12px;
+        
+        .seats-container {
+          gap: 6px;
+          
+          .seat {
+            width: 32px;
+            height: 32px;
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+}

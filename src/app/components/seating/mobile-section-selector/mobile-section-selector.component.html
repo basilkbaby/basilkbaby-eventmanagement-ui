@@ -1,0 +1,171 @@
+<div class="mobile-section-selector">
+  
+  <!-- Simple Header -->
+  <div class="simple-header">
+    <h1>Select Section</h1>
+    <p class="instructions">Pinch to zoom • Drag to pan • Tap a section</p>
+  </div>
+
+  <!-- Zoom Controls -->
+  <div class="zoom-controls">
+    <button class="zoom-btn" (click)="zoomOut()">−</button>
+    <button class="zoom-btn" (click)="resetView()">↺</button>
+    <button class="zoom-btn" (click)="zoomIn()">+</button>
+  </div>
+
+  <!-- SVG Container with HammerJS -->
+  <div class="svg-container"
+       #svgContainer>
+    
+    <div class="svg-wrapper"
+         [style.transform]="'scale(' + scale + ')'"
+         [style.left.px]="offsetX"
+         [style.top.px]="offsetY">
+      
+      <svg class="venue-svg"
+           [attr.width]="CANVAS_WIDTH"
+           [attr.height]="CANVAS_HEIGHT">
+        
+        <!-- Stage -->
+        <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2"
+              [attr.y]="30"
+              [attr.width]="STAGE_WIDTH"
+              [attr.height]="STAGE_HEIGHT"
+              rx="10"
+              fill="#ffffff"
+              stroke="#764ba2"
+              stroke-width="3" />
+        
+        <text [attr.x]="CANVAS_WIDTH / 2"
+              [attr.y]="30 + STAGE_HEIGHT / 2 + 8"
+              text-anchor="middle"
+              font-family="Arial"
+              font-size="24"
+              font-weight="bold"
+              fill="#764ba2">STAGE</text>
+
+        <!-- Section Labels -->
+        <g *ngFor="let section of venueData.sections; let i = index">
+          <ng-container *ngIf="i === 0 || section.name !== venueData.sections[i-1].name">
+            <text [attr.x]="section.x + (getSectionWidth(section) / 2)"
+                  [attr.y]="section.y - 30"
+                  text-anchor="middle"
+                  font-family="Arial"
+                  font-size="20"
+                  font-weight="bold"
+                  fill="#333">
+              {{ section.sectionLabel || section.name }}
+            </text>
+          </ng-container>
+        </g>
+        
+        <!-- Section Blocks -->
+        <g *ngFor="let section of venueData.sections">
+          <!-- Main section rectangle -->
+          <rect [attr.x]="section.x"
+                [attr.y]="section.y + (section.rowOffset || 0)"
+                [attr.width]="getSectionWidth(section)"
+                [attr.height]="getSectionHeight(section)"
+                [attr.fill]="getSectionColor(section)"
+                [attr.opacity]="selectedSection === section ? 1 : 0.9"
+                stroke="#ffffff"
+                stroke-width="2"
+                rx="6"
+                class="section-block"
+                [class.selected]="selectedSection === section">
+            
+            <title>
+              {{ section.sectionLabel || section.name }}
+              • {{ section.rows }} rows × {{ section.seatsPerRow }} seats
+              • From {{ formatPrice(getSectionMinPrice(section)) }}
+            </title>
+          </rect>
+          
+          <!-- Selected section highlight -->
+          <rect *ngIf="selectedSection === section"
+                [attr.x]="section.x - 6"
+                [attr.y]="section.y + (section.rowOffset || 0) - 6"
+                [attr.width]="getSectionWidth(section) + 12"
+                [attr.height]="getSectionHeight(section) + 12"
+                fill="none"
+                stroke="#4CAF50"
+                stroke-width="4"
+                rx="10"
+                stroke-dasharray="8,4" />
+        </g>
+        
+        <!-- FOH Area -->
+        <g *ngIf="getFOHBounds()">
+          <rect [attr.x]="getFOHBounds()!.leftFOHX"
+                [attr.y]="getFOHBounds()!.y"
+                [attr.width]="getFOHBounds()!.width"
+                [attr.height]="getFOHBounds()!.height"
+                fill="#ffffff"
+                stroke="#666"
+                stroke-width="2"
+                rx="6" />
+          
+          <rect [attr.x]="getFOHBounds()!.rightFOHX"
+                [attr.y]="getFOHBounds()!.y"
+                [attr.width]="getFOHBounds()!.width"
+                [attr.height]="getFOHBounds()!.height"
+                fill="#ffffff"
+                stroke="#666"
+                stroke-width="2"
+                rx="6" />
+          
+          <text [attr.x]="getFOHBounds()!.leftFOHX + getFOHBounds()!.width / 2"
+                [attr.y]="getFOHBounds()!.y + 20"
+                text-anchor="middle"
+                font-family="Arial"
+                font-size="16"
+                font-weight="bold"
+                fill="#666">FOH AREA</text>
+        </g>
+        
+      </svg>
+    </div>
+  </div>
+
+  <!-- Selected Section Info -->
+  <div class="selected-info" *ngIf="selectedSection">
+    <div class="info-content">
+      <div class="section-color-indicator" 
+           [style.background-color]="getSectionColor(selectedSection)"></div>
+      
+      <div class="section-details">
+        <h3>{{ selectedSection.sectionLabel || selectedSection.name }}</h3>
+        <div class="section-meta">
+          <span class="meta-item">
+            {{ selectedSection.rows }} rows
+          </span>
+          <span class="meta-item">
+            {{ selectedSection.seatsPerRow }} seats/row
+          </span>
+        </div>
+      </div>
+      
+      <div class="section-price">
+        {{ formatPrice(getSectionMinPrice(selectedSection)) }}
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-back" (click)="selectedSection = null">
+        Back
+      </button>
+      <button class="btn-select" (click)="sectionSelected.emit(selectedSection)">
+        View Seats
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Legend -->
+  <!-- <div class="quick-legend">
+    <div class="legend-item" *ngFor="let section of getUniqueSections()">
+      <div class="legend-color" [style.background-color]="getSectionColor(section)"></div>
+      <span class="legend-text">{{ section.sectionLabel || section.name }}</span>
+    </div>
+  </div> -->
+
+</div>

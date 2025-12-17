@@ -1,0 +1,91 @@
+<!-- social-media-feed.component.html -->
+<div class="social-feed">
+  <div class="feed-header">
+    <h3>Join Our Community</h3>
+    <p>Follow us for updates and exclusive content</p>
+  </div>
+
+  <div class="social-grid">
+    <!-- Facebook Card -->
+    <div class="social-card facebook" 
+         (click)="openSocialLink('facebook')"
+         [class.loading]="isLoading">
+      
+      <div class="card-background"></div>
+      
+      <div class="card-content">
+        <div class="platform-icon">
+          <div class="icon-wrapper">
+            <span class="material-icons">thumb_up</span>
+          </div>
+        </div>
+        
+        <div class="platform-info">
+          <h4>Facebook</h4>
+          <p>Connect with our community</p>
+        </div>
+
+        <div class="engagement-badge">
+          <div class="stat">
+            <span class="material-icons">people</span>
+            <span>{{ getFacebookEngagement().followers | shortNumber }}</span>
+          </div>
+          <div class="stat">
+            <span class="material-icons">favorite</span>
+            <span>{{ getFacebookEngagement().likes | shortNumber }}</span>
+          </div>
+        </div>
+
+        <div class="action-button">
+          <button class="btn-follow" (click)="$event.stopPropagation()">
+            <span>Follow</span>
+            <span class="material-icons">open_in_new</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-hover-effect"></div>
+    </div>
+
+    <!-- Instagram Card -->
+    <div class="social-card instagram" 
+         (click)="openSocialLink('instagram')"
+         [class.loading]="isLoading">
+      
+      <div class="card-background"></div>
+      
+      <div class="card-content">
+        <div class="platform-icon">
+          <div class="icon-wrapper">
+            <span class="material-icons">photo_camera</span>
+          </div>
+        </div>
+        
+        <div class="platform-info">
+          <h4>Instagram</h4>
+          <p>See behind the scenes</p>
+        </div>
+
+        <div class="engagement-badge">
+          <div class="stat">
+            <span class="material-icons">people</span>
+            <span>{{ getInstagramEngagement().followers | shortNumber }}</span>
+          </div>
+          <div class="stat">
+            <span class="material-icons">favorite</span>
+            <span>{{ getInstagramEngagement().likes | shortNumber }}</span>
+          </div>
+        </div>
+
+        <div class="action-button">
+          <button class="btn-follow" (click)="$event.stopPropagation()">
+            <span>Follow</span>
+            <span class="material-icons">open_in_new</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-hover-effect"></div>
+    </div>
+  </div>
+</div>

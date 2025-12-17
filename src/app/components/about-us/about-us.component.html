@@ -1,0 +1,116 @@
+<!-- about-us.component.html -->
+<div class="about-container" [class.mobile-view]="isMobile">
+  
+  <!-- Main Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <div class="hero-badge">UK's Premier Malayali Concert Specialists</div>
+      <h1 class="hero-title">{{ companyData.tagline }}</h1>
+      <p class="hero-description">{{ companyData.description }}</p>
+
+      <div class="stats-container">
+        <div class="stat-card" *ngFor="let stat of companyData.stats">
+          <div class="stat-number">{{ stat.number }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a routerLink="/concerts" class="primary-btn">
+          <span class="btn-icon">🎫</span>
+          View Upcoming Concerts
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Iconic Venues Section -->
+  <section class="venues-section">
+    <div class="section-header">
+      <div class="section-badge">Iconic UK Venues</div>
+      <h2 class="section-title">Where Kerala's Music Meets British Grandeur</h2>
+      <p class="section-subtitle">We produce Malayali concerts at the UK's most prestigious venues</p>
+    </div>
+
+    <div class="venues-grid">
+      <div class="venue-card" *ngFor="let venue of companyData.venues">
+        <div class="venue-header">
+          <div class="venue-icon">🏛️</div>
+          <div class="venue-info">
+            <h3 class="venue-name">{{ venue.name }}</h3>
+            <div class="venue-location">
+              <span class="location-icon">📍</span>
+              {{ venue.city }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="venue-features">
+          <div class="feature-tag" *ngFor="let feature of venue.features">{{ feature }}</div>
+        </div>
+
+        <div class="venue-events">
+          <div class="events-label">Featured Malayali Concerts:</div>
+          <div class="event-tag" *ngFor="let event of venue.pastEvents">{{ event }}</div>
+        </div>
+
+        <div class="venue-cta">
+          <a [routerLink]="['/venues', venue.name.toLowerCase()]" class="venue-link">
+            View Available Dates →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Artists Section -->
+  <section class="artists-section">
+    <div class="section-header">
+      <div class="section-badge">Star Lineup</div>
+      <h2 class="section-title">Kerala's Finest Artists on UK Stages</h2>
+      <p class="section-subtitle">Exclusive UK concerts by Malayalam music's biggest names</p>
+    </div>
+
+    <div class="artists-grid">
+      <div class="artist-card" *ngFor="let artist of companyData.featuredArtists">
+        <div class="artist-header">
+          <div class="artist-avatar">
+            <span class="avatar-icon">🎤</span>
+          </div>
+          <div class="artist-main">
+            <h3 class="artist-name">{{ artist.name }}</h3>
+            <div class="artist-category">{{ artist.category }}</div>
+          </div>
+          <div class="artist-status" [ngClass]="getStatusClass(artist.status)">
+            {{ artist.status }}
+          </div>
+        </div>
+
+        <div class="artist-details">
+          <div class="upcoming-show">
+            <span class="show-icon">📅</span>
+            <span class="show-text">{{ artist.upcomingShow }}</span>
+          </div>
+        </div>
+
+        <div class="artist-actions">
+          <button class="notify-btn" *ngIf="artist.status === 'Announcing Soon'">
+            <span class="btn-icon">🔔</span>
+            Notify Me
+          </button>
+          <button class="book-btn" *ngIf="artist.status === 'Booking Open' || artist.status === 'Early Bird'">
+            <span class="btn-icon">🎫</span>
+            Book Tickets
+          </button>
+          <button class="waitlist-btn" *ngIf="artist.status === 'Sold Out'">
+            <span class="btn-icon">⏳</span>
+            Join Waitlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>

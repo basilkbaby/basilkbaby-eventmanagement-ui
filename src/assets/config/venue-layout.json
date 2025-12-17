@@ -1,0 +1,1370 @@
+{
+  "gridRows": 11,
+  "gridCols": 12,
+  "sections": [
+    {
+      "id": "stage-1765242749826",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "stage-1765242750445",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "stage-1765242750813",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "stage-1765242751269",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "stage-1765242751761",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "stage-1765242752345",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "stage-1765242755891",
+      "name": "Stage",
+      "type": "stage",
+      "color": "#1e293b",
+      "icon": "🎭",
+      "price": 0,
+      "gridArea": {
+        "startRow": 0,
+        "endRow": 0,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "standing-1765242760311",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242760723",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242761135",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242761619",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242762039",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242762569",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242763093",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242763461",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242763979",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242764369",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242766577",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 0,
+        "endCol": 0
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242767057",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 1,
+        "endCol": 1
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242767833",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242768333",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242768697",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242769125",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242769521",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242770005",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242770563",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242770963",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242772195",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242772603",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242773139",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 9,
+        "endCol": 9
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "standing-1765242773519",
+      "name": "Standing",
+      "type": "standing",
+      "color": "#10B981",
+      "icon": "👤",
+      "price": 20,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 10,
+        "endCol": 10
+      },
+      "capacity": 50,
+      "available": 50
+    },
+    {
+      "id": "vip-1765242778043",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "vip-1765242778579",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "vip-1765242778905",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "vip-1765242779313",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "vip-1765242779853",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "vip-1765242780225",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "vip-1765242780597",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "vip-1765242780965",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "vip-1765242781349",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "vip-1765242781817",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "vip-1765242782405",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "vip-1765242782773",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "vip-1765242783426",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 1,
+        "endRow": 1,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "vip-1765242783897",
+      "name": "VIP",
+      "type": "vip",
+      "color": "#9333EA",
+      "icon": "👑",
+      "price": 100,
+      "gridArea": {
+        "startRow": 2,
+        "endRow": 2,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "premium-1765242786017",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "premium-1765242786381",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "premium-1765242786825",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "premium-1765242787167",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "premium-1765242787551",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "premium-1765242787939",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "premium-1765242788447",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "premium-1765242788860",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "premium-1765242789267",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "premium-1765242789631",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "premium-1765242790047",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "premium-1765242790419",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "premium-1765242790899",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 3,
+        "endRow": 3,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "premium-1765242791327",
+      "name": "Premium",
+      "type": "premium",
+      "color": "#0EA5E9",
+      "icon": "💎",
+      "price": 75,
+      "gridArea": {
+        "startRow": 4,
+        "endRow": 4,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "standard-1765242794439",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "standard-1765242794851",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "standard-1765242795239",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "standard-1765242795601",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "standard-1765242795981",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "standard-1765242796362",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "standard-1765242796714",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "standard-1765242797193",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "standard-1765242797581",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "standard-1765242797929",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "standard-1765242798301",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "standard-1765242798753",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "standard-1765242799157",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 6,
+        "endRow": 6,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "standard-1765242799549",
+      "name": "Standard",
+      "type": "standard",
+      "color": "#F59E0B",
+      "icon": "⭐",
+      "price": 50,
+      "gridArea": {
+        "startRow": 5,
+        "endRow": 5,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "economy-1765242805966",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "economy-1765242811837",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "economy-1765242812216",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "economy-1765242812613",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "economy-1765242813145",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "economy-1765242813688",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "economy-1765242814041",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 7,
+        "endRow": 7,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "economy-1765242814753",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "economy-1765242815161",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "economy-1765242815717",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "economy-1765242816078",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "economy-1765242816429",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "economy-1765242816861",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "economy-1765242817245",
+      "name": "Economy",
+      "type": "economy",
+      "color": "#94A3B8",
+      "icon": "🪙",
+      "price": 25,
+      "gridArea": {
+        "startRow": 8,
+        "endRow": 8,
+        "startCol": 8,
+        "endCol": 8
+      }
+    },
+    {
+      "id": "foh-1765242824851",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 2,
+        "endCol": 2
+      }
+    },
+    {
+      "id": "foh-1765242825354",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 3,
+        "endCol": 3
+      }
+    },
+    {
+      "id": "foh-1765242825946",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 4,
+        "endCol": 4
+      }
+    },
+    {
+      "id": "foh-1765242826443",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 5,
+        "endCol": 5
+      }
+    },
+    {
+      "id": "foh-1765242826795",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 6,
+        "endCol": 6
+      }
+    },
+    {
+      "id": "foh-1765242827170",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 7,
+        "endCol": 7
+      }
+    },
+    {
+      "id": "foh-1765242827560",
+      "name": "FOH Area",
+      "type": "foh",
+      "color": "#475569",
+      "icon": "🎤",
+      "price": 15,
+      "gridArea": {
+        "startRow": 9,
+        "endRow": 9,
+        "startCol": 8,
+        "endCol": 8
+      }
+    }
+  ]
+}

@@ -1,0 +1,492 @@
+<div class="seat-selection-layout" [class.mobile]="isMobile" [class.tablet]="isTablet">
+  
+  <!-- Mobile Header -->
+  <div class="mobile-header" *ngIf="isMobile">
+    <button class="mobile-back-button" routerLink="/events">
+      ‹
+    </button>
+    <div class="mobile-event-title">
+      {{ event.title }}
+    </div>
+    <button class="mobile-menu-button" (click)="toggleMobileMenu()">
+      ☰
+    </button>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" *ngIf="showMobileMenu && isMobile" (click)="toggleMobileMenu()">
+    <div class="mobile-menu" (click)="$event.stopPropagation()">
+      <div class="mobile-menu-header">
+        <h3>Event Details</h3>
+        <button class="close-menu" (click)="toggleMobileMenu()">×</button>
+      </div>
+      
+      <div class="mobile-event-details">
+        <div class="mobile-detail-item">
+          <span class="detail-icon">📅</span>
+          <span>{{ formatDate(event.date) }}</span>
+        </div>
+        <div class="mobile-detail-item">
+          <span class="detail-icon">🕒</span>
+          <span>{{ event.time }}</span>
+        </div>
+        <div class="mobile-detail-item">
+          <span class="detail-icon">📍</span>
+          <span>{{ event.venue }}</span>
+        </div>
+      </div>
+      
+      <div class="mobile-legend">
+        <h4>Seat Types</h4>
+        <div class="mobile-legend-items">
+          <div class="mobile-legend-item" *ngFor="let tier of getUniqueTicketTiers()">
+            <div class="mobile-legend-color" [style.background-color]="tier.color"></div>
+            <span class="mobile-legend-label">{{ tier.name }}</span>
+            <span class="mobile-legend-price">{{ formatPrice(tier.price) }}</span>
+          </div>
+          
+          <div class="mobile-legend-item" *ngFor="let status of getDisplayStatuses()">
+            <div class="mobile-legend-color" 
+                 [style.background-color]="seatStatusConfig[status.status].color"
+                 [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
+              <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-mobile">
+                <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
+                <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
+              </div>
+            </div>
+            <span class="mobile-legend-label">{{ status.displayText }}</span>
+            <span class="mobile-legend-price">{{ status.price }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mobile-controls">
+        <button (click)="zoomAt(1.2, CANVAS_WIDTH/2, CANVAS_HEIGHT/2); toggleMobileMenu()" class="mobile-control-btn">
+          <span>Zoom In</span>
+        </button>
+        <button (click)="zoomAt(0.8, CANVAS_WIDTH/2, CANVAS_HEIGHT/2); toggleMobileMenu()" class="mobile-control-btn">
+          <span>Zoom Out</span>
+        </button>
+        <button (click)="resetView(); toggleMobileMenu()" class="mobile-control-btn">
+          <span>Reset View</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Canvas Area -->
+  <main class="canvas-area" [class.mobile-full]="isMobile && !showSelectedSummary">
+    <div class="canvas-wrapper">
+      
+      <!-- Mobile Instructions -->
+      <div class="mobile-instructions" *ngIf="isMobile && selectedSeats.length === 0">
+        <p>👆 Tap seats to select</p>
+        <p>↕️ Drag to pan • Double-tap to zoom</p>
+      </div>
+
+      <!-- Mobile Zoom Controls -->
+      <div class="mobile-zoom-controls" *ngIf="isMobile">
+        <button (click)="zoomAt(1.2, CANVAS_WIDTH/2, CANVAS_HEIGHT/2)" class="zoom-btn">
+          +
+        </button>
+        <button (click)="zoomAt(0.8, CANVAS_WIDTH/2, CANVAS_HEIGHT/2)" class="zoom-btn">
+          −
+        </button>
+        <button (click)="resetView()" class="zoom-btn reset">
+          ↺
+        </button>
+      </div>
+
+      <!-- SVG Container -->
+      <div class="svg-container" #svgContainer>
+        <svg #svgElement
+             class="seatmap-svg"
+             [attr.viewBox]="'0 0 ' + CANVAS_WIDTH + ' ' + CANVAS_HEIGHT"
+             preserveAspectRatio="xMidYMid meet"
+             [style.transform]="'scale(' + scale + ') translate(' + offsetX + 'px, ' + offsetY + 'px)'"
+             (mousemove)="onHover($event)"
+             (mouseleave)="onSvgMouseLeave()"
+             (wheel)="onZoom($event)">
+          
+          <!-- Stage -->
+          <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2"
+                [attr.y]="STAGE_Y"
+                [attr.width]="STAGE_WIDTH"
+                [attr.height]="STAGE_HEIGHT"
+                [attr.rx]="8"
+                fill="#ffffff"
+                stroke="#bebebe"
+                [attr.stroke-width]="2" />
+          
+          <text [attr.x]="CANVAS_WIDTH / 2"
+                [attr.y]="STAGE_Y + STAGE_HEIGHT / 2 + 6"
+                text-anchor="middle"
+                font-family="Arial"
+                [attr.font-size]="stageFontSize"
+                font-weight="bold"
+                fill="#bebebe">STAGE</text>
+          
+          <!-- Section Labels -->
+          <g *ngFor="let section of venueData.sections; let i = index">
+            <ng-container *ngIf="i === 0 || section.name !== venueData.sections[i-1].name">
+              <text [attr.x]="section.x + (section.seatsPerRow * seatGap / 2)"
+                    [attr.y]="section.y - 20"
+                    text-anchor="center"
+                    font-family="Arial"
+                    font-size="16"
+                    font-weight="bold"
+                    fill="#bebebe">
+                {{ section.sectionLabel || section.name }}
+              </text>
+              
+              <line [attr.x1]="section.x + 10"
+                    [attr.x2]="section.x + (section.seatsPerRow * seatGap) - 10"
+                    [attr.y1]="section.y - 10"
+                    [attr.y2]="section.y - 10"
+                    stroke="#bebebe"
+                    [attr.stroke-width]="1"
+                    [attr.stroke-dasharray]="'3,3'" />
+            </ng-container>
+          </g>
+          
+          <!-- Row Labels -->
+          <ng-container *ngIf="venueData.sections.length > 0">
+            <g *ngFor="let row of getRowArray(venueData.sections[0].rows); let i = index">
+              <text [attr.x]="venueData.sections[0].x - 20"
+                    [attr.y]="venueData.sections[0].y + (i * seatGap) + (venueData.sections[0].rowOffset || 0) + 4"
+                    font-family="Arial"
+                    font-size="12"
+                    font-weight="bold"
+                    fill="#333">
+                {{ getRowLetter(i) }}
+              </text>
+            </g>
+          </ng-container>
+          
+          <!-- FOH Area -->
+          <g *ngIf="middleMinX < MAX_VALUE">
+            <rect [attr.x]="getFOHBounds().leftFOHX"
+                  [attr.y]="getFOHBounds().y"
+                  [attr.width]="getFOHBounds().width"
+                  [attr.height]="getFOHBounds().height"
+                  fill="#ffffff"
+                  stroke="#bebebe"
+                  [attr.stroke-width]="1" />
+            
+            <rect [attr.x]="getFOHBounds().rightFOHX"
+                  [attr.y]="getFOHBounds().y"
+                  [attr.width]="getFOHBounds().width"
+                  [attr.height]="getFOHBounds().height"
+                  fill="#ffffff"
+                  stroke="#bebebe"
+                  [attr.stroke-width]="1" />
+            
+            <text [attr.x]="getFOHBounds().leftFOHX + getFOHBounds().width / 2"
+                  [attr.y]="getFOHBounds().y + 24"
+                  text-anchor="middle"
+                  font-family="Arial"
+                  font-size="15"
+                  font-weight="bold"
+                  fill="#bebebe">FOH AREA</text>
+          </g>
+          
+          <!-- Seats -->
+          <g *ngFor="let seat of seats">
+            <!-- Regular seats -->
+            <circle *ngIf="seat.status !== SeatStatus.PARTIAL_VIEW"
+                    [attr.cx]="seat.cx"
+                    [attr.cy]="seat.cy"
+                    [attr.r]="seatRadius"
+                    [attr.fill]="getSeatColor(seat)"
+                    [attr.stroke]="getSeatStroke(seat)"
+                    [attr.stroke-width]="getSeatStrokeWidth(seat)"
+                    [attr.opacity]="getSeatOpacity(seat)"
+                    [attr.cursor]="getSeatCursor(seat)"
+                    (click)="onSeatClick(seat, $event)">
+              
+              <title>
+                {{ seat.section }} - {{ seat.rowLabel }}{{ seat.seatNumber }}
+                {{ seat.status !== SeatStatus.AVAILABLE ? '(' + getSeatStatusText(seat.status, seat.ticketType) + ')' : '' }}
+              </title>
+            </circle>
+            
+            <!-- Partial view seats -->
+            <g *ngIf="seat.status === SeatStatus.PARTIAL_VIEW">
+              <defs>
+                <linearGradient [attr.id]="'partial-' + seat.id" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" [style.stop-color]="seat.color"></stop>
+                  <stop offset="50%" [style.stop-color]="seat.color"></stop>
+                  <stop offset="50%" [style.stop-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></stop>
+                  <stop offset="100%" [style.stop-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></stop>
+                </linearGradient>
+              </defs>
+              
+              <circle [attr.cx]="seat.cx"
+                      [attr.cy]="seat.cy"
+                      [attr.r]="seatRadius"
+                      [attr.fill]="'url(#partial-' + seat.id + ')'"
+                      [attr.stroke]="getSeatStroke(seat)"
+                      [attr.stroke-width]="getSeatStrokeWidth(seat)"
+                      [attr.opacity]="getSeatOpacity(seat)"
+                      [attr.cursor]="getSeatCursor(seat)"
+                      (click)="onSeatClick(seat, $event)">
+                
+                <title>
+                  {{ seat.section }} - {{ seat.rowLabel }}{{ seat.seatNumber }}
+                  ({{ getSeatStatusText(seat.status, seat.ticketType) }})
+                  - Partial/obstructed view
+                </title>
+              </circle>
+            </g>
+            
+            <!-- Selected indicator -->
+            <g *ngIf="seat.status === SeatStatus.SELECTED">
+              <circle [attr.cx]="seat.cx"
+                      [attr.cy]="seat.cy"
+                      [attr.r]="seatRadius * 1.2"
+                      fill="#4CAF50"
+                      [attr.opacity]="0.8" />
+              
+              <text [attr.x]="seat.cx"
+                    [attr.y]="seat.cy"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    fill="white"
+                    font-weight="bold"
+                    [attr.font-size]="isMobile ? '10' : '12'">✓</text>
+            </g>
+            
+            <!-- Status indicator for unavailable seats -->
+            <text *ngIf="seat.status === SeatStatus.SOLD || seat.status === SeatStatus.RESERVED || seat.status === SeatStatus.BLOCKED"
+                  [attr.x]="seat.cx"
+                  [attr.y]="seat.cy"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  fill="white"
+                  [attr.font-size]="isMobile ? '9' : '10'"
+                  font-weight="bold">
+              {{ seat.status === SeatStatus.SOLD ? 'S' : 
+                 seat.status === SeatStatus.RESERVED ? 'R' : 
+                 seat.status === SeatStatus.BLOCKED ? 'X' : '' }}
+            </text>
+            
+            <!-- Seat numbers for first row -->
+            <text *ngIf="seat.rowLabel === 'A'"
+                  [attr.x]="seat.cx"
+                  [attr.y]="seat.cy + seatRadius + 15"
+                  text-anchor="middle"
+                  font-family="Arial"
+                  [attr.font-size]="isMobile ? '9' : '10'"
+                  fill="#666">{{ seat.seatNumber }}</text>
+          </g>
+          
+        </svg>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sidebar / Mobile Bottom Sheet -->
+  <aside class="controls-sidebar" [class.mobile-bottom-sheet]="isMobile" 
+        [class.expanded]="showSelectedSummary || !isMobile">
+    
+    <!-- Desktop Header -->
+    <div class="compact-header" *ngIf="!isMobile">
+      <div class="header-top">
+        <button class="back-button" routerLink="/events">
+          ← Back
+        </button>
+      </div>
+      
+      <div class="event-info-ultra-compact">
+        <h1>{{ event.title }}</h1>
+        <div class="event-details-minimal">
+          <span class="detail-item">
+            <i class="icon-calendar"></i>
+            {{ formatDate(event.date) }}
+          </span>
+          <span class="detail-item">
+            <i class="icon-time"></i>
+            {{ event.time }}
+          </span>
+          <span class="detail-item">
+            <i class="icon-location"></i>
+            {{ event.venue }}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Summary Toggle -->
+    <div class="mobile-summary-toggle" *ngIf="isMobile" (click)="toggleSelectedSummary()">
+      <div class="toggle-handle"></div>
+      <div class="toggle-content">
+        <span class="selected-count" *ngIf="selectedSeats.length > 0">
+          {{ selectedSeats.length }} seat{{ selectedSeats.length > 1 ? 's' : '' }} selected
+        </span>
+        <span class="total-price" *ngIf="selectedSeats.length > 0">
+          {{ formatPrice(getTotalPrice()) }}
+        </span>
+        <span class="toggle-hint" *ngIf="selectedSeats.length === 0">
+          Tap seats to select
+        </span>
+      </div>
+    </div>
+
+    <!-- Selected Seats Summary -->
+    <div class="selected-summary" 
+         [class.mobile-summary]="isMobile"
+         *ngIf="(selectedSeats.length > 0 && !isMobile) || (isMobile && showSelectedSummary)">
+      
+      <div class="summary-header">
+        <h3>Selected Seats ({{ selectedSeats.length }})</h3>
+        <button class="clear-btn" (click)="clearSelection()">Clear All</button>
+      </div>
+      
+      <div class="seats-grid" [class.mobile-scrollable]="isMobile">
+        <div class="seat-tag" *ngFor="let seat of selectedSeats; let i = index">
+          <span class="seat-label">{{ seat.row }}S{{ seat.number }}</span>
+          <span class="seat-tier" [style.color]="seat.tier.color">
+            {{ seat.tier.name.charAt(0) }}
+          </span>
+          <button class="remove-tag" 
+                  (click)="onRemoveSeat(seat.id, $event)" 
+                  title="Remove">×</button>
+        </div>
+      </div>
+      
+      <div class="quick-summary">
+        <div class="price-breakdown">
+          <div class="price-item" *ngFor="let seat of selectedSeats">
+            <span>{{ seat.tier.name }} {{ seat.row }}{{ seat.number }}</span>
+            <span>{{ formatPrice(seat.price) }}</span>
+          </div>
+        </div>
+        <div class="total-price">
+          <span>Total:</span>
+          <span class="amount">{{ formatPrice(getTotalPrice()) }}</span>
+        </div>
+      </div>
+      
+      <div class="action-buttons-compact">
+        <button class="btn-add-compact" (click)="addToCart()">
+          Add {{ selectedSeats.length }} to Cart
+        </button>
+        <button class="btn-view-cart-compact" [routerLink]="['/cart']">
+          View Cart
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state-compact" *ngIf="selectedSeats.length === 0 && !isMobile">
+      <div class="empty-icon">👆</div>
+      <p>Click on seats to select them</p>
+      <p class="hint" *ngIf="getUniqueTicketTiers().length > 0">
+        Available seats are shown in 
+        <span *ngFor="let tier of getUniqueTicketTiers(); let last = last">
+          <span [style.color]="tier.color">{{ tier.name.toLowerCase() }}</span>
+          <span *ngIf="!last">, </span>
+        </span>
+      </p>
+    </div>
+
+    <!-- Legend -->
+    <div class="compact-legend" [class.collapsed]="isMobile && !showLegend">
+      <h4 (click)="toggleLegend()" *ngIf="isMobile">
+        <span>Seat Types</span>
+        <span class="toggle-icon">{{ showLegend ? '−' : '+' }}</span>
+      </h4>
+      <h4 *ngIf="!isMobile">Seat Types</h4>
+      
+      <div class="legend-items-compact" *ngIf="!isMobile || showLegend">
+        <!-- Ticket type tiers -->
+        <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
+          <div class="legend-color-compact" [style.background-color]="tier.color"></div>
+          <span class="legend-label-compact">{{ tier.name }}</span>
+          <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
+        </div>
+        
+        <!-- Seat status types -->
+        <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
+          <div class="legend-color-compact" 
+               [style.background-color]="seatStatusConfig[status.status].color"
+               [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
+            <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
+              <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
+              <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
+            </div>
+          </div>
+          <span class="legend-label-compact">{{ status.displayText }}</span>
+          <span class="legend-price-compact">{{ status.price }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Zoom Controls -->
+    <div class="zoom-controls-compact" *ngIf="!isMobile">
+      <h4>Controls</h4>
+      <div class="zoom-buttons-compact">
+        <button (click)="zoomAt(1.2, CANVAS_WIDTH/2, CANVAS_HEIGHT/2)" title="Zoom In">
+          <span class="zoom-icon">+</span>
+          <span>Zoom In</span>
+        </button>
+        <button (click)="zoomAt(0.8, CANVAS_WIDTH/2, CANVAS_HEIGHT/2)" title="Zoom Out">
+          <span class="zoom-icon">−</span>
+          <span>Zoom Out</span>
+        </button>
+        <button (click)="resetView()" title="Reset View">
+          <span class="zoom-icon">↺</span>
+          <span>Reset</span>
+        </button>
+      </div>
+    </div>
+    
+  </aside>
+
+  <!-- Mobile Tooltip Bottom Sheet -->
+  <div class="mobile-tooltip-sheet" *ngIf="isMobile && hoveredSeat && hoveredSeat.status !== SeatStatus.UNAVAILABLE">
+    <div class="mobile-tooltip-content">
+      <div class="mobile-tooltip-header">
+        <h4>{{ hoveredSeat.section }} {{ formatPrice(hoveredSeat.price) }}</h4>
+        <button class="close-tooltip" (click)="hideTooltip()">×</button>
+      </div>
+      <p>{{ hoveredSeat.rowLabel }}{{ hoveredSeat.seatNumber }}, 
+         {{ getSeatStatusText(hoveredSeat.status, hoveredSeat.ticketType) }}</p>
+      
+      <div *ngIf="hoveredSeat.features && hoveredSeat.features.length" class="mobile-tooltip-features">
+        <div *ngFor="let feature of hoveredSeat.features" class="feature">
+          • {{ feature }}
+        </div>
+      </div>
+      
+
+      
+      <button *ngIf="canSelectSeat(hoveredSeat)" 
+              class="mobile-select-btn"
+              (click)="onSeatClick(hoveredSeat, $event); hideTooltip()">
+        {{ hoveredSeat.status === SeatStatus.SELECTED ? 'Deselect' : 'Select' }} Seat
+      </button>
+    </div>
+  </div>
+
+<!-- Desktop Tooltip -->
+<div class="svg-tooltip desktop-tooltip" 
+     *ngIf="!isMobile && hoveredSeat && shouldShowTooltip()"
+     [style.left.px]="tooltipLeft"
+     [style.top.px]="tooltipTop">
+  <div class="tooltip-content" *ngIf="hoveredSeat">
+    <h4>{{ hoveredSeat.section }} {{ formatPrice(hoveredSeat.price) }}</h4>
+    <p>{{ hoveredSeat.rowLabel }}{{ hoveredSeat.seatNumber }}, 
+       {{ getSeatStatusText(hoveredSeat.status, hoveredSeat.ticketType) }}</p>
+    
+    <div *ngIf="hoveredSeat.features && hoveredSeat.features.length" class="tooltip-features">
+      <div *ngFor="let feature of hoveredSeat.features" class="feature">
+        • {{ feature }}
+      </div>
+    </div>
+    
+
+  </div>
+  <div class="tooltip-arrow"></div>
+</div>
+</div>

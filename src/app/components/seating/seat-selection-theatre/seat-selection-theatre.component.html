@@ -1,0 +1,110 @@
+<div class="seat-selection-theatre">
+  <!-- Header -->
+  <div class="view-header">
+    <div class="header-content">
+      <div class="venue-info">
+        <h1>{{ layout?.name || 'Venue Layout' }}</h1>
+        <div class="venue-stats">
+          <div class="stat">
+            <div class="stat-value">{{ getTotalCapacity() }}</div>
+            <div class="stat-label">Total Seats</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ getTotalAvailable() }}</div>
+            <div class="stat-label">Available</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ getOverallOccupancy() }}%</div>
+            <div class="stat-label">Occupied</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-container">
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background: #1e293b;"></div>
+        <span class="legend-text">Stage</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #3b82f6;"></div>
+        <span class="legend-text">Middle - £150</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #10b981;"></div>
+        <span class="legend-text">Wing - £120</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #ef4444;"></div>
+        <span class="legend-text">Standing - £80</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Floor Plan -->
+  <div class="floor-plan-container">
+    <div class="floor-plan">
+      <div class="venue-container">
+        
+        <!-- Stage -->
+        <div class="section stage-section"
+             [ngStyle]="{
+               'top': '5%',
+               'left': '25%',
+               'width': '50%',
+               'height': '10%',
+               'background': '#1e293b'
+             }"
+             (click)="selectSection(getSectionByType('stage')!)">
+          <div class="stage-content">
+            <div class="stage-name">STAGE</div>
+          </div>
+        </div>
+        
+        <!-- All seating sections -->
+        <ng-container *ngFor="let section of getSeatingSections()">
+          <div class="section seating-section"
+               [class.selected]="selectedSection?.id === section.id"
+               [ngStyle]="getSectionStyle(section)"
+               (click)="selectSection(section)">
+            <div class="section-content">
+              <div class="section-name">{{ section.name }}</div>
+              <div class="section-price">£{{ section.price }}</div>
+              <div class="section-info">{{ section.available }} available</div>
+            </div>
+          </div>
+        </ng-container>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Selection Status -->
+  <div class="selection-status" *ngIf="selectedSection">
+    <div class="status-content">
+      <div class="selected-info">
+        <div class="selected-name">{{ selectedSection.name }}</div>
+        <div class="selected-details">
+          <span class="selected-price">£{{ selectedSection.price }} per seat</span>
+          <span class="selected-separator">•</span>
+          <span class="selected-available">{{ selectedSection.available }} seats available</span>
+        </div>
+      </div>
+      <button class="view-seats-btn" 
+              *ngIf="hasSeats(selectedSection)"
+              (click)="sectionSelect.emit(selectedSection)">
+        Select Seats
+      </button>
+    </div>
+  </div>
+
+  <!-- Hint -->
+  <div class="hint-container" *ngIf="!selectedSection">
+    <div class="hint-content">
+      Click on any section to view details and select seats
+    </div>
+  </div>
+</div>

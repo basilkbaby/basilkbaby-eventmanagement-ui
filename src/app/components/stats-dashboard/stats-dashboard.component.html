@@ -1,0 +1,56 @@
+<!-- stats-dashboard.component.html -->
+<div class="stats-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">UK's Leading Event Organizer</h2>
+    <p class="dashboard-description">Trusted by thousands of music lovers across the UK. Delivering unforgettable experiences since day one.</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-container">
+    <!-- Tickets Sold -->
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">confirmation_number</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ formatNumber(stats.totalTicketsSold) }}</div>
+        <div class="stat-label">Tickets Sold</div>
+        <div class="stat-trend trend-positive">
+          <span class="material-icons">trending_up</span>
+          <span class="trend-value">+{{ stats.trends.tickets.value }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events Hosted -->
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">event_available</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.totalEvents }}</div>
+        <div class="stat-label">Events Hosted</div>
+        <div class="stat-trend trend-positive">
+          <span class="material-icons">trending_up</span>
+          <span class="trend-value">+{{ stats.trends.events.value }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sold Out Shows -->
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">celebration</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.soldOutEvents }}</div>
+        <div class="stat-label">Sold Out Shows</div>
+        <div class="stat-trend trend-positive">
+          <span class="material-icons">trending_up</span>
+          <span class="trend-value">{{ stats.trends.soldOut.value }}% success rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

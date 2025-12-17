@@ -1,0 +1,24 @@
+<div class="venue-render">
+      <div class="grid-render" [style.width.px]="totalWidth" [style.height.px]="totalHeight">
+        <div *ngFor="let section of layout?.sections" 
+             class="venue-section"
+             [style.left.px]="getSectionX(section)"
+             [style.top.px]="getSectionY(section)"
+             [style.width.px]="getSectionWidth(section)"
+             [style.height.px]="getSectionHeight(section)"
+             [style.background]="getSectionGradient(section.color)"
+             [style.border-color]="getBorderColor(section)"
+             (click)="selectSection(section)">
+          
+          <div class="section-content">
+            <div class="section-icon">{{ section.icon }}</div>
+            <div class="section-name">{{ section.name }}</div>
+            <div class="section-price" *ngIf="section.price">£{{ section.price }}</div>
+          </div>
+          
+          <div class="section-capacity" *ngIf="section.capacity">
+            {{ section.available }}/{{ section.capacity }}
+          </div>
+        </div>
+      </div>
+    </div>

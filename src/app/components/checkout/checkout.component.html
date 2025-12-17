@@ -1,0 +1,398 @@
+<div class="checkout-container">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading checkout...</p>
+  </div>
+
+  <!-- Order Complete -->
+  <div class="order-complete" *ngIf="orderComplete">
+    <div class="success-animation">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+        <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h1>Order Confirmed!</h1>
+    <p class="order-id">Order #{{ orderId }}</p>
+    <p class="success-message">Thank you for your purchase. Your tickets have been confirmed and will be sent to your email.</p>
+    
+    <div class="completion-actions">
+      <button class="continue-shopping-btn" (click)="continueShopping()">
+        Continue Shopping
+      </button>
+      <button class="view-tickets-btn" (click)="viewOrderConfirmation()">
+        View My Tickets
+      </button>
+    </div>
+  </div>
+
+  <!-- Checkout Form -->
+  <div class="checkout-content" *ngIf="!loading && !orderComplete && cartItems.length > 0">
+    <!-- Header -->
+    <div class="checkout-header">
+      <button class="back-btn" (click)="goBackToCart()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Cart
+      </button>
+      <h1>Checkout</h1>
+      <div class="step-indicator">
+        <span class="step active">1. Cart</span>
+        <span class="step active">2. Checkout</span>
+        <span class="step">3. Confirmation</span>
+      </div>
+    </div>
+
+    <div class="checkout-main">
+      <!-- Left Column: Checkout Form -->
+      <div class="checkout-form-column">
+        <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+          <!-- Customer Information -->
+          <section class="form-section">
+            <h2>Customer Information</h2>
+            <div class="form-grid" formGroupName="customer">
+              <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  formControlName="firstName"
+                  [class.invalid]="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched"
+                  placeholder="John"
+                >
+                <div class="error-message" *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
+                  <span *ngIf="customerForm.get('firstName')?.errors?.['required']">
+                    First name is required
+                  </span>
+                  <span *ngIf="customerForm.get('firstName')?.errors?.['minlength']">
+                    First name must be at least 2 characters
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  formControlName="lastName"
+                  [class.invalid]="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched"
+                  placeholder="Doe"
+                >
+                <div class="error-message" *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
+                  <span *ngIf="customerForm.get('lastName')?.errors?.['required']">
+                    Last name is required
+                  </span>
+                  <span *ngIf="customerForm.get('lastName')?.errors?.['minlength']">
+                    Last name must be at least 2 characters
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="email">Email Address *</label>
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  [class.invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched"
+                  placeholder="john.doe@example.com"
+                >
+                <div class="error-message" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                  <span *ngIf="customerForm.get('email')?.errors?.['required']">
+                    Email is required
+                  </span>
+                  <span *ngIf="customerForm.get('email')?.errors?.['email']">
+                    Please enter a valid email address
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="phone">Phone Number *</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  formControlName="phone"
+                  [class.invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched"
+                  placeholder="07700 900123"
+                >
+                <div class="error-message" *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+                  <span *ngIf="customerForm.get('phone')?.errors?.['required']">
+                    Phone number is required
+                  </span>
+                  <span *ngIf="customerForm.get('phone')?.errors?.['pattern']">
+                    Please enter a valid UK phone number (e.g., 07700 900123 or 020 7946 0958)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Billing Address -->
+          <section class="form-section">
+            <h2>Billing Address</h2>
+            <div class="form-grid" formGroupName="billingAddress">
+              <div class="form-group full-width">
+                <label for="addressLine1">Address Line 1 *</label>
+                <input
+                  id="addressLine1"
+                  type="text"
+                  formControlName="addressLine1"
+                  [class.invalid]="billingAddressForm.get('addressLine1')?.invalid && billingAddressForm.get('addressLine1')?.touched"
+                  placeholder="123 Main Street"
+                >
+                <div class="error-message" *ngIf="billingAddressForm.get('addressLine1')?.invalid && billingAddressForm.get('addressLine1')?.touched">
+                  Address line 1 is required
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="addressLine2">Address Line 2</label>
+                <input
+                  id="addressLine2"
+                  type="text"
+                  formControlName="addressLine2"
+                  placeholder="Apartment, studio, or floor"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="city">Town/City *</label>
+                <input
+                  id="city"
+                  type="text"
+                  formControlName="city"
+                  [class.invalid]="billingAddressForm.get('city')?.invalid && billingAddressForm.get('city')?.touched"
+                  placeholder="London"
+                >
+                <div class="error-message" *ngIf="billingAddressForm.get('city')?.invalid && billingAddressForm.get('city')?.touched">
+                  Town/City is required
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="county">County</label>
+                <input
+                  id="county"
+                  type="text"
+                  formControlName="county"
+                  placeholder="Greater London"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="postcode">Postcode *</label>
+                <input
+                  id="postcode"
+                  type="text"
+                  formControlName="postcode"
+                  [class.invalid]="billingAddressForm.get('postcode')?.invalid && billingAddressForm.get('postcode')?.touched"
+                  placeholder="SW1A 1AA"
+                  (blur)="formatPostcode()"
+                >
+                <div class="error-message" *ngIf="billingAddressForm.get('postcode')?.invalid && billingAddressForm.get('postcode')?.touched">
+                  <span *ngIf="billingAddressForm.get('postcode')?.errors?.['required']">
+                    Postcode is required
+                  </span>
+                  <span *ngIf="billingAddressForm.get('postcode')?.errors?.['pattern']">
+                    Please enter a valid UK postcode (e.g., SW1A 1AA, M1 1AA, EH12 9HQ)
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="country">Country *</label>
+                <select
+                  id="country"
+                  formControlName="country"
+                  [class.invalid]="billingAddressForm.get('country')?.invalid && billingAddressForm.get('country')?.touched"
+                >
+                  <option value="">Select Country</option>
+                  <option value="GB">United Kingdom</option>
+                  <option value="IE">Ireland</option>
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                  <option value="AU">Australia</option>
+                  <option value="NZ">New Zealand</option>
+                  <option value="OTHER">Other</option>
+                </select>
+                <div class="error-message" *ngIf="billingAddressForm.get('country')?.invalid && billingAddressForm.get('country')?.touched">
+                  Country is required
+                </div>
+              </div>
+            </div>
+          </section>
+
+<!-- Payment Information Section -->
+<section class="form-section">
+  <h2>Payment Information</h2>
+  
+   <div class="payment-methods">
+    <div class="payment-method active">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+        <path d="M2 8h20" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      Secure Payment
+    </div>
+  </div>
+
+  <!-- Payment Element Container -->
+  <div class="form-group full-width">
+    <label>Payment Details *</label>
+    <div class="payment-element-container" id="payment-element-container">
+      <!-- Stripe will inject the Payment Element here -->
+    </div>
+    <div class="error-message" *ngIf="stripeError">
+      {{ stripeError }}
+    </div>
+    <div class="payment-element-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <span>Your payment is secured with SSL encryption</span>
+    </div>
+  </div>
+
+  <!-- Billing Address Same Checkbox -->
+  <div class="same-address-group">
+    <label class="checkbox-label">
+      <input 
+        type="checkbox" 
+        [checked]="billingAddressSame" 
+        (change)="toggleBillingAddress()"
+      >
+      <span class="checkmark"></span>
+      Billing address is the same as customer address
+    </label>
+  </div>
+</section>
+
+          <!-- Terms and Conditions -->
+          <section class="form-section">
+            <div class="terms-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="acceptTerms">
+                <span class="checkmark"></span>
+                I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>
+              </label>
+              <div class="error-message" *ngIf="checkoutForm.get('acceptTerms')?.invalid && checkoutForm.get('acceptTerms')?.touched">
+                You must accept the terms and conditions to proceed
+              </div>
+            </div>
+          </section>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="submit-order-btn"
+            [disabled]="processing || checkoutForm.invalid"
+          >
+            <span *ngIf="!processing">Complete Purchase - {{ formatPrice(cartSummary.total) }}</span>
+            <span *ngIf="processing" class="processing-text">
+              <div class="processing-spinner"></div>
+              Processing...
+            </span>
+          </button>
+
+
+          <!-- Form Error Summary -->
+          <div class="form-error-summary" *ngIf="showFormErrors && checkoutForm.invalid">
+            <h3>Please fix the following errors:</h3>
+            <ul>
+              <li *ngIf="customerForm.get('firstName')?.invalid">• First name is required</li>
+              <li *ngIf="customerForm.get('lastName')?.invalid">• Last name is required</li>
+              <li *ngIf="customerForm.get('email')?.invalid">• Valid email is required</li>
+              <li *ngIf="customerForm.get('phone')?.invalid">• Valid UK phone number is required</li>
+              <li *ngIf="billingAddressForm.get('addressLine1')?.invalid">• Address line 1 is required</li>
+              <li *ngIf="billingAddressForm.get('city')?.invalid">• Town/City is required</li>
+              <li *ngIf="billingAddressForm.get('postcode')?.invalid">• Valid UK postcode is required</li>
+              <li *ngIf="billingAddressForm.get('country')?.invalid">• Country is required</li>            
+              <li *ngIf="checkoutForm.get('acceptTerms')?.invalid">• You must accept the terms and conditions</li>
+            </ul>
+          </div>
+
+          <!-- Security Note -->
+          <div class="security-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>Your payment is secured with SSL encryption. We never store your card details.</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Column: Order Summary -->
+      <div class="order-summary-column">
+        <div class="order-summary-card">
+          <h3>Order Summary</h3>
+          
+          <div class="order-items">
+            <div *ngFor="let event of getGroupedEvents()" class="event-group">
+              <div class="event-header">
+                <h4>{{ event.title }}</h4>
+                <p class="event-details">{{ formatDate(event.date) }} • {{ event.venue }}</p>
+              </div>
+              
+              <div *ngFor="let item of event.items" class="order-item">
+                <div class="item-details">
+                  <span class="item-name">
+                    <span *ngIf="item.seat">
+                      {{ getSeatInfo(item).section }} - Row {{ getSeatInfo(item).row }}, Seat {{ getSeatInfo(item).seatNumber }}
+                    </span>
+                    <span *ngIf="item.ticketType">
+                      {{ item.ticketType.name }}
+                    </span>
+                  </span>
+                  <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                </div>
+                <span class="item-price">{{ formatPrice(item.price * item.quantity) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-totals">
+            <div class="total-line">
+              <span>Subtotal</span>
+              <span>{{ formatPrice(cartSummary.subtotal) }}</span>
+            </div>
+            <div class="total-line">
+              <span>Service Fee</span>
+              <span>{{ formatPrice(cartSummary.serviceFee) }}</span>
+            </div>
+            <div class="total-line grand-total">
+              <span>Total</span>
+              <span>{{ formatPrice(cartSummary.total) }}</span>
+            </div>
+          </div>
+
+          <div class="refund-policy">
+            <h4>Refund Policy</h4>
+            <p>Tickets are non-refundable except in case of event cancellation. Name changes may be permitted up to 24 hours before the event.</p>
+          </div>
+
+          <div class="support-info">
+            <p>Need help? <a href="/contact">Contact our support team</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty Cart State -->
+  <div class="empty-state" *ngIf="!loading && cartItems.length === 0 && !orderComplete">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <h3>Your cart is empty</h3>
+    <p>Add some tickets to proceed to checkout</p>
+    <button class="browse-events-btn" (click)="continueShopping()">
+      Browse Events
+    </button>
+  </div>
+</div>

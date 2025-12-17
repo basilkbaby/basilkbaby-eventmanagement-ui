@@ -1,0 +1,392 @@
+<div class="seat-selection-container">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading seat selection...</p>
+  </div>
+
+  <!-- Seat Selection Interface -->
+  <div class="seat-selection" *ngIf="event && !loading">
+    <!-- Header -->
+    <header class="selection-header">
+      <div class="header-content">
+        <button class="back-btn" (click)="goBack()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Back to Event
+        </button>
+        
+        <div class="event-info">
+          <h1>{{ event.title }}</h1>
+          <div class="event-meta">
+            <span>{{ formatDate(event.startDate) }}</span>
+            <span>•</span>
+            <span>{{ event.venue.name }}</span>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button class="cart-btn" routerLink="/cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17M17 13v4a2 2 0 11-4 0v-4M9 19.5A1.5 1.5 0 117.5 18 1.5 1.5 0 019 19.5zM18 19.5A1.5 1.5 0 1116.5 18 1.5 1.5 0 0118 19.5z" 
+                    stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Cart ({{ cartItemCount }})
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Panel: Controls & Information -->
+      <div class="controls-panel">
+        
+        
+        <!-- Controls -->
+        <section class="controls-section">
+          <h3>Controls</h3>
+          
+          <div class="control-group" *ngIf="false">
+            <label class="control-label">
+              <input type="checkbox" [(ngModel)]="autoSelect" />
+              Auto-select best available seats
+            </label>
+            <p class="control-hint">Automatically select the best seats when changing ticket type</p>
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label">Max Price: {{ formatPrice(priceRange) }}</label>
+            <input type="range" [(ngModel)]="priceRange" min="20" max="200" step="10" class="price-slider">
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label">Filter by Section</label>
+            <select [(ngModel)]="sectionFilter" class="section-select">
+              <option value="all">All Sections</option>
+              <option value="vip">VIP Section</option>
+              <option value="gold">Gold Circle</option>
+              <option value="standard">Standard</option>
+              <option value="balcony">Balcony</option>
+            </select>
+          </div>
+          
+          <div class="control-group" *ngIf="false">
+            <label class="control-label">View Mode</label>
+            <div class="view-toggle">
+              <button class="view-btn" [class.active]="viewMode === 'map'" (click)="viewMode = 'map'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" 
+                        stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Map View
+              </button>
+              <button class="view-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" 
+                        stroke="currentColor" stroke-width="2"/>
+                </svg>
+                List View
+              </button>
+            </div>
+          </div>
+          
+          <div class="control-group">
+            <div class="zoom-controls">
+              <button class="zoom-btn" (click)="zoomOut()" [disabled]="zoomLevel <= 0.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+              <span class="zoom-level">{{ (zoomLevel * 100).toFixed(0) }}%</span>
+              <button class="zoom-btn" (click)="zoomIn()" [disabled]="zoomLevel >= 2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+              <button class="reset-btn" (click)="resetZoom()">Reset</button>
+            </div>
+          </div>
+        </section>
+        
+              <!-- Legend -->
+        <section class="legend-section" *ngIf="showLegend">
+          <h3>Seat Legend</h3>
+          <div class="legend-items">
+            <div class="legend-item">
+              <div class="legend-color seat-available"></div>
+              <span>Available</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color seat-selected"></div>
+              <span>Selected</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color seat-unavailable"></div>
+              <span>Unavailable</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color seat-wheelchair"></div>
+              <span>Wheelchair Accessible</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color seat-premium"></div>
+              <span>Premium Seating</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ticket Tier Selection -->
+        <section class="tier-selection">
+          <h3>Select Ticket Type</h3>
+          <div class="tier-cards">
+            <div class="tier-card" 
+                 *ngFor="let tier of event.ticketTiers" 
+                 [class.selected]="selectedTier?.id === tier.id"
+                 (click)="selectTier(tier)">
+              <div class="tier-header">
+                <h4>{{ tier.name }}</h4>
+                <span class="tier-price">{{ formatPrice(tier.price) }}</span>
+              </div>
+              <p class="tier-description">{{ tier.description }}</p>
+              
+              <div class="tier-stats">
+                <div class="stat">
+                  <span class="stat-label">Available:</span>
+                  <span class="stat-value">{{ getAvailableSeatsCount(tier) }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Benefits:</span>
+                  <span class="stat-value">{{ tier.benefits?.length || 0 }}</span>
+                </div>
+              </div>
+              
+              <div class="tier-benefits" *ngIf="tier.benefits && tier.benefits.length > 0">
+                <div class="benefit" *ngFor="let benefit of tier.benefits.slice(0, 3)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  {{ benefit }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+  
+      </div>
+
+      <!-- Right Panel: Seat Map & Selection -->
+      <div class="seat-map-panel">
+        <!-- Map Header -->
+        <div class="map-header" *ngIf="false">
+          <div class="map-info">
+            <h2>Interactive Seat Map</h2>
+            <p class="map-subtitle">Click on available seats to select them</p>
+          </div>
+          
+          <div class="map-stats">
+            <div class="stat">
+              <span class="stat-label">Selected:</span>
+              <span class="stat-value">{{ selectedSeats.length }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Total Price:</span>
+              <span class="stat-value">{{ formatPrice(getTotalPrice()) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage -->
+        <div class="stage-container">
+          <div class="stage">
+            <span>STAGE</span>
+            <div class="stage-info">Main Performance Area</div>
+          </div>
+        </div>
+
+        <!-- Seat Map -->
+        <div class="seat-map-container" [style.transform]="'scale(' + zoomLevel + ')'" [style.transformOrigin]="'center'">
+          <div class="seat-map">
+            <!-- Sections -->
+            <div class="seat-section" *ngFor="let section of getFilteredSections()">
+              <div class="section-header">
+                <h3>{{ section.name }}</h3>
+<div class="section-badge" [style.backgroundColor]="section.color">
+  From {{ formatPrice(getSectionPrice(section.id)) }}
+</div>
+              </div>
+              
+              <div class="section-description">{{ section.description }}</div>
+              
+              <!-- Rows -->
+              <div class="seat-rows">
+                <div class="seat-row" *ngFor="let row of section.rows">
+                  <div class="row-label">{{ row.rowLabel }}</div>
+                  <div class="seats">
+                    <button class="seat" 
+                            *ngFor="let seat of row.seats" 
+                            [class]="getSeatClass(seat)"
+                            [disabled]="!seat.isAvailable"
+                            (click)="toggleSeat(seat, section)"
+                            [title]="'Seat ' + row.rowLabel + seat.number + ' - ' + (seat.isAvailable ? 'Available' : 'Unavailable')">
+                      <span class="seat-number">{{ seat.number }}</span>
+                    </button>
+                  </div>
+                  <div class="row-label">{{ row.rowLabel }}</div>
+                </div>
+              </div>
+              
+              <!-- Aisle -->
+              <div class="aisle" *ngIf="section.id === 'vip' || section.id === 'gold'">
+                <div class="aisle-label">Aisle</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zoom Controls for Mobile -->
+        <div class="mobile-zoom-controls">
+          <button class="zoom-btn" (click)="zoomOut()" [disabled]="zoomLevel <= 0.5">-</button>
+          <span class="zoom-level">{{ (zoomLevel * 100).toFixed(0) }}%</span>
+          <button class="zoom-btn" (click)="zoomIn()" [disabled]="zoomLevel >= 2">+</button>
+        </div>
+
+        <!-- Selected Seats Summary -->
+        <div class="selection-summary">
+          <h3>Selected Seats</h3>
+          
+          <div class="summary-content">
+            <!-- Empty State -->
+            <div class="empty-selection" *ngIf="selectedSeats.length === 0">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <path d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" stroke="var(--text-tertiary)" stroke-width="2"/>
+              </svg>
+              <p>No seats selected yet</p>
+              <p class="hint">Click on available seats on the map to select them</p>
+            </div>
+            
+            <!-- Selected Seats List -->
+            <div class="selected-seats-list" *ngIf="selectedSeats.length > 0">
+              <div class="selected-tiers">
+                <div class="selected-tier" *ngFor="let tierGroup of getSelectedSeatsByTier()">
+                  <div class="tier-summary">
+                    <h4>{{ tierGroup.tier.name }}</h4>
+                    <span class="tier-count">{{ tierGroup.count }} seat(s)</span>
+                  </div>
+                  <div class="seat-details">
+<div class="seat-item" *ngFor="let seat of getSeatsForTier(tierGroup.tier.id)">
+  <span class="seat-label">{{ seat.section }} {{ seat.row }} {{ seat.number }}</span>
+  <span class="seat-price">{{ formatPrice(seat.price) }}</span>
+</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="summary-total">
+                <div class="total-label">
+                  <span>Total:</span>
+                  <span class="seat-count">{{ selectedSeats.length }} seat(s)</span>
+                </div>
+                <div class="total-price">{{ formatPrice(getTotalPrice()) }}</div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="summary-actions">
+              <button class="clear-btn" (click)="clearSelection()" [disabled]="selectedSeats.length === 0">
+                Clear Selection
+              </button>
+              <button class="add-to-cart-btn" 
+                      (click)="addToCart()" 
+                      [disabled]="selectedSeats.length === 0"
+                      [class.disabled]="selectedSeats.length === 0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Add {{ selectedSeats.length }} Seat(s) to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-cart-summary" *ngIf="selectedSeats.length > 0">
+  <div class="cart-summary-content">
+    <div class="summary-details">
+      <div class="summary-header">
+        <h3>Your Selection</h3>
+        <span class="seat-count">{{ selectedSeats.length }} seat(s)</span>
+      </div>
+      
+      <div class="selected-tiers-preview">
+        <div class="tier-preview" *ngFor="let tierGroup of getSelectedSeatsByTier()">
+          <span class="tier-name">{{ tierGroup.tier.name }}</span>
+          <span class="tier-count">×{{ tierGroup.count }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="summary-total">
+      <span class="total-label">Total:</span>
+      <span class="total-price">{{ formatPrice(getTotalPrice()) }}</span>
+    </div>
+    
+    <div class="summary-actions">
+      <button class="clear-btn" (click)="clearSelection()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Clear
+      </button>
+      <button class="checkout-btn" (click)="addToCart()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+</div>
+
+    <!-- Quick Tips -->
+    <div class="quick-tips">
+      <div class="tips-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span>Quick Tips</span>
+      </div>
+      <div class="tips-content">
+        <p>• Hover over seats to see details</p>
+        <p>• Click to select/deselect seats</p>
+        <p>• Use zoom controls to see seat numbers clearly</p>
+        <p>• Green seats are available for selection</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-action" *ngIf="selectedSeats.length === 0">
+    <button class="floating-btn" (click)="scrollToMap()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Select Seats
+    </button>
+    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+  <!-- Error State -->
+  <div class="error-state" *ngIf="!event && !loading">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M15 9L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <h3>Event Not Found</h3>
+    <p>Unable to load seat selection for this event.</p>
+    <button class="back-to-events" (click)="goBack()">Back to Event</button>
+  </div>
+</div>

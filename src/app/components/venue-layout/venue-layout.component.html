@@ -1,0 +1,203 @@
+<div class="venue-map-container">
+  <!-- Venue Layout -->
+  <div class="venue-layout">
+    <!-- Stage Area -->
+    <div class="stage-area">
+      <div class="stage">
+        <div class="stage-platform"></div>
+        <div class="stage-label">MAIN STAGE</div>
+      </div>
+      <div class="orchestra-pit"></div>
+    </div>
+
+    <!-- VIP Tables - All in one line -->
+    <div class="section-row vip-section full-width" *ngIf="getFilteredSections('vip').length">
+      <div class="section-label">VIP TABLES</div>
+      <div class="vip-tables-row">
+        <div 
+          *ngFor="let section of getFilteredSections('vip')"
+          class="venue-section vip-table-item"
+          [class]="getSectionClass(section)"
+          (click)="selectSection(section)"
+        >
+          <div class="table-container">
+            <div class="table-top"></div>
+            <div class="seats-around">
+              <div class="seat vip-seat" *ngFor="let seat of [1,2,3,4,5,6]"></div>
+            </div>
+          </div>
+          <div class="section-info-compact">
+            <div class="section-name">{{ section.name }}</div>
+            <div class="section-price">{{ formatPrice(section.price) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floor Standing - Full width with two lines -->
+    <div class="section-row floor-section full-width" *ngIf="getFilteredSections('floor').length">
+      <div class="section-label">FLOOR STANDING</div>
+      <div 
+        *ngFor="let section of getFilteredSections('floor')"
+        class="venue-section floor-standing-full"
+        [class]="getSectionClass(section)"
+        (click)="selectSection(section)"
+      >
+        <div class="standing-area-full">
+          <div class="standing-rows">
+            <div class="standing-row" *ngFor="let row of [1,2]">
+              <div class="standing-spot" *ngFor="let spot of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]"></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-info-compact">
+          <div class="section-name">{{ section.name }}</div>
+          <div class="section-price">{{ formatPrice(section.price) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lower Bowl - Full width with more seats -->
+    <div class="section-row lower-section full-width" *ngIf="getFilteredSections('lower').length">
+      <div class="section-label">LOWER BOWL</div>
+      <div class="seating-sections-row">
+        <div 
+          *ngFor="let section of getFilteredSections('lower')"
+          class="venue-section seating-section-full"
+          [class]="getSectionClass(section)"
+          (click)="selectSection(section)"
+        >
+          <div class="seating-layout-full">
+            <div class="seat-row" *ngFor="let row of generateSeats(section); let i = index">
+              <div 
+                class="seat stadium-seat" 
+                *ngFor="let seat of row; let j = index"
+                [style.background]="getSeatColor(section, i * section.seatsPerRow + j)"
+                [class.taken]="(i * section.seatsPerRow + j + 1) > section.available"
+              ></div>
+            </div>
+          </div>
+          <div class="section-info-compact">
+            <div class="section-name">{{ section.name }}</div>
+            <div class="section-price">{{ formatPrice(section.price) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Balcony - Center section only, full width -->
+    <div class="section-row balcony-section full-width" *ngIf="getFilteredSections('balcony').length">
+      <div class="section-label">BALCONY</div>
+      <div class="balcony-sections-row">
+        <div 
+          *ngFor="let section of getFilteredSections('balcony')"
+          class="venue-section seating-section-full"
+          [class]="getSectionClass(section)"
+          (click)="selectSection(section)"
+        >
+          <div class="seating-layout-full">
+            <div class="seat-row" *ngFor="let row of generateSeats(section); let i = index">
+              <div 
+                class="seat stadium-seat" 
+                *ngFor="let seat of row; let j = index"
+                [style.background]="getSeatColor(section, i * section.seatsPerRow + j)"
+                [class.taken]="(i * section.seatsPerRow + j + 1) > section.available"
+              ></div>
+            </div>
+          </div>
+          <div class="section-info-compact">
+            <div class="section-name">{{ section.name }}</div>
+            <div class="section-price">{{ formatPrice(section.price) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Standard - Center section only, full width -->
+    <div class="section-row standard-section full-width" *ngIf="getFilteredSections('standard').length">
+      <div class="section-label">UPPER LEVEL</div>
+      <div class="standard-sections-row">
+        <div 
+          *ngFor="let section of getFilteredSections('standard')"
+          class="venue-section seating-section-full"
+          [class]="getSectionClass(section)"
+          (click)="selectSection(section)"
+        >
+          <div class="seating-layout-full">
+            <div class="seat-row" *ngFor="let row of generateSeats(section); let i = index">
+              <div 
+                class="seat stadium-seat" 
+                *ngFor="let seat of row; let j = index"
+                [style.background]="getSeatColor(section, i * section.seatsPerRow + j)"
+                [class.taken]="(i * section.seatsPerRow + j + 1) > section.available"
+              ></div>
+            </div>
+          </div>
+          <div class="section-info-compact">
+            <div class="section-name">{{ section.name }}</div>
+            <div class="section-price">{{ formatPrice(section.price) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rest of the component (legend and details) remains the same -->
+  <div class="section-legend">
+    <h3>Seating Sections</h3>
+    <div class="legend-items">
+      <div 
+        *ngFor="let section of venueSections" 
+        class="legend-item"
+        [class.selected]="selectedSection?.id === section.id"
+        [class.sold-out]="section.available === 0"
+        (click)="selectSection(section)"
+      >
+        <div class="legend-color" [style.background]="getSectionColor(section)"></div>
+        <div class="legend-info">
+          <div class="legend-name">{{ section.name }}</div>
+          <div class="legend-details">
+            <span class="seat-type">{{ getSeatTypeLabel(section) }}</span>
+            <span class="legend-price">From {{ formatPrice(section.price) }}</span>
+          </div>
+        </div>
+        <div class="legend-availability">
+          <span class="availability-text" *ngIf="section.available > 0">
+            {{ section.available }} left
+          </span>
+          <span class="sold-out-text" *ngIf="section.available === 0">
+            Sold Out
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="selected-section-details" *ngIf="selectedSection">
+    <div class="details-header">
+      <h3>{{ selectedSection.name }}</h3>
+      <div class="section-price-large">{{ formatPrice(selectedSection.price) }}</div>
+    </div>
+    <div class="section-stats">
+      <div class="stat">
+        <span class="stat-value">{{ selectedSection.available }}</span>
+        <span class="stat-label">Available</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ selectedSection.capacity }}</span>
+        <span class="stat-label">Capacity</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ getSeatTypeLabel(selectedSection) }}</span>
+        <span class="stat-label">Seat Type</span>
+      </div>
+    </div>
+    <button 
+      class="select-seats-btn" 
+      (click)="selectSection(selectedSection)"
+      [disabled]="selectedSection.available === 0"
+    >
+      {{ selectedSection.available === 0 ? 'Sold Out' : 'Select Seats in This Section' }}
+    </button>
+  </div>
+</div>

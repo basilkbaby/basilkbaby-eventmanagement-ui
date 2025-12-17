@@ -1,0 +1,126 @@
+[
+  {
+    "id": "v4entertainments",
+    "name": "V4 Entertainments",
+    "domain": "v4entertainments.co.uk",
+    "company": {
+      "name": "V4 Entertainments",
+      "logo": {
+        "text": "V4",
+        "sublabel": "ENTERTAINMENT",
+        "color": "#FFFFFF",
+        "backgroundColor": "#1a1a2e"
+      },
+      "primaryColor": "#1a1a2e",
+      "secondaryColor": "#e94560",
+      "accentColor": "#f9a826",
+      "contact": {
+        "phone": "+44 123 456 7890",
+        "email": "info@v4entertainments.co.uk",
+        "address": "London, UK"
+      }
+    },
+"navigation": {
+    "menuItems": [
+      {
+        "label": "Home",
+        "routerLink": "/",
+        "type": "home"
+      },
+      {
+        "label": "Events",
+        "routerLink": "/events",
+        "type": "events"
+      },
+      {
+        "label": "About Us",
+        "routerLink": "/about",
+        "type": "about"
+      },
+      {
+        "label": "Contact Us",
+        "routerLink": "/contact",
+        "type": "contact"
+      }
+    ],
+    "showSearch": true,
+    "showCart": true
+  },
+    "theme": {
+      "backgroundColor": "#1a1a2e",
+      "textColor": "#FFFFFF",
+      "buttonColor": "#e94560",
+      "buttonTextColor": "#FFFFFF",
+      "glassBackground": "rgba(255, 255, 255, 0.1)",
+      "glassBorder": "rgba(255, 255, 255, 0.15)"
+    },
+    "features": {
+      "enableAuth": true,
+      "enableCart": true,
+      "enableSearch": false,
+      "showContactInfo": true
+    }
+  },
+  {
+    "id": "default",
+    "name": "TicketFlow",
+    "domain": "ticketflow.com",
+    "company": {
+      "name": "TicketFlow",
+      "logo": {
+        "text": "TicketFlow",
+        "sublabel": "EVENTS",
+        "color": "#FFFFFF",
+        "backgroundColor": "#6366f1"
+      },
+      "primaryColor": "#6366f1",
+      "secondaryColor": "#ec4899",
+      "accentColor": "#f59e0b",
+      "contact": {
+        "phone": "+1 555-0123",
+        "email": "info@ticketflow.com",
+        "address": "New York, USA"
+      }
+    },
+    "navigation": {
+      "menuItems": [
+        {
+          "label": "Events",
+          "routerLink": "/events",
+          "type": "events"
+        },
+        {
+          "label": "Concerts",
+          "routerLink": "/concerts",
+          "type": "concerts"
+        },
+        {
+          "label": "Sports",
+          "routerLink": "/sports",
+          "type": "sports"
+        },
+        {
+          "label": "Theater",
+          "routerLink": "/theater",
+          "type": "theater"
+        }
+      ],
+      "showSearch": true,
+      "showCart": true
+    },
+    "theme": {
+      "backgroundColor": "#6366f1",
+      "textColor": "#FFFFFF",
+      "buttonColor": "#ec4899",
+      "buttonTextColor": "#FFFFFF",
+      "glassBackground": "rgba(255, 255, 255, 0.1)",
+      "glassBorder": "rgba(255, 255, 255, 0.15)"
+    },
+    "features": {
+      "enableAuth": true,
+      "enableCart": true,
+      "enableSearch": true,
+      "showContactInfo": true
+    }
+  }
+]
