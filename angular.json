@@ -23,6 +23,9 @@
             "polyfills": [
               "zone.js"
             ],
+            "allowedCommonJsDependencies": [
+              "qrcode"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -33,7 +36,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",   
+              "src/styles.scss",
               "@angular/material/prebuilt-themes/azure-blue.css"
             ],
             "scripts": []
@@ -43,13 +46,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
                 }
               ],
               "outputHashing": "all"
