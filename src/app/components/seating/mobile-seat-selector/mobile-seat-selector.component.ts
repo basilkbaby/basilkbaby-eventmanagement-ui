@@ -70,7 +70,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 19, 
             type: 'SILVER', 
-            customPrice: 50,
+            customPrice: 25,
             color: '#4a8bc9'
           }
         ]
@@ -89,7 +89,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 18, 
             type: 'GOLD', 
-            customPrice: 100,
+            customPrice: 30,
             color: '#b3543a'
           }
         ]
@@ -107,14 +107,14 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 2, 
             type: 'VIP', 
-            customPrice: 200,
+            customPrice: 75,
             color: '#8a6b8c'
           },
           { 
             fromRow: 3, 
             toRow: 14, 
             type: 'DIAMOND', 
-            customPrice: 150,
+            customPrice: 50,
             color: '#8a9a5b'
           }
         ]
@@ -132,14 +132,14 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 2, 
             type: 'VIP', 
-            customPrice: 200,
+            customPrice: 75,
             color: '#8a6b8c'
           },
           { 
             fromRow: 3, 
             toRow: 14, 
             type: 'DIAMOND', 
-            customPrice: 150,
+            customPrice: 50,
             color: '#8a9a5b'
           }
         ]
@@ -158,7 +158,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 18, 
             type: 'GOLD', 
-            customPrice: 100,
+            customPrice: 30,
             color: '#b3543a'
           }
         ]
@@ -176,7 +176,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             fromRow: 0, 
             toRow: 19, 
             type: 'SILVER', 
-            customPrice: 50,
+            customPrice: 25,
             color: '#4a8bc9'
           }
         ]
@@ -210,7 +210,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   
   private loadSectionData(sectionId: string) {
     const foundSection = this.venueData.sections.find(s => 
-      s.name.toLowerCase() === sectionId.toLowerCase() ||
+      s.id.toLowerCase() === sectionId.toLowerCase() ||
       (s.sectionLabel && s.sectionLabel.toLowerCase().replace(/\s+/g, '-') === sectionId.toLowerCase())
     );
     
@@ -299,7 +299,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     }
     
     // Reverse rows so A is at the bottom (closest to stage)
-    this.rows.reverse();
+    //this.rows.reverse();
   }
   
   private getRowConfigForSeat(rowIndex: number): SectionRowConfig {
@@ -457,7 +457,8 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       VIP: '1',
       DIAMOND: '2',
       GOLD: '3',
-      SILVER: '4'
+      SILVER: '4',
+      FOH: '5'
     };
     return tierMap[ticketType] || '0';
   }
@@ -539,12 +540,13 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   }
 
     // Helper method to map ticket types
-  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' {
-    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'> = {
+  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' {
+    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh'> = {
       VIP: 'vip',
       DIAMOND: 'vip',
       GOLD: 'standard',
-      SILVER: 'standard'
+      SILVER: 'standard',
+      FOH: 'foh'
     };
     
     return typeMap[ticketType] || 'standard';

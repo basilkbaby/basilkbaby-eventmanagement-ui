@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VenueLayoutComponent } from './venue-layout.component';
+import { CanvasSeatMapComponent } from './canvas-seatmap.component';
 
-describe('VenueLayoutComponent', () => {
-  let component: VenueLayoutComponent;
-  let fixture: ComponentFixture<VenueLayoutComponent>;
+describe('CanvasSeatMapComponent', () => {
+  let component: CanvasSeatMapComponent;
+  let fixture: ComponentFixture<CanvasSeatMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VenueLayoutComponent]
+      imports: [CanvasSeatMapComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(VenueLayoutComponent);
+    fixture = TestBed.createComponent(CanvasSeatMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

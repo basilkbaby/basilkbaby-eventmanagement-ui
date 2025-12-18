@@ -53,7 +53,7 @@ export enum SeatStatus {
   HOLD = 'HOLD'
 }
 
-export type TicketType = 'VIP' | 'DIAMOND' | 'GOLD' | 'SILVER';
+export type TicketType = 'VIP' | 'DIAMOND' | 'GOLD' | 'SILVER' | 'FOH';
 
 export interface Seat {
   id: string;

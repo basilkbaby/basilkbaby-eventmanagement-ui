@@ -1,7 +1,7 @@
 // social-media-feed.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { ShortNumberPipe } from '../../core/pipes/short-number-pipe';
+import { ShortNumberPipe } from '../../../core/pipes/short-number-pipe';
 
 interface SocialEngagement {
   likes: number;

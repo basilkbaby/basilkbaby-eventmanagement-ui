@@ -40,13 +40,13 @@ interface Seat {
 }
 
 @Component({
-  selector: 'app-seat-selection',
+  selector: 'app-seatmap-block',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './seat-selection.component.html',
-  styleUrls: ['./seat-selection.component.scss']
+  templateUrl: './seatmap-block.component.html',
+  styleUrls: ['./seatmap-block.component.scss']
 })
-export class SeatSelectionComponent implements OnInit {
+export class SeatmapBlockComponent implements OnInit {
   event: Event | null = null;
   loading: boolean = true;
   selectedTier: TicketTier | null = null;

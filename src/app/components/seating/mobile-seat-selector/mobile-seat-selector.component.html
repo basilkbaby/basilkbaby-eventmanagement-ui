@@ -24,14 +24,7 @@
   <!-- Seat Grid -->
   <div class="seat-grid">
     <div class="grid-container">
-      <!-- Row header with seat numbers -->
-      <div class="row-header">
-        <div class="row-label">Row</div>
-        <div class="seat-numbers">
-          <span *ngFor="let num of getSeatNumbers()" class="seat-number">{{ num }}</span>
-        </div>
-      </div>
-      
+
       <!-- Seat rows -->
       <div *ngFor="let row of rows" class="seat-row">
         <div class="row-letter">{{ row.letter }}</div>
@@ -74,26 +67,28 @@
       <button class="btn-clear" (click)="clearSelection()">Clear All</button>
     </div>
     
-    <div class="selected-seats">
-      <div *ngFor="let seat of selectedSeats" class="selected-seat-item">
-        <div class="seat-details">
-          <span class="seat-location">{{ seat.row }}{{ seat.number }}</span>
-          <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
-        </div>
-        <div class="seat-price">{{ formatPrice(seat.price) }}</div>
-      </div>
+ <div class="compact-seats">
+    <div *ngFor="let seat of selectedSeats; let i = index" 
+         class="seat-chip"
+         [style.background-color]="seat.tier.color + '15'"
+         [style.border-color]="seat.tier.color">
+      <span class="seat-number">{{ seat.row }}{{ seat.number }}</span>
+      <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
+      <span class="seat-price-chip">{{ formatPrice(seat.price) }}</span>
     </div>
+  </div>
     
     <div class="summary-total">
       <span>Total:</span>
       <span class="total-amount">{{ formatPrice(getTotalPrice()) }}</span>
-    </div>
-    
-    <div class="summary-actions">
+          <div class="summary-actions">
         <button class="btn-primary" (click)="addToCart()">
-          Add to Cart - {{ formatPrice(getTotalPrice() + 2.50) }}
+          Add to Cart
         </button>
     </div>
+    </div>
+    
+
   </div>
 
 

@@ -165,7 +165,7 @@ export interface Seat {
   row: string;
   number: number;
   section: string;
-  type: 'standard' | 'vip' | 'accessible'| 'standing' | 'seated';
+  type: 'standard' | 'vip' | 'accessible'| 'standing' | 'seated' | 'foh';
   price: number;
   status: 'available' | 'selected' | 'taken' | 'reserved';
   x: number;

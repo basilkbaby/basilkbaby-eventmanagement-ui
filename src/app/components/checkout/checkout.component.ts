@@ -24,6 +24,7 @@ import { CartService, CartSummary } from '../../core/services/cart.service';
 import { CartItem } from '../../core/models/event.model';
 import { OrderService } from '../../core/services/order.service';
 import { EmailService } from '../../core/services/email.service';
+import { emailMatchValidator } from '../../core/validators/email-match-validator';
 
 @Component({
   selector: 'app-checkout',
@@ -43,7 +44,6 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
   processing: boolean = false;
   orderComplete: boolean = false;
   orderId: string = '';
-  billingAddressSame: boolean = true;
   showFormErrors: boolean = false;
   
   // Stripe properties
@@ -105,9 +105,6 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    this.billingAddressForm.patchValue({
-      country: 'GB'
-    });
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -203,24 +200,10 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
           billingDetails: {
             name: `${this.customerForm.get('firstName')?.value} ${this.customerForm.get('lastName')?.value}`,
             email: this.customerForm.get('email')?.value,
-            phone: this.customerForm.get('phone')?.value,
-            address: {
-              line1: this.billingAddressForm.get('addressLine1')?.value,
-              line2: this.billingAddressForm.get('addressLine2')?.value,
-              city: this.billingAddressForm.get('city')?.value,
-              state: this.billingAddressForm.get('county')?.value,
-              postal_code: this.billingAddressForm.get('postcode')?.value,
-              country: this.billingAddressForm.get('country')?.value,
-            }
+            phone: this.customerForm.get('phone')?.value
           }
         },
-        fields: {
-          billingDetails: {
-            name: 'never',
-            email: 'never',
-            phone: 'auto',
-            address: 'auto'
-          }
+        fields: { 
         },
         wallets: {
           applePay: 'never',
@@ -426,14 +409,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
         name: `${this.customerForm.get('firstName')?.value} ${this.customerForm.get('lastName')?.value}`,
         email: this.customerForm.get('email')?.value,
         phone: this.customerForm.get('phone')?.value,
-        address: {
-          line1: this.billingAddressForm.get('addressLine1')?.value,
-          line2: this.billingAddressForm.get('addressLine2')?.value,
-          city: this.billingAddressForm.get('city')?.value,
-          state: this.billingAddressForm.get('county')?.value,
-          postal_code: this.billingAddressForm.get('postcode')?.value,
-          country: this.billingAddressForm.get('country')?.value,
-        }
+        postal_code: this.customerForm.get('postcode')?.value,
       };
       
       // 3. Confirm the payment
@@ -477,8 +453,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
         this.http.post<any>(`${environment.apiUrl}/api/orders/create-payment-intent`, {
           amount: amount,
           currency: 'gbp',
-          customer: this.customerForm.value,
-          billing_address: this.billingAddressForm.value
+          customer: this.customerForm.value
         })
       );
       
@@ -566,22 +541,16 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
         firstName: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-Z\s'-]+$/)]],
         lastName: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-Z\s'-]+$/)]],
         email: ['', [Validators.required, Validators.email]],
+        confirmEmail: ['', [Validators.required]],
         phone: ['', [
           Validators.required, 
           Validators.pattern(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$|^(\+44\s?2\d|\(?02\d\)?)\s?\d{4}\s?\d{4}$/)
-        ]]
-      }),
-      billingAddress: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.minLength(3)]],
-        addressLine2: [''],
-        city: ['', [Validators.required, Validators.minLength(2)]],
-        county: [''],
+        ]],
         postcode: ['', [
           Validators.required,
           Validators.pattern(/^([A-Z][A-HJ-Y]?\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$/)
         ]],
-        country: ['', Validators.required]
-      }),
+      }, { validators: emailMatchValidator }),
       acceptTerms: [false, Validators.requiredTrue]
     });
   }
@@ -610,10 +579,6 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.checkoutForm.get('customer') as FormGroup;
   }
 
-  get billingAddressForm(): FormGroup {
-    return this.checkoutForm.get('billingAddress') as FormGroup;
-  }
-
   formatPrice(price: number): string {
     return new Intl.NumberFormat('en-UK', {
       style: 'currency',
@@ -622,20 +587,6 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
     }).format(price);
   }
 
-  toggleBillingAddress(): void {
-    this.billingAddressSame = !this.billingAddressSame;
-    
-    if (this.billingAddressSame) {
-      this.billingAddressForm.patchValue({
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        county: '',
-        postcode: '',
-        country: 'GB'
-      });
-    }
-  }
 
   goBackToCart(): void {
     this.router.navigate(['/cart']);
@@ -653,7 +604,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   formatPostcode(): void {
-    const postcodeControl = this.billingAddressForm.get('postcode');
+    const postcodeControl = this.customerForm.get('postcode');
     if (postcodeControl?.value) {
       // Remove all spaces and convert to uppercase
       let value = postcodeControl.value.toUpperCase().replace(/\s/g, '');

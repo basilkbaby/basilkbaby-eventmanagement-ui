@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
-import { HeroSliderComponent } from '../hero-slider/hero-slider.component';
+import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component';
 import { EventService } from '../../core/services/event.service';
 import { Event, EventType, TicketTier } from '../../core/models/event.model';
 import { LoadingSpinnerComponent } from '../common/loading-spinner/loading-spinner.component';

@@ -44,13 +44,13 @@ interface Seat {
 }
 
 @Component({
-  selector: 'app-seat-map',
+  selector: 'app-seatmap-section',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './seat-map.component.html',
-  styleUrls: ['./seat-map.component.scss']
+  templateUrl: './seatmap-section.component.html',
+  styleUrls: ['./seatmap-section.component.scss']
 })
-export class SeatMapComponent implements OnInit {
+export class SeatMapSectionComponent implements OnInit {
   event: Event | null = null;
   loading: boolean = true;
   selectedSeats: SelectedSeat[] = [];

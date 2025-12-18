@@ -2,12 +2,15 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, NgZone, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SeatStatus, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { SeatStatus, SectionRowConfig, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { SeatService } from '../../../core/services/seat.service';
+import { HelperService } from '../../../core/services/helper.service';
+import { CurrencyFormatPipe } from '../../../core/pipes/currency-format.pipe';
 
 @Component({
   selector: 'app-mobile-section-selector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CurrencyFormatPipe],
   templateUrl: './mobile-section-selector.component.html',
   styleUrls: ['./mobile-section-selector.component.scss']
 })
@@ -18,157 +21,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
   selectedSection: VenueSection | null = null;
 
   // Local venue data
-  readonly venueData: VenueData = {
-    sections: [
-      { 
-        id: "1",
-        name: 'SILVER', 
-        x: 50, 
-        y: 250, 
-        rows: 20, 
-        seatsPerRow: 5,
-        sectionLabel: 'Silver Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 19, 
-            type: 'SILVER', 
-            customPrice: 50,
-            color: '#4a8bc9'
-          }
-        ]
-      },
-      { 
-        id: "2",
-        name: 'GOLD', 
-        x: 200, 
-        y: 170, 
-        rows: 19, 
-        seatsPerRow: 10, 
-        rowOffset: 1,
-        sectionLabel: 'Gold Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 18, 
-            type: 'GOLD', 
-            customPrice: 100,
-            color: '#b3543a'
-          }
-        ]
-      },
-      { 
-        id: "3",
-        name: 'VIP', 
-        x: 450, 
-        y: 150, 
-        rows: 15, 
-        seatsPerRow: 10,
-        sectionLabel: 'VIP Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 2, 
-            type: 'VIP', 
-            customPrice: 200,
-            color: '#8a6b8c'
-          },
-          { 
-            fromRow: 3, 
-            toRow: 14, 
-            type: 'DIAMOND', 
-            customPrice: 150,
-            color: '#8a9a5b'
-          }
-        ]
-      },
-      { 
-        id: "4",
-        name: 'VIP', 
-        x: 700, 
-        y: 150, 
-        rows: 15, 
-        seatsPerRow: 10,
-        sectionLabel: 'VIP Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 2, 
-            type: 'VIP', 
-            customPrice: 200,
-            color: '#8a6b8c'
-          },
-          { 
-            fromRow: 3, 
-            toRow: 14, 
-            type: 'DIAMOND', 
-            customPrice: 150,
-            color: '#8a9a5b'
-          }
-        ]
-      },
-      { 
-        id: "5",
-        name: 'GOLD', 
-        x: 950, 
-        y: 170, 
-        rows: 19, 
-        seatsPerRow: 10, 
-        rowOffset: 1,
-        sectionLabel: 'Gold Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 18, 
-            type: 'GOLD', 
-            customPrice: 100,
-            color: '#b3543a'
-          }
-        ]
-      },
-      { 
-        id: "6",
-        name: 'SILVER', 
-        x: 1200, 
-        y: 250, 
-        rows: 20, 
-        seatsPerRow: 5,
-        sectionLabel: 'Silver Section',
-        rowConfigs: [
-          { 
-            fromRow: 0, 
-            toRow: 19, 
-            type: 'SILVER', 
-            customPrice: 50,
-            color: '#4a8bc9'
-          }
-        ]
-      }
-    ],
-    
-    seatManagement: {
-      reservedSeats: [
-        { seatId: 'VIP-A-1', status: SeatStatus.RESERVED, reason: 'VIP_GUEST', reservationId: 'RES-001' },
-        { seatId: 'VIP-A-2', status: SeatStatus.RESERVED, reason: 'ARTIST_GUEST', reservationId: 'RES-002' },
-        { seatId: 'DIAMOND-D-5', status: SeatStatus.RESERVED, reason: 'PRESS', reservationId: 'RES-003' }
-      ],
-      
-      blockedSeats: [
-        { seatId: 'GOLD-A-1', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
-        { seatId: 'SILVER-B-3', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
-        { seatId: 'GOLD-C-5', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
-      ],
-      
-      soldSeats: [
-        { seatId: 'VIP-A-5', status: SeatStatus.SOLD, bookingId: 'BK001' },
-        { seatId: 'VIP-A-6', status: SeatStatus.SOLD, bookingId: 'BK002' },
-        { seatId: 'DIAMOND-D-8', status: SeatStatus.SOLD, bookingId: 'BK003' },
-        { seatId: 'DIAMOND-D-9', status: SeatStatus.SOLD, bookingId: 'BK004' },
-        { seatId: 'GOLD-B-4', status: SeatStatus.SOLD, bookingId: 'BK005' },
-        { seatId: 'SILVER-C-2', status: SeatStatus.SOLD, bookingId: 'BK006' }
-      ]
-    }
-  };
+  readonly venueData: VenueData;
 
   // Event details
   event = {
@@ -178,16 +31,13 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     venue: 'Manchester venue'
   };
 
-  // Zoom/pan properties
-  scale = 0.3;
-  offsetX = 0;
-  offsetY = 0;
   readonly CANVAS_WIDTH = 1400;
-  readonly CANVAS_HEIGHT = 900;
+  readonly CANVAS_HEIGHT = 1600;
   readonly STAGE_WIDTH = 500;
-  readonly STAGE_HEIGHT = 60;
-  readonly SEAT_SIZE = 20;
-  
+  readonly STAGE_HEIGHT = 60 *2;
+  readonly SEAT_SIZE = 22;
+  readonly HEIGHT_MULTIPLIER = 3; // Change this number to adjust height
+
   // Gesture state
   private isDragging = false;
   private isPinching = false;
@@ -195,11 +45,18 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
   private lastTouchCenter = { x: 0, y: 0 };
   private lastTapTime = 0;
 
+  
+  // Zoom/pan properties
+  scale = 0.3;
+  offsetX = 0;
+  offsetY = 10;
+
   constructor(
-    private ngZone: NgZone,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private seatSerive : SeatService
+  ) {
+    this.venueData = seatSerive.getSeatMapConfig();
+  }
 
   ngOnInit() {
     setTimeout(() => this.resetView(), 100);
@@ -306,7 +163,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
         const rect = this.svgContainer.nativeElement.getBoundingClientRect();
         const x = touch.clientX - rect.left;
         const y = touch.clientY - rect.top;
-        this.handleTap(x, y);
+        //this.handleTap(x, y);
       }
     }
   }
@@ -324,7 +181,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     
     for (const section of this.venueData.sections) {
       const width = section.seatsPerRow * this.SEAT_SIZE;
-      const height = section.rows * this.SEAT_SIZE;
+      const height = section.rows * (this.SEAT_SIZE *20);
       const sectionY = section.y + (section.rowOffset || 0);
       
       if (svgX >= section.x && svgX <= section.x + width &&
@@ -358,14 +215,14 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     
     // Center the stage at top
     const stageCenterX = this.CANVAS_WIDTH / 2;
-    const stageCenterY = 30 + (this.STAGE_HEIGHT / 2);
-    const targetScreenY = rect.height * 0.25;
+    const stageCenterY = 30 + ((this.STAGE_HEIGHT* this.HEIGHT_MULTIPLIER) / 2);
+    //const targetScreenY = rect.height * 0.25;
     
     const scaledStageCenterX = stageCenterX * this.scale;
     const scaledStageCenterY = stageCenterY * this.scale;
     
     this.offsetX = (rect.width / 2) - scaledStageCenterX;
-    this.offsetY = targetScreenY - scaledStageCenterY;
+    //this.offsetY = targetScreenY - scaledStageCenterY;
     
     this.enforceBoundaries();
   }
@@ -401,10 +258,10 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     
     // Vertical boundaries
     if (scaledHeight <= rect.height) {
-      this.offsetY = (rect.height - scaledHeight) / 2;
+     // this.offsetY = (rect.height - scaledHeight) / 2;
     } else {
       const maxOffsetY = rect.height - scaledHeight;
-      this.offsetY = Math.max(maxOffsetY, Math.min(0, this.offsetY));
+     // this.offsetY = Math.max(maxOffsetY, Math.min(0, this.offsetY));
     }
   }
 
@@ -424,24 +281,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     this.zoomAt(0.8, rect.width / 2, rect.height / 2);
   }
 
-  // Keep all your existing helper methods...
-  getSectionColor(section: VenueSection): string {
-    const colorMap: Record<string, string> = {
-      'VIP': '#8a6b8c',
-      'DIAMOND': '#8a9a5b',
-      'GOLD': '#b3543a',
-      'SILVER': '#4a8bc9'
-    };
-    return colorMap[section.name] || '#cccccc';
-  }
 
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-UK', {
-      style: 'currency',
-      currency: 'GBP',
-      minimumFractionDigits: 0
-    }).format(price);
-  }
 
   getSectionMinPrice(section: VenueSection): number {
     if (!section.rowConfigs || section.rowConfigs.length === 0) return 0;
@@ -469,40 +309,6 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     this.router.navigate(['/cart']);
   }
 
-   getUniqueSections(): VenueSection[] {
-    const uniqueSections: VenueSection[] = [];
-    const seenNames = new Set<string>();
-    
-    this.venueData.sections.forEach(section => {
-      const name = section.sectionLabel || section.name;
-      if (!seenNames.has(name)) {
-        seenNames.add(name);
-        uniqueSections.push(section);
-      }
-    });
-    
-    return uniqueSections;
-  }
-
-   getFOHBounds(): any | null {
-    const vipSections = this.venueData.sections.filter(s => s.name === 'VIP');
-    if (vipSections.length === 0) return null;
-    
-    const middleMinX = Math.min(...vipSections.map(s => s.x));
-    const middleMaxX = Math.max(...vipSections.map(s => s.x + this.getSectionWidth(s)));
-    const middleBottomY = Math.max(...vipSections.map(s => s.y + this.getSectionHeight(s)));
-    
-    const paddingY = 25;
-    const height = 30;
-    const y = middleBottomY + paddingY;
-    const width = (middleMaxX - middleMinX) / 2 + 35;
-    const leftFOHX = middleMinX - 15;
-    const rightFOHX = (middleMinX + middleMaxX) / 2 + 15;
-    
-    return { leftFOHX, rightFOHX, y, width, height };
-  }
-
-  
   // Calculate section width based on seats per row
   getSectionWidth(section: VenueSection): number {
     return section.seatsPerRow * this.SEAT_SIZE;
@@ -510,7 +316,114 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
 
    // Calculate section height based on rows
   getSectionHeight(section: VenueSection): number {
-    return section.rows * this.SEAT_SIZE;
+    return (section.rows * this.SEAT_SIZE) * this.HEIGHT_MULTIPLIER;
   }
+
+  getSectionRowConfigs(section: VenueSection): SectionRowConfig[] {
+    return section.rowConfigs || [];
+  }
+  
+  // Get all unique ticket types in a section
+  getSectionTicketTypes(section: VenueSection): TicketType[] {
+    if (!section.rowConfigs || !section.rowConfigs.length) {
+      return ['SILVER']; // Default type
+    }
+    
+    const types = new Set<TicketType>();
+    section.rowConfigs.forEach(config => {
+      types.add(config.type);
+    });
+    return Array.from(types);
+  }
+   
+  // Get price range for a section
+  getSectionPriceRange(section: VenueSection): { min: number, max: number, types: TicketType[] } {
+    const types = this.getSectionTicketTypes(section);
+    
+    if (!section.rowConfigs || !section.rowConfigs.length) {
+      return { min: 0, max: 0, types };
+    }
+    
+    const prices = section.rowConfigs
+      .filter(config => config.customPrice !== undefined)
+      .map(config => config.customPrice as number);
+    
+    return {
+      min: prices.length ? Math.min(...prices) : 0,
+      max: prices.length ? Math.max(...prices) : 0,
+      types
+    };
+  }
+  
+  // Get rows for a specific ticket type in a section
+  getRowsForTicketType(section: VenueSection, ticketType: TicketType): number {
+    if (!section.rowConfigs) return 0;
+    
+    const configs = section.rowConfigs.filter(c => c.type === ticketType);
+    return configs.reduce((total, config) => {
+      return total + (config.toRow - config.fromRow + 1);
+    }, 0);
+  }
+  
+  // Get min price for a specific ticket type
+  getMinPriceForType(section: VenueSection, ticketType: TicketType): number {
+    if (!section.rowConfigs) return 0;
+    
+    const config = section.rowConfigs.find(c => c.type === ticketType);
+    return config?.customPrice || 0;
+  }
+  
+
+  
+  // Calculate visual representation of row configs
+  getRowConfigVisual(section: VenueSection): Array<{
+    ticketType: TicketType;
+    color: string;
+    startY: number;
+    height: number;
+    rows: number;
+    price: number;
+  }> {
+    const result: Array<{
+    ticketType: TicketType;
+    color: string;
+    startY: number;
+    height: number;
+    rows: number;
+    price: number;
+  }> = [];
+    const sectionHeight = this.getSectionHeight(section);
+    const rowHeight = sectionHeight / section.rows;
+
+    
+    // Sort row configs by fromRow
+    const sortedConfigs = [...section.rowConfigs].sort((a, b) => a.fromRow - b.fromRow);
+    
+    sortedConfigs.forEach(config => {
+      const rowsCount = config.toRow - config.fromRow + 1;
+      const startY = (config.fromRow - 1) * rowHeight;
+      const height = rowsCount * rowHeight;
+      
+      result.push({
+        ticketType: config.type,
+        color: config.color,
+        startY: startY,
+        height: height,
+        rows: rowsCount,
+        price: config.customPrice || 0
+      });
+    });
+    
+    return result;
+  }
+
+
+
+onSectionClick(section: VenueSection): void {
+  event?.stopPropagation(); // Prevent event bubbling
+  this.selectedSection = section;
+  console.log('Section clicked:', section.name);
+}
+
 
 }

@@ -130,7 +130,7 @@
       gap: 8px;
       
       &::before {
-        content: "↓";
+        content: "↑";
         font-size: 16px;
         animation: pointDown 2s infinite;
       }
@@ -153,7 +153,7 @@
     -webkit-overflow-scrolling: touch;
     
     .grid-container {
-      max-width: 600px;
+      width: 700px;
       margin: 0 auto;
       background: white;
       border-radius: 12px;
@@ -177,8 +177,8 @@
         .seat-numbers {
           flex: 1;
           display: flex;
-          justify-content: space-around;
-          gap: 8px;
+        //   justify-content: space-around;
+          gap: 15px;
           
           .seat-number {
             width: 36px;
@@ -203,8 +203,8 @@
         }
         
         .row-letter {
-          width: 50px;
-          height: 40px;
+          width: 0px;
+          height: 25px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -219,12 +219,12 @@
         .seats-container {
           flex: 1;
           display: flex;
-          justify-content: space-around;
-          gap: 8px;
+        //   justify-content: space-around;
+          gap: 4px;
           
           .seat {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -346,7 +346,7 @@
   .selection-summary {
     background: white;
     border-top: 1px solid #e9ecef;
-    padding: 16px;
+    padding: 16px 16px 5px 16px;
     box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
     
     .summary-header {
@@ -379,6 +379,44 @@
       }
     }
     
+     .compact-seats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 4px;
+    
+        .seat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid;
+        font-size: 12px;
+        white-space: nowrap;
+      
+            .seat-number {
+                font-weight: 700;
+                color: #212529;
+                min-width: 24px;
+            }
+      
+            .seat-tier {
+                font-weight: 600;
+                font-size: 11px;
+                min-width: 40px;
+            }
+      
+            .seat-price-chip {
+                font-weight: 600;
+                color: #28a745;
+                font-size: 11px;
+            }
+        }
+    }
     .selected-seats {
       max-height: 200px;
       overflow-y: auto;
@@ -427,7 +465,7 @@
       padding: 12px 0;
       border-top: 1px solid #e9ecef;
       border-bottom: 1px solid #e9ecef;
-      margin-bottom: 16px;
+    //   margin-bottom: 16px;
       
       span {
         font-size: 15px;
@@ -534,7 +572,7 @@
 @media (max-width: 480px) {
   .mobile-seat-selector {
     .seat-grid {
-      padding: 12px;
+      padding: 2px;
       
       .grid-container {
         padding: 12px;

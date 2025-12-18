@@ -112,6 +112,25 @@
               </div>
 
               <div class="form-group full-width">
+                <label for="confirmEmail">Confirm Email Address *</label>
+                <input
+                  id="confirmEmail"
+                  type="email"
+                  formControlName="confirmEmail"
+                  [class.invalid]="customerForm.get('confirmEmail')?.invalid && customerForm.get('confirmEmail')?.touched"
+                  placeholder="john.doe@example.com"
+                >
+                <div class="error-message" *ngIf="customerForm.get('confirmEmail')?.invalid && customerForm.get('confirmEmail')?.touched">
+                  <span *ngIf="customerForm.get('confirmEmail')?.errors?.['required']">
+                    Please confirm your email address
+                  </span>
+                  <span *ngIf="customerForm.get('confirmEmail')?.errors?.['emailMatch']">
+                    Email addresses do not match
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
                 <label for="phone">Phone Number *</label>
                 <input
                   id="phone"
@@ -129,148 +148,61 @@
                   </span>
                 </div>
               </div>
-            </div>
-          </section>
 
-          <!-- Billing Address -->
-          <section class="form-section">
-            <h2>Billing Address</h2>
-            <div class="form-grid" formGroupName="billingAddress">
-              <div class="form-group full-width">
-                <label for="addressLine1">Address Line 1 *</label>
-                <input
-                  id="addressLine1"
-                  type="text"
-                  formControlName="addressLine1"
-                  [class.invalid]="billingAddressForm.get('addressLine1')?.invalid && billingAddressForm.get('addressLine1')?.touched"
-                  placeholder="123 Main Street"
-                >
-                <div class="error-message" *ngIf="billingAddressForm.get('addressLine1')?.invalid && billingAddressForm.get('addressLine1')?.touched">
-                  Address line 1 is required
-                </div>
-              </div>
-
-              <div class="form-group full-width">
-                <label for="addressLine2">Address Line 2</label>
-                <input
-                  id="addressLine2"
-                  type="text"
-                  formControlName="addressLine2"
-                  placeholder="Apartment, studio, or floor"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="city">Town/City *</label>
-                <input
-                  id="city"
-                  type="text"
-                  formControlName="city"
-                  [class.invalid]="billingAddressForm.get('city')?.invalid && billingAddressForm.get('city')?.touched"
-                  placeholder="London"
-                >
-                <div class="error-message" *ngIf="billingAddressForm.get('city')?.invalid && billingAddressForm.get('city')?.touched">
-                  Town/City is required
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="county">County</label>
-                <input
-                  id="county"
-                  type="text"
-                  formControlName="county"
-                  placeholder="Greater London"
-                >
-              </div>
-
+              <!-- Postcode field -->
               <div class="form-group">
                 <label for="postcode">Postcode *</label>
                 <input
                   id="postcode"
                   type="text"
                   formControlName="postcode"
-                  [class.invalid]="billingAddressForm.get('postcode')?.invalid && billingAddressForm.get('postcode')?.touched"
+                  [class.invalid]="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched"
                   placeholder="SW1A 1AA"
                   (blur)="formatPostcode()"
                 >
-                <div class="error-message" *ngIf="billingAddressForm.get('postcode')?.invalid && billingAddressForm.get('postcode')?.touched">
-                  <span *ngIf="billingAddressForm.get('postcode')?.errors?.['required']">
+                <div class="error-message" *ngIf="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched">
+                  <span *ngIf="customerForm.get('postcode')?.errors?.['required']">
                     Postcode is required
                   </span>
-                  <span *ngIf="billingAddressForm.get('postcode')?.errors?.['pattern']">
+                  <span *ngIf="customerForm.get('postcode')?.errors?.['pattern']">
                     Please enter a valid UK postcode (e.g., SW1A 1AA, M1 1AA, EH12 9HQ)
                   </span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="country">Country *</label>
-                <select
-                  id="country"
-                  formControlName="country"
-                  [class.invalid]="billingAddressForm.get('country')?.invalid && billingAddressForm.get('country')?.touched"
-                >
-                  <option value="">Select Country</option>
-                  <option value="GB">United Kingdom</option>
-                  <option value="IE">Ireland</option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="AU">Australia</option>
-                  <option value="NZ">New Zealand</option>
-                  <option value="OTHER">Other</option>
-                </select>
-                <div class="error-message" *ngIf="billingAddressForm.get('country')?.invalid && billingAddressForm.get('country')?.touched">
-                  Country is required
                 </div>
               </div>
             </div>
           </section>
 
-<!-- Payment Information Section -->
-<section class="form-section">
-  <h2>Payment Information</h2>
-  
-   <div class="payment-methods">
-    <div class="payment-method active">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-        <path d="M2 8h20" stroke="currentColor" stroke-width="2"/>
-      </svg>
-      Secure Payment
-    </div>
-  </div>
+          <!-- Payment Information Section -->
+          <section class="form-section">
+            <h2>Payment Information</h2>
+            
+            <div class="payment-methods">
+              <div class="payment-method active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2 8h20" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Secure Payment
+              </div>
+            </div>
 
-  <!-- Payment Element Container -->
-  <div class="form-group full-width">
-    <label>Payment Details *</label>
-    <div class="payment-element-container" id="payment-element-container">
-      <!-- Stripe will inject the Payment Element here -->
-    </div>
-    <div class="error-message" *ngIf="stripeError">
-      {{ stripeError }}
-    </div>
-    <div class="payment-element-hint">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
-      </svg>
-      <span>Your payment is secured with SSL encryption</span>
-    </div>
-  </div>
-
-  <!-- Billing Address Same Checkbox -->
-  <div class="same-address-group">
-    <label class="checkbox-label">
-      <input 
-        type="checkbox" 
-        [checked]="billingAddressSame" 
-        (change)="toggleBillingAddress()"
-      >
-      <span class="checkmark"></span>
-      Billing address is the same as customer address
-    </label>
-  </div>
-</section>
+            <!-- Payment Element Container -->
+            <div class="form-group full-width">
+              <label>Payment Details *</label>
+              <div class="payment-element-container" id="payment-element-container">
+                <!-- Stripe will inject the Payment Element here -->
+              </div>
+              <div class="error-message" *ngIf="stripeError">
+                {{ stripeError }}
+              </div>
+              <div class="payment-element-hint">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Your payment is secured with SSL encryption</span>
+              </div>
+            </div>
+          </section>
 
           <!-- Terms and Conditions -->
           <section class="form-section">
@@ -299,7 +231,6 @@
             </span>
           </button>
 
-
           <!-- Form Error Summary -->
           <div class="form-error-summary" *ngIf="showFormErrors && checkoutForm.invalid">
             <h3>Please fix the following errors:</h3>
@@ -307,11 +238,9 @@
               <li *ngIf="customerForm.get('firstName')?.invalid">• First name is required</li>
               <li *ngIf="customerForm.get('lastName')?.invalid">• Last name is required</li>
               <li *ngIf="customerForm.get('email')?.invalid">• Valid email is required</li>
+              <li *ngIf="customerForm.get('confirmEmail')?.invalid">• Email confirmation is required</li>
               <li *ngIf="customerForm.get('phone')?.invalid">• Valid UK phone number is required</li>
-              <li *ngIf="billingAddressForm.get('addressLine1')?.invalid">• Address line 1 is required</li>
-              <li *ngIf="billingAddressForm.get('city')?.invalid">• Town/City is required</li>
-              <li *ngIf="billingAddressForm.get('postcode')?.invalid">• Valid UK postcode is required</li>
-              <li *ngIf="billingAddressForm.get('country')?.invalid">• Country is required</li>            
+              <li *ngIf="customerForm.get('postcode')?.invalid">• Valid UK postcode is required</li>
               <li *ngIf="checkoutForm.get('acceptTerms')?.invalid">• You must accept the terms and conditions</li>
             </ul>
           </div>

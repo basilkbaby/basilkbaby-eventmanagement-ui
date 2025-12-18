@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { SeatService } from '../../../core/services/seat.service';
 
 @Component({
   selector: 'app-svg-seatmap',
@@ -291,7 +292,9 @@ mobileFilters = {
     }[];
   }[] = [];
   
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, seatservice : SeatService) {
+    this.venueData = seatservice.getSeatMapConfig();
+  }
   
   // ========== LIFECYCLE HOOKS ==========
   
@@ -906,7 +909,8 @@ getMobileTicketTypes(): Array<TicketType | 'all'> {
       VIP: '1',
       DIAMOND: '2',
       GOLD: '3',
-      SILVER: '4'
+      SILVER: '4',
+      FOH: '5'
     };
     return tierMap[ticketType] || '0';
   }
@@ -1179,12 +1183,13 @@ getMobileTicketTypes(): Array<TicketType | 'all'> {
     }
   }
   
-  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' {
-    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'> = {
+  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' {
+    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh'> = {
       VIP: 'vip',
       DIAMOND: 'vip',
       GOLD: 'standard',
-      SILVER: 'standard'
+      SILVER: 'standard',
+      FOH: 'foh'
     };
     
     return typeMap[ticketType] || 'standard';

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SeatSelectionComponent } from './seat-selection.component';
+import { SeatSelectionComponent } from './seatmap-block.component';
 
 describe('SeatSelectionComponent', () => {
   let component: SeatSelectionComponent;

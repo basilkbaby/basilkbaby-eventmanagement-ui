@@ -50,13 +50,13 @@ interface SelectedSeat {
 }
 
 @Component({
-  selector: 'app-full-seatmap',
+  selector: 'app-canvas-seatmap',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './full-seatmap.component.html',
-  styleUrls: ['./full-seatmap.component.scss']
+  templateUrl: './canvas-seatmap.component.html',
+  styleUrls: ['./canvas-seatmap.component.scss']
 })
-export class FullSeatMapComponent implements AfterViewInit, OnInit, OnDestroy {
+export class CanvasSeatMapComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvasRef!: ElementRef<HTMLCanvasElement>;
 

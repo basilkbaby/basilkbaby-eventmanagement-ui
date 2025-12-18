@@ -31,11 +31,11 @@
   
   .zoom-controls {
     position: absolute;
-    bottom: 100px;
+    bottom: 0px;
     right: 16px;
     z-index: 20;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
     
     .zoom-btn {
@@ -220,7 +220,7 @@ position: relative;
   
   .quick-legend {
     position: absolute;
-    bottom: 180px;
+    bottom: 50px;
     left: 16px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -284,4 +284,184 @@ position: relative;
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
+}
+
+.selected-info {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.section-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.meta-item {
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.ticket-types {
+  margin: 16px 0;
+}
+
+.ticket-type-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: #fafafa;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.type-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.type-details {
+  flex: 1;
+}
+
+.type-name {
+  display: block;
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+.type-rows {
+  display: block;
+  font-size: 12px;
+  color: #666;
+}
+
+.type-price {
+  font-weight: bold;
+  color: #764ba2;
+  font-size: 14px;
+}
+
+.price-summary {
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.price-range {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.price-value {
+  font-weight: bold;
+  color: #764ba2;
+  font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn-back, .btn-select {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-back {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-select {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  color: white;
+}
+
+.quick-legend {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.legend-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-text {
+  font-size: 12px;
+  color: #333;
+}
+
+/* Make sure sections are above other elements */
+.section-group {
+  pointer-events: bounding-box;
+}
+
+/* Ensure SVG elements don't block clicks */
+.venue-svg {
+  pointer-events: none; /* Disable on SVG */
+}
+
+.venue-svg > * {
+  pointer-events: none; /* Disable on all children */
+}
+
+.venue-svg .section-block {
+  pointer-events: all; /* Re-enable only on sections */
 }

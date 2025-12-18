@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Event, EventStatus, EventType } from '../../core/models/event.model';
-import { EventService } from '../../core/services/event.service';
+import { Event, EventStatus, EventType } from '../../../core/models/event.model';
+import { EventService } from '../../../core/services/event.service';
 
 @Component({
   selector: 'app-hero-slider',

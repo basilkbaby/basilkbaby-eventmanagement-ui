@@ -8,15 +8,13 @@
 
   <!-- Zoom Controls -->
   <div class="zoom-controls">
-    <button class="zoom-btn" (click)="zoomOut()">−</button>
-    <button class="zoom-btn" (click)="resetView()">↺</button>
     <button class="zoom-btn" (click)="zoomIn()">+</button>
+    <button class="zoom-btn" (click)="resetView()">↺</button>
+    <button class="zoom-btn" (click)="zoomOut()">−</button>
   </div>
 
-  <!-- SVG Container with HammerJS -->
-  <div class="svg-container"
-       #svgContainer>
-    
+  <!-- SVG Container -->
+  <div class="svg-container" #svgContainer>
     <div class="svg-wrapper"
          [style.transform]="'scale(' + scale + ')'"
          [style.left.px]="offsetX"
@@ -28,7 +26,7 @@
         
         <!-- Stage -->
         <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2"
-              [attr.y]="30"
+              [attr.y]="10"
               [attr.width]="STAGE_WIDTH"
               [attr.height]="STAGE_HEIGHT"
               rx="10"
@@ -37,91 +35,109 @@
               stroke-width="3" />
         
         <text [attr.x]="CANVAS_WIDTH / 2"
-              [attr.y]="30 + STAGE_HEIGHT / 2 + 8"
+              [attr.y]="10 + STAGE_HEIGHT / 2 + 8"
               text-anchor="middle"
               font-family="Arial"
               font-size="24"
               font-weight="bold"
               fill="#764ba2">STAGE</text>
 
-        <!-- Section Labels -->
-        <g *ngFor="let section of venueData.sections; let i = index">
-          <ng-container *ngIf="i === 0 || section.name !== venueData.sections[i-1].name">
-            <text [attr.x]="section.x + (getSectionWidth(section) / 2)"
-                  [attr.y]="section.y - 30"
-                  text-anchor="middle"
-                  font-family="Arial"
-                  font-size="20"
-                  font-weight="bold"
-                  fill="#333">
-              {{ section.sectionLabel || section.name }}
-            </text>
-          </ng-container>
-        </g>
+
         
         <!-- Section Blocks -->
-        <g *ngFor="let section of venueData.sections">
-          <!-- Main section rectangle -->
-          <rect [attr.x]="section.x"
-                [attr.y]="section.y + (section.rowOffset || 0)"
-                [attr.width]="getSectionWidth(section)"
-                [attr.height]="getSectionHeight(section)"
-                [attr.fill]="getSectionColor(section)"
-                [attr.opacity]="selectedSection === section ? 1 : 0.9"
-                stroke="#ffffff"
-                stroke-width="2"
-                rx="6"
-                class="section-block"
-                [class.selected]="selectedSection === section">
-            
-            <title>
-              {{ section.sectionLabel || section.name }}
-              • {{ section.rows }} rows × {{ section.seatsPerRow }} seats
-              • From {{ formatPrice(getSectionMinPrice(section)) }}
-            </title>
-          </rect>
-          
-          <!-- Selected section highlight -->
-          <rect *ngIf="selectedSection === section"
-                [attr.x]="section.x - 6"
-                [attr.y]="section.y + (section.rowOffset || 0) - 6"
-                [attr.width]="getSectionWidth(section) + 12"
-                [attr.height]="getSectionHeight(section) + 12"
-                fill="none"
-                stroke="#4CAF50"
-                stroke-width="4"
-                rx="10"
-                stroke-dasharray="8,4" />
-        </g>
+<!-- Section Blocks -->
+<g *ngFor="let section of venueData.sections">
+  <!-- Group for the entire section -->
+  <g class="section-group" (click)="onSectionClick(section)">
+    
+    <!-- Background -->
+    <rect [attr.x]="section.x"
+          [attr.y]="section.y + (section.rowOffset || 0)"
+          [attr.width]="getSectionWidth(section)"
+          [attr.height]="getSectionHeight(section)"
+          fill="#f8f9fa"
+          stroke="#dee2e6"
+          stroke-width="1"
+          rx="6" />
+    
+    <!-- Row config visualization with text labels -->
+    <g *ngFor="let rowConfig of getRowConfigVisual(section)">
+      <rect [attr.x]="section.x"
+            [attr.y]="section.y + (section.rowOffset || 0) + rowConfig.startY"
+            [attr.width]="getSectionWidth(section)"
+            [attr.height]="rowConfig.height"
+            [attr.fill]="rowConfig.color"
+            [attr.opacity]="selectedSection === section ? 1 : 0.9"
+            stroke="#ffffff"
+            stroke-width="1"
+            rx="4"
+            class="section-block"
+            [class.selected]="selectedSection === section">
         
-        <!-- FOH Area -->
-        <g *ngIf="getFOHBounds()">
-          <rect [attr.x]="getFOHBounds()!.leftFOHX"
-                [attr.y]="getFOHBounds()!.y"
-                [attr.width]="getFOHBounds()!.width"
-                [attr.height]="getFOHBounds()!.height"
-                fill="#ffffff"
-                stroke="#666"
-                stroke-width="2"
-                rx="6" />
-          
-          <rect [attr.x]="getFOHBounds()!.rightFOHX"
-                [attr.y]="getFOHBounds()!.y"
-                [attr.width]="getFOHBounds()!.width"
-                [attr.height]="getFOHBounds()!.height"
-                fill="#ffffff"
-                stroke="#666"
-                stroke-width="2"
-                rx="6" />
-          
-          <text [attr.x]="getFOHBounds()!.leftFOHX + getFOHBounds()!.width / 2"
-                [attr.y]="getFOHBounds()!.y + 20"
-                text-anchor="middle"
-                font-family="Arial"
-                font-size="16"
-                font-weight="bold"
-                fill="#666">FOH AREA</text>
-        </g>
+        <title>
+          {{ section.sectionLabel || section.name }} - {{ rowConfig.ticketType }}
+          • {{ rowConfig.rows }} rows
+          • {{ (rowConfig.price) | currencyFormat  }}
+        </title>
+      </rect>
+      
+      <!-- Row group label (type and price) -->
+      <g *ngIf="rowConfig.height > 25"> <!-- Only show text if row group is tall enough -->
+        <!-- Type name -->
+        <text [attr.x]="section.x + getSectionWidth(section) / 2"
+              [attr.y]="section.y + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 - 8"
+              text-anchor="middle"
+              font-family="Arial, sans-serif"
+              font-size="30"
+              font-weight="bold"
+              fill="#ffffff"
+              style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+          {{ rowConfig.ticketType }}
+        </text>
+        
+        <!-- Price (only if > 0) -->
+        <text *ngIf="rowConfig.price > 0"
+              [attr.x]="section.x + getSectionWidth(section) / 2"
+              [attr.y]="section.y + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 50"
+              text-anchor="middle"
+              font-family="Arial, sans-serif"
+              font-size="30"
+              font-weight="600"
+              fill="#ffffff"
+              style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+          {{ (rowConfig.price) | currencyFormat  }}
+        </text>
+      </g>
+      
+      <!-- For very small row groups, show just the type -->
+      <text *ngIf="rowConfig.height <= 25 && rowConfig.height > 15"
+            [attr.x]="section.x + getSectionWidth(section) / 2"
+            [attr.y]="section.y + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2"
+            text-anchor="middle"
+            font-family="Arial, sans-serif"
+            font-size="70"
+            font-weight="bold"
+            fill="#ffffff"
+            style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+        {{ rowConfig.ticketType }}
+      </text>
+    </g>
+
+    
+    <!-- Selected section highlight -->
+    <rect *ngIf="selectedSection === section"
+          [attr.x]="section.x - 6"
+          [attr.y]="section.y + (section.rowOffset || 0) - 6"
+          [attr.width]="getSectionWidth(section) + 12"
+          [attr.height]="getSectionHeight(section) + 12"
+          fill="none"
+          stroke="#4CAF50"
+          stroke-width="4"
+          rx="10"
+          stroke-dasharray="8,4" />
+  </g>
+</g>
+
         
       </svg>
     </div>
@@ -130,10 +146,7 @@
   <!-- Selected Section Info -->
   <div class="selected-info" *ngIf="selectedSection">
     <div class="info-content">
-      <div class="section-color-indicator" 
-           [style.background-color]="getSectionColor(selectedSection)"></div>
-      
-      <div class="section-details">
+      <div class="section-header">
         <h3>{{ selectedSection.sectionLabel || selectedSection.name }}</h3>
         <div class="section-meta">
           <span class="meta-item">
@@ -142,11 +155,36 @@
           <span class="meta-item">
             {{ selectedSection.seatsPerRow }} seats/row
           </span>
+          <span class="meta-item">
+            {{ selectedSection.rows * selectedSection.seatsPerRow }} total seats
+          </span>
         </div>
       </div>
       
-      <div class="section-price">
-        {{ formatPrice(getSectionMinPrice(selectedSection)) }}
+      <!-- Ticket types in this section -->
+      <div class="ticket-types">
+        <div *ngFor="let rowConfig of getRowConfigVisual(selectedSection)"
+             class="ticket-type-item">
+          <div class="type-color" [style.background-color]="rowConfig.color"></div>
+          <div class="type-details">
+            <span class="type-name">{{ rowConfig.ticketType }}</span>
+            <span class="type-rows">{{ rowConfig.rows }} rows ({{ rowConfig.rows * selectedSection.seatsPerRow }} seats)</span>
+          </div>
+          <div class="type-price">
+            {{ rowConfig.price > 0 ? (rowConfig.price | currencyFormat)  : 'Price Varies' }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Price summary -->
+      <div class="price-summary" *ngIf="getSectionPriceRange(selectedSection).min > 0">
+        <div class="price-range">
+          <span class="price-label">Price Range:</span>
+          <span class="price-value">
+            {{ (getSectionPriceRange(selectedSection).min) | currencyFormat  }} - 
+            {{ (getSectionPriceRange(selectedSection).max) | currencyFormat  }}
+          </span>
+        </div>
       </div>
     </div>
     
@@ -154,18 +192,22 @@
       <button class="btn-back" (click)="selectedSection = null">
         Back
       </button>
-      <button class="btn-select" (click)="sectionSelected.emit(selectedSection)">
+      <button class="btn-select" (click)="navigateToSection(selectedSection)">
         View Seats
       </button>
     </div>
   </div>
 
   <!-- Quick Legend -->
-  <!-- <div class="quick-legend">
-    <div class="legend-item" *ngFor="let section of getUniqueSections()">
-      <div class="legend-color" [style.background-color]="getSectionColor(section)"></div>
-      <span class="legend-text">{{ section.sectionLabel || section.name }}</span>
+<!-- <div class="quick-legend">
+  <div class="legend-title">Ticket Types</div>
+  <div class="legend-items">
+    <div *ngFor="let type of ['VIP', 'DIAMOND', 'GOLD', 'SILVER']"
+         class="legend-item">
+      <div class="legend-color" [style.background-color]="getColorForType(type)"></div>
+      <span class="legend-text">{{ type }}</span>
     </div>
-  </div> -->
+  </div>
+</div> -->
 
 </div>
