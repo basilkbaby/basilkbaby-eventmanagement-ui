@@ -37,12 +37,15 @@
                (click)="toggleSeatSelection(seat)"
                [title]="getSeatStatusText(seat) + ' - £' + seat.price">
             
-            <div class="seat-number">{{ seat.seatNumber }}</div>
+              <ng-container *ngIf="seat.status !== SeatStatus.BLOCKED">
+                  <div class="seat-number">{{ seat.seatNumber }}</div>
+              
             
-            <!-- Status indicator -->
-            <div class="seat-status" *ngIf="seat.status !== SeatStatus.AVAILABLE && seat.status !== SeatStatus.SELECTED">
-              {{ getSeatStatusText(seat).charAt(0) }}
-            </div>
+                <!-- Status indicator -->
+                <div class="seat-status" *ngIf="seat.status !== SeatStatus.AVAILABLE && seat.status !== SeatStatus.SELECTED">
+                  {{ getSeatStatusText(seat).charAt(0) }}
+                </div>
+              </ng-container>
             
             <!-- Selected checkmark -->
             <div class="seat-selected" *ngIf="seat.status === SeatStatus.SELECTED">

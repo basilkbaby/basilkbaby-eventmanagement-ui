@@ -66,30 +66,12 @@ export class SeatService
             ]
           },
           { 
-            id: "3",
+            id: "4",
             name: 'DIAMOND', 
             x: 450, 
             y: 550, 
             rows: 12, 
-            seatsPerRow: 10,
-            sectionLabel: 'DIAMOND',
-            rowConfigs: [
-              { 
-                fromRow: 0, 
-                toRow: 11, 
-                type: 'DIAMOND', 
-                customPrice: 50,
-                color: '#8a9a5b'
-              }
-            ]
-          },
-          { 
-            id: "4",
-            name: 'DIAMOND', 
-            x: 700, 
-            y: 550, 
-            rows: 12, 
-            seatsPerRow: 10,
+            seatsPerRow: 21,
             sectionLabel: 'DIAMOND',
             rowConfigs: [
               { 
@@ -139,7 +121,7 @@ export class SeatService
             ]
           },
           { 
-            id: "4",
+            id: "7",
             name: 'FOH', 
             x: 450, 
             y: 1400, 
@@ -166,9 +148,18 @@ export class SeatService
           ],
           
           blockedSeats: [
-            { seatId: 'GOLD-A-1', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
-            { seatId: 'SILVER-B-3', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
-            { seatId: 'GOLD-C-5', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
+            { seatId: 'DIAMOND-A-11', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-B-11', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-C-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-D-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-E-11', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-F-11', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-G-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-H-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-I-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-J-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-K-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+            { seatId: 'DIAMOND-L-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
           ],
           
           soldSeats: [

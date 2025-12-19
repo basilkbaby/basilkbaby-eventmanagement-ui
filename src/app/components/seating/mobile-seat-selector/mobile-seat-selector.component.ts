@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { VenueData, VenueSection, SectionRowConfig, SeatStatus, TicketType, Seat, SelectedSeat } from '../../../core/models/seats.model';
 import { CartService } from '../../../core/services/cart.service';
+import { SeatService } from '../../../core/services/seat.service';
 
 interface RowData {
   letter: string;
@@ -35,9 +36,10 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private cartService : CartService
+    private cartService : CartService,
+    private seatService : SeatService
   ) {
-    this.venueData = this.initializeVenueData();
+    this.venueData = this.seatService.getSeatMapConfigMobile();
   }
   
   ngOnInit() {
@@ -191,9 +193,11 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       ],
       
       blockedSeats: [
-        { seatId: 'GOLD-A-1', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
-        { seatId: 'SILVER-B-3', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
-        { seatId: 'GOLD-C-5', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
+        { seatId: 'DIAMOND-A-11', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
+        { seatId: 'DIAMOND-B-11', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
+        { seatId: 'DIAMOND-C-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+        { seatId: 'DIAMOND-D-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
+        { seatId: 'DIAMOND-E-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
       ],
       
       soldSeats: [
@@ -471,7 +475,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     if (seat.status === SeatStatus.SELECTED) return '#4CAF50';
     if (seat.status === SeatStatus.SOLD) return '#999999';
     if (seat.status === SeatStatus.RESERVED) return '#FF9800';
-    if (seat.status === SeatStatus.BLOCKED) return '#f44336';
+    if (seat.status === SeatStatus.BLOCKED) return '#dfdfdfff';
     return seat.color;
   }
   
