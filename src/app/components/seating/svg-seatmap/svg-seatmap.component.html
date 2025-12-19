@@ -1,18 +1,21 @@
-<div class="seat-selection-layout" [class.mobile]="isMobile" [class.tablet]="isTablet">
+<div class="seat-selection-layout">
 
   <!-- Main Canvas Area -->
-  <main class="canvas-area" [class.mobile-full]="isMobile && !showSelectedSummary">
+  <main class="canvas-area">
     <div class="canvas-wrapper">
       <!-- SVG Container -->
-      <div class="svg-container" #svgContainer>
+      <div class="svg-container" #svgContainer (mousedown)="startDrag($event)"
+     (mousemove)="doDrag($event)"
+     (mouseup)="stopDrag()"
+     (mouseleave)="stopDrag()"
+     style="cursor: grab;">
         <svg #svgElement
              class="seatmap-svg"
              [attr.viewBox]="'0 0 ' + CANVAS_WIDTH + ' ' + CANVAS_HEIGHT"
              preserveAspectRatio="xMidYMid meet"
-             [style.transform]="'scale(' + scale + ') translate(' + offsetX + 'px, ' + offsetY + 'px)'"
-             (mousemove)="onHover($event)"
-             (mouseleave)="onSvgMouseLeave()"
-             (wheel)="onZoom($event)">
+              [style.transform]="'scale(' + scale + ')'"
+(wheel)="onZoom($event)"
+             >
           
           <!-- Stage -->
           <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2"
@@ -34,7 +37,6 @@
           
           <!-- Section Labels -->
           <g *ngFor="let section of venueData.sections; let i = index">
-            <ng-container *ngIf="i === 0 || section.name !== venueData.sections[i-1].name">
               <text [attr.x]="section.x + (section.seatsPerRow * seatGap / 2)"
                     [attr.y]="section.y - 20"
                     text-anchor="center"
@@ -44,15 +46,6 @@
                     fill="#bebebe">
                 {{ section.sectionLabel || section.name }}
               </text>
-              
-              <line [attr.x1]="section.x + 10"
-                    [attr.x2]="section.x + (section.seatsPerRow * seatGap) - 10"
-                    [attr.y1]="section.y - 10"
-                    [attr.y2]="section.y - 10"
-                    stroke="#bebebe"
-                    [attr.stroke-width]="1"
-                    [attr.stroke-dasharray]="'3,3'" />
-            </ng-container>
           </g>
           
           <!-- Row Labels -->
@@ -133,7 +126,7 @@
                     dominant-baseline="middle"
                     fill="white"
                     font-weight="bold"
-                    [attr.font-size]="isMobile ? '10' : '12'">✓</text>
+                    [attr.font-size]="'12'">✓</text>
             </g>
             
             <!-- Status indicator for unavailable seats -->
@@ -143,53 +136,34 @@
                   text-anchor="middle"
                   dominant-baseline="middle"
                   fill="white"
-                  [attr.font-size]="isMobile ? '9' : '10'"
+                  [attr.font-size]="'10'"
                   font-weight="bold">
               {{ seat.status === SeatStatus.SOLD ? 'S' : 
                  seat.status === SeatStatus.RESERVED ? 'R' : 
                  seat.status === SeatStatus.BLOCKED ? 'X' : '' }}
             </text>
-            
-            <!-- Seat numbers for first row -->
-            <text *ngIf="seat.rowLabel === 'A'"
-                  [attr.x]="seat.cx"
-                  [attr.y]="seat.cy + seatRadius + 15"
-                  text-anchor="middle"
-                  font-family="Arial"
-                  [attr.font-size]="isMobile ? '9' : '10'"
-                  fill="#666">{{ seat.seatNumber }}</text>
-          </g>
-          
+          </g>    
         </svg>
       </div>
     </div>
   </main>
 
   <!-- Sidebar / Mobile Bottom Sheet -->
-  <aside class="controls-sidebar" [class.mobile-bottom-sheet]="isMobile" 
-        [class.expanded]="showSelectedSummary || !isMobile">
+  <aside class="controls-sidebar expanded">
     
     <!-- Desktop Header -->
-    <div class="compact-header" *ngIf="!isMobile">
-      <div class="header-top">
-        <button class="back-button" routerLink="/events">
-          ← Back
-        </button>
-      </div>
+    <div class="compact-header">
       
       <div class="event-info-ultra-compact">
         <h1>{{ event.title }}</h1>
         <div class="event-details-minimal">
           <span class="detail-item">
-            <i class="icon-calendar"></i>
             {{ formatDate(event.date) }}
           </span>
           <span class="detail-item">
-            <i class="icon-time"></i>
             {{ event.time }}
           </span>
           <span class="detail-item">
-            <i class="icon-location"></i>
             {{ event.venue }}
           </span>
         </div>
@@ -200,15 +174,14 @@
 
     <!-- Selected Seats Summary -->
     <div class="selected-summary" 
-         [class.mobile-summary]="isMobile"
-         *ngIf="(selectedSeats.length > 0 && !isMobile) || (isMobile && showSelectedSummary)">
+         *ngIf="(selectedSeats.length > 0)">
       
       <div class="summary-header">
         <h3>Selected Seats ({{ selectedSeats.length }})</h3>
         <button class="clear-btn" (click)="clearSelection()">Clear All</button>
       </div>
       
-      <div class="seats-grid" [class.mobile-scrollable]="isMobile">
+      <div class="seats-grid">
         <div class="seat-tag" *ngFor="let seat of selectedSeats; let i = index">
           <span class="seat-label">{{ seat.row }}S{{ seat.number }}</span>
           <span class="seat-tier" [style.color]="seat.tier.color">
@@ -244,7 +217,7 @@
     </div>
 
     <!-- Empty State -->
-    <div class="empty-state-compact" *ngIf="selectedSeats.length === 0 && !isMobile">
+    <div class="empty-state-compact" *ngIf="selectedSeats.length === 0">
       <div class="empty-icon">👆</div>
       <p>Click on seats to select them</p>
       <p class="hint" *ngIf="getUniqueTicketTiers().length > 0">
@@ -257,10 +230,10 @@
     </div>
 
     <!-- Legend -->
-    <div class="compact-legend" [class.collapsed]="isMobile && !showLegend">
-      <h4 *ngIf="!isMobile">Seat Types</h4>
+    <div class="compact-legend">
+      <h4>Seat Types</h4>
       
-      <div class="legend-items-compact" *ngIf="!isMobile || showLegend">
+      <div class="legend-items-compact">
         <!-- Ticket type tiers -->
         <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
           <div class="legend-color-compact" [style.background-color]="tier.color"></div>
@@ -285,7 +258,7 @@
     </div>
 
     <!-- Desktop Zoom Controls -->
-    <div class="zoom-controls-compact" *ngIf="!isMobile">
+    <div class="zoom-controls-compact" >
       <h4>Controls</h4>
       <div class="zoom-buttons-compact">
         <button (click)="zoomAt(1.2, CANVAS_WIDTH/2, CANVAS_HEIGHT/2)" title="Zoom In">
@@ -306,7 +279,7 @@
   </aside>
 <!-- Desktop Tooltip -->
 <div class="svg-tooltip desktop-tooltip" 
-     *ngIf="!isMobile && hoveredSeat && shouldShowTooltip()"
+     *ngIf="hoveredSeat && shouldShowTooltip()"
      [style.left.px]="tooltipLeft"
      [style.top.px]="tooltipTop">
   <div class="tooltip-content" *ngIf="hoveredSeat">

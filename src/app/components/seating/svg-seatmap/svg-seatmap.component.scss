@@ -20,22 +20,16 @@
       .svg-container {
         padding: 20px;
         overflow: auto;
+        width: 100%;
+        height: 100%;
 
         .seatmap-svg {
           display: block;
           margin: 0 auto;
           background: white;
-          transform-origin: center;
-          transition: transform 0.1s ease-out;
-
-          circle {
-            transition: all 0.2s ease;
-
-            &:hover {
-              transform: scale(1.2);
-              filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.3));
-            }
-          }
+          transition: transform 0.2s ease-out;
+    transform-origin: 0 0;
+    transform: scale(var(--zoom-scale, 1));
         }
       }
 
@@ -315,43 +309,42 @@
         color: #333;
       }
 
-      .legend-items-compact {
-        .legend-item-compact {
-          display: flex;
-          align-items: center;
-          margin-bottom: 10px;
-          font-size: 13px;
+      .legend-item-compact {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 13px;
+        flex: 0 0 auto; /* Don't grow or shrink */
 
-          &:last-child {
-            margin-bottom: 0;
-          }
+        &:last-child {
+          margin-bottom: 0;
+        }
 
-          .legend-color-compact {
-            width: 20px;
-            height: 20px;
-            border-radius: 8px;
-            margin-right: 10px;
-            flex-shrink: 0;
+        .legend-color-compact {
+          width: 20px;
+          height: 20px;
+          border-radius: 8px;
+          margin-right: 10px;
+          flex-shrink: 0;
 
-            .partial-view-compact {
-              display: flex;
-              height: 100%;
+          .partial-view-compact {
+            display: flex;
+            height: 100%;
 
-              .half-left,
-              .half-right {
-                flex: 1;
-              }
+            .half-left,
+            .half-right {
+              flex: 1;
             }
           }
+        }
 
-          .legend-label-compact {
-            flex: 1;
-          }
+        .legend-label-compact {
+          flex: 1;
+        }
 
-          .legend-price-compact {
-            font-weight: bold;
-            color: #333;
-          }
+        .legend-price-compact {
+          font-weight: bold;
+          color: #333;
         }
       }
     }
@@ -399,10 +392,10 @@
   }
 
   .svg-tooltip {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     pointer-events: none; // Prevents tooltip from interfering with mouse events
-    transition: opacity 0.1s ease;
+
     background: white;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -472,3 +465,4 @@
     }
   }
 }
+

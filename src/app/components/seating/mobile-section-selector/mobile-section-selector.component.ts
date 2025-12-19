@@ -55,7 +55,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     private router: Router,
     private seatSerive : SeatService
   ) {
-    this.venueData = seatSerive.getSeatMapConfig();
+    this.venueData = seatSerive.getSeatMapConfigMobile();
   }
 
   ngOnInit() {
