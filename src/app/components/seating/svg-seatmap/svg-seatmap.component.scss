@@ -299,55 +299,54 @@
       }
     }
 
-    .compact-legend {
-      padding: 20px;
-      border-bottom: 1px solid #eee;
+.compact-legend {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
 
-      h4 {
-        margin: 0 0 15px 0;
-        font-size: 16px;
-        color: #333;
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .legend-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 columns
+    gap: 8px 12px; // 8px row gap, 12px column gap
+    margin-top: 5px;
+    
+    .legend-item-compact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      min-height: 20px;
+      
+      .legend-color-compact {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 0, 0, 0.1); // Subtle border
       }
-
-      .legend-item-compact {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        font-size: 13px;
-        flex: 0 0 auto; /* Don't grow or shrink */
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        .legend-color-compact {
-          width: 20px;
-          height: 20px;
-          border-radius: 8px;
-          margin-right: 10px;
-          flex-shrink: 0;
-
-          .partial-view-compact {
-            display: flex;
-            height: 100%;
-
-            .half-left,
-            .half-right {
-              flex: 1;
-            }
-          }
-        }
-
-        .legend-label-compact {
-          flex: 1;
-        }
-
-        .legend-price-compact {
-          font-weight: bold;
-          color: #333;
-        }
+      
+      .legend-label-compact {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #555;
+      }
+      
+      .legend-price-compact {
+        font-weight: 600;
+        color: #333;
+        font-size: 11px;
       }
     }
+  }
+}
 
     .zoom-controls-compact {
       padding: 20px;

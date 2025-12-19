@@ -230,32 +230,34 @@
     </div>
 
     <!-- Legend -->
-    <div class="compact-legend">
-      <h4>Seat Types</h4>
-      
-      <div class="legend-items-compact">
-        <!-- Ticket type tiers -->
-        <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
-          <div class="legend-color-compact" [style.background-color]="tier.color"></div>
-          <span class="legend-label-compact">{{ tier.name }}</span>
-          <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
-        </div>
-        
-        <!-- Seat status types -->
-        <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
-          <div class="legend-color-compact" 
-               [style.background-color]="seatStatusConfig[status.status].color"
-               [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
-            <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
-              <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
-              <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
-            </div>
-          </div>
-          <span class="legend-label-compact">{{ status.displayText }}</span>
-          <span class="legend-price-compact">{{ status.price }}</span>
+<div class="compact-legend">
+  <h4>Seat Types</h4>
+  
+  <!-- Ticket Tiers - Side by side -->
+  <div class="legend-container">
+    <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
+      <div class="legend-color-compact" [style.background-color]="tier.color"></div>
+      <span class="legend-label-compact">{{ tier.name }}</span>
+      <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
+    </div>
+  </div>
+  
+  <!-- Seat Status - Below tiers -->
+  <div class="legend-container">
+    <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
+      <div class="legend-color-compact" 
+           [style.background-color]="seatStatusConfig[status.status].color"
+           [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
+        <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
+          <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
+          <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
         </div>
       </div>
+      <span class="legend-label-compact">{{ status.displayText }}</span>
+      <span class="legend-price-compact">{{ status.price }}</span>
     </div>
+  </div>
+</div>
 
     <!-- Desktop Zoom Controls -->
     <div class="zoom-controls-compact" >

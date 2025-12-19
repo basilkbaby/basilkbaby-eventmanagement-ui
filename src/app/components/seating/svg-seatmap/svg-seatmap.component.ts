@@ -479,7 +479,8 @@ zoomOut() {
       DIAMOND: 'vip',
       GOLD: 'standard',
       SILVER: 'standard',
-      FOH: 'foh'
+      FOH: 'foh',
+      STANDING : 'standing'
     };
     
     return typeMap[ticketType] || 'standard';

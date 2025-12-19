@@ -458,7 +458,8 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       DIAMOND: '2',
       GOLD: '3',
       SILVER: '4',
-      FOH: '5'
+      FOH: '5',
+      STANDING : '6'
     };
     return tierMap[ticketType] || '0';
   }
@@ -540,13 +541,14 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   }
 
     // Helper method to map ticket types
-  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' {
-    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh'> = {
+  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' | 'standing' {
+    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' | 'standing' > = {
       VIP: 'vip',
       DIAMOND: 'vip',
       GOLD: 'standard',
       SILVER: 'standard',
-      FOH: 'foh'
+      FOH: 'foh',
+      STANDING : 'standing'
     };
     
     return typeMap[ticketType] || 'standard';
