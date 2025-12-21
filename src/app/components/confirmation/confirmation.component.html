@@ -1,4 +1,4 @@
-<div class="confirmation-container">
+<div class="confirmation-container" *ngIf="!loading">
   <!-- Header -->
   <div class="confirmation-header">
     <div class="header-content">
@@ -9,7 +9,7 @@
         </svg>
       </div>
       <h1>Order Confirmed!</h1>
-      <p class="order-id">Order Reference: <strong>{{ order?.reference }}</strong></p>
+      <p class="order-id">Order Reference: <strong>{{ order?.orderNumber }}</strong></p>
       <p class="confirmation-message">Your tickets have been confirmed and emailed to you.</p>
     </div>
   </div>
@@ -25,15 +25,19 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Name:</span>
-              <span class="value">{{ order?.customer?.firstName }} {{ order?.customer?.lastName }}</span>
+              <span class="value">{{ order?.customerName }}</span>
             </div>
             <div class="info-item">
               <span class="label">Email:</span>
-              <span class="value">{{ order?.customer?.email }}</span>
+              <span class="value">{{ order?.customerEmail }}</span>
             </div>
             <div class="info-item">
               <span class="label">Phone:</span>
-              <span class="value">{{ order?.customer?.phone }}</span>
+              <span class="value">{{ order?.customerPhone }}</span>
+            </div>            
+            <div class="info-item">
+              <span class="label">Post Code:</span>
+              <span class="value">{{ order?.customerPostCode }}</span>
             </div>
             <div class="info-item">
               <span class="label">Order Date:</span>
@@ -53,7 +57,7 @@
           </div>
           <div class="total-line grand-total">
             <span>Total Paid</span>
-            <span>{{ formatPrice(order?.total) }}</span>
+            <span>{{ formatPrice(order?.totalAmount ) }}</span>
           </div>
         </div>
       </div>
@@ -67,7 +71,7 @@
           </svg>
           <div>
             <strong>Check Your Email</strong>
-            <p>Your tickets have been sent to {{ order?.customer?.email }}</p>
+            <p>Your tickets have been sent to {{ order?.customerEmail }}</p>
           </div>
         </div>
         
@@ -101,56 +105,58 @@
       <h2>Your Tickets</h2>
       
       <div class="ticket-cards">
-        <div *ngFor="let ticket of tickets" class="ticket-card">
+        <div class="ticket-card">
           <div class="ticket-header">
-            <div class="ticket-type">{{ ticket.type }}</div>
-            <div class="ticket-status" [class]="ticket.status">{{ ticket.status }}</div>
+            <div class="ticket-type">Ticket type goes here</div>
+            <div class="ticket-status" >Confirmed</div>
           </div>
           
           <div class="ticket-content">
             <div class="event-info">
-              <h3>{{ ticket.eventTitle }}</h3>
+              <h3>{{ order?.eventName }}</h3>
               <div class="event-details">
                 <div class="detail-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
                     <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="2"/>
                   </svg>
-                  <span>{{ formatDateTime(ticket.eventDate) }}</span>
+                  <span>{{ (order?.eventDate) | formatDate }}</span>
                 </div>
                 <div class="detail-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" stroke="currentColor" stroke-width="2"/>
                     <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
                   </svg>
-                  <span>{{ ticket.venue }}</span>
+                  <span>Venue goes here</span>
                 </div>
               </div>
             </div>
 
-            <div class="ticket-details">
+            <div *ngFor="let ticket of order?.seats">
+            <div class="ticket-details" >
               <div class="detail-row">
                 <span class="label">Ticket ID:</span>
-                <span class="value">{{ ticket.id }}</span>
+                <span class="value">{{ ticket.seatId }}</span>
               </div>
-              <div class="detail-row" *ngIf="ticket.seatInfo">
+              <div class="detail-row">
                 <span class="label">Seat:</span>
                 <span class="value">
-                  {{ ticket.seatInfo.section }} - Row {{ ticket.seatInfo.row }}, Seat {{ ticket.seatInfo.number }}
+                  {{ ticket.seatId }} 
                 </span>
               </div>
               <div class="detail-row">
                 <span class="label">Quantity:</span>
-                <span class="value">{{ ticket.quantity }}</span>
+                <span class="value">{{ 1 }}</span>
               </div>
               <div class="detail-row">
                 <span class="label">Price:</span>
-                <span class="value">{{ formatPrice(ticket.price * ticket.quantity) }}</span>
+                <!-- <span class="value">{{ formatPrice(ticket.price * ticket.quantity) }}</span> -->
               </div>
+            </div>
             </div>
 
             <div class="ticket-qr">
-              <qrcode [qrdata]="generateQRData(ticket)" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
+              <!-- <qrcode [qrdata]="generateQRData(ticket)" [width]="120" [errorCorrectionLevel]="'M'"></qrcode> -->
               <p class="qr-note">Scan at entrance</p>
             </div>
           </div>
@@ -159,12 +165,6 @@
             <div class="ticket-terms">
               <small>This ticket is non-transferable and non-refundable.</small>
             </div>
-            <button class="add-wallet-btn" (click)="addToWallet(ticket)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              Add to Wallet
-            </button>
           </div>
         </div>
       </div>

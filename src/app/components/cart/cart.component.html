@@ -13,6 +13,16 @@
       <p *ngIf="cartItems.length === 0">Your cart is empty</p>
     </div>
 
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="errorMessage">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>{{ errorMessage }}</span>
+      <button class="retry-btn" (click)="refreshCart()">Retry</button>
+    </div>
+
     <!-- Cart Items -->
     <div class="cart-items" *ngIf="cartItems.length > 0">
       <!-- Clear Cart Button -->
@@ -26,96 +36,77 @@
         </button>
       </div>
 
-      <!-- Event Group -->
-      <div class="event-group" *ngFor="let event of getGroupedEvents()">
-        <div class="event-header">
-          <h2>{{ event.title }}</h2>
-          <div class="event-details">
-            <span class="event-date">{{ formatDate(event.date) }}</span>
-            <span class="event-venue">{{ event.venue }}</span>
+      <!-- Simple list of seats -->
+      <div class="items-list">
+        <div *ngFor="let item of cartItems" class="cart-item">
+          <div class="item-info">
+            <div class="seat-details">
+              <span class="seat-number">Seat Number : {{ item.seatId }}</span>
+              <div class="seat-meta">
+                <span class="section">Section : {{ item.sectionName }} </span>
+                <!-- <span class="price-per-seat">{{ (item.price) | currencyFormat }} each</span> -->
+              </div>
+            </div>
           </div>
+
+          <div class="quantity-controls">
+            <span class="quantity">{{ item.quantity }}</span>
+          </div>
+
+          <div class="item-price">
+            {{ (item.price * item.quantity) | currencyFormat }}
+          </div>
+
+          <button class="remove-btn" 
+                  (click)="removeItem(item.seatId)" 
+                  title="Remove seat">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
-
-<div class="items-list">
-  <div *ngFor="let item of event.items; let i = index" class="cart-item">
-    <div class="item-info">
-      <div class="seat-details">
-        <span class="section">{{ getSeatInfo(item).section }}</span>
-        <span class="seat" *ngIf="item.seat">
-          Row {{ getSeatInfo(item).row }}, Seat {{ getSeatInfo(item).seatNumber }}
-        </span>
-        <span class="seat" *ngIf="item.ticketType">
-          {{ item.ticketType.name }} Admission
-        </span>
-      </div>
-      <div class="item-type">{{ getItemType(item) }}</div>
-    </div>
-
-    <div class="quantity-controls">
-      <!-- <button class="quantity-btn" (click)="updateQuantity(item, -1)" [disabled]="item.quantity <= 1">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button> -->
-      <span class="quantity">Quantity: {{ item.quantity }}</span>
-      <!-- <button class="quantity-btn" (click)="updateQuantity(item, 1)" [disabled]="item.quantity >= 10">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button> -->
-    </div>
-
-    <div class="item-price">
-      {{ formatPrice(item.price * item.quantity) }}
-    </div>
-
-    <button class="remove-btn" (click)="removeItem(item.id!)" title="Remove item">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </button>
-  </div>
-</div>
       </div>
     </div>
 
-    <!-- Update order summary to use cartSummary -->
-<div class="order-summary" *ngIf="cartItems.length > 0">
-  <h3>Order Summary</h3>
-  
-  <div class="summary-line">
-    <span>Subtotal</span>
-    <span>{{ formatPrice(cartSummary.subtotal) }}</span>
-  </div>
-  
-  <div class="summary-line">
-    <span>Service Fee</span>
-    <span>{{ formatPrice(cartSummary.serviceFee) }}</span>
-  </div>
-  
-  <div class="summary-line total">
-    <span>Total</span>
-    <span>{{ formatPrice(cartSummary.total) }}</span>
-  </div>
+    <!-- Order Summary -->
+    <div class="order-summary" *ngIf="cartItems.length > 0">
+      <h3>Order Summary</h3>
+      
+      <div class="summary-line">
+        <span>Subtotal ({{ cartSummary.seatCount }} {{ cartSummary.seatCount === 1 ? 'seat' : 'seats' }})</span>
+        <span>{{ (cartSummary.subtotal) | currencyFormat }}</span>
+      </div>
+      
+      <div class="summary-line">
+        <span>Service Fee</span>
+        <span>{{ (cartSummary.serviceFee) | currencyFormat }}</span>
+      </div>
+      
+      <div class="summary-line total">
+        <span>Total</span>
+        <span>{{ (cartSummary.total) | currencyFormat }}</span>
+      </div>
 
-  <div class="checkout-actions">
-    <button class="checkout-btn" (click)="proceedToCheckout()">
-      Proceed to Checkout
-    </button>
-    <button class="continue-shopping-btn" (click)="continueShopping()">
-      Continue Shopping
-    </button>
-  </div>
-</div>
+      <div class="checkout-actions">
+        <button class="checkout-btn" 
+                (click)="proceedToCheckout()"
+                [disabled]="!cartSummary.cartId">
+          Proceed to Checkout
+        </button>
+        <button class="continue-shopping-btn" (click)="continueShopping()">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
 
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="cartItems.length === 0 && !loading">
+    <div class="empty-state" *ngIf="cartItems.length === 0 && !loading && !errorMessage">
       <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
         <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z" 
               stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
       <h3>Your cart is empty</h3>
-      <p>Find amazing events and add tickets to your cart</p>
+      <p>Find amazing events and add seats to your cart</p>
       <button class="browse-events-btn" (click)="continueShopping()">
         Browse Events
       </button>

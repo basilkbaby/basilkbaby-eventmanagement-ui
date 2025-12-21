@@ -1,129 +1,79 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { MOCK_EVENTS } from '../mock/mock-events.data';
-import { Event, EventType, QuestionType, SponsorLevel, EventStatus } from '../models/event.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { EventCouponDto, EventDetailDto, EventDto} from '../models/DTOs/event.DTO.model';
+
+export interface EventFilter {
+  searchTerm?: string;
+  type?: string;
+  status?: string;
+  startDateFrom?: Date;
+  startDateTo?: Date;
+  isActive?: boolean;
+  featured?: boolean;
+  organizerId?: string;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDescending?: boolean;
+}
+
+export interface ToggleResponse {
+  isActive?: boolean;
+  featured?: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
-  private mockEvents: Event[] = MOCK_EVENTS;
+  private baseUrl = environment.apiUrl + '/api/Event';
 
-  // GET methods
-  getEvents(): Observable<Event[]> {
-    return of(this.mockEvents);
-  }
+  constructor(private http: HttpClient) {}
 
-  getEventById(eventId: string): Observable<Event> {
-    const event = this.mockEvents.find(e => e.id === eventId);
-    if (event) {
-      return of(event);
-    }
-    throw new Error('Event not found');
-  }
-
-  getEventsByOrganizer(organizerId: string): Observable<Event[]> {
-    const filteredEvents = this.mockEvents.filter(event => event.organizerId === organizerId);
-    return of(filteredEvents);
-  }
-
-  getEventsByStatus(status: EventStatus): Observable<Event[]> {
-    const filteredEvents = this.mockEvents.filter(event => event.status === status);
-    return of(filteredEvents);
-  }
-
-  getFeaturedEvents(): Observable<Event[]> {
-    return of(this.mockEvents.filter(event => event.featured));
-  }
-
-  getUpcomingEvents(limit?: number): Observable<Event[]> {
-    const now = new Date();
-    let events = this.mockEvents
-      .filter(event => event.status === EventStatus.PUBLISHED && event.startDate > now)
-      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+  // GET: Get all events (list view)
+  getEvents(filter?: EventFilter): Observable<EventDto[]> {
+    let params = this.buildFilterParams(filter);
     
-    if (limit) {
-      events = events.slice(0, limit);
-    }
-    
-    return of(events);
+    return this.http.get<EventDto[]>(this.baseUrl, { params });
   }
 
-  // CREATE method
-  createEvent(eventData: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>): Observable<Event> {
-    // TODO: Uncomment when API is ready
-    // return this.http.post<Event>('/api/events', eventData);
-    
-    // Mock implementation
-    const newEvent: Event = {
-      ...eventData,
-      id: (this.mockEvents.length + 1).toString(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    this.mockEvents.push(newEvent);
-    return of(newEvent);
+  // GET: Get single event by ID
+  getEventById(eventId: string): Observable<EventDetailDto> {
+    return this.http.get<EventDetailDto>(`${this.baseUrl}/${eventId}`);
   }
 
-    // UpdateEvent method
-  UpdateEvent(eventData:any): Observable<Event> {
-    // TODO: Uncomment when API is ready
-    // return this.http.post<Event>('/api/events', eventData);
-    
-    // Mock implementation
-    const newEvent: Event = {
-      ...eventData,
-      id: (this.mockEvents.length + 1).toString(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    this.mockEvents.push(newEvent);
-    return of(newEvent);
+  // GET: Get event details with all related data
+  getEventDetails(eventId: string): Observable<EventDetailDto> {
+    return this.http.get<EventDetailDto>(`${this.baseUrl}/GetEventDetails/${eventId}`);
   }
 
 
-      // UpdateEvent method
-  toggleEventStatus(eventData: Omit<Event, 'id' | 'createdAt' | 'updatedAt'>): Observable<Event> {
-    // TODO: Uncomment when API is ready
-    // return this.http.post<Event>('/api/events', eventData);
+  // Helper methods
+  private buildFilterParams(filter?: EventFilter): HttpParams {
+    let params = new HttpParams();
     
-    // Mock implementation
-    const newEvent: Event = {
-      ...eventData,
-      id: (this.mockEvents.length + 1).toString(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    if (!filter) return params;
     
-    this.mockEvents.push(newEvent);
-    return of(newEvent);
-  }
-
-      // UpdateEvent method
-  deleteEvent(eventId : any): Observable<true> {
+    if (filter.searchTerm) params = params.set('searchTerm', filter.searchTerm);
+    if (filter.type) params = params.set('type', filter.type);
+    if (filter.status) params = params.set('status', filter.status);
+    if (filter.startDateFrom) params = params.set('startDateFrom', filter.startDateFrom.toISOString());
+    if (filter.startDateTo) params = params.set('startDateTo', filter.startDateTo.toISOString());
+    if (filter.isActive !== undefined) params = params.set('isActive', filter.isActive.toString());
+    if (filter.featured !== undefined) params = params.set('featured', filter.featured.toString());
+    if (filter.organizerId) params = params.set('organizerId', filter.organizerId);
+    if (filter.pageNumber) params = params.set('pageNumber', filter.pageNumber.toString());
+    if (filter.pageSize) params = params.set('pageSize', filter.pageSize.toString());
+    if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
+    if (filter.sortDescending !== undefined) params = params.set('sortDescending', filter.sortDescending.toString());
     
-    return of(true);
+    return params;
   }
 
-  // SEARCH and FILTER methods
-  searchEvents(query: string): Observable<Event[]> {
-    const searchTerm = query.toLowerCase();
-    const events = this.mockEvents.filter(event => 
-      event.title.toLowerCase().includes(searchTerm) ||
-      event.description.toLowerCase().includes(searchTerm) ||
-      event.venue.city.toLowerCase().includes(searchTerm) ||
-      event.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
-    );
-    return of(events);
+  validateCoupon(eventId: string, couponCode: string): Observable<EventCouponDto> {
+    return this.http.post<any>(`${this.baseUrl}/${eventId}/coupons/validate`, { couponCode });
   }
-
-  getEventsByType(type: EventType): Observable<Event[]> {
-    const filteredEvents = this.mockEvents.filter(event => event.type === type);
-    return of(filteredEvents);
-  }
-
-
-
 }

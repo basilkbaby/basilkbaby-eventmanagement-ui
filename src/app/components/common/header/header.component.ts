@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { ConfigService } from '../../../core/services/config.service';
-import { CartService, CartSummary } from '../../../core/services/cart.service'; // Import CartService
+import { CartService } from '../../../core/services/cart.service'; // Import CartService
 import { HeaderConfig } from '../../../core/models/config.interface';
+import { CartSummaryDto } from '../../../core/models/DTOs/cart.DTO.model';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,7 @@ import { HeaderConfig } from '../../../core/models/config.interface';
 export class HeaderComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   cartItemCount = 0;
-  cartSummary: CartSummary | null = null; // Add cart summary
+  cartSummary: CartSummaryDto | null = null; // Add cart summary
   config: HeaderConfig | null = null;
   
   // Copy feedback states
@@ -31,7 +32,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private configSubscription: Subscription | null = null;
   private routerSubscription: Subscription | null = null;
-  private cartSubscription: Subscription | null = null; // Add cart subscription
+  private cartStateSubscription: Subscription | undefined;
 
   constructor(
     private configService: ConfigService, 
@@ -56,38 +57,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to cart changes
-    this.cartSubscription = this.cartService.cart$.subscribe(() => {
-      this.updateCartInfo();
-    });
+    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
+        next: (state) => {
+          // Calculate count from cart items
+          this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
+        }
+      });
 
     // Initialize current route
     this.currentRoute = this.router.url;
-    
-    // Initialize cart info
-    this.updateCartInfo();
+
   }
 
   ngOnDestroy() {
     this.configSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
-    this.cartSubscription?.unsubscribe(); // Unsubscribe from cart
+    this.cartStateSubscription?.unsubscribe(); // Unsubscribe from cart
   }
 
-  // Method to update cart information
-  updateCartInfo(): void {
-    this.cartItemCount = this.cartService.getItemCount();
-    this.cartSummary = this.cartService.getCartSummary();
-  }
 
   // Get cart item count for display
   getCartCount(): number {
     return this.cartItemCount;
   }
 
-  // Check if cart has items
-  hasCartItems(): boolean {
-    return !this.cartService.isEmpty();
-  }
 
   // Navigate to cart page
   navigateToCart(): void {

@@ -1,5 +1,9 @@
 
-<app-hero-slider></app-hero-slider>
-<app-event-list></app-event-list>
+<app-hero-slider [events]="events"
+  [isLoading]="isLoading"></app-hero-slider>
+<app-event-list [events]="events"
+  [isLoading]="isLoading"
+  [error]="error"
+  (retryLoad)="onRetryLoad()">></app-event-list>
 <!-- <app-stats-dashboard></app-stats-dashboard>
 <app-social-media-feed></app-social-media-feed> -->

@@ -4,13 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { QRCodeModule } from 'angularx-qrcode';
 import { OrderService } from '../../core/services/order.service';
 import { TicketService } from '../../core/services/ticket.service';
-import { Order, Ticket, SeatInfo } from '../../core/models/order.model';
+import { Order, Ticket } from '../../core/models/order.model';
 import { CartService } from '../../core/services/cart.service';
+import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 
 @Component({
   selector: 'app-confirmation',
   standalone: true,
-  imports: [CommonModule, QRCodeModule],
+  imports: [CommonModule, QRCodeModule, FormatDatePipe],
   templateUrl: './confirmation.component.html',
   styleUrls: ['./confirmation.component.scss']
 })
@@ -19,7 +20,6 @@ export class ConfirmationComponent implements OnInit {
   order: Order | null = null;
   tickets: Ticket[] = [];
   loading: boolean = true;
-  useMockData: boolean = false; // Set to true to use mock data
 
   constructor(
     private route: ActivatedRoute,
@@ -31,190 +31,91 @@ export class ConfirmationComponent implements OnInit {
 
   ngOnInit(): void {
     // Get order ID from route parameters
+    this.loading = true;
     this.route.paramMap.subscribe(params => {
       this.orderId = params.get('id') || '';
       
       if (this.orderId) {
-        // For testing: if order ID starts with "test", use mock data
-        if (this.orderId.startsWith('test') || this.useMockData) {
-          this.loadMockData();
-        } else {
-          this.loadOrder(this.orderId);
-        }
+        this.loadOrder(this.orderId);
       } else {
-        // If no ID, load mock data for testing
-        this.loadMockData();
+        this.router.navigate(['/']);
+        this.loading = false;
       }
     });
 
+    // Clear cart after successful order
     this.cartService.clearCart();
-  }
-
-  // Load mock data for testing
-  loadMockData(): void {
-    console.log('Loading mock data...');
-    
-    // Create mock order
-    this.order = {
-      id: 'mock_order_123',
-      reference: 'ORD-' + Date.now().toString().slice(-6) + '-ABC123',
-      customer: {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phone: '07700 900123'
-      },
-      items: [
-        {
-          id: 'item_1',
-          eventId: 'event_001',
-          eventTitle: 'Summer Music Festival 2024',
-          eventDate: new Date('2024-07-15T18:00:00'),
-          venue: 'Hyde Park, London',
-          ticketType: 'VIP Weekend Pass',
-          quantity: 2,
-          price: 129.99,
-          seatInfo: {
-            section: 'VIP',
-            row: 'A',
-            number: 12,
-            type: 'Reserved'
-          }
-        },
-        {
-          id: 'item_2',
-          eventId: 'event_002',
-          eventTitle: 'Premier League: Arsenal vs Chelsea',
-          eventDate: new Date('2024-08-20T15:00:00'),
-          venue: 'Emirates Stadium, London',
-          ticketType: 'Standard Admission',
-          quantity: 1,
-          price: 89.50
-        }
-      ],
-      subtotal: 349.48,
-      serviceFee: 34.95,
-      total: 384.43,
-      status: 'confirmed',
-      paymentMethod: 'credit_card',
-      paymentStatus: 'completed',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    // Create mock tickets
-    this.tickets = this.generateMockTickets();
-    
-    this.loading = false;
-    console.log('Mock data loaded:', { order: this.order, tickets: this.tickets });
-  }
-
-  // Generate mock tickets based on order items
-  generateMockTickets(): Ticket[] {
-    const mockTickets: Ticket[] = [];
-    
-    this.order!.items.forEach((item, itemIndex) => {
-      for (let i = 0; i < item.quantity; i++) {
-        const ticketNumber = i + 1;
-        const mockTicket: Ticket = {
-          id: `ticket_${Date.now()}_${itemIndex}_${ticketNumber}`,
-          orderId: this.order!.id,
-          eventId: item.eventId,
-          eventTitle: item.eventTitle,
-          eventDate: item.eventDate,
-          venue: item.venue,
-          type: item.ticketType,
-          price: item.price,
-          quantity: 1,
-          seatInfo: item.seatInfo,
-          status: 'valid' as const,
-          validUntil: new Date(item.eventDate.getTime() + (2 * 60 * 60 * 1000)), // 2 hours after event
-          qrCode: JSON.stringify({
-            ticketId: `ticket_${Date.now()}_${itemIndex}_${ticketNumber}`,
-            orderId: this.order!.id,
-            eventId: item.eventId,
-            timestamp: Date.now()
-          }),
-          createdAt: new Date()
-        };
-        mockTickets.push(mockTicket);
-      }
-    });
-    
-    return mockTickets;
   }
 
   loadOrder(orderId: string): void {
     this.orderService.getOrder(orderId).subscribe({
       next: (order) => {
         this.order = order;
-        this.loadTickets(order.id);
+        //this.loadTickets(order.id);
         this.loading = false;
       },
       error: (error) => {
         console.error('Error loading order:', error);
-        // Fall back to mock data if real order not found
-        console.log('Falling back to mock data...');
-        this.loadMockData();
+        this.loading = false;
       }
     });
   }
 
-  loadTickets(orderId: string): void {
-    this.ticketService.getTicketsByOrder(orderId).subscribe({
-      next: (tickets) => {
-        this.tickets = tickets;
-        // If no tickets returned, generate mock tickets
-        if (tickets.length === 0) {
-          console.log('No tickets found, generating mock tickets...');
-          this.tickets = this.generateMockTickets();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading tickets:', error);
-        // Generate mock tickets on error
-        this.tickets = this.generateMockTickets();
-      }
-    });
+  
 
-    
-    this.cartService.clearCart();
-  }
-
-  // Test method to add more mock tickets
-  addMockTicket(): void {
-    const newTicket: Ticket = {
-      id: `ticket_mock_${Date.now()}`,
-      orderId: this.order?.id || 'mock_order',
-      eventId: 'event_003',
-      eventTitle: 'Mock Concert Event',
-      eventDate: new Date('2024-09-15T20:00:00'),
-      venue: 'Royal Albert Hall, London',
-      type: 'Standard',
-      price: 75.00,
-      quantity: 1,
-      status: 'valid',
-      validUntil: new Date('2024-09-15T22:00:00'),
-      qrCode: JSON.stringify({
-        ticketId: `ticket_mock_${Date.now()}`,
-        orderId: this.order?.id,
-        eventId: 'event_003',
-        timestamp: Date.now()
-      }),
-      createdAt: new Date()
+  downloadTickets(): void {
+    // Create a downloadable PDF or file of tickets
+    const ticketData = {
+      order: this.order,
+      tickets: this.tickets,
+      downloadDate: new Date().toISOString()
     };
     
-    this.tickets.push(newTicket);
-    console.log('Mock ticket added:', newTicket);
+    // Create a blob and download link
+    const blob = new Blob([JSON.stringify(ticketData, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    // Generate filename with order reference
+    const fileName = `tickets_${this.order?.orderNumber || 'order'}.json`;
+    
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    console.log(`Downloading ${this.tickets.length} tickets for order ${this.order?.orderNumber}`);
   }
 
-  // Test method to clear and regenerate mock data
-  refreshMockData(): void {
-    this.loading = true;
-    setTimeout(() => {
-      this.loadMockData();
-      console.log('Mock data refreshed');
-    }, 500);
+  addToWallet(ticket: Ticket): void {
+    // For iOS Wallet (PassKit)
+    if ('AddPass' in window) {
+      // This would typically be a .pkpass file from your backend
+      console.log('Adding to Apple Wallet:', ticket.id);
+      
+      // In a real implementation, you would:
+      // 1. Generate or fetch a .pkpass file from your backend
+      // 2. Trigger the AddPass API
+      
+      // Example: window.AddPass.addPass(passUrl);
+      
+      alert('Wallet functionality would be implemented with actual .pkpass files from backend');
+    } 
+    // For Google Wallet
+    else if ('saveToGooglePay' in window) {
+      console.log('Adding to Google Wallet:', ticket.id);
+      // Google Wallet implementation
+      alert('Google Wallet integration would be implemented here');
+    }
+    // Fallback for browsers without wallet support
+    else {
+      console.log('Wallet not supported in this browser:', ticket.id);
+      alert('Wallet functionality is not supported in your current browser');
+    }
   }
 
   generateQRData(ticket: Ticket): string {
@@ -223,7 +124,7 @@ export class ConfirmationComponent implements OnInit {
       return ticket.qrCode;
     }
     
-    // Generate new QR data
+    // Generate QR data
     const qrData = {
       ticketId: ticket.id,
       orderId: ticket.orderId,
@@ -266,19 +167,7 @@ export class ConfirmationComponent implements OnInit {
     }).format(new Date(date));
   }
 
-  downloadTickets(): void {
-    console.log('Downloading tickets...', this.tickets);
-    //alert(`Downloading ${this.tickets.length} tickets as PDF`);
-    // Implement actual download logic here
-  }
-
-  addToWallet(ticket: Ticket): void {
-    console.log('Adding to wallet:', ticket);
-    //alert(`Ticket ${ticket.id} added to wallet (mock functionality)`);
-  }
-
   printTickets(): void {
-    console.log('Printing tickets...');
     window.print();
   }
 

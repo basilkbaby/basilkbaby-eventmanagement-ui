@@ -50,7 +50,6 @@
         <button 
           type="submit" 
           class="find-tickets-btn"
-          [disabled]="lookupForm.invalid || loading"
         >
           <span *ngIf="!loading">
             {{ autoNavigate ? 'Find & View Tickets' : 'Find Tickets' }}
@@ -99,11 +98,11 @@
       <div class="order-info">
         <div class="info-item">
           <span class="label">Order Reference:</span>
-          <span class="value">{{ order.reference }}</span>
+          <span class="value">{{ order.orderNumber }}</span>
         </div>
         <div class="info-item">
           <span class="label">Customer:</span>
-          <span class="value">{{ order.customer.firstName }} {{ order.customer.lastName }}</span>
+          <span class="value">{{ order.customerName }}</span>
         </div>
       </div>
 
@@ -143,15 +142,5 @@
     </div>
   </div>
 
-  <!-- Loading Overlay for auto-navigation -->
-  <div class="loading-overlay" *ngIf="loading && autoNavigate">
-    <div class="loading-content">
-      <div class="spinner-large"></div>
-      <h3>Order Found!</h3>
-      <p>Redirecting to your tickets...</p>
-      <button class="cancel-btn" (click)="loading = false; autoNavigate = false;">
-        Stay on this page
-      </button>
-    </div>
-  </div>
+
 </div>

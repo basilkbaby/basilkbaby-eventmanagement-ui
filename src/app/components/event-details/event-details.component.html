@@ -29,34 +29,9 @@
           <p class="event-description">{{ event.description }}</p>
           
           <!-- Concert Features -->
-          <div class="concert-features">
-            <h3>Concert Features</h3>
-            <div class="features-grid">
-              <div class="feature-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 19l-5.157 2.7a1 1 0 01-1.316-1.316L5 15M9 19a9 9 0 119-9" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Live Orchestra</span>
-              </div>
-              <div class="feature-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Special Effects</span>
-              </div>
-              <div class="feature-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" 
-                        stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>VIP Access</span>
-              </div>
-              <div class="feature-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Meet & Greet</span>
-              </div>
+          <div class="concert-features" >
+             <div class="tags">
+              <span class="tag tag-purple" *ngFor="let tag of event.settings.tagList">{{ tag }}</span>
             </div>
           </div>
         </section>
@@ -66,6 +41,7 @@
       <div class="event-basic-info">
         <!-- <div class="category-badge">{{ event.type }}</div> -->
         <h1 class="event-title">{{ event.title }}</h1>
+        <p>{{ event.shortDescription }}</p>
         <p class="event-artist">{{ event.organizerName }}</p>
         
         <div class="event-meta">
@@ -76,8 +52,9 @@
             </svg>
             <div>
               <div class="meta-label">Date & Time</div>
-              <div class="meta-value">{{ formatDate(event.startDate) }}</div>
-              <div class="meta-subvalue">{{ event.startTime }} • {{ getDuration() }}</div>
+              <div class="meta-value">{{ event.startDate | formatDate }}</div>
+              <div class="meta-subvalue">Starting Time {{ event.startTime | formatTime }} • {{ event.startTime | duration:event.endTime }}</div>
+              <div class="meta-subvalue">Gate Open {{ event.gateOpenTime | formatTime}} </div>
             </div>
           </div>
           
@@ -87,15 +64,15 @@
                     stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <div>
+            <div *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
               <div class="meta-label">Venue</div>
-              <div class="meta-value">{{ event.venue.name }}</div>
-              <div class="meta-subvalue">{{ event.venue.address }}, {{ event.venue.city }}</div>
-              <!-- <div class="meta-subvalue">{{ event.venue.country }}</div> -->
+              <div class="meta-value">{{ venue.name }}</div>
+              <div class="meta-subvalue">{{ venue.city }} {{ venue.postalCode }}</div>
+              <div class="meta-subvalue"></div> 
             </div>
           </div>
           
-          <div class="meta-item">
+          <!-- <div class="meta-item">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" 
                     stroke="currentColor" stroke-width="2"/>
@@ -104,29 +81,25 @@
               <div class="meta-label">Age Restriction</div>
               <div class="meta-value">{{ event.ageRestriction || 'All ages' }}</div>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <!-- Ticket Summary -->
         <div class="ticket-summary">
           <div class="summary-item">
             <span class="summary-label">Starting From</span>
-            <span class="summary-value">{{ formatPrice(getLowestTicketPrice()) }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Available Tickets</span>
-            <span class="summary-value">{{ getAvailableTickets() }}</span>
+            <span class="summary-value">{{ event.startingFromPrice }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Status</span>
-            <span class="summary-value status" [class.available]="!isEventSoldOut()" [class.sold-out]="isEventSoldOut()">
-              {{ isEventSoldOut() ? 'Sold Out' : 'Tickets Available' }}
+            <span class="summary-value status" [class.available]="!event.isPast" [class.sold-out]="event.isPast">
+              {{ event.isPast ? 'Sold Out' : 'Tickets Available' }}
             </span>
           </div>
         </div>
 
         <!-- Main Action -->
-        <div class="main-action" *ngIf="!isEventSoldOut()">
+        <div class="main-action" *ngIf="!event.isPast">
           <button class="select-seats-btn" (click)="navigateToSeatSelection()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" stroke="currentColor" stroke-width="2"/>
@@ -137,7 +110,7 @@
         </div>
 
         <!-- Sold Out Message -->
-        <div class="sold-out-message" *ngIf="isEventSoldOut()">
+        <div class="sold-out-message" *ngIf="event.isPast">
           <div class="sold-out-content">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
@@ -160,9 +133,9 @@
           <p>This event is made possible by our partners</p>
         </div>
         <div class="sponsors-logos">
-          <div class="sponsor-logo" *ngFor="let sponsor of event.sponsors">
-            <img [src]="sponsor.logo" [alt]="sponsor.name" [title]="sponsor.name" />
-            <div class="sponsor-tier">{{ sponsor.sponsorLevel }}</div>
+          <div class="sponsor-logo" *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
+            <img [src]="sponsor.logoUrl" [alt]="sponsor.name" [title]="sponsor.name" />
+            <!-- <div class="sponsor-tier">{{ sponsor.sponsorLevel }}</div> -->
           </div>
         </div>
       </div>
@@ -180,7 +153,7 @@
           <div class="details-grid">
             <div class="detail-item">
               <span class="detail-label">Date</span>
-              <span class="detail-value">{{ formatDate(event.startDate) }}</span>
+              <span class="detail-value">{{ event.startDate | formatDate }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Time</span>
@@ -188,25 +161,25 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">Duration</span>
-              <span class="detail-value">{{ getDuration() }}</span>
+              <!-- <span class="detail-value">{{ getDuration() }}</span> -->
             </div>
-            <div class="detail-item">
+            <!-- <div class="detail-item">
               <span class="detail-label">Venue</span>
               <span class="detail-value">{{ event.venue.name }}</span>
-            </div>
-            <div class="detail-item">
+            </div> -->
+            <!-- <div class="detail-item">
               <span class="detail-label">Organizer</span>
               <span class="detail-value">{{ event.organizerName }}</span>
-            </div>
-            <div class="detail-item" *ngIf="event.dressCode">
+            </div> -->
+            <!-- <div class="detail-item" *ngIf="event.dressCode">
               <span class="detail-label">Dress Code</span>
               <span class="detail-value">{{ event.dressCode }}</span>
-            </div>
+            </div> -->
           </div>
         </section>
 
         <!-- Social Links -->
-        <section class="social-section">
+        <!-- <section class="social-section">
           <h3>Connect With Us</h3>
           <div class="social-links">
             <a *ngIf="event.socialMedia?.facebook" [href]="event.socialMedia?.facebook" target="_blank" class="social-link">
@@ -228,7 +201,7 @@
               Twitter
             </a>
           </div>
-        </section>
+        </section> -->
       </div>
 
       <!-- Right Column: Concert Preview & Next Steps (75%) -->
@@ -241,17 +214,49 @@
           </div>
           
           <div class="sponsors-showcase">
-            <div class="sponsor-card" *ngFor="let sponsor of event.sponsors">
+            <div class="sponsor-card" *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
               <div class="sponsor-card-header">
                 <div class="sponsor-card-logo">
-                  <img [src]="sponsor.logo" [alt]="sponsor.name" />
+                  <img [src]="sponsor.logoUrl" [alt]="sponsor.name" />
                 </div>
-                <div class="sponsor-card-tier">{{ sponsor.sponsorLevel }}</div>
+                <!-- <div class="sponsor-card-tier">{{ sponsor.sponsorLevel }}</div> -->
               </div>
               <div class="sponsor-card-body">
                 <h3>{{ sponsor.name }}</h3>
                 <p>{{ sponsor.description }}</p>
                 <a [href]="sponsor.website" target="_blank" class="sponsor-website">
+                  Visit Website
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" 
+                          stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!--- organizers-->
+        <section class="featured-sponsors" *ngIf="event.sponsors && event.sponsors.length > 0">
+          <div class="section-header">
+            <h2>Organizer</h2>
+            <p class="section-subtitle">This event is organized and managed by our dedicated team</p>
+          </div>
+          
+          <div class="sponsors-showcase">
+            <div class="sponsor-card" *ngFor="let organizer of event.sponsors | organizationFilter:OrganizationType.Organizer">
+              <div class="sponsor-card-header">
+                <div class="sponsor-card-logo">
+                  <img [src]="organizer.logoUrl" [alt]="organizer.name" />
+                </div>
+                <!-- <div class="sponsor-card-tier">{{ sponsor.sponsorLevel }}</div> -->
+              </div>
+              <div class="sponsor-card-body">
+                <h3>{{ organizer.name }}</h3>
+                <p>{{ organizer.address }} {{ organizer.city }}</p>
+                <p>{{ organizer.contactPhone }}</p>
+                <p> {{ organizer.contactEmail }}</p>
+                <a [href]="organizer.website" target="_blank" class="sponsor-website">
                   Visit Website
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" 
@@ -301,13 +306,13 @@
           </div>
           
           <div class="next-step-action">
-            <button class="next-step-btn" (click)="navigateToSeatSelection()" *ngIf="!isEventSoldOut()">
+            <button class="next-step-btn" (click)="navigateToSeatSelection()" *ngIf="!event.isPast">
               Start with Seat Selection
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
-            <div class="sold-out-alert" *ngIf="isEventSoldOut()">
+            <div class="sold-out-alert" *ngIf="event.isPast">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
                       stroke="currentColor" stroke-width="2"/>
@@ -321,54 +326,38 @@
         </section>
 
         <!-- Venue Preview -->
-        <section class="venue-preview-section">
+        <section class="venue-preview-section" *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
           <div class="section-header">
             <h2>About the Venue</h2>
-            <button class="view-map-btn" (click)="navigateToSeatSelectionWithSection('vip')" *ngIf="!isEventSoldOut()">
-              View Interactive Map
-            </button>
+            <a class="view-map-btn" [href]="venue.mapUrl" target="_blank" *ngIf="!event.isPast">
+              View In Map
+            </a>
           </div>
           
           <div class="venue-overview">
             <div class="venue-image">
-              <img [src]="event.venue.image" alt="Venue Overview" />
-              <div class="venue-caption">{{ event.venue.name }}</div>
+              <img [src]="venue.logoUrl" alt="Venue Overview" />
+              <div class="venue-caption">{{ venue.name }}</div>
             </div>
             
             <div class="venue-details">
-              <h3>{{ event.venue.name }}</h3>
+              <h3>{{ venue.name }}</h3>
               <div class="venue-info">
                 <div class="info-item">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
                           stroke="currentColor" stroke-width="2"/>
                   </svg>
-                  <span>{{ event.venue.address }}, {{ event.venue.city }}</span>
-                </div>
-                <div class="info-item">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" 
-                          stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <span>Capacity: {{ event.venue.capacity | number }}</span>
-                </div>
-                <div class="info-item">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" 
-                          stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <span>World-class concert venue</span>
+                  <span>{{ venue.address }}, {{venue.postalCode}}, {{ venue.city }}</span>
                 </div>
               </div>
               
               <div class="venue-amenities">
-                <h4>Venue Amenities</h4>
+                <h4>Venue Address</h4>
                 <ul>
-                  <li>Premium sound system</li>
-                  <li>Accessible seating</li>
-                  <li>Food & beverage outlets</li>
-                  <li>Merchandise stands</li>
-                  <li>Coat check service</li>
+                  <li>Contact : {{ venue.contactPhone }}</li>
+                  <li>Email : {{ venue.contactEmail }}</li>
+                  <li>{{venue.description}}</li>
                 </ul>
               </div>
             </div>
@@ -409,7 +398,7 @@
     </div>
 
     <!-- Fixed Bottom CTA -->
-    <div class="bottom-cta" *ngIf="!isEventSoldOut()">
+    <div class="bottom-cta" *ngIf="!event.isPast">
       <div class="cta-content">
         <div class="cta-info">
           <h4>Ready for the Experience?</h4>

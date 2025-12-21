@@ -5,27 +5,35 @@ import { CartService } from '../../core/services/cart.service';
 import { Subscription } from 'rxjs';
 import { Event, TicketTier } from '../../core/models/event.model';
 import { MOCK_EVENTS } from '../../core/mock/mock-events.data';
+import { EventService } from '../../core/services/event.service';
+import { EventDetailDto } from '../../core/models/DTOs/event.DTO.model';
+import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
+import { OrganizationType } from '../../core/models/Enums/event.enums';
+import { OrganizationFilterPipe } from '../../core/pipes/custom/organization-filter.pipe';
+import { FormatTimePipe } from '../../core/pipes/common/time-format.pipe';
+import { DurationPipe } from '../../core/pipes/common/duration.pipe';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormatDatePipe, OrganizationFilterPipe, FormatTimePipe, DurationPipe],
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.scss']
 })
 export class EventDetailsComponent implements OnInit {
-  event: Event | null = null;
+  event: EventDetailDto | null = null;
   loading: boolean = true;
   cartItemCount: number = 0;
-  
+  OrganizationType = OrganizationType;
   // Add these properties
-selectedSection: string = '';
-  private cartSubscription: Subscription | undefined;
+  selectedSection: string = '';
+  private cartStateSubscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    private eventService : EventService
   ) {}
 
   ngOnInit(): void {
@@ -34,28 +42,39 @@ selectedSection: string = '';
       this.loadEventDetails(eventId);
     });
 
-    this.cartSubscription = this.cartService.cart$.subscribe(() => {
-      this.cartItemCount = this.cartService.getItemCount();
+    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
+      next: (state) => {
+        // Calculate count from cart items
+        this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
+      }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.cartSubscription) {
-      this.cartSubscription.unsubscribe();
+    if (this.cartStateSubscription) {
+      this.cartStateSubscription.unsubscribe();
     }
   }
 
   loadEventDetails(eventId: string): void {
-    setTimeout(() => {
-      this.event = MOCK_EVENTS.find(e => e.id === eventId) || null;
-      this.loading = false;
-    }, 500);
+    this.loading = true;
+      // Use getEventDetails to get full event with all related data
+      this.eventService.getEventDetails(eventId).subscribe({
+        next: (event) => {
+          this.event = event;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error loading event:', error);
+          this.loading = false;
+        }
+      });
   }
 
   navigateToSeatSelection(): void {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
       .test(navigator.userAgent);
-    if (this.event && !this.isEventSoldOut()) {
+    if (this.event && !this.event.isPast) {
       if(isMobile)
         this.router.navigate(['/events', this.event.id, 'mobileseatmap']);
         else
@@ -63,23 +82,6 @@ selectedSection: string = '';
     }
   }
 
-  navigateToSeatSelectionWithTier(tierId: string): void {
-  if (this.event && !this.isEventSoldOut()) {
-    // You can pass tier ID as query parameter or store in service
-    this.router.navigate(['/events', this.event.id, 'seatmap'], { //seatstheatre
-      queryParams: { tier: tierId }
-    });
-  }
-}
-
-// For specific section navigation
-navigateToSeatSelectionWithSection(section: string): void {
-  if (this.event && !this.isEventSoldOut()) {
-    this.router.navigate(['/events', this.event.id, 'seatmap'], { //seatstheatre
-      queryParams: { section: section }
-    });
-  }
-}
 
   formatDate(date: Date): string {
     return new Intl.DateTimeFormat('en-UK', {
@@ -118,22 +120,7 @@ navigateToSeatSelectionWithSection(section: string): void {
     return `${minutes} minutes`;
   }
 
-  isEventSoldOut(): boolean {
-    if (!this.event) return true;
-    return this.event.ticketTiers.every(tier => tier.available <= 0);
-  }
 
-  getAvailableTickets(): number {
-    if (!this.event) return 0;
-    return this.event.ticketTiers.reduce((total, tier) => total + tier.available, 0);
-  }
-
-
-// Add these methods
-getLowestTicketPrice(): number {
-  if (!this.event || this.event.ticketTiers.length === 0) return 0;
-  return Math.min(...this.event.ticketTiers.map(tier => tier.price));
-}
 
 selectSection(section: string): void {
   this.selectedSection = this.selectedSection === section ? '' : section;
@@ -150,12 +137,6 @@ getSectionAvailability(section: string): number {
   return availabilityMap[section] || 0;
 }
 
-selectTicketAndNavigate(tier: TicketTier): void {
-  if (tier.available > 0 && !this.isEventSoldOut()) {
-    // You could store the selected tier in a service for the seat selection page
-    this.navigateToSeatSelection();
-  }
-}
 
 scrollToSection(sectionId: string): void {
   const element = document.getElementById(sectionId);

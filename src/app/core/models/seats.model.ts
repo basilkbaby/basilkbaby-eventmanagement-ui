@@ -28,12 +28,14 @@ export interface VenueSection {
   rows: number;
   seatsPerRow: number;
   sectionLabel?: string;
+  seatSectionType?: SeatSectionType;
   rowOffset?: number;
   
   rowConfigs: SectionRowConfig[];
 }
 
 export interface SectionRowConfig {
+  id: string;
   fromRow: number;
   toRow: number;
   type: TicketType;
@@ -45,13 +47,20 @@ export interface SectionRowConfig {
 export enum SeatStatus {
   AVAILABLE = 'AVAILABLE',
   SELECTED = 'SELECTED',
-  SOLD = 'SOLD',
+  BOOKED = 'BOOKED',
   UNAVAILABLE = 'UNAVAILABLE',
   PARTIAL_VIEW = 'PARTIAL_VIEW',
   RESERVED = 'RESERVED',
   BLOCKED = 'BLOCKED',
   HOLD = 'HOLD'
 }
+
+  export enum SeatSectionType
+  {
+      SEAT,
+      STANDING,
+      FOH
+  }
 
 export type TicketType = 'VIP' | 'DIAMOND' | 'GOLD' | 'SILVER' | 'FOH' | 'STANDING';
 
@@ -62,7 +71,9 @@ export interface Seat {
   r: number;
   rowLabel: string;
   seatNumber: number;
-  section: string;
+  sectionName: string;
+  sectionId: string;
+  sectionConfigId : string;
   ticketType: TicketType;
   status: SeatStatus;
   price: number;
@@ -70,19 +81,14 @@ export interface Seat {
   features?: string[];
   gridRow?: number;
   gridColumn?: number;
-  metadata?: {
-    overrideReason?: string;
-    bookingId?: string;
-    reservationId?: string;
-    blockedBy?: string;
-  };
+  isStandingArea : boolean;
 }
 
 export interface SelectedSeat {
   id: string;
   row: string;
   number: number;
-  section: string;
+  sectionName: string;
   tier: {
     id: string;
     name: string;
@@ -91,6 +97,7 @@ export interface SelectedSeat {
   };
   price: number;
   features: string[];
+  isStandingArea : boolean;
 }
 
 export interface SeatStatusConfig {
@@ -126,7 +133,7 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
     canSelect: true,
     tooltip: 'Selected - Click to deselect'
   },
-  [SeatStatus.SOLD]: {
+  [SeatStatus.BOOKED]: {
     color: '#888888',
     stroke: '#666',
     strokeWidth: 1,
@@ -213,6 +220,9 @@ export function getSeatColor(seat: Seat): string {
   
   if (seat.status === SeatStatus.AVAILABLE) {
     return seat.color || config.color;
+  }
+  else{
+    return "#ffff"
   }
   
   return config.color;

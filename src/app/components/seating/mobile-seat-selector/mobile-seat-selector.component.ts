@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { VenueData, VenueSection, SectionRowConfig, SeatStatus, TicketType, Seat, SelectedSeat } from '../../../core/models/seats.model';
+import { VenueData, VenueSection, SectionRowConfig, SeatStatus, TicketType, Seat, SelectedSeat, SeatSectionType } from '../../../core/models/seats.model';
 import { CartService } from '../../../core/services/cart.service';
 
 interface RowData {
@@ -23,7 +23,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   section!: VenueSection;
   venueData: VenueData;
   selectedSeats: SelectedSeat[] = [];
-  
+  SeatSectionType = SeatSectionType;
   rows: RowData[] = [];
   
   readonly SeatStatus = SeatStatus;
@@ -31,7 +31,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   // Selection state
   maxSeats = 8;
   selectionError: string | null = null;
-  
+  eventId : string = "";
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -44,6 +44,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     // Get section ID from route
     this.route.params.subscribe(params => {
       const sectionId = params['sectionId'];
+      this.eventId = params['eventid']
       this.loadSectionData(sectionId);
       this.generateSeats();
     });
@@ -67,6 +68,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'Silver Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 19, 
             type: 'SILVER', 
@@ -86,6 +88,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'Gold Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 18, 
             type: 'GOLD', 
@@ -104,6 +107,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'VIP Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 2, 
             type: 'VIP', 
@@ -111,6 +115,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             color: '#8a6b8c'
           },
           { 
+          id : crypto.randomUUID(),
             fromRow: 3, 
             toRow: 14, 
             type: 'DIAMOND', 
@@ -129,6 +134,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'VIP Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 2, 
             type: 'VIP', 
@@ -136,6 +142,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
             color: '#8a6b8c'
           },
           { 
+          id : crypto.randomUUID(),
             fromRow: 3, 
             toRow: 14, 
             type: 'DIAMOND', 
@@ -155,6 +162,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'Gold Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 18, 
             type: 'GOLD', 
@@ -173,6 +181,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         sectionLabel: 'Silver Section',
         rowConfigs: [
           { 
+          id : crypto.randomUUID(),
             fromRow: 0, 
             toRow: 19, 
             type: 'SILVER', 
@@ -197,12 +206,12 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       ],
       
       soldSeats: [
-        { seatId: 'VIP-A-5', status: SeatStatus.SOLD, bookingId: 'BK001' },
-        { seatId: 'VIP-A-6', status: SeatStatus.SOLD, bookingId: 'BK002' },
-        { seatId: 'DIAMOND-D-8', status: SeatStatus.SOLD, bookingId: 'BK003' },
-        { seatId: 'DIAMOND-D-9', status: SeatStatus.SOLD, bookingId: 'BK004' },
-        { seatId: 'GOLD-B-4', status: SeatStatus.SOLD, bookingId: 'BK005' },
-        { seatId: 'SILVER-C-2', status: SeatStatus.SOLD, bookingId: 'BK006' }
+        { seatId: 'VIP-A-5', status: SeatStatus.BOOKED, bookingId: 'BK001' },
+        { seatId: 'VIP-A-6', status: SeatStatus.BOOKED, bookingId: 'BK002' },
+        { seatId: 'DIAMOND-D-8', status: SeatStatus.BOOKED, bookingId: 'BK003' },
+        { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
+        { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
+        { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
       ]
     }
     };
@@ -236,6 +245,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       sectionLabel: sectionName,
       rowConfigs: [
         { 
+          id : crypto.randomUUID(),
           fromRow: 0, 
           toRow: 2, 
           type: 'VIP', 
@@ -243,6 +253,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
           color: '#8a6b8c'
         },
         { 
+          id : crypto.randomUUID(),
           fromRow: 3, 
           toRow: 14, 
           type: 'DIAMOND', 
@@ -281,7 +292,9 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
           r: 15,
           rowLabel: rowLetter,
           seatNumber: c,
-          section: this.section.sectionLabel || this.section.name,
+          sectionId : this.section.id,
+          sectionName: this.section.sectionLabel || this.section.name,
+          sectionConfigId : rowConfig.id,
           ticketType: rowConfig.type,
           status: status,
           price: rowConfig.customPrice || 0,
@@ -289,7 +302,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
           features: this.generateSeatFeatures(rowConfig.type, r, c),
           gridRow: globalRow,
           gridColumn: c,
-          metadata: {}
+          isStandingArea : false
         };
         
         rowData.seats.push(seat);
@@ -309,6 +322,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     
     if (!config) {
       return {
+        id : crypto.randomUUID(),
         fromRow: 0,
         toRow: this.section.rows - 1,
         type: 'SILVER' as TicketType,
@@ -330,7 +344,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     const isReserved = this.venueData.seatManagement.reservedSeats.some(s => s.seatId === seatId);
     const isBlocked = this.venueData.seatManagement.blockedSeats.some(s => s.seatId === seatId);
     
-    if (isSold) return SeatStatus.SOLD;
+    if (isSold) return SeatStatus.BOOKED;
     if (isReserved) return SeatStatus.RESERVED;
     if (isBlocked) return SeatStatus.BLOCKED;
     
@@ -380,7 +394,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       id: seat.id,
       row: seat.rowLabel,
       number: seat.seatNumber,
-      section: seat.section,
+      sectionName: seat.sectionName,
       tier: {
         id: this.getTicketTierId(seat.ticketType),
         name: seat.ticketType,
@@ -388,7 +402,8 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
         color: seat.color
       },
       price: seat.price,
-      features: seat.features || []
+      features: seat.features || [],
+      isStandingArea : false
     };
     
     this.selectedSeats.push(selectedSeat);
@@ -470,7 +485,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   
   getSeatColor(seat: Seat): string {
     if (seat.status === SeatStatus.SELECTED) return '#4CAF50';
-    if (seat.status === SeatStatus.SOLD) return '#999999';
+    if (seat.status === SeatStatus.BOOKED) return '#999999';
     if (seat.status === SeatStatus.RESERVED) return '#FF9800';
     if (seat.status === SeatStatus.BLOCKED) return '#f44336';
     return seat.color;
@@ -479,7 +494,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   getSeatStatusText(seat: Seat): string {
     switch (seat.status) {
       case SeatStatus.SELECTED: return 'Selected';
-      case SeatStatus.SOLD: return 'Sold';
+      case SeatStatus.BOOKED: return 'Sold';
       case SeatStatus.RESERVED: return 'Reserved';
       case SeatStatus.BLOCKED: return 'Blocked';
       case SeatStatus.AVAILABLE: return 'Available';
@@ -524,17 +539,20 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     if (this.selectedSeats.length === 0) return;
     
     this.selectedSeats.forEach(seat => {
-      this.cartService.addSeat({
-        id: seat.id,
-        section: seat.section,
-        row: seat.row,
-        number: seat.number,
-        price: seat.price,
-        type: this.mapTicketTypeToCartType(seat.tier.name as TicketType),
-        status: 'selected',
-        x: 0,
-        y: 0
-      });
+      this.cartService.addSeatsToCart(this.eventId, [seat.id]);
+        
+        
+      //   {
+      //   id: seat.id,
+      //   section: seat.section,
+      //   row: seat.row,
+      //   number: seat.number,
+      //   price: seat.price,
+      //   type: this.mapTicketTypeToCartType(seat.tier.name as TicketType),
+      //   status: 'selected',
+      //   x: 0,
+      //   y: 0
+      // });
     });
     
     this.router.navigate(['/cart']);
@@ -553,4 +571,17 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     
     return typeMap[ticketType] || 'standard';
   }
+
+hasSectionTypes(): boolean {
+  if (!this.venueData?.sections) return false;
+  
+  const sectionTypes = new Set<SeatSectionType>();
+  this.venueData.sections.forEach(section => {
+    if (section.seatSectionType !== undefined) {
+      sectionTypes.add(section.seatSectionType);
+    }
+  });
+  
+  return sectionTypes.size > 1 || sectionTypes.has(SeatSectionType.FOH) || sectionTypes.has(SeatSectionType.STANDING);
+}
 }

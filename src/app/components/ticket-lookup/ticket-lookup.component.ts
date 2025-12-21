@@ -67,35 +67,29 @@ export class TicketLookupComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.lookupForm.valid) {
-      this.loading = true;
-      this.errorMessage = '';
-      this.order = null;
-      this.tickets = [];
+  if (this.lookupForm.valid) {
+    this.loading = true;
+    this.errorMessage = '';
+    this.order = null;
+    this.tickets = [];
 
-      const { orderRef, lastName, email } = this.lookupForm.value;
+    const { orderRef, lastName, email } = this.lookupForm.value;
 
-      this.orderService.lookupOrder(orderRef, lastName, email).subscribe({
-        next: (order) => {
-          this.order = order;
-          this.loadTickets(order.id);
-          
-          // Auto-navigate to confirmation page if enabled
-          if (this.autoNavigate) {
-            this.navigateToConfirmation(order.id);
-          } else {
-            this.loading = false;
-          }
-        },
-        error: (error) => {
-          this.errorMessage = error.message || 'Order not found. Please check your details and try again.';
-          this.loading = false;
-        }
-      });
-    } else {
-      this.lookupForm.markAllAsTouched();
-    }
+    this.orderService.lookupOrder(orderRef, lastName, email).subscribe({
+      next: (order) => {
+        // Redirect to confirmation page with order ID
+        this.router.navigate(['/confirmation', order.orderId]);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Order not found. Please check your details and try again.';
+        this.loading = false;
+      }
+    });
+  } else {
+    this.lookupForm.markAllAsTouched();
   }
+}
 
   loadTickets(orderId: string): void {
     this.ticketService.getTicketsByOrder(orderId).subscribe({
@@ -130,7 +124,7 @@ export class TicketLookupComponent implements OnInit {
   // Manual navigation to confirmation
   viewOrderConfirmation(): void {
     if (this.order) {
-      this.navigateToConfirmation(this.order.id);
+      this.navigateToConfirmation(this.order.orderId);
     }
   }
 

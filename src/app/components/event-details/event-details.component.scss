@@ -1782,3 +1782,30 @@
     display: none;
   }
 }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: #e9ecef;
+  border-radius: 50px; /* More rounded for chip look */
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: #dee2e6;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}

@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
-import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatSectionType, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
 import { SeatService } from '../../../core/services/seat.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class SVGSeatmapComponent implements OnInit, AfterViewInit {
   // Make SeatStatus available in template
   readonly SeatStatus = SeatStatus;
   MAX_VALUE = Number.MAX_VALUE;
+  isStandingArea?: boolean; // Add this optional property
 
   
   // Canvas dimensions (base values)
@@ -70,7 +71,7 @@ export class SVGSeatmapComponent implements OnInit, AfterViewInit {
   
   // Selected seats
   selectedSeats: SelectedSeat[] = [];
-  
+  SeatSectionType = SeatSectionType;
   // Track middle section bounds for FOH
   middleMinX = Number.MAX_VALUE;
   middleMaxX = 0;
@@ -83,21 +84,27 @@ export class SVGSeatmapComponent implements OnInit, AfterViewInit {
     time: '19:30',
     venue: 'Manchester venue'
   };
-  
+  eventId : string = "";
   // Seat status configuration
   readonly seatStatusConfig = SEAT_STATUS_CONFIG;
   
   // Single source of truth: venue configuration
-public readonly venueData: VenueData;
+  venueData!: VenueData;
 
-  constructor(private cartService: CartService, seatservice : SeatService) {
-    this.venueData = seatservice.getSeatMapConfig();
+  constructor(private cartService: CartService, private seatservice : SeatService,
+      private route: ActivatedRoute, private router: Router) {
+    // this.venueData = seatservice.getSeatMapConfig();
   }
   
   // ========== LIFECYCLE HOOKS ==========
   
   ngOnInit() {
-    this.generateSeats();
+
+     this.route.params.subscribe(params => {
+      this.eventId = params['id'];
+      this.getSeatMap(this.eventId);
+    });
+
   }
   
   ngAfterViewInit() {
@@ -108,70 +115,128 @@ public readonly venueData: VenueData;
     this.cleanup();
   }
   
- 
+  getSeatMap(eventId : string){
+    this.seatservice.getSeatMap(eventId).subscribe({
+        next: (seatmap) => {
+          this.venueData = seatmap;
+          console.log(seatmap)
+          
+          this.generateSeats();
+        },
+        error: (error) => {
+          console.error('Error loading event:', error);
+        }
+      });
+  }
 
 
   // ========== SEAT MANAGEMENT ==========
   
   generateSeats() {
-    this.seats = [];
-    this.middleMinX = Number.MAX_VALUE;
-    this.middleMaxX = 0;
-    this.middleBottomY = 0;
-    
-    const statusMap = new Map<string, SeatOverride>();
-    const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
-    
-    categories.forEach(category => {
-      this.venueData.seatManagement[category].forEach(seatOverride => {
-        statusMap.set(seatOverride.seatId, seatOverride);
-      });
+  this.seats = [];
+  this.middleMinX = Number.MAX_VALUE;
+  this.middleMaxX = 0;
+  this.middleBottomY = 0;
+  
+  const statusMap = new Map<string, SeatOverride>();
+  const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
+  
+  categories.forEach(category => {
+    this.venueData.seatManagement[category].forEach(seatOverride => {
+      statusMap.set(seatOverride.seatId, seatOverride);
     });
+  });
+  
+  this.venueData.sections.forEach((section) => {
+    // Default to SEAT if seatSectionType is undefined
+    const sectionType = section.seatSectionType || SeatSectionType.SEAT;
     
-    this.venueData.sections.forEach((section) => {
-      const rowOffset = section.rowOffset || 0;
+    // Skip FOH sections for seat generation
+    if (sectionType === SeatSectionType.FOH) {
+      return;
+    }
+    
+    // For STANDING sections, create a single "seat" representing the entire area
+    if (sectionType === SeatSectionType.STANDING) {
+      // Get the first 4 characters of section name (or full name if shorter)
+      const sectionPrefix = section.name.toUpperCase();
+      const seatId = `${sectionPrefix}-ST`;
       
-      for (let r = 0; r < section.rows; r++) {
-        const globalRow = r + rowOffset;
-        const rowLetter = this.getRowLetter(r);
+      const cx = section.x + (section.seatsPerRow * this.seatGap) / 2;
+      const cy = section.y + (section.rows * this.seatGap) / 2;
+      
+      // Use the first row config for pricing
+      const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
+      
+      const seat: Seat = {
+        id: seatId,
+        cx,
+        cy,
+        r: Math.max(section.seatsPerRow, section.rows) * this.seatGap / 4,
+        rowLabel: 'ST',
+        seatNumber: 0,
+        sectionId: section.id,
+        sectionName: section.sectionLabel || section.name,
+        sectionConfigId: rowConfig.id,
+        ticketType: rowConfig.type, 
+        status: SeatStatus.AVAILABLE,
+        price: rowConfig.customPrice || 0,
+        color: rowConfig.color,
+        gridRow: 0,
+        gridColumn: 0,
+        isStandingArea: true
+      };
+      
+      this.seats.push(seat);
+      return;
+    }
+    
+    // Original logic for SEAT sections
+    const rowOffset = section.rowOffset || 0;
+    
+    // Get the first 4 characters of section name (or full name if shorter)
+    const sectionPrefix = section.name.toUpperCase();
+    
+    for (let r = 0; r < section.rows; r++) {
+      const globalRow = r + rowOffset;
+      const rowLetter = this.getRowLetter(r);
+      
+      const rowConfig = this.getRowConfigForSeat(section, r);
+      const seatPrice = rowConfig.customPrice || 0;
+      
+      for (let c = 1; c <= section.seatsPerRow; c++) {
+        // Format: SECTION_PREFIX-ROW_LETTER-SEAT_NUMBER
+        const seatId = `${sectionPrefix}-${rowLetter}-${c}`;
+        const cx = section.x + (c * this.seatGap);
+        const cy = section.y + (globalRow * this.seatGap);
         
-        const rowConfig = this.getRowConfigForSeat(section, r);
-        const seatPrice = rowConfig.customPrice || 0;
+        const seatOverride = statusMap.get(seatId);
+        const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
         
-        for (let c = 1; c <= section.seatsPerRow; c++) {
-          const seatId = `${section.name}-${rowLetter}-${c}`;
-          const cx = section.x + (c * this.seatGap);
-          const cy = section.y + (globalRow * this.seatGap);
-          
-          const seatOverride = statusMap.get(seatId);
-          const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
-          
-          const seat: Seat = {
-            id: seatId,
-            cx,
-            cy,
-            r: this.seatRadius,
-            rowLabel: rowLetter,
-            seatNumber: c,
-            section: section.sectionLabel || section.name,
-            ticketType: rowConfig.type,
-            status: seatStatus,
-            price: seatPrice,
-            color: rowConfig.color,
-            gridRow: globalRow,
-            gridColumn: c,
-            metadata: {
-              overrideReason: seatOverride?.reason,
-              bookingId: seatOverride?.bookingId,
-              reservationId: seatOverride?.reservationId
-            }
-          };
-          
-          this.seats.push(seat);
-        }
+        const seat: Seat = {
+          id: seatId,
+          cx,
+          cy,
+          r: this.seatRadius,
+          rowLabel: rowLetter,
+          seatNumber: c,
+          sectionId: section.id,
+          sectionName: section.sectionLabel || section.name,
+          sectionConfigId : rowConfig.id,
+          ticketType: rowConfig.type, 
+          status: seatStatus,
+          price: seatPrice,
+          color: rowConfig.color,
+          gridRow: globalRow,
+          gridColumn: c,
+          isStandingArea: false
+        };
+        
+        this.seats.push(seat);
       }
-    });
-  }
+    }
+  });
+}
   
   private getRowConfigForSeat(section: VenueSection, rowIndex: number): SectionRowConfig {
     const config = section.rowConfigs.find(rc => 
@@ -180,6 +245,7 @@ public readonly venueData: VenueData;
     
     if (!config) {
       return {
+        id : crypto.randomUUID(),
         fromRow: 0,
         toRow: section.rows - 1,
         type: 'SILVER',
@@ -190,6 +256,17 @@ public readonly venueData: VenueData;
     
     return config;
   }
+
+  private getDefaultRowConfig(): SectionRowConfig {
+  return {
+    id: crypto.randomUUID(),
+    fromRow: 0,
+    toRow: 0,
+    type: 'STANDING',
+    customPrice: 0,
+    color: '#cccccc'
+  };
+}
   
   public getRowLetter(rowIndex: number): string {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -210,26 +287,33 @@ public readonly venueData: VenueData;
     }
   }
   
-  selectSeat(seat: Seat) {
-    seat.status = SeatStatus.SELECTED;
-    
-    const selectedSeat: SelectedSeat = {
+selectSeat(seat: Seat) {
+  seat.status = SeatStatus.SELECTED;
+  
+  // For regular seats, display as: GOLD-A-12
+  // For standing areas, display as: GOLD-ST
+  const displayLabel = seat.isStandingArea 
+    ? `${seat.ticketType} Standing`
+    : `${seat.ticketType}-${seat.rowLabel}-${seat.seatNumber}`;
+  
+  const selectedSeat: SelectedSeat = {
+    id: seat.id, // This now has the new format: GOLD-A-12 or GOLD-ST
+    row: seat.rowLabel,
+    number: seat.seatNumber,
+    sectionName: seat.sectionName,
+    tier: {
       id: seat.id,
-      row: seat.rowLabel,
-      number: seat.seatNumber,
-      section: seat.section,
-      tier: {
-        id: seat.id,
-        name: seat.ticketType,
-        price: seat.price,
-        color: seat.color
-      },
+      name: seat.ticketType,
       price: seat.price,
-      features: seat.features || []
-    };
-    
-    this.selectedSeats.push(selectedSeat);
-  }
+      color: seat.color
+    },
+    price: seat.price,
+    features: seat.features || [],
+    isStandingArea: seat.isStandingArea || false,
+  };
+  
+  this.selectedSeats.push(selectedSeat);
+}
   
   deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
@@ -394,6 +478,7 @@ zoomOut() {
   // ========== SEAT STYLING ==========
   
   getSeatColor(seat: Seat): string {
+
     return getSeatColor(seat);
   }
   
@@ -443,35 +528,49 @@ zoomOut() {
     return this.selectedSeats.reduce((total, seat) => total + seat.price, 0);
   }
   
-  addToCart() {
-    if (this.selectedSeats.length === 0) return;
-    
-    this.selectedSeats.forEach(seat => {
-      const svgSeat = this.seats.find(s => s.id === seat.id);
-      if (svgSeat) {
-        const cartSeat = {
-          id: seat.id,
-          section: seat.section,
-          row: seat.row,
-          number: seat.number,
-          price: seat.price,
-          type: this.mapTicketTypeToCartType(svgSeat.ticketType) as 'standard' | 'vip' | 'accessible'| 'standing' | 'seated',
-          status: 'SELECTED' as 'available' | 'selected' | 'taken' | 'reserved',
-          x: svgSeat.cx,
-          y: svgSeat.cy,
-          rowLabel: svgSeat.rowLabel,
-          seatNumber: svgSeat.seatNumber,
-          ticketType: svgSeat.ticketType,
-          color: svgSeat.color,
-          features: seat.features || []
-        };
-
-        this.cartService.addSeat(cartSeat);
-      }
-    });
-    
-    this.clearSelection();
+addToCart() {
+  if (this.selectedSeats.length === 0) return;
+  
+  // Collect all seat IDs
+  const seatIdsArray: string[] = [];
+  
+  this.selectedSeats.forEach(seat => {
+    const svgSeat = this.seats.find(s => s.id === seat.id);
+    if (svgSeat) {
+      const cartSeat = {
+        id: seat.id, // This now has the correct format: GOLD-A-12, SILV-S-20, etc.
+        sectionName: seat.sectionName,
+        row: seat.row,
+        number: seat.number,
+        price: seat.price,
+        type: this.mapTicketTypeToCartType(svgSeat.ticketType) as 'standard' | 'vip' | 'accessible'| 'standing' | 'seated',
+        status: 'SELECTED' as 'available' | 'selected' | 'taken' | 'reserved',
+        x: svgSeat.cx,
+        y: svgSeat.cy,
+        rowLabel: svgSeat.rowLabel,
+        seatNumber: svgSeat.seatNumber,
+        ticketType: svgSeat.ticketType,
+        color: svgSeat.color,
+        features: seat.features || [],
+        isStandingArea: svgSeat.isStandingArea || false
+      };
+      
+      // Add seat ID to the array
+      seatIdsArray.push(seat.id);
+    }
+  });
+  
+  // Add ALL seats to cart at once
+  if (seatIdsArray.length > 0) {
+    this.cartService.addSeatsToCart(this.eventId, seatIdsArray);
   }
+  
+  // Navigate to cart
+  
+  
+  // Clear selection
+  this.clearSelection();
+}
   
   private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' {
     const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh'> = {
@@ -538,7 +637,7 @@ zoomOut() {
   getDisplayStatuses() {
     const statuses = [
       SeatStatus.SELECTED,
-      SeatStatus.SOLD,
+      SeatStatus.BOOKED,
       SeatStatus.UNAVAILABLE,
       SeatStatus.PARTIAL_VIEW,
       SeatStatus.RESERVED,
@@ -608,4 +707,6 @@ stopDrag() {
     container.style.cursor = 'grab';
   }
 }
+
+
 }

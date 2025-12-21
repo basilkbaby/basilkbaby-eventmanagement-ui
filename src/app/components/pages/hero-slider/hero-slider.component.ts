@@ -1,49 +1,60 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+// hero-slider.component.ts
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Event, EventStatus, EventType } from '../../../core/models/event.model';
-import { EventService } from '../../../core/services/event.service';
+import { EventDto } from '../../../core/models/DTOs/event.DTO.model';
+import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 
 @Component({
   selector: 'app-hero-slider',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormatDatePipe],
   templateUrl: './hero-slider.component.html',
   styleUrls: ['./hero-slider.component.scss']
 })
-export class HeroSliderComponent {
+export class HeroSliderComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() events: EventDto[] = [];
+  @Input() isLoading: boolean = false;
   @Output() scrollToEvents = new EventEmitter<void>();
-
-    events: Event[] = [];
 
   currentSlide = 0;
   private autoSlideInterval: any;
 
-  // Add EventStatus enum to template
-  EventStatus = EventStatus;
- constructor(private eventService: EventService) {}
-
-  ngOnInit() {
-    if (this.events.length > 0) {
-      this.startAutoSlide();
-    }
-        this.loadFeaturedEvents();
-
+  // Filter featured events
+  get featuredEvents(): EventDto[] {
+    if (!this.events) return [];
+    return this.events.filter(event => event.featured);
   }
 
-   loadFeaturedEvents() {
-    // Get featured events from service
-    this.eventService.getEvents().subscribe({
-          next: (events) => {
-            this.events = events;
-            
-          },
-          error: (error) => {
-            console.error('Error loading events:', error);
-          }
-        });
-    if (this.events.length > 0) {
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    if (this.featuredEvents.length > 0) {
       this.startAutoSlide();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // When events input changes, update slider
+    if (changes['events']) {
+      console.log('Hero slider events updated:', this.events?.length);
+      
+      // Reset to first slide if events change
+      if (this.featuredEvents.length > 0) {
+        this.currentSlide = 0;
+        
+        // Restart autoslide if it was running
+        if (this.autoSlideInterval) {
+          this.resetAutoSlide();
+        } else {
+          this.startAutoSlide();
+        }
+      } else {
+        // Stop autoslide if no events
+        this.stopAutoSlide();
+      }
+      
+      this.cdr.markForCheck();
     }
   }
 
@@ -52,69 +63,27 @@ export class HeroSliderComponent {
   }
 
   nextSlide() {
-    this.currentSlide = (this.currentSlide + 1) % this.events.length;
+    if (this.featuredEvents.length === 0) return;
+    
+    this.currentSlide = (this.currentSlide + 1) % this.featuredEvents.length;
     this.resetAutoSlide();
+    this.cdr.markForCheck();
   }
 
   prevSlide() {
-    this.currentSlide = (this.currentSlide - 1 + this.events.length) % this.events.length;
+    if (this.featuredEvents.length === 0) return;
+    
+    this.currentSlide = (this.currentSlide - 1 + this.featuredEvents.length) % this.featuredEvents.length;
     this.resetAutoSlide();
+    this.cdr.markForCheck();
   }
 
   goToSlide(index: number) {
-    this.currentSlide = index;
+    if (this.featuredEvents.length === 0) return;
+    
+    this.currentSlide = Math.min(Math.max(0, index), this.featuredEvents.length - 1);
     this.resetAutoSlide();
-  }
-
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }
-
-  getLocation(event: Event): string {
-    return `${event.venue.name}, ${event.venue.city}`;
-  }
-
-  getEventTypeLabel(type: EventType): string {
-    const typeLabels = {
-      [EventType.CONFERENCE]: 'Conference',
-      [EventType.WORKSHOP]: 'Workshop',
-      [EventType.SEMINAR]: 'Seminar',
-      [EventType.NETWORKING]: 'Networking',
-      [EventType.SOCIAL]: 'Social Event',
-      [EventType.SPORTS]: 'Sports',
-      [EventType.MUSIC]: 'Concert',
-      [EventType.ART]: 'Art Exhibition',
-      [EventType.COMEDY]: 'Comedy Show',
-      [EventType.THEATRE]: 'Theatre',
-      [EventType.FESTIVAL]: 'Festival',
-      [EventType.EXHIBITION]: 'Exhibition',
-      [EventType.OTHER]: 'Event'
-    };
-    return typeLabels[type] || 'Event';
-  }
-
-  getStartingPrice(event: Event): number {
-    if (!event.ticketTiers || event.ticketTiers.length === 0) return 0;
-    return Math.min(...event.ticketTiers.map(tier => tier.price));
-  }
-
-  isSoldOut(event: Event): boolean {
-    if (!event.ticketTiers || event.ticketTiers.length === 0) return false;
-    return event.ticketTiers.reduce((sum, tier) => sum + tier.available, 0) === 0;
-  }
-
-  // New method for completed events
-  getAttendanceInfo(event: Event): string {
-    if (!event.ticketTiers || event.ticketTiers.length === 0) return 'Event Completed';
-    
-    const totalTickets = event.ticketTiers.reduce((sum, tier) => sum + tier.quantity, 0);
-    const soldTickets = event.ticketTiers.reduce((sum, tier) => sum + (tier.quantity - tier.available), 0);
-    
-    return `${soldTickets} attendees`;
+    this.cdr.markForCheck();
   }
 
   onScrollToEvents() {
@@ -122,6 +91,9 @@ export class HeroSliderComponent {
   }
 
   private startAutoSlide() {
+    if (this.featuredEvents.length <= 1) return; // Don't autoslide if only 1 or 0 events
+    
+    this.stopAutoSlide(); // Clear any existing interval
     this.autoSlideInterval = setInterval(() => {
       this.nextSlide();
     }, 5000);
@@ -130,6 +102,7 @@ export class HeroSliderComponent {
   private stopAutoSlide() {
     if (this.autoSlideInterval) {
       clearInterval(this.autoSlideInterval);
+      this.autoSlideInterval = null;
     }
   }
 

@@ -1,16 +1,31 @@
 export interface Order {
-  id: string;
-  reference: string;
-  customer: CustomerInfo;
-  items: OrderItem[];
+  orderId: string;
+  orderNumber: string;
+  customerName : string;
+  customerEmail : string;
+  customerPhone : string;
+  customerPostCode : string;
+  eventId : string;
+  eventName : string;
+  eventDate?: Date;
+  venue : string;
   subtotal: number;
   serviceFee: number;
-  total: number;
+  totalAmount: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'refunded';
   paymentMethod: string;
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
   createdAt: Date;
   updatedAt: Date;
+  seats: OrderSeatDto[];
+}
+
+export interface OrderSeatDto{
+    seatId: string;
+    seatNumber: string;
+    sectionName: string ;
+    price: number;
+    ticketNumber: string;
 }
 
 export interface CustomerInfo {

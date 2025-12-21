@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CartService } from './core/services/cart.service';
 import { HeaderComponent } from './components/common/header/header.component';
 import { EventListComponent } from './components/event-list/event-list.component';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { ConfigService } from './core/services/config.service';
 import { FooterComponent } from './components/common/footer/footer.component';
 
@@ -17,16 +17,21 @@ import { FooterComponent } from './components/common/footer/footer.component';
 })
 export class AppComponent {
   cartItemCount = 0;
+  private cartStateSubscription: Subscription | undefined;
 
   constructor(
     private cartService: CartService,
     private router: Router,
     private configService: ConfigService
   ) {
-    this.cartService.cart$.subscribe(items => {
-      this.cartItemCount = this.cartService.getItemCount();
+ // Subscribe to cart state
+ // Subscribe to cart state changes
+    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
+      next: (state) => {
+        // Calculate count from cart items
+        this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
+      }
     });
-
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {

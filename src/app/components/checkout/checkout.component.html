@@ -22,14 +22,14 @@
       <button class="continue-shopping-btn" (click)="continueShopping()">
         Continue Shopping
       </button>
-      <button class="view-tickets-btn" (click)="viewOrderConfirmation()">
+      <button class="view-tickets-btn" [routerLink]="['/confirmation', orderId]">
         View My Tickets
       </button>
     </div>
   </div>
 
   <!-- Checkout Form -->
-  <div class="checkout-content" *ngIf="!loading && !orderComplete && cartItems.length > 0">
+  <div class="checkout-content" *ngIf="!loading && !orderComplete && cartSummary.seatCount > 0">
     <!-- Header -->
     <div class="checkout-header">
       <button class="back-btn" (click)="goBackToCart()">
@@ -143,9 +143,6 @@
                   <span *ngIf="customerForm.get('phone')?.errors?.['required']">
                     Phone number is required
                   </span>
-                  <span *ngIf="customerForm.get('phone')?.errors?.['pattern']">
-                    Please enter a valid UK phone number (e.g., 07700 900123 or 020 7946 0958)
-                  </span>
                 </div>
               </div>
 
@@ -163,9 +160,6 @@
                 <div class="error-message" *ngIf="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched">
                   <span *ngIf="customerForm.get('postcode')?.errors?.['required']">
                     Postcode is required
-                  </span>
-                  <span *ngIf="customerForm.get('postcode')?.errors?.['pattern']">
-                    Please enter a valid UK postcode (e.g., SW1A 1AA, M1 1AA, EH12 9HQ)
                   </span>
                 </div>
               </div>
@@ -261,32 +255,24 @@
           <h3>Order Summary</h3>
           
           <div class="order-items">
-            <div *ngFor="let event of getGroupedEvents()" class="event-group">
-              <div class="event-header">
-                <h4>{{ event.title }}</h4>
-                <p class="event-details">{{ formatDate(event.date) }} • {{ event.venue }}</p>
+            <!-- Show seats from cart summary -->
+            <div *ngFor="let seat of cartSummary.seats" class="order-item">
+              <div class="item-details">
+                <span class="item-name">
+                  Section : {{ seat.section }}
+                </span>
+                <span class="item-name">
+                  Seat Number : {{ seat.seatId }}
+                </span>
+                <span class="item-quantity">Qty: 1</span>
               </div>
-              
-              <div *ngFor="let item of event.items" class="order-item">
-                <div class="item-details">
-                  <span class="item-name">
-                    <span *ngIf="item.seat">
-                      {{ getSeatInfo(item).section }} - Row {{ getSeatInfo(item).row }}, Seat {{ getSeatInfo(item).seatNumber }}
-                    </span>
-                    <span *ngIf="item.ticketType">
-                      {{ item.ticketType.name }}
-                    </span>
-                  </span>
-                  <span class="item-quantity">Qty: {{ item.quantity }}</span>
-                </div>
-                <span class="item-price">{{ formatPrice(item.price * item.quantity) }}</span>
-              </div>
+              <span class="item-price">{{ formatPrice(seat.price) }}</span>
             </div>
           </div>
 
           <div class="order-totals">
             <div class="total-line">
-              <span>Subtotal</span>
+              <span>Subtotal ({{ cartSummary.seatCount }} {{ cartSummary.seatCount === 1 ? 'seat' : 'seats' }})</span>
               <span>{{ formatPrice(cartSummary.subtotal) }}</span>
             </div>
             <div class="total-line">
@@ -313,13 +299,13 @@
   </div>
 
   <!-- Empty Cart State -->
-  <div class="empty-state" *ngIf="!loading && cartItems.length === 0 && !orderComplete">
+  <div class="empty-state" *ngIf="!loading && cartSummary.seatCount === 0 && !orderComplete">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
       <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z" 
             stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
     <h3>Your cart is empty</h3>
-    <p>Add some tickets to proceed to checkout</p>
+    <p>Add some seats to proceed to checkout</p>
     <button class="browse-events-btn" (click)="continueShopping()">
       Browse Events
     </button>

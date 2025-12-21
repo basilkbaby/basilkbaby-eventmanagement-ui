@@ -9,6 +9,8 @@ import { StatsDashboardComponent } from '../pages/stats-dashboard/stats-dashboar
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { TicketLookupComponent } from '../ticket-lookup/ticket-lookup.component';
 import { SocialMediaFeedComponent } from '../pages/social-media-feed/social-media-feed.component';
+import { EventService } from '../../core/services/event.service';
+import { EventDto } from '../../core/models/DTOs/event.DTO.model';
 
 @Component({
   selector: 'app-main',
@@ -28,4 +30,37 @@ import { SocialMediaFeedComponent } from '../pages/social-media-feed/social-medi
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
-export class MainComponent {}
+export class MainComponent {
+
+events: EventDto[] = [];
+  isLoading = true;
+  error: string | null = null;
+
+  constructor(private eventService : EventService)
+  {
+
+  }
+
+  ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  loadEvents(): void {
+    this.isLoading = true;
+    this.eventService.getEvents().subscribe({
+      next: (events) => {
+        this.events = [...events];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading events:', error);
+        this.error = 'Failed to load events. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onRetryLoad() {
+    this.loadEvents(); // Parent handles the retry
+  }
+}

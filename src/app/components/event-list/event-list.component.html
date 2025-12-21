@@ -5,45 +5,31 @@
     <div class="filters-container">
       <!-- Search -->
       <div class="search-box">
-  <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" 
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-  <input 
-    type="text" 
-    class="search-input" 
-    placeholder="Search events, artists, or venues..."
-    [value]="searchTerm"
-    (input)="onSearchInput($event)"
-    aria-label="Search events"
-  >
-  <button 
-    *ngIf="searchTerm" 
-    class="clear-search" 
-    (click)="searchSubject.next('')"
-    aria-label="Clear search"
-  >
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-    </svg>
-  </button>
-</div>
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" 
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search events, artists, or venues..."
+          [value]="searchTerm"
+          (input)="onSearchInput($event)"
+          aria-label="Search events"
+        >
+        <button 
+          *ngIf="searchTerm" 
+          class="clear-search" 
+          (click)="resetSearch()"
+          aria-label="Clear search"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
 
       <div class="filters-row">
-        <!-- Category Filters -->
-        <div class="category-filters" *ngIf="categories.length > 2">
-          <div class="filter-buttons">
-            <button 
-              *ngFor="let category of categories; trackBy: trackByCategory" 
-              class="filter-btn" 
-              [class.active]="selectedCategory === category"
-              (click)="filterByCategory(category)"
-              [attr.aria-pressed]="selectedCategory === category"
-            >
-              {{ category }}
-            </button>
-          </div>
-        </div>
         <!-- Date Filters -->
         <div class="date-filters">
           <div class="filter-buttons">
@@ -59,7 +45,7 @@
               [class.active]="dateFilter === 'past'"
               (click)="filterByDate('past')"
             >
-              Event Hightlights
+              Event Highlights
             </button>
             <button 
               class="filter-btn" 
@@ -93,7 +79,8 @@
       </svg>
       <h3>Unable to load events</h3>
       <p>{{ error }}</p>
-      <button class="retry-btn" (click)="loadEvents()">
+      <!-- Changed to emit event for parent to handle loading -->
+      <button class="retry-btn" (click)="retryLoadEvents()">
         Try Again
       </button>
     </div>
@@ -102,18 +89,11 @@
   <!-- Events Grid -->
   <section class="events-section" *ngIf="!isLoading && !error">
     <div class="events-container">
-      <h2 class="section-title">
-        {{ selectedCategory === 'All' ? 'All Events' : selectedCategory + ' Events' }}
-        <span class="event-count" aria-live="polite">({{ filteredEvents.length }})</span>
-      </h2>
-
       <div class="events-grid" *ngIf="filteredEvents.length > 0">
         <div 
-          *ngFor="let event of filteredEvents; trackBy: trackByEventId" 
+          *ngFor="let event of filteredEvents;" 
           class="event-card"
           [class.featured]="event.featured"
-          [class.sold-out]="isSoldOut(event)"
-          [class.almost-sold-out]="isAlmostSoldOut(event)"
           [routerLink]="['/events', event.id]"
           tabindex="0"
           role="button"
@@ -128,73 +108,52 @@
             Featured
           </div>
 
-          
-          <div class="completed-badge" *ngIf="isEventCompleted(event)" aria-label="Event completed">
-            Completed
-          </div>
-
-          <!-- Sold Out Badge -->
-          <div class="sold-out-badge" *ngIf="!isEventCompleted(event) && isSoldOut(event)" aria-label="Sold out">
-            Sold Out
-          </div>
-
-          <!-- Almost Sold Out Badge -->
-          <div class="almost-sold-out-badge" *ngIf="isAlmostSoldOut(event) && !isSoldOut(event)" aria-label="Almost sold out">
-            Almost Sold Out
-          </div>
-
           <!-- Event Image -->
           <div class="event-image">
-              <img 
-                [src]="getEventImage(event)" 
-                [alt]="event.title" 
-                loading="lazy"
-                (error)="handleImageError($event)"
-              />
+            <img 
+              [src]="event.bannerImage" 
+              [alt]="event.title" 
+              loading="lazy"
+              (error)="handleImageError($event)"
+            />
             <div class="image-overlay"></div>
           </div>
 
           <!-- Event Content -->
           <div class="event-content">
             <div class="event-header">
-              <div class="event-type">{{ getEventTypeLabel(event.type) }}</div>
               <div class="event-date">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
                 </svg>
-                {{ formatDate(event.startDate) }}
+                <!-- Use pipe instead of method -->
+                {{ event.startDate | formatDate }}
               </div>
             </div>
             
             <h3 class="event-title">{{ event.title }}</h3>
-            <p class="event-description">{{ getEventDescription(event) }}</p>
+            <p class="event-description">{{ event.shortDescription }}</p>
             
             <div class="event-location">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>
-              {{ event.venue.name }}, {{ event.venue.city }}
+              {{ event.venueName }}, {{ event.venueCity }}
             </div>
 
             <div class="event-footer">
               <div class="event-pricing">
-                <div class="price" *ngIf="getStartingPrice(event) > 0">
-                  From {{ formatPrice(getStartingPrice(event)) }}
-                </div>
-                <div class="price free" *ngIf="getStartingPrice(event) === 0 && !isEventCompleted(event)">
-                  Free
-                </div>
-                <div class="ticket-availability" *ngIf="event.settings?.showRemainingTickets && !isSoldOut(event)">
-                  {{ getAvailableTickets(event) }} tickets left
+                <div class="price">
+                  From {{ event.startingFromPrice }}
                 </div>
               </div>
               <button 
                 class="buy-btn" 
                 (click)="$event.stopPropagation()" 
                 [routerLink]="['/events', event.id]"
-                [attr.aria-label]="isSoldOut(event) ? 'Sold out' : 'Get tickets for ' + event.title"
+                [attr.aria-label]="'Get tickets for ' + event.title"
               >
-                  {{ isEventCompleted(event) ? 'Event Details' : isSoldOut(event) ? 'Sold Out' : 'Get Tickets' }}
+                {{ (event.isPast || !event.isActive) ? 'Event Details' : 'Get Tickets' }}
               </button>
             </div>
           </div>

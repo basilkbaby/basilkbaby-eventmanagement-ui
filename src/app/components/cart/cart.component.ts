@@ -1,22 +1,26 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { CartService, CartSummary } from '../../core/services/cart.service';
-import { CartItem } from '../../core/models/event.model';
+import { CartService } from '../../core/services/cart.service';
+import { CartItemDto, CartSummaryDto, CartDetailsResponse } from '../../core/models/DTOs/cart.DTO.model';
 import { Subscription } from 'rxjs';
+import { CurrencyFormatPipe } from '../../core/pipes/currency-format.pipe';
 
 @Component({  
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CurrencyFormatPipe],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
 export class CartComponent implements OnInit, OnDestroy {
-  cartItems: CartItem[] = [];
-  cartSummary: CartSummary = { subtotal: 0, serviceFee: 0, total: 0, itemCount: 0 };
+  cartItems: CartItemDto[] = [];
+  cartSummary: CartSummaryDto = this.getEmptyCartSummary();
   loading: boolean = true;
-  private cartSubscription: Subscription | undefined;
+  errorMessage: string = '';
+  
+  private cartStateSubscription: Subscription | undefined;
+  private cartDetailsSubscription: Subscription | undefined;
 
   constructor(
     private cartService: CartService,
@@ -24,61 +28,90 @@ export class CartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.cartSubscription = this.cartService.cart$.subscribe(items => {
-      this.cartItems = items;
-      this.cartSummary = this.cartService.getCartSummary();
-      this.loading = false;
+    // Subscribe to current cart state
+    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
+      next: (state) => {
+        this.cartItems = state.items;
+        this.cartSummary = state.summary;
+      }
     });
+
+    // Subscribe to cart details API responses
+    this.cartDetailsSubscription = this.cartService.cartDetails$.subscribe({
+      next: (response: CartDetailsResponse) => {
+        this.loading = false;
+        if (!response.success) {
+          this.errorMessage = response.error || 'Failed to load cart details';
+        } else {
+          this.errorMessage = '';
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = 'Error loading cart details';
+        console.error('Cart component error:', error);
+      }
+    });
+
+    // Load initial cart data
+    this.loadCartData();
   }
 
   ngOnDestroy(): void {
-    if (this.cartSubscription) {
-      this.cartSubscription.unsubscribe();
+    if (this.cartStateSubscription) {
+      this.cartStateSubscription.unsubscribe();
+    }
+    if (this.cartDetailsSubscription) {
+      this.cartDetailsSubscription.unsubscribe();
     }
   }
 
-  updateQuantity(item: CartItem, change: number): void {
-    // Only allow quantity updates for ticket types, not seats
-    if (item.ticketType && item.id) {
-      const newQuantity = (item.quantity || 1) + change;
+  loadCartData(): void {
+    this.loading = true;
+    this.cartService.getCartDetails();
+  }
+
+  updateQuantity(seatId: string, change: number): void {
+    const item = this.cartItems.find(item => item.seatId === seatId);
+    if (item) {
+      const newQuantity = item.quantity + change;
       if (newQuantity >= 1 && newQuantity <= 10) {
-        this.cartService.updateQuantity(item.id, newQuantity);
+        this.cartService.updateQuantity(seatId, newQuantity);
+        this.loading = true;
       }
     }
   }
 
-  removeItem(itemId: string): void {
-    this.cartService.removeItem(itemId);
+  removeItem(seatId: string): void {
+    if (confirm('Are you sure you want to remove this seat?')) {
+      this.cartService.removeSeat(seatId);
+      this.loading = true;
+    }
   }
 
   clearCart(): void {
-    if (confirm('Are you sure you want to clear your cart?')) {
+    if (confirm('Are you sure you want to clear your entire cart?')) {
       this.cartService.clearCart();
+      this.loading = true;
     }
   }
 
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-UK', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'GBP',
+      currency: 'USD',
       minimumFractionDigits: 2
     }).format(price);
   }
 
-  formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('en-UK', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }).format(new Date(date));
-  }
-
   proceedToCheckout(): void {
-    if (this.cartItems.length > 0) {
-      this.router.navigate(['/checkout']);
+    const cartId = this.cartService.getCurrentCartId();
+    if (cartId && this.cartItems.length > 0) {
+      this.router.navigate(['/checkout'], { 
+        state: { cartId } 
+      });
+    } else {
+      this.errorMessage = 'Cannot proceed to checkout. Please add items to your cart first.';
     }
   }
 
@@ -86,55 +119,53 @@ export class CartComponent implements OnInit, OnDestroy {
     this.router.navigate(['/events']);
   }
 
-  getGroupedEvents(): any[] {
-    const eventMap = new Map();
+  // Group seats by section for better display
+  getGroupedSeats(): Map<string, CartItemDto[]> {
+    const grouped = new Map<string, CartItemDto[]>();
     
     this.cartItems.forEach(item => {
-      let eventId, eventTitle, eventDate, venue;
-      
-      if (item.seat) {
-        eventId = item.seat.eventId || '1';
-        eventTitle = item.seat.eventTitle || 'Event';
-        eventDate = item.seat.eventDate || new Date();
-        venue = item.seat.venue || 'Venue';
-      } else if (item.ticketType) {
-        eventId = item.ticketType.eventId || '1';
-        eventTitle = item.ticketType.eventTitle || 'Event';
-        eventDate = item.ticketType.eventDate || new Date();
-        venue = item.ticketType.venue || 'Venue';
-      } else {
-        return;
+      const section = item.sectionName || 'General';
+      if (!grouped.has(section)) {
+        grouped.set(section, []);
       }
-      
-      if (!eventMap.has(eventId)) {
-        eventMap.set(eventId, {
-          id: eventId,
-          title: eventTitle,
-          date: eventDate,
-          venue: venue,
-          items: []
-        });
-      }
-      eventMap.get(eventId).items.push(item);
+      grouped.get(section)!.push(item);
     });
     
-    return Array.from(eventMap.values());
+    return grouped;
   }
 
-  getSeatInfo(item: CartItem): { section: string, row: string, seatNumber: number } {
-    if (item.seat) {
-      return {
-        section: item.seat.section || 'General',
-        row: item.seat.row || 'GA',
-        seatNumber: item.seat.number || 0
-      };
-    }
-    return { section: 'General', row: 'GA', seatNumber: 0 };
+  // Get seat display info
+  getSeatDisplayInfo(item: CartItemDto): { 
+    section: string; 
+    seatNumber: string; 
+    price: string; 
+  } {
+    return {
+      section: item.sectionName || 'General',
+      seatNumber: item.seatNumber || 'Unknown',
+      price: this.formatPrice(item.price)
+    };
   }
 
-  getItemType(item: CartItem): string {
-    if (item.seat) return 'Reserved Seat';
-    if (item.ticketType) return item.ticketType.name || 'General Admission';
-    return 'General Admission';
+  // Calculate item total
+  getItemTotal(item: CartItemDto): number {
+    return item.price * item.quantity;
+  }
+
+  // Refresh cart data
+  refreshCart(): void {
+    this.loadCartData();
+  }
+
+  private getEmptyCartSummary(): CartSummaryDto {
+    return { 
+      cartId: '', 
+      eventId: '', 
+      subtotal: 0, 
+      serviceFee: 0, 
+      total: 0, 
+      seatCount: 0, 
+      seats: [] 
+    };
   }
 }

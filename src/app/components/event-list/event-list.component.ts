@@ -1,13 +1,13 @@
 // event-list.component.ts
-import { Component, HostListener, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component';
-import { EventService } from '../../core/services/event.service';
-import { Event, EventType, TicketTier } from '../../core/models/event.model';
 import { LoadingSpinnerComponent } from '../common/loading-spinner/loading-spinner.component';
+import { EventDto } from '../../core/models/DTOs/event.DTO.model';
+import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 
 @Component({
   selector: 'app-event-list',
@@ -17,33 +17,52 @@ import { LoadingSpinnerComponent } from '../common/loading-spinner/loading-spinn
     RouterModule, 
     FormsModule,
     HeroSliderComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    FormatDatePipe // Add the pipe here
   ],
   templateUrl: './event-list.component.html',
   styleUrls: ['./event-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventListComponent implements OnInit, OnDestroy {
-  events: Event[] = [];
-  filteredEvents: Event[] = [];
-  categories: string[] = ['All'];
-  selectedCategory: string = 'All';
+export class EventListComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() events: EventDto[] = [];
+  @Input() isLoading: boolean = true;
+  @Input() error: string | null = null; // Make error an input too
+  
+  @Output() retryLoad = new EventEmitter<void>(); // Emit when retry is clicked
+  @Output() filterChanged = new EventEmitter<{
+    searchTerm: string;
+    dateFilter: 'upcoming' | 'past' | 'all';
+  }>(); // Emit filter changes if parent needs to know
+  
+  filteredEvents: EventDto[] = [];
   searchTerm: string = '';
-  isLoading: boolean = true;
+  
   isSticky: boolean = false;
-  error: string | null = null;
-  dateFilter: 'upcoming' | 'past' | 'all' = 'all';
+  dateFilter: 'upcoming' | 'past' | 'all' = 'upcoming';
 
   public searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  constructor(private eventService: EventService) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.setupSearchDebounce();
-    this.loadEvents();
-    this.filteredEvents = this.events;
+    this.applyFilters(); // Initial filter on init
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // Detect when events input changes
+    if (changes['events'] || changes['isLoading'] || changes['error']) {
+      console.log('Input changed - events:', this.events?.length, 'loading:', this.isLoading);
+      
+      if (!this.isLoading && this.events) {
+        this.applyFilters();
+      }
+      
+      // Trigger change detection for OnPush
+      this.cdr.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {
@@ -61,40 +80,9 @@ export class EventListComponent implements OnInit, OnDestroy {
       .subscribe(searchTerm => {
         this.searchTerm = searchTerm;
         this.applyFilters();
+        this.emitFilterChanges(); // Notify parent if needed
+        this.cdr.markForCheck();
       });
-  }
-
-  loadEvents(): void {
-    this.isLoading = true;
-    this.error = null;
-
-    this.eventService.getEvents().subscribe({
-      next: (events) => {
-        this.events = events;
-        this.categories = ['All', ...this.extractUniqueCategories(events)];
-        this.applyFilters();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading events:', error);
-        this.error = 'Failed to load events. Please try again later.';
-        this.isLoading = false;
-        this.filteredEvents = [];
-      }
-    });
-  }
-
-  private extractUniqueCategories(events: Event[]): string[] {
-    const uniqueCategories = new Set<string>();
-    
-    events.forEach(event => {
-      const categoryLabel = this.getEventTypeLabel(event.type);
-      if (categoryLabel && categoryLabel.trim() !== '') {
-        uniqueCategories.add(categoryLabel);
-      }
-    });
-    
-    return Array.from(uniqueCategories).sort();
   }
 
   onSearchInput(inputevent: any): void {
@@ -102,177 +90,104 @@ export class EventListComponent implements OnInit, OnDestroy {
     this.searchSubject.next(value);
   }
 
-  filterByCategory(category: string): void {
-    this.selectedCategory = category;
-    this.applyFilters();
+  // New method to handle clear search button
+  resetSearch(): void {
+    this.searchSubject.next('');
   }
 
   private applyFilters(): void {
-    if (this.isLoading) return;
+    if (this.isLoading || !this.events) {
+      this.filteredEvents = [];
+      return;
+    }
 
+    console.log('Applying filters to', this.events.length, 'events');
+    
     this.filteredEvents = this.events.filter(event => {
-      // Date filtering
-      const eventDate = new Date(event.startDate);
-      const now = new Date();
-      const matchesDate = this.matchesDateFilter(eventDate, now);
+      if (!event) return false;
       
-      // Category filtering
-      const matchesCategory = this.selectedCategory === 'All' || 
-        this.getEventTypeLabel(event.type) === this.selectedCategory;
+      // Date filtering
+      let matchesDate = true;
+      if (event.startDate) {
+        const eventDate = new Date(event.startDate);
+        const now = new Date();
+        matchesDate = this.matchesDateFilter(eventDate, now);
+      }
       
       // Search filtering
-      const matchesSearch = !this.searchTerm || 
-        event.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        event.description?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        event.venue.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        event.venue.city.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        event.tags?.some(tag => tag.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      let matchesSearch = true;
+      if (this.searchTerm) {
+        const searchLower = this.searchTerm.toLowerCase();
+        matchesSearch = 
+          event.title?.toLowerCase().includes(searchLower) ||
+          event.description?.toLowerCase().includes(searchLower) ||
+          event.venueName?.toLowerCase().includes(searchLower) ||
+          event.venueCity?.toLowerCase().includes(searchLower) ||
+          false;
+      }
       
-      return matchesDate && matchesCategory && matchesSearch;
+      return matchesDate && matchesSearch;
     });
+    
+    console.log('Filtered to', this.filteredEvents.length, 'events');
   }
 
-   private matchesDateFilter(eventDate: Date, now: Date): boolean {
+  private matchesDateFilter(eventDate: Date, now: Date): boolean {
+    // Normalize dates to compare only date parts (not time)
+    const normalizedEventDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+    const normalizedNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
     switch (this.dateFilter) {
       case 'upcoming':
-        return eventDate >= now;
+        return normalizedEventDate >= normalizedNow;
       case 'past':
-        return eventDate < now;
+        return normalizedEventDate < normalizedNow;
       case 'all':
         return true;
       default:
-        return eventDate >= now;
+        return normalizedEventDate >= normalizedNow;
     }
   }
 
   filterByDate(dateFilter: 'upcoming' | 'past' | 'all'): void {
     this.dateFilter = dateFilter;
     this.applyFilters();
+    this.emitFilterChanges();
+    this.cdr.markForCheck();
   }
 
-  getEventTypeLabel(type: EventType): string {
-    const typeLabels: Record<EventType, string> = {
-      [EventType.CONFERENCE]: 'Conference',
-      [EventType.WORKSHOP]: 'Workshop',
-      [EventType.SEMINAR]: 'Seminar',
-      [EventType.NETWORKING]: 'Networking',
-      [EventType.SOCIAL]: 'Social',
-      [EventType.SPORTS]: 'Sports',
-      [EventType.MUSIC]: 'Concert',
-      [EventType.ART]: 'Art',
-      [EventType.COMEDY]: 'Comedy',
-      [EventType.THEATRE]: 'Theatre',
-      [EventType.FESTIVAL]: 'Festival',
-      [EventType.EXHIBITION]: 'Exhibition',
-      [EventType.OTHER]: 'Other'
-    };
-    return typeLabels[type] || 'Event';
-  }
-
-  formatDate(date: Date | string): string {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return dateObj.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }
-
-  getStartingPrice(event: Event): number {
-    if (!event.ticketTiers?.length) return 0;
-    
-    const activeTiers = event.ticketTiers.filter(tier => 
-      tier.available > 0 && this.isTicketTierActive(tier)
-    );
-    
-    if (activeTiers.length === 0) return 0;
-    
-    return Math.min(...activeTiers.map(tier => tier.price));
-  }
-
-private isTicketTierActive(tier: TicketTier): boolean {
-  // If the tier is marked as inactive, return false
-  if (tier.isActive === false) return false;
-  
-  // Check if tickets are available
-  if (tier.available <= 0) return false;
-  
-  // // If there's a purchase limit per user, ensure it's positive
-  // if (tier.purchaseLimit && tier.purchaseLimit <= 0) return false;
-  
-  return true;
-}
-
-  getTotalTickets(event: Event): number {
-    if (!event.ticketTiers?.length) return 0;
-    return event.ticketTiers.reduce((sum, tier) => sum + tier.quantity, 0);
-  }
-
-  getAvailableTickets(event: Event): number {
-    if (!event.ticketTiers?.length) return 0;
-    return event.ticketTiers.reduce((sum, tier) => sum + tier.available, 0);
-  }
-
-  isSoldOut(event: Event): boolean {
-    return this.getAvailableTickets(event) === 0;
-  }
-
-  isAlmostSoldOut(event: Event): boolean {
-    const available = this.getAvailableTickets(event);
-    const total = this.getTotalTickets(event);
-    return available > 0 && available / total <= 0.2; // 20% or less remaining
-  }
-
-  getEventImage(event: Event): string {
-    return event.thumbnailImage || event.bannerImage || '/assets/images/event-default.jpg';
-  }
-
-  getEventDescription(event: Event): string {
-    const description = event.shortDescription || event.description || '';
-    return description.length > 100 ? description.slice(0, 100) + '...' : description;
-  }
+  // Remove formatDate method - use pipe instead
 
   resetFilters(): void {
-    this.selectedCategory = 'All';
     this.searchTerm = '';
     this.dateFilter = 'upcoming';
     this.searchSubject.next('');
     this.applyFilters();
+    this.emitFilterChanges();
+    this.cdr.markForCheck();
   }
 
-  isEventUpcoming(event: Event): boolean {
-    return new Date(event.startDate) >= new Date();
+  // Emit filter changes to parent if needed
+  private emitFilterChanges(): void {
+    this.filterChanged.emit({
+      searchTerm: this.searchTerm,
+      dateFilter: this.dateFilter
+    });
   }
 
-  trackByEventId(index: number, event: Event): string {
-    return event.id;
-  }
-
-  trackByCategory(index: number, category: string): string {
-    return category;
-  }
-    
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-UK', {
-      style: 'currency',
-      currency: 'GBP',
-      minimumFractionDigits: 2
-    }).format(price);
+  // Handle retry button click
+  retryLoadEvents(): void {
+    this.retryLoad.emit();
   }
 
   handleImageError(event: any): void {
-  const imgElement = event.target as HTMLImageElement;
-  imgElement.src = '/assets/images/event-default.jpg';
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = '/assets/images/event-default.jpg';
   }
-
-  isEventCompleted(event: Event): boolean {
-  const eventEndDate = new Date(event.endDate);
-  const now = new Date();
-  return eventEndDate < now;
-}
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
     this.isSticky = window.scrollY > 100;
+    this.cdr.markForCheck();
   }
 }

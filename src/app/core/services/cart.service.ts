@@ -1,127 +1,321 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { CartItem, Seat, TicketType } from '../models/event.model';
-
-export interface CartSummary {
-  subtotal: number;
-  serviceFee: number;
-  total: number;
-  itemCount: number;
-}
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { 
+  AddToCartRequest, 
+  CartDetailsResponse, 
+  CartItemDto, 
+  CartSummaryDto, 
+  CheckoutRequest, 
+  CheckoutResponse, 
+  OrderConfirmationResponse,
+} from '../models/DTOs/cart.DTO.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private cartItems: CartItem[] = [];
-  private cartSubject = new BehaviorSubject<CartItem[]>([]);
+  private currentCartId?: string;
+  private currentEventId?: string;
+  private baseUrl = environment.apiUrl + '/api';
+
+  // Subject for API responses only
+  private cartDetailsSubject = new Subject<CartDetailsResponse>();
+  cartDetails$ = this.cartDetailsSubject.asObservable();
   
-  cart$ = this.cartSubject.asObservable();
+  private checkoutSubject = new Subject<CheckoutResponse>();
+  checkout$ = this.checkoutSubject.asObservable();
+  
+  private orderConfirmationSubject = new Subject<OrderConfirmationResponse>();
+  orderConfirmation$ = this.orderConfirmationSubject.asObservable();
 
-  // Add seat to cart
-  addSeat(seat: Seat): void {
-    const existingItem = this.cartItems.find(item => item.seat?.id === seat.id);
+  // Subject to emit current cart state for components
+  private currentCartStateSubject = new BehaviorSubject<{
+    items: CartItemDto[],
+    summary: CartSummaryDto
+  }>({
+    items: [],
+    summary: this.getEmptyCartSummary()
+  });
+  currentCartState$ = this.currentCartStateSubject.asObservable();
+
+  constructor(private http: HttpClient, private router : Router) {
+    this.loadCartIdFromStorage();
+  }
+
+  // Add seats to cart via API
+  addSeatsToCart(eventId: string, seatIds: string[]): void {
+    const sessionId = this.getOrCreateSessionId();
+    const request: AddToCartRequest = { eventId, seatIds, sessionId };
     
-    if (existingItem) {
-      // For seats, we typically don't allow multiple of the same seat
-      existingItem.quantity = 1;
-    } else {
-      this.cartItems.push({
-        id: this.generateId(),
-        seat: seat,
-        quantity: 1,
-        price: seat.price,
-        type: 'seat',
-        addedAt: new Date()
+    this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.currentCartId = response.data.cartId;
+            this.currentEventId = response.data.eventId;
+            this.saveCartIdToStorage();
+            this.updateCartState(response.data);
+          }
+          this.cartDetailsSubject.next(response);
+          this.router.navigate(['/cart']);
+        },
+        error: (error) => {
+          console.error('API Error:', error);
+          this.cartDetailsSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
       });
-    }
-    
-    this.cartSubject.next([...this.cartItems]);
   }
 
-  // Add ticket type to cart
-  addTicketType(ticketType: TicketType, quantity: number = 1): void {
-    const existingItem = this.cartItems.find(item => item.ticketType?.id === ticketType.id);
-    
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      this.cartItems.push({
-        id: this.generateId(),
-        ticketType: ticketType,
-        quantity: quantity,
-        price: ticketType.price,
-        type: 'ticketType',
-        addedAt: new Date()
+  // Get cart details from API
+  getCartDetails(cartId?: string): void {
+    const idToUse = cartId || this.currentCartId;
+    if (!idToUse) {
+      this.cartDetailsSubject.next({ 
+        success: false, 
+        error: 'No cart ID available',
+        data: undefined 
       });
+      this.updateCartStateWithError();
+      return;
     }
     
-    this.cartSubject.next([...this.cartItems]);
+    this.http.get<CartDetailsResponse>(`${this.baseUrl}/cart/${idToUse}`)
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.currentCartId = response.data.cartId;
+            this.currentEventId = response.data.eventId;
+            this.updateCartState(response.data);
+          } else {
+            this.updateCartStateWithError();
+          }
+          this.cartDetailsSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Error getting cart details:', error);
+          this.cartDetailsSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+          this.updateCartStateWithError();
+        }
+      });
   }
 
-  // Remove item by ID
-  removeItem(id: string): void {
-    this.cartItems = this.cartItems.filter(item => item.id !== id);
-    this.cartSubject.next([...this.cartItems]);
-  }
-
-  // Remove item by index (for backward compatibility)
-  removeItemByIndex(index: number): void {
-    this.cartItems.splice(index, 1);
-    this.cartSubject.next([...this.cartItems]);
-  }
-
-  // Update quantity
-  updateQuantity(id: string, quantity: number): void {
-    const item = this.cartItems.find(item => item.id === id);
-    if (item) {
-      if (quantity <= 0) {
-        this.removeItem(id);
-      } else {
-        item.quantity = quantity;
-        this.cartSubject.next([...this.cartItems]);
-      }
+  // Update quantity via API
+  updateQuantity(seatId: string, quantity: number): void {
+    const cartId = this.currentCartId;
+    if (!cartId) {
+      console.error('No cart ID available');
+      return;
     }
+    
+    this.http.put<CartDetailsResponse>(`${this.baseUrl}/cart/${cartId}/seat/${seatId}`, { quantity })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.updateCartState(response.data);
+          }
+          this.cartDetailsSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Error updating quantity:', error);
+          this.cartDetailsSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
+      });
   }
 
-  // Clear entire cart
+  // Remove seat via API
+  removeSeat(seatId: string): void {
+    const cartId = this.currentCartId;
+    if (!cartId) {
+      console.error('No cart ID available');
+      return;
+    }
+    
+    this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/${cartId}/seat/${seatId}`)
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.updateCartState(response.data);
+          }
+          this.cartDetailsSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Error removing seat:', error);
+          this.cartDetailsSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
+      });
+  }
+
+  // Clear cart via API
   clearCart(): void {
-    this.cartItems = [];
-    this.cartSubject.next([]);
+    const cartId = this.currentCartId;
+    if (!cartId) {
+      console.error('No cart ID available');
+      return;
+    }
+    
+    this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/clear/${cartId}`)
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.clearLocalCartData();
+          }
+          this.cartDetailsSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Error clearing cart:', error);
+          this.cartDetailsSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
+      });
   }
 
-  // Get cart summary
-  getCartSummary(): CartSummary {
-    const subtotal = this.getTotal();
-    const serviceFee = subtotal * 0.10; // 10% service fee
-    const total = subtotal + serviceFee;
-    const itemCount = this.getItemCount();
-
-    return { subtotal, serviceFee, total, itemCount };
+  // Complete checkout
+  checkout(checkoutData: CheckoutRequest): void {
+    this.http.post<CheckoutResponse>(`${this.baseUrl}/checkout`, checkoutData)
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.clearLocalCartData();
+          }
+          this.checkoutSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Checkout error:', error);
+          this.checkoutSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
+      });
   }
 
-  // Get total price
-  getTotal(): number {
-    return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  // Get order confirmation
+  getOrderConfirmation(orderId: string): void {
+    this.http.get<OrderConfirmationResponse>(`${this.baseUrl}/checkout/orders/${orderId}`)
+      .subscribe({
+        next: (response) => {
+          this.orderConfirmationSubject.next(response);
+        },
+        error: (error) => {
+          console.error('Error getting order confirmation:', error);
+          this.orderConfirmationSubject.next({ 
+            success: false, 
+            error: error.message,
+            data: undefined 
+          });
+        }
+      });
   }
 
-  // Get total item count
-  getItemCount(): number {
-    return this.cartItems.reduce((count, item) => count + item.quantity, 0);
+  // Helper methods for components
+  getCurrentCartId(): string | undefined {
+    return this.currentCartId;
   }
 
-  // Get all cart items
-  getCartItems(): CartItem[] {
-    return [...this.cartItems];
+  getCurrentEventId(): string | undefined {
+    return this.currentEventId;
   }
 
-  // Check if cart is empty
-  isEmpty(): boolean {
-    return this.cartItems.length === 0;
+  // Private helper methods
+  private updateCartState(data: any): void {
+    const items = (data.seats || []).map((seat: any) => ({
+      seatId: seat.seatId,
+      seatNumber: seat.seatNumber,
+      sectionName: seat.section,
+      price: seat.price,
+      quantity: seat.quantity || 1,
+      eventId: data.eventId,
+      eventName: '', // Add if available
+      venueName: ''  // Add if available
+    }));
+
+    const summary: CartSummaryDto = {
+      cartId: data.cartId || '',
+      eventId: data.eventId || '',
+      subtotal: data.subtotal || 0,
+      serviceFee: data.serviceFee || 0,
+      total: data.subtotal || 0,
+      seatCount: data.seatCount || items.length,
+      seats: data.seats || []
+    };
+
+    this.currentCartStateSubject.next({ items, summary });
   }
 
-  // Generate unique ID for cart items
-  private generateId(): string {
-    return `cart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  private updateCartStateWithError(): void {
+    this.currentCartStateSubject.next({
+      items: [],
+      summary: this.getEmptyCartSummary()
+    });
+  }
+
+  private getEmptyCartSummary(): CartSummaryDto {
+    return { 
+      cartId: '', 
+      eventId: '', 
+      subtotal: 0, 
+      serviceFee: 0, 
+      total: 0, 
+      seatCount: 0, 
+      seats: [] 
+    };
+  }
+
+  private getOrCreateSessionId(): string {
+    let sessionId = localStorage.getItem('cart_session');
+    if (!sessionId) {
+      sessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('cart_session', sessionId);
+    }
+    return sessionId;
+  }
+
+  private saveCartIdToStorage(): void {
+    if (this.currentCartId) {
+      localStorage.setItem('current_cart_id', this.currentCartId);
+    }
+    if (this.currentEventId) {
+      localStorage.setItem('current_event_id', this.currentEventId);
+    }
+  }
+
+  private loadCartIdFromStorage(): void {
+    try {
+      this.currentCartId = localStorage.getItem('current_cart_id') || undefined;
+      this.currentEventId = localStorage.getItem('current_event_id') || undefined;
+    } catch (error) {
+      console.error('Error loading cart ID from storage:', error);
+    }
+  }
+
+  private clearLocalCartData(): void {
+    this.currentCartId = undefined;
+    this.currentEventId = undefined;
+    localStorage.removeItem('current_cart_id');
+    localStorage.removeItem('current_event_id');
+    this.updateCartStateWithError();
   }
 }
