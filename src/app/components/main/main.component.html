@@ -1,6 +1,8 @@
 
-<app-hero-slider [events]="events"
-  [isLoading]="isLoading"></app-hero-slider>
+<ng-container *ngIf="!eventlistonly" >
+  <app-hero-slider [events]="events"
+    [isLoading]="isLoading"></app-hero-slider>
+</ng-container>
 <app-event-list [events]="events"
   [isLoading]="isLoading"
   [error]="error"
