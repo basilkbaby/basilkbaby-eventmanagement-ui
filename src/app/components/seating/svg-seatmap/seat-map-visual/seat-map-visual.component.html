@@ -163,7 +163,9 @@
                             [attr.cy]="seat.cy" 
                             [attr.r]="BASE_SEAT_RADIUS * 1.2" 
                             fill="#4CAF50"
-                            opacity="0.8" />
+                            opacity="0.8"  
+                            [attr.cursor]="getSeatCursor(seat)" 
+                            (click)="onSeatClick(seat, $event)" />
 
                         <text [attr.x]="seat.cx" 
                             [attr.y]="seat.cy" 
@@ -171,7 +173,9 @@
                             dominant-baseline="middle"
                             fill="white" 
                             font-weight="bold" 
-                            font-size="12">
+                            font-size="12"
+                            [attr.cursor]="getSeatCursor(seat)" 
+                            (click)="onSeatClick(seat, $event)">
                             ✓
                         </text>
                     </g>
