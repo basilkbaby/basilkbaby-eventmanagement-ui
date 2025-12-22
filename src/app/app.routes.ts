@@ -15,7 +15,7 @@ export const routes: Routes = [
   },
   { 
     path: 'events', 
-    loadComponent: () => import('./components/event-list/event-list.component').then(m => m.EventListComponent),  
+    loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
     title: 'Event List' 
   },
   { 

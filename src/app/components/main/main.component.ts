@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { HeaderComponent } from '../common/header/header.component';
 import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component';
 import { FooterComponent } from '../common/footer/footer.component';
@@ -39,20 +39,24 @@ events: EventDto[] = [];
   error: string | null = null;
 
   constructor(private eventService : EventService,
-    private router: Router)
+    private router: Router,
+  private activatedRoute: ActivatedRoute)
   {
 
   }
 
 ngOnInit(): void {
-  // Check initial route first
-  this.checkCurrentRoute(this.router.url);
+  // Check the current route path
+  const currentPath = this.activatedRoute.snapshot.routeConfig?.path || '';
+  this.eventlistonly = currentPath === 'events';
+  console.log('Initial eventlistonly:', this.eventlistonly);
   
-  // Then subscribe to route changes
   this.router.events.pipe(
     filter(event => event instanceof NavigationEnd)
-  ).subscribe((event: NavigationEnd) => {
-    this.checkCurrentRoute(event.url);
+  ).subscribe(() => {
+    const newPath = this.activatedRoute.snapshot.routeConfig?.path || '';
+    this.eventlistonly = newPath === 'events';
+    console.log('Updated eventlistonly:', this.eventlistonly);
   });
   
   this.loadEvents();
