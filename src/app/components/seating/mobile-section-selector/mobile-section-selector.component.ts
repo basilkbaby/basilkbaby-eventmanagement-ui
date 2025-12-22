@@ -2,7 +2,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, NgZone, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SeatStatus, SectionRowConfig, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { SeatSectionType, SeatStatus, SectionRowConfig, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
 import { SeatService } from '../../../core/services/seat.service';
 import { HelperService } from '../../../core/services/helper.service';
 import { CurrencyFormatPipe } from '../../../core/pipes/currency-format.pipe';
@@ -21,16 +21,10 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
   selectedSection: VenueSection | null = null;
 
   // Local venue data
-  readonly venueData: VenueData;
-
-  // Event details
-  event = {
-    title: 'SITHARA\'S PROJECT MALABARICUS - Manchester',
-    date: new Date('2026-01-15'),
-    time: '19:30',
-    venue: 'Manchester venue'
-  };
-
+  SeatSectionType = SeatSectionType;
+  venueData!: VenueData;
+  loading : boolean = false;
+  eventId: string = "";
   readonly CANVAS_WIDTH = 1400;
   readonly CANVAS_HEIGHT = 1600;
   readonly STAGE_WIDTH = 500;
@@ -53,13 +47,31 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
 
   constructor(
     private router: Router,
-    private seatSerive : SeatService
+    private seatService : SeatService,
+    private route: ActivatedRoute,
   ) {
-    this.venueData = seatSerive.getSeatMapConfigMobile();
   }
 
   ngOnInit() {
     setTimeout(() => this.resetView(), 100);
+    this.route.params.subscribe(params => {
+      this.eventId = params['id'];
+      this.getSeatMap(this.eventId);
+    });
+  }
+
+  getSeatMap(eventId: string) {
+    this.loading = true;
+    this.seatService.getSeatMap(eventId).subscribe({
+      next: (seatmap) => {
+        this.venueData = seatmap;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error loading event:', error);
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -194,7 +206,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
 
   navigateToSection(section: VenueSection) {
     const sectionId = this.getSectionRouteId(section);
-     this.router.navigate(['events', 'eventId', 'section', sectionId]);
+     this.router.navigate(['events', this.eventId, 'section', sectionId]);
     //this.router.navigate(['events/:id/section/:sectionId', sectionId]);
   }
 
@@ -401,7 +413,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     
     sortedConfigs.forEach(config => {
       const rowsCount = config.toRow - config.fromRow + 1;
-      const startY = (config.fromRow - 1) * rowHeight;
+      const startY = (config.fromRow) * rowHeight;
       const height = rowsCount * rowHeight;
       
       result.push({

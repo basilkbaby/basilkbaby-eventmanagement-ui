@@ -1,244 +1,25 @@
-<div class="seat-selection-layout">
+<div class="seat-selection-layout" *ngIf="!loading">
 
   <!-- Main Canvas Area -->
-  <main class="canvas-area">
+ <main class="canvas-area">
     <div class="canvas-wrapper">
-      <!-- SVG Container -->
-      <div class="svg-container" #svgContainer (mousedown)="startDrag($event)"
-     (mousemove)="doDrag($event)"
-     (mouseup)="stopDrag()"
-     (mouseleave)="stopDrag()"
-     style="cursor: grab;">
-        <svg #svgElement
-             class="seatmap-svg"
-             [attr.viewBox]="'0 0 ' + CANVAS_WIDTH + ' ' + CANVAS_HEIGHT"
-             preserveAspectRatio="xMidYMid meet"
-              [style.transform]="'scale(' + scale + ')'"
-(wheel)="onZoom($event)"
-             >
-          
-          <!-- Stage -->
-          <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2"
-                [attr.y]="STAGE_Y"
-                [attr.width]="STAGE_WIDTH"
-                [attr.height]="STAGE_HEIGHT"
-                [attr.rx]="8"
-                fill="#ffffff"
-                stroke="#bebebe"
-                [attr.stroke-width]="2" />
-          
-          <text [attr.x]="CANVAS_WIDTH / 2"
-                [attr.y]="STAGE_Y + STAGE_HEIGHT / 2 + 6"
-                text-anchor="middle"
-                font-family="Arial"
-                [attr.font-size]="stageFontSize"
-                font-weight="bold"
-                fill="#bebebe">STAGE</text>
-          
-          <!-- Section Labels -->
-          <g *ngFor="let section of venueData.sections; let i = index">
-              <text [attr.x]="section.x + (section.seatsPerRow * seatGap / 2)"
-                    [attr.y]="section.y - 20"
-                    text-anchor="center"
-                    font-family="Arial"
-                    font-size="16"
-                    font-weight="bold"
-                    fill="#bebebe">
-                {{ section.sectionLabel || section.name }}
-              </text>
-          </g>
-          
-          <!-- Row Labels (only for SEAT sections) -->
-<ng-container *ngFor="let section of venueData.sections">
-  <g *ngIf="section.seatSectionType === SeatSectionType.SEAT">
-    <g *ngFor="let row of getRowArray(section.rows); let i = index">
-      <text [attr.x]="section.x"
-            [attr.y]="section.y + (i * seatGap) + (section.rowOffset || 0) + 4"
-            font-family="Arial"
-            font-size="12"
-            font-weight="bold"
-            fill="#333">
-        {{ getRowLetter(i) }}
-      </text>
-    </g>
-  </g>
-</ng-container>
-
-          <!-- FOH Sections (just visual, no interaction) -->
-          <g *ngFor="let section of venueData.sections">
-            <ng-container *ngIf="section.seatSectionType === SeatSectionType.FOH">
-              <!-- Visual representation of FOH area -->
-              <rect [attr.x]="section.x"
-                    [attr.y]="section.y"
-                    [attr.width]="section.seatsPerRow * seatGap"
-                    [attr.height]="section.rows * seatGap"
-                    fill="#f0f0f0"
-                    fill-opacity="0.5"
-                    stroke="#999"
-                    stroke-dasharray="3,3"
-                    stroke-width="1" />
-              
-              <text [attr.x]="section.x + (section.seatsPerRow * seatGap / 2)"
-                    [attr.y]="section.y + (section.rows * seatGap / 2)"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    fill="#666"
-                    font-weight="bold"
-                    font-size="14">
-                FOH
-              </text>
-            </ng-container>
-          </g>
-          
-          <!-- Seats -->
-          <g *ngFor="let seat of seats">
-            <!-- Standing Area -->
-            <circle *ngIf="seat.isStandingArea"
-                    [attr.cx]="seat.cx"
-                    [attr.cy]="seat.cy"
-                    [attr.r]="seat.r"
-                    [attr.fill]="seat.color"
-                    fill-opacity="0.3"
-                    [attr.stroke]="seat.color"
-                    stroke-width="2"
-                    stroke-dasharray="5,5"
-                    [attr.cursor]="seat.status === SeatStatus.AVAILABLE ? 'pointer' : 'default'"
-                    (click)="onSeatClick(seat, $event)">
-              
-              <title>
-                {{ seat.sectionName }} - Standing Area
-                {{ formatPrice(seat.price) }}
-                {{ seat.status !== SeatStatus.AVAILABLE ? '(' + getSeatStatusText(seat.status, seat.ticketType) + ')' : '' }}
-              </title>
-              
-              <!-- Standing area label -->
-              <text [attr.x]="seat.cx"
-                    [attr.y]="seat.cy"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    fill="#333"
-                    font-weight="bold"
-                    font-size="12">
-                Standing
-              </text>
-              
-              <!-- Selected indicator for standing area -->
-              <g *ngIf="seat.status === SeatStatus.SELECTED">
-                <circle [attr.cx]="seat.cx"
-                        [attr.cy]="seat.cy"
-                        [attr.r]="seat.r * 1.1"
-                        fill="#4CAF50"
-                        fill-opacity="0.3"
-                        stroke="#4CAF50"
-                        stroke-width="3" />
-                
-                <text [attr.x]="seat.cx"
-                      [attr.y]="seat.cy"
-                      text-anchor="middle"
-                      dominant-baseline="middle"
-                      fill="#4CAF50"
-                      font-weight="bold"
-                      font-size="16">✓</text>
-              </g>
-              
-              <!-- Status indicator for unavailable standing areas -->
-              <text *ngIf="seat.status === SeatStatus.BOOKED || seat.status === SeatStatus.RESERVED || seat.status === SeatStatus.BLOCKED"
-                    [attr.x]="seat.cx"
-                    [attr.y]="seat.cy"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    fill="white"
-                    font-size="10"
-                    font-weight="bold">
-                {{ seat.status === SeatStatus.BOOKED ? 'S' : 
-                   seat.status === SeatStatus.RESERVED ? 'R' : 
-                   seat.status === SeatStatus.BLOCKED ? 'X' : '' }}
-              </text>
-            </circle>
-            
-            <!-- Regular seats (only for non-standing areas) -->
-            <ng-container *ngIf="!seat.isStandingArea">
-              <!-- Regular seats -->
-              <circle *ngIf="seat.status !== SeatStatus.PARTIAL_VIEW"
-                      [attr.cx]="seat.cx"
-                      [attr.cy]="seat.cy"
-                      [attr.r]="seatRadius"
-                      [attr.fill]="getSeatColor(seat)"
-                      [attr.stroke]="getSeatStroke(seat)"
-                      [attr.stroke-width]="getSeatStrokeWidth(seat)"
-                      [attr.opacity]="getSeatOpacity(seat)"
-                      [attr.cursor]="getSeatCursor(seat)"
-                      (click)="onSeatClick(seat, $event)">
-                
-                <title>
-                  {{ seat.sectionName }} - {{ seat.rowLabel }}{{ seat.seatNumber }}
-                  {{ seat.status !== SeatStatus.AVAILABLE ? '(' + getSeatStatusText(seat.status, seat.ticketType) + ')' : '' }}
-                </title>
-              </circle>
-              
-              <!-- Partial view seats -->
-              <g *ngIf="seat.status === SeatStatus.PARTIAL_VIEW">
-                <defs>
-                  <linearGradient [attr.id]="'partial-' + seat.id" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" [style.stop-color]="seat.color"></stop>
-                    <stop offset="50%" [style.stop-color]="seat.color"></stop>
-                    <stop offset="50%" [style.stop-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></stop>
-                    <stop offset="100%" [style.stop-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></stop>
-                  </linearGradient>
-                </defs>
-                
-                <circle [attr.cx]="seat.cx"
-                        [attr.cy]="seat.cy"
-                        [attr.r]="seatRadius"
-                        [attr.fill]="'url(#partial-' + seat.id + ')'"
-                        [attr.stroke]="getSeatStroke(seat)"
-                        [attr.stroke-width]="getSeatStrokeWidth(seat)"
-                        [attr.opacity]="getSeatOpacity(seat)"
-                        [attr.cursor]="getSeatCursor(seat)"
-                        (click)="onSeatClick(seat, $event)">
-                  
-                  <title>
-                    {{ seat.sectionName }} - {{ seat.rowLabel }}{{ seat.seatNumber }}
-                    ({{ getSeatStatusText(seat.status, seat.ticketType) }})
-                    - Partial/obstructed view
-                  </title>
-                </circle>
-              </g>
-              
-              <!-- Selected indicator for regular seats -->
-              <g *ngIf="seat.status === SeatStatus.SELECTED">
-                <circle [attr.cx]="seat.cx"
-                        [attr.cy]="seat.cy"
-                        [attr.r]="seatRadius * 1.2"
-                        fill="#4CAF50"
-                        opacity="0.8" />
-                
-                <text [attr.x]="seat.cx"
-                      [attr.y]="seat.cy"
-                      text-anchor="middle"
-                      dominant-baseline="middle"
-                      fill="white"
-                      font-weight="bold"
-                      font-size="12">✓</text>
-              </g>
-              
-              <!-- Status indicator for unavailable seats -->
-              <text *ngIf="seat.status === SeatStatus.BOOKED || seat.status === SeatStatus.RESERVED || seat.status === SeatStatus.BLOCKED"
-                    [attr.x]="seat.cx"
-                    [attr.y]="seat.cy"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    fill="white"
-                    font-size="10"
-                    font-weight="bold">
-                {{ seat.status === SeatStatus.BOOKED ? 'S' : 
-                   seat.status === SeatStatus.RESERVED ? 'R' : 
-                   seat.status === SeatStatus.BLOCKED ? 'X' : '' }}
-              </text>
-            </ng-container>
-          </g>    
-        </svg>
-      </div>
+      <!-- SVG Component -->
+      <app-seat-map-visual
+        [venueData]="venueData"
+        [seats]="seats"
+        [selectedSeatIds]="selectedSeatIds"
+        [hoveredSeatId]="hoveredSeatId"
+        [scale]="scale"
+        [offsetX]="offsetX"
+        [offsetY]="offsetY"
+        (seatClicked)="onSeatClicked($event)"
+        (seatHovered)="onSeatHovered($event)"
+        (dragStarted)="onDragStarted($event)"
+        (dragMoved)="onDragMoved($event)"
+        (dragEnded)="onDragEnded()"
+        (zoomed)="onZoomed($event)"
+        class="seat-map-visual">
+      </app-seat-map-visual>
     </div>
   </main>
 
@@ -249,16 +30,10 @@
     <div class="compact-header">
       
       <div class="event-info-ultra-compact">
-        <h1>{{ event.title }}</h1>
+        <h1>{{ venueData.eventName }}</h1>
         <div class="event-details-minimal">
           <span class="detail-item">
-            {{ formatDate(event.date) }}
-          </span>
-          <span class="detail-item">
-            {{ event.time }}
-          </span>
-          <span class="detail-item">
-            {{ event.venue }}
+            {{ venueData.eventDate | formatDate }}
           </span>
         </div>
       </div>
@@ -282,9 +57,6 @@
           <span class="seat-label" *ngIf="seat.isStandingArea">
             Standing Area
           </span>
-          <!-- <span class="seat-tier" [style.color]="seat.tier.color">
-            {{ seat.tier.name.charAt(0) }}
-          </span> -->
           <button class="remove-tag" 
                   (click)="onRemoveSeat(seat.id, $event)" 
                   title="Remove">×</button>
@@ -296,10 +68,10 @@
           <div class="price-item" *ngFor="let seat of selectedSeats">
             <span>
               <span *ngIf="!seat.isStandingArea">
-            {{ seat.id }}
+                {{ seat.id }}
               </span>
               <span *ngIf="seat.isStandingArea">
-                            {{ seat.id }} Standing
+                {{ seat.id }} Standing
               </span>
             </span>
             <span>{{ formatPrice(seat.price) }}</span>
@@ -338,7 +110,7 @@
     <div class="compact-legend">
       <h4>Seat Types</h4>
       
-      <!-- Ticket Tiers - Side by side -->
+      <!-- Ticket Tiers -->
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
           <div class="legend-color-compact" [style.background-color]="tier.color"></div>
@@ -347,10 +119,7 @@
         </div>
       </div>
       
-      <!-- Section Types -->
-
-      
-      <!-- Seat Status - Below tiers -->
+      <!-- Seat Status -->
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
           <div class="legend-color-compact" 
@@ -387,38 +156,4 @@
     </div>
     
   </aside>
-  
-  <!-- Desktop Tooltip -->
-  <div class="svg-tooltip desktop-tooltip" 
-       *ngIf="hoveredSeat && shouldShowTooltip()"
-       [style.left.px]="tooltipLeft"
-       [style.top.px]="tooltipTop">
-    <div class="tooltip-content" *ngIf="hoveredSeat">
-      <h4>{{ hoveredSeat.sectionName }} {{ formatPrice(hoveredSeat.price) }}</h4>
-      
-      <!-- Different text for standing areas -->
-      <p *ngIf="hoveredSeat.isStandingArea">
-        Standing Area - {{ getSeatStatusText(hoveredSeat.status, hoveredSeat.ticketType) }}
-      </p>
-      <p *ngIf="!hoveredSeat.isStandingArea">
-        {{ hoveredSeat.rowLabel }}{{ hoveredSeat.seatNumber }}, 
-        {{ getSeatStatusText(hoveredSeat.status, hoveredSeat.ticketType) }}
-      </p>
-      
-      <div *ngIf="hoveredSeat.features && hoveredSeat.features.length" class="tooltip-features">
-        <div *ngFor="let feature of hoveredSeat.features" class="feature">
-          • {{ feature }}
-        </div>
-      </div>
-      
-      <div class="tooltip-action" *ngIf="hoveredSeat.status === SeatStatus.AVAILABLE">
-        <button class="tooltip-select-btn" 
-                (click)="onSeatClick(hoveredSeat, $event)">
-          <span *ngIf="hoveredSeat.isStandingArea">Select Area</span>
-          <span *ngIf="!hoveredSeat.isStandingArea">Select Seat</span>
-        </button>
-      </div>
-    </div>
-    <div class="tooltip-arrow"></div>
-  </div>
 </div>

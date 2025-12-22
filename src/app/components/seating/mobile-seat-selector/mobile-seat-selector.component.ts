@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { VenueData, VenueSection, SectionRowConfig, SeatStatus, TicketType, Seat, SelectedSeat, SeatSectionType } from '../../../core/models/seats.model';
+import { VenueData, VenueSection, SectionRowConfig, SeatStatus, TicketType, Seat, SelectedSeat, SeatSectionType, SeatOverride } from '../../../core/models/seats.model';
 import { CartService } from '../../../core/services/cart.service';
 import { SeatService } from '../../../core/services/seat.service';
 
@@ -22,9 +22,10 @@ interface RowData {
 })
 export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   section!: VenueSection;
-  venueData: VenueData;
-  selectedSeats: SelectedSeat[] = [];
   SeatSectionType = SeatSectionType;
+  venueData!: VenueData;
+  loading: boolean = false;
+  selectedSeats: SelectedSeat[] = [];
   rows: RowData[] = [];
   
   readonly SeatStatus = SeatStatus;
@@ -32,12 +33,14 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   // Selection state
   maxSeats = 8;
   selectionError: string | null = null;
-  eventId : string = "";
+  eventId: string = "";  
+  sectionId: string = "";
+  
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private cartService : CartService,
-    private seatService : SeatService
+    private cartService: CartService,
+    private seatService: SeatService
   ) {
     this.venueData = this.seatService.getSeatMapConfigMobile();
   }
@@ -45,180 +48,30 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Get section ID from route
     this.route.params.subscribe(params => {
-      const sectionId = params['sectionId'];
-      this.eventId = params['eventid']
-      this.loadSectionData(sectionId);
-      this.generateSeats();
+      this.sectionId = params['sectionId'];
+      this.eventId = params['id'];
+      this.getSeatMap(this.eventId);
     });
   }
   
   ngOnDestroy() {
     // Cleanup
   }
-  
-  private initializeVenueData(): VenueData {
-    // Keep your existing venue data
-    return {
-    sections: [
-      { 
-        id: "1",
-        name: 'SILVER', 
-        x: 50, 
-        y: 250, 
-        rows: 20, 
-        seatsPerRow: 5,
-        sectionLabel: 'Silver Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 19, 
-            type: 'SILVER', 
-            customPrice: 25,
-            color: '#4a8bc9'
-          }
-        ]
+
+  getSeatMap(eventId: string) {
+    this.loading = true;
+    this.seatService.getSeatMap(eventId).subscribe({
+      next: (seatmap) => {
+        this.venueData = seatmap;
+        this.loadSectionData(this.sectionId);
+        this.generateSeats();
+        this.loading = false;
       },
-      { 
-        id: "2",
-        name: 'GOLD', 
-        x: 200, 
-        y: 170, 
-        rows: 19, 
-        seatsPerRow: 10, 
-        rowOffset: 1,
-        sectionLabel: 'Gold Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 18, 
-            type: 'GOLD', 
-            customPrice: 30,
-            color: '#b3543a'
-          }
-        ]
-      },
-      { 
-        id: "3",
-        name: 'VIP', 
-        x: 450, 
-        y: 150, 
-        rows: 15, 
-        seatsPerRow: 10,
-        sectionLabel: 'VIP Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 2, 
-            type: 'VIP', 
-            customPrice: 75,
-            color: '#8a6b8c'
-          },
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 3, 
-            toRow: 14, 
-            type: 'DIAMOND', 
-            customPrice: 50,
-            color: '#8a9a5b'
-          }
-        ]
-      },
-      { 
-        id: "4",
-        name: 'VIP', 
-        x: 700, 
-        y: 150, 
-        rows: 15, 
-        seatsPerRow: 10,
-        sectionLabel: 'VIP Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 2, 
-            type: 'VIP', 
-            customPrice: 75,
-            color: '#8a6b8c'
-          },
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 3, 
-            toRow: 14, 
-            type: 'DIAMOND', 
-            customPrice: 50,
-            color: '#8a9a5b'
-          }
-        ]
-      },
-      { 
-        id: "5",
-        name: 'GOLD', 
-        x: 950, 
-        y: 170, 
-        rows: 19, 
-        seatsPerRow: 10, 
-        rowOffset: 1,
-        sectionLabel: 'Gold Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 18, 
-            type: 'GOLD', 
-            customPrice: 30,
-            color: '#b3543a'
-          }
-        ]
-      },
-      { 
-        id: "6",
-        name: 'SILVER', 
-        x: 1200, 
-        y: 250, 
-        rows: 20, 
-        seatsPerRow: 5,
-        sectionLabel: 'Silver Section',
-        rowConfigs: [
-          { 
-          id : crypto.randomUUID(),
-            fromRow: 0, 
-            toRow: 19, 
-            type: 'SILVER', 
-            customPrice: 25,
-            color: '#4a8bc9'
-          }
-        ]
+      error: (error) => {
+        this.loading = false;
+        console.error('Error loading event:', error);
       }
-    ],
-    
-    seatManagement: {
-      reservedSeats: [
-        { seatId: 'VIP-A-1', status: SeatStatus.RESERVED, reason: 'VIP_GUEST', reservationId: 'RES-001' },
-        { seatId: 'VIP-A-2', status: SeatStatus.RESERVED, reason: 'ARTIST_GUEST', reservationId: 'RES-002' },
-        { seatId: 'DIAMOND-D-5', status: SeatStatus.RESERVED, reason: 'PRESS', reservationId: 'RES-003' }
-      ],
-      
-      blockedSeats: [
-        { seatId: 'DIAMOND-A-11', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
-        { seatId: 'DIAMOND-B-11', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
-        { seatId: 'DIAMOND-C-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
-        { seatId: 'DIAMOND-D-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' },
-        { seatId: 'DIAMOND-E-11', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
-      ],
-      
-      soldSeats: [
-        { seatId: 'VIP-A-5', status: SeatStatus.BOOKED, bookingId: 'BK001' },
-        { seatId: 'VIP-A-6', status: SeatStatus.BOOKED, bookingId: 'BK002' },
-        { seatId: 'DIAMOND-D-8', status: SeatStatus.BOOKED, bookingId: 'BK003' },
-        { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
-        { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
-        { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
-      ]
-    }
-    };
+    });
   }
   
   private loadSectionData(sectionId: string) {
@@ -230,47 +83,27 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     if (foundSection) {
       this.section = foundSection;
     } else {
-      this.section = this.createDefaultSection(sectionId);
+      console.error('Section not found:', sectionId);
     }
-  }
-  
-  private createDefaultSection(sectionId: string): VenueSection {
-    const sectionName = sectionId.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-    
-    return {
-      id: '1',
-      name: sectionId.toUpperCase(),
-      x: 450,
-      y: 150,
-      rows: 15,
-      seatsPerRow: 10,
-      sectionLabel: sectionName,
-      rowConfigs: [
-        { 
-          id : crypto.randomUUID(),
-          fromRow: 0, 
-          toRow: 2, 
-          type: 'VIP', 
-          customPrice: 200,
-          color: '#8a6b8c'
-        },
-        { 
-          id : crypto.randomUUID(),
-          fromRow: 3, 
-          toRow: 14, 
-          type: 'DIAMOND', 
-          customPrice: 150,
-          color: '#8a9a5b'
-        }
-      ]
-    };
   }
   
   private generateSeats() {
     this.rows = [];
+    
+    // Create a map of seat statuses from venue data for quick lookup
+    const statusMap = new Map<string, SeatOverride>();
+    const categories: (keyof { reservedSeats: SeatOverride[], blockedSeats: SeatOverride[], soldSeats: SeatOverride[] })[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
+    
+    categories.forEach(category => {
+      if (this.venueData.seatManagement && this.venueData.seatManagement[category]) {
+        this.venueData.seatManagement[category].forEach(seatOverride => {
+          statusMap.set(seatOverride.seatId.toUpperCase(), seatOverride);
+        });
+      }
+    });
+    
     const rowOffset = this.section.rowOffset || 0;
+    const sectionPrefix = this.section.name.toUpperCase();
     
     for (let r = 0; r < this.section.rows; r++) {
       const globalRow = r + rowOffset;
@@ -286,8 +119,33 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       };
       
       for (let c = 1; c <= this.section.seatsPerRow; c++) {
-        const seatId = `${this.section.name}-${rowLetter}-${c}`;
-        const status = this.getSeatStatus(seatId);
+        const seatId = `${sectionPrefix}-${rowLetter}-${c}`;
+        
+        // Check seat status from status map
+        const seatOverride = statusMap.get(seatId);
+        let status: SeatStatus;
+        
+        if (seatOverride) {
+          // Map override status to SeatStatus enum
+          switch (seatOverride.status.toLowerCase()) {
+            case 'sold':
+            case 'booked':
+              status = SeatStatus.BOOKED;
+              break;
+            case 'reserved':
+              status = SeatStatus.RESERVED;
+              break;
+            case 'blocked':
+              status = SeatStatus.BLOCKED;
+              break;
+            default:
+              status = SeatStatus.AVAILABLE;
+          }
+        } else {
+          // Check if already selected
+          const isSelected = this.selectedSeats.some(s => s.id === seatId);
+          status = isSelected ? SeatStatus.SELECTED : SeatStatus.AVAILABLE;
+        }
         
         const seat: Seat = {
           id: seatId,
@@ -296,9 +154,9 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
           r: 15,
           rowLabel: rowLetter,
           seatNumber: c,
-          sectionId : this.section.id,
+          sectionId: this.section.id,
           sectionName: this.section.sectionLabel || this.section.name,
-          sectionConfigId : rowConfig.id,
+          sectionConfigId: rowConfig.id,
           ticketType: rowConfig.type,
           status: status,
           price: rowConfig.customPrice || 0,
@@ -306,7 +164,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
           features: this.generateSeatFeatures(rowConfig.type, r, c),
           gridRow: globalRow,
           gridColumn: c,
-          isStandingArea : false
+          isStandingArea: false
         };
         
         rowData.seats.push(seat);
@@ -316,7 +174,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     }
     
     // Reverse rows so A is at the bottom (closest to stage)
-    //this.rows.reverse();
+    // this.rows.reverse(); // Uncomment if needed
   }
   
   private getRowConfigForSeat(rowIndex: number): SectionRowConfig {
@@ -326,9 +184,11 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     
     if (!config) {
       return {
-        id : crypto.randomUUID(),
+        id: crypto.randomUUID(),
         fromRow: 0,
         toRow: this.section.rows - 1,
+        fromColumn: 0,
+        toColumn: 0,
         type: 'SILVER' as TicketType,
         customPrice: 0,
         color: '#cccccc'
@@ -341,21 +201,6 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   private getRowLetter(rowIndex: number): string {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     return letters[rowIndex % letters.length];
-  }
-  
-  private getSeatStatus(seatId: string): SeatStatus {
-    const isSold = this.venueData.seatManagement.soldSeats.some(s => s.seatId === seatId);
-    const isReserved = this.venueData.seatManagement.reservedSeats.some(s => s.seatId === seatId);
-    const isBlocked = this.venueData.seatManagement.blockedSeats.some(s => s.seatId === seatId);
-    
-    if (isSold) return SeatStatus.BOOKED;
-    if (isReserved) return SeatStatus.RESERVED;
-    if (isBlocked) return SeatStatus.BLOCKED;
-    
-    const isSelected = this.selectedSeats.some(s => s.id === seatId);
-    if (isSelected) return SeatStatus.SELECTED;
-    
-    return SeatStatus.AVAILABLE;
   }
   
   private generateSeatFeatures(type: TicketType, row: number, seatNumber: number): string[] {
@@ -407,7 +252,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       },
       price: seat.price,
       features: seat.features || [],
-      isStandingArea : false
+      isStandingArea: false
     };
     
     this.selectedSeats.push(selectedSeat);
@@ -432,29 +277,12 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   
   // Navigation
   goBack() {
-    // Get event ID from route
-    const eventId = this.route.snapshot.params['id'];
-
-     this.router.navigate(['events', 'eventId', 'mobileseatmap']);
+    this.router.navigate(['events', this.eventId, 'mobileseatmap']);
   }
   
   goToCart() {
     this.saveSelectionToStorage();
     this.router.navigate(['/cart']);
-  }
-  
-  goToSummary() {
-    if (this.selectedSeats.length === 0) {
-      this.selectionError = 'Please select at least one seat';
-      setTimeout(() => this.selectionError = null, 3000);
-      return;
-    }
-    
-    this.saveSelectionToStorage();
-    
-    // Navigate to summary page
-    const eventId = this.route.snapshot.params['id'];
-    this.router.navigate(['events', eventId, 'seating', 'summary']);
   }
   
   private saveSelectionToStorage() {
@@ -478,7 +306,7 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
       GOLD: '3',
       SILVER: '4',
       FOH: '5',
-      STANDING : '6'
+      STANDING: '6'
     };
     return tierMap[ticketType] || '0';
   }
@@ -524,16 +352,6 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
     return Array.from({ length: this.section.seatsPerRow }, (_, i) => i + 1);
   }
   
-  getMinPrice(): number {
-    if (!this.section?.rowConfigs?.length) return 0;
-    return Math.min(...this.section.rowConfigs.map(config => config.customPrice || 0));
-  }
-  
-  getMaxPrice(): number {
-    if (!this.section?.rowConfigs?.length) return 0;
-    return Math.max(...this.section.rowConfigs.map(config => config.customPrice || 0));
-  }
-  
   getTotalPrice(): number {
     return this.selectedSeats.reduce((total, seat) => total + seat.price, 0);
   }
@@ -541,51 +359,21 @@ export class MobileSeatSelectorComponent implements OnInit, OnDestroy {
   // Add selected seats to cart
   addToCart() {
     if (this.selectedSeats.length === 0) return;
+    const seatIds = this.selectedSeats.map(seat => seat.id);
+
+    this.cartService.addSeatsToCart(this.eventId, seatIds);
+  }
+
+  hasSectionTypes(): boolean {
+    if (!this.venueData?.sections) return false;
     
-    this.selectedSeats.forEach(seat => {
-      this.cartService.addSeatsToCart(this.eventId, [seat.id]);
-        
-        
-      //   {
-      //   id: seat.id,
-      //   section: seat.section,
-      //   row: seat.row,
-      //   number: seat.number,
-      //   price: seat.price,
-      //   type: this.mapTicketTypeToCartType(seat.tier.name as TicketType),
-      //   status: 'selected',
-      //   x: 0,
-      //   y: 0
-      // });
+    const sectionTypes = new Set<SeatSectionType>();
+    this.venueData.sections.forEach(section => {
+      if (section.seatSectionType !== undefined) {
+        sectionTypes.add(section.seatSectionType);
+      }
     });
     
-    this.router.navigate(['/cart']);
+    return sectionTypes.size > 1 || sectionTypes.has(SeatSectionType.FOH) || sectionTypes.has(SeatSectionType.STANDING);
   }
-
-    // Helper method to map ticket types
-  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' | 'standing' {
-    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated'| 'foh' | 'standing' > = {
-      VIP: 'vip',
-      DIAMOND: 'vip',
-      GOLD: 'standard',
-      SILVER: 'standard',
-      FOH: 'foh',
-      STANDING : 'standing'
-    };
-    
-    return typeMap[ticketType] || 'standard';
-  }
-
-hasSectionTypes(): boolean {
-  if (!this.venueData?.sections) return false;
-  
-  const sectionTypes = new Set<SeatSectionType>();
-  this.venueData.sections.forEach(section => {
-    if (section.seatSectionType !== undefined) {
-      sectionTypes.add(section.seatSectionType);
-    }
-  });
-  
-  return sectionTypes.size > 1 || sectionTypes.has(SeatSectionType.FOH) || sectionTypes.has(SeatSectionType.STANDING);
-}
 }

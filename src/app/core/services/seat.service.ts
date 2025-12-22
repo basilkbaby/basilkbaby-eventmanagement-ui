@@ -15,12 +15,16 @@ import { environment } from "../../../environments/environment";
     
     getSeatMapConfigMobile(): VenueData {
       return {
+        eventName : "event name",
+        eventDate : new Date('2026-01-15'),
         sections: [
           {
             id: "1",
             name: 'SILVER',
             x: 50,
             y: 500,
+            mx: 50,
+            my: 500,
             rows: 20,
             seatsPerRow: 5,
             sectionLabel: 'Silver',
@@ -29,6 +33,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'SILVER',
                 customPrice: 25,
                 color: '#4a8bc9'
@@ -40,6 +46,8 @@ import { environment } from "../../../environments/environment";
             name: 'GOLD',
             x: 200,
             y: 400,
+            mx: 200,
+            my: 400,
             rows: 19,
             seatsPerRow: 10,
             rowOffset: 0,
@@ -49,6 +57,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 18,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -60,6 +70,8 @@ import { environment } from "../../../environments/environment";
             name: 'VIP',
             x: 450,
             y: 300,
+            mx: 450,
+            my: 300,
             rows: 3,
             seatsPerRow: 21,
             sectionLabel: 'VIP',
@@ -68,6 +80,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 2,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'VIP',
                 customPrice: 75,
                 color: '#8a6b8c'
@@ -79,6 +93,8 @@ import { environment } from "../../../environments/environment";
             name: 'DIAMOND',
             x: 450,
             y: 550,
+            mx: 450,
+            my: 550,
             rows: 12,
             seatsPerRow: 10,
             sectionLabel: 'DIAMOND',
@@ -87,6 +103,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 11,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -98,6 +116,8 @@ import { environment } from "../../../environments/environment";
             name: 'DIAMOND',
             x: 700,
             y: 550,
+            mx: 700,
+            my: 550,
             rows: 12,
             seatsPerRow: 10,
             sectionLabel: 'DIAMOND',
@@ -106,6 +126,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 11,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -117,6 +139,8 @@ import { environment } from "../../../environments/environment";
             name: 'GOLD',
             x: 950,
             y: 400,
+            mx: 950,
+            my: 400,
             rows: 19,
             seatsPerRow: 10,
             rowOffset: 0,
@@ -126,6 +150,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 18,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -137,6 +163,8 @@ import { environment } from "../../../environments/environment";
             name: 'SILVER',
             x: 1200,
             y: 500,
+            mx: 1200,
+            my: 500,
             rows: 20,
             seatsPerRow: 5,
             sectionLabel: 'Silver',
@@ -145,6 +173,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'SILVER',
                 customPrice: 25,
                 color: '#4a8bc9'
@@ -156,6 +186,8 @@ import { environment } from "../../../environments/environment";
             name: 'FOH',
             x: 450,
             y: 1400,
+            mx: 450,
+            my: 1400,
             rows: 2,
             seatsPerRow: 21,
             sectionLabel: 'FOH',
@@ -164,6 +196,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 2,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'FOH',
                 customPrice: 0,
                 color: '#d4d4d4ff'
@@ -208,12 +242,16 @@ import { environment } from "../../../environments/environment";
 
     getSeatMapConfig(): VenueData {
       return {
+        eventName : "event name",
+        eventDate : new Date('2026-01-15'),
         sections: [
           {
             id: "1",
             name: 'SILVER',
             x: 50,
             y: 250,
+            mx: 50,
+            my: 250,
             rows: 20,
             seatsPerRow: 5,
             sectionLabel: 'Silver',
@@ -222,6 +260,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'SILVER',
                 customPrice: 25,
                 color: '#4a8bc9'
@@ -233,6 +273,8 @@ import { environment } from "../../../environments/environment";
             name: 'GOLD',
             x: 200,
             y: 200,
+            mx: 200,
+            my: 200,
             rows: 19,
             seatsPerRow: 10,
             rowOffset: 0,
@@ -242,6 +284,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 18,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -253,6 +297,8 @@ import { environment } from "../../../environments/environment";
             name: 'VIP',
             x: 450,
             y: 150,
+            mx: 450,
+            my: 150,
             rows: 3,
             seatsPerRow: 21,
             sectionLabel: 'VIP',
@@ -261,6 +307,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 2,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'VIP',
                 customPrice: 75,
                 color: '#8a6b8c'
@@ -272,6 +320,8 @@ import { environment } from "../../../environments/environment";
             name: 'DIAMOND',
             x: 450,
             y: 250,
+            mx: 450,
+            my: 250,
             rows: 12,
             seatsPerRow: 10,
             sectionLabel: 'DIAMOND',
@@ -280,6 +330,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 11,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -291,6 +343,8 @@ import { environment } from "../../../environments/environment";
             name: 'DIAMOND',
             x: 700,
             y: 250,
+            mx: 700,
+            my: 250,
             rows: 12,
             seatsPerRow: 10,
             sectionLabel: 'DIAMOND',
@@ -299,6 +353,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 11,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -310,6 +366,8 @@ import { environment } from "../../../environments/environment";
             name: 'GOLD',
             x: 950,
             y: 200,
+            mx: 950,
+            my: 200,
             rows: 19,
             seatsPerRow: 10,
             rowOffset: 0,
@@ -319,6 +377,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 18,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -330,6 +390,8 @@ import { environment } from "../../../environments/environment";
             name: 'SILVER',
             x: 1200,
             y: 250,
+            mx: 1200,
+            my: 250,
             rows: 20,
             seatsPerRow: 5,
             sectionLabel: 'Silver',
@@ -338,6 +400,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'SILVER',
                 customPrice: 25,
                 color: '#4a8bc9'
@@ -349,6 +413,8 @@ import { environment } from "../../../environments/environment";
             name: 'FOH',
             x: 450,
             y: 550,
+            mx: 450,
+            my: 550,
             rows: 2,
             seatsPerRow: 21,
             sectionLabel: 'FOH',
@@ -357,6 +423,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 2,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'FOH',
                 customPrice: 0,
                 color: '#d4d4d4ff'
@@ -392,13 +460,17 @@ import { environment } from "../../../environments/environment";
 
     getSeatMapConfigLeicester(): VenueData {
       return {
+        eventName : "event name",
+        eventDate : new Date('2026-01-15'),
         sections: [
           // Left Standing Area
           {
             id: "left-standing",
             name: 'STANDING',
             x: 50,
-            y: 150,
+            y: 150,            
+            mx: 50,
+            my: 150,
             rows: 20,
             seatsPerRow: 12,
             sectionLabel: 'Standing',
@@ -407,6 +479,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'STANDING',
                 customPrice: 20,
                 color: '#666666'
@@ -420,6 +494,8 @@ import { environment } from "../../../environments/environment";
             name: 'LEFT_SECTION',
             x: 350,
             y: 150,
+            mx: 350,
+            my: 150,
             rows: 22,  // A to V = 22 rows
             seatsPerRow: 12,
             sectionLabel: 'Left',
@@ -427,7 +503,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 0,
-                toRow: 2,  // Rows A-C: VIP
+                toRow: 2,
+                fromColumn : 0,
+                toColumn : 0,  // Rows A-C: VIP
                 type: 'VIP',
                 customPrice: 75,
                 color: '#8a6b8c'
@@ -435,7 +513,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 3,
-                toRow: 9,  // Rows D-J: Diamond
+                toRow: 9,
+                fromColumn : 0,
+                toColumn : 0,  // Rows D-J: Diamond
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -443,7 +523,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 10,
-                toRow: 21,  // Rows K-V: Gold
+                toRow: 21, 
+                fromColumn : 0,
+                toColumn : 0, // Rows K-V: Gold
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -457,6 +539,8 @@ import { environment } from "../../../environments/environment";
             name: 'RIGHT_SECTION',
             x: 650,
             y: 150,
+            mx: 650,
+            my: 150,
             rows: 22,  // A to V = 22 rows
             seatsPerRow: 12,
             sectionLabel: 'Right',
@@ -464,7 +548,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 0,
-                toRow: 2,  // Rows A-C: VIP
+                toRow: 2, 
+                fromColumn : 0,
+                toColumn : 0, // Rows A-C: VIP
                 type: 'VIP',
                 customPrice: 75,
                 color: '#8a6b8c'
@@ -472,7 +558,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 3,
-                toRow: 9,  // Rows D-J: Diamond
+                toRow: 9,
+                fromColumn : 0,
+                toColumn : 0,  // Rows D-J: Diamond
                 type: 'DIAMOND',
                 customPrice: 50,
                 color: '#8a9a5b'
@@ -480,7 +568,9 @@ import { environment } from "../../../environments/environment";
               {
                 id: crypto.randomUUID(),
                 fromRow: 10,
-                toRow: 21,  // Rows K-V: Gold
+                toRow: 21,
+                fromColumn : 0,
+                toColumn : 0,  // Rows K-V: Gold
                 type: 'GOLD',
                 customPrice: 30,
                 color: '#b3543a'
@@ -494,6 +584,8 @@ import { environment } from "../../../environments/environment";
             name: 'STANDING',
             x: 950,
             y: 150,
+            mx: 950,
+            my: 150,
             rows: 20,
             seatsPerRow: 12,
             sectionLabel: 'Standing',
@@ -502,6 +594,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 19,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'STANDING',
                 customPrice: 20,
                 color: '#666666'
@@ -515,6 +609,8 @@ import { environment } from "../../../environments/environment";
             name: 'FOH',
             x: 350,
             y: 680,
+            mx: 350,
+            my: 680,
             rows: 2,
             seatsPerRow: 26,
             sectionLabel: 'FOH',
@@ -523,6 +619,8 @@ import { environment } from "../../../environments/environment";
                 id: crypto.randomUUID(),
                 fromRow: 0,
                 toRow: 1,
+                fromColumn : 0,
+                toColumn : 0,
                 type: 'FOH',
                 customPrice: 0,
                 color: '#d4d4d4'

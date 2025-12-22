@@ -1,4 +1,4 @@
-<div class="mobile-seat-selector">
+<div class="mobile-seat-selector" *ngIf="!loading">
   <!-- Header -->
   <header class="mobile-header">
     <button class="back-button" (click)="goBack()">‹</button>
@@ -13,7 +13,7 @@
   <div class="error-message" *ngIf="selectionError">
     {{ selectionError }}
   </div>
-
+<div class="content-wrapper">
   <!-- Stage Indicator -->
   <div class="stage-indicator">
     <div class="stage-line"></div>
@@ -62,9 +62,9 @@
       </div>
     </div>
   </div>
-
+</div>
   <!-- Selection Summary -->
-  <div class="selection-summary" *ngIf="selectedSeats.length > 0">
+  <div class="selection-summary sticky-bottom" *ngIf="selectedSeats.length > 0">
     <div class="summary-header">
       <h3>{{ selectedSeats.length }} Seat{{ selectedSeats.length > 1 ? 's' : '' }} Selected</h3>
       <button class="btn-clear" (click)="clearSelection()">Clear All</button>
@@ -75,7 +75,7 @@
          class="seat-chip"
          [style.background-color]="seat.tier.color + '15'"
          [style.border-color]="seat.tier.color">
-      <span class="seat-number">{{ seat.row }}{{ seat.number }}</span>
+      <span class="seat-number">{{ seat.id }}</span>
       <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
       <span class="seat-price-chip">{{ formatPrice(seat.price) }}</span>
     </div>

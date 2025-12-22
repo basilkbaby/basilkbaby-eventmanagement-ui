@@ -1,4 +1,6 @@
 export interface VenueData {
+  eventName : string;
+  eventDate : Date;
   sections: VenueSection[];
   seatManagement: SeatManagement;
 }
@@ -24,7 +26,9 @@ export interface VenueSection {
   id : string;
   name: string;
   x: number;
+  mx : number;
   y: number;
+  my: number;
   rows: number;
   seatsPerRow: number;
   sectionLabel?: string;
@@ -38,6 +42,8 @@ export interface SectionRowConfig {
   id: string;
   fromRow: number;
   toRow: number;
+  fromColumn: number;
+  toColumn: number;
   type: TicketType;
   customPrice?: number;
   color: string; // Color specific to this ticket type in this row group
@@ -82,6 +88,11 @@ export interface Seat {
   gridRow?: number;
   gridColumn?: number;
   isStandingArea : boolean;
+  columnSectionIndex?: number;
+  originalColumn?: number;
+  isFirstInSection?: boolean;
+  isLastInSection?: boolean;
+  rowRangeIndex? :number;
 }
 
 export interface SelectedSeat {
