@@ -84,11 +84,11 @@
           </svg>
           <div>
             <strong>Save Your Tickets</strong>
-            <p>Download the PDF or save to your phone's wallet</p>
+            <p>Download the PDF or save to your device</p>
           </div>
         </div>
 
-        <div class="action-buttons">
+        <!-- <div class="action-buttons">
           <button class="download-btn" (click)="downloadTickets()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"
@@ -99,7 +99,7 @@
           <button class="home-btn" (click)="goHome()">
             Back to Home
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -157,8 +157,13 @@
           <div class="ticket-content">
 
 
-            <div class="ticket-qr">
-              <!-- <qrcode [qrdata]="generateQRData(ticket)" [width]="120" [errorCorrectionLevel]="'M'"></qrcode> -->
+            <div class="ticket-qr" >
+              <div class="qr-container">
+                    <img [src]="'data:image/png;base64,' + order!.qrCodeData" 
+                        alt="Ticket QR Code"
+                        width="100"
+                        height="100">
+                  </div>
               <p class="qr-note">Scan at entrance</p>
             </div>
           </div>

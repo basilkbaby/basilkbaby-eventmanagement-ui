@@ -18,6 +18,7 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   seats: OrderSeatDto[];
+  qrCodeData :string;
 }
 
 export interface OrderSeatDto{
