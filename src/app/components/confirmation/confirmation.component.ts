@@ -20,7 +20,7 @@ export class ConfirmationComponent implements OnInit {
   order: Order | null = null;
   tickets: Ticket[] = [];
   loading: boolean = true;
-
+Math = Math;
   constructor(
     private route: ActivatedRoute,
     private router: Router,

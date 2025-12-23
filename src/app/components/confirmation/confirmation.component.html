@@ -4,8 +4,9 @@
     <div class="header-content">
       <div class="success-icon">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
-          <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+          <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </div>
       <h1>Order Confirmed!</h1>
@@ -19,7 +20,7 @@
     <div class="order-summary-section">
       <div class="summary-card">
         <h2>Order Summary</h2>
-        
+
         <div class="customer-info">
           <h3>Customer Details</h3>
           <div class="info-grid">
@@ -34,7 +35,7 @@
             <div class="info-item">
               <span class="label">Phone:</span>
               <span class="value">{{ order?.customerPhone }}</span>
-            </div>            
+            </div>
             <div class="info-item">
               <span class="label">Post Code:</span>
               <span class="value">{{ order?.customerPostCode }}</span>
@@ -66,19 +67,20 @@
         <h3>Next Steps</h3>
         <div class="action-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
-            <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/>
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor"
+              stroke-width="2" />
+            <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" />
           </svg>
           <div>
             <strong>Check Your Email</strong>
             <p>Your tickets have been sent to {{ order?.customerEmail }}</p>
           </div>
         </div>
-        
+
         <div class="action-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="8" width="18" height="12" rx="1" stroke="currentColor" stroke-width="2"/>
-            <path d="M8 12h8M8 16h8" stroke="currentColor" stroke-width="2"/>
+            <rect x="3" y="8" width="18" height="12" rx="1" stroke="currentColor" stroke-width="2" />
+            <path d="M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" />
           </svg>
           <div>
             <strong>Save Your Tickets</strong>
@@ -89,7 +91,8 @@
         <div class="action-buttons">
           <button class="download-btn" (click)="downloadTickets()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"
+                stroke-width="2" />
             </svg>
             Download Tickets
           </button>
@@ -103,57 +106,56 @@
     <!-- Right: Ticket Details -->
     <div class="tickets-section">
       <h2>Your Tickets</h2>
-      
+
       <div class="ticket-cards">
         <div class="ticket-card">
           <div class="ticket-header">
-            <div class="ticket-type">Ticket type goes here</div>
-            <div class="ticket-status" >Confirmed</div>
+            <div class="ticket-type">{{ order?.eventName }}</div>
+            <div class="ticket-status">Confirmed</div>
           </div>
-          
+
           <div class="ticket-content">
             <div class="event-info">
-              <h3>{{ order?.eventName }}</h3>
               <div class="event-details">
                 <div class="detail-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                    <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="2"/>
+                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
+                    <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="2" />
                   </svg>
                   <span>{{ (order?.eventDate) | formatDate }}</span>
                 </div>
                 <div class="detail-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" />
                   </svg>
                   <span>Venue goes here</span>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="ticket-content">
 
             <div *ngFor="let ticket of order?.seats">
-            <div class="ticket-details" >
-              <div class="detail-row">
-                <span class="label">Ticket ID:</span>
-                <span class="value">{{ ticket.seatId }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Seat:</span>
-                <span class="value">
-                  {{ ticket.seatId }} 
-                </span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Quantity:</span>
-                <span class="value">{{ 1 }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Price:</span>
-                <!-- <span class="value">{{ formatPrice(ticket.price * ticket.quantity) }}</span> -->
+              <div class="ticket-details">
+                <div class="detail-row">
+                  <span class="label">Ticket ID:</span>
+                  <span class="value">{{ ticket.ticketNumber }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Seat:</span>
+                  <span class="value">
+                    {{ ticket.seatId }}
+                  </span>
+                </div>
               </div>
             </div>
-            </div>
+
+
+          </div>
+          <div class="ticket-content">
+
 
             <div class="ticket-qr">
               <!-- <qrcode [qrdata]="generateQRData(ticket)" [width]="120" [errorCorrectionLevel]="'M'"></qrcode> -->
@@ -177,22 +179,23 @@
     <div class="support-options">
       <a href="mailto:support@example.com" class="support-link">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 12h8M12 16V8" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+          <path d="M8 12h8M12 16V8" stroke="currentColor" stroke-width="2" />
         </svg>
         Contact Support
       </a>
       <a href="/faq" class="support-link">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+          <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" />
         </svg>
         View FAQ
       </a>
       <button class="support-link" (click)="printTickets()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" stroke-width="2"/>
-          <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2"/>
+          <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"
+            stroke="currentColor" stroke-width="2" />
+          <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" />
         </svg>
         Print Tickets
       </button>

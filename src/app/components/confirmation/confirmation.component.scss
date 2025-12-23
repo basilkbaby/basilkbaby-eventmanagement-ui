@@ -354,7 +354,7 @@
       .ticket-content {
         padding: 24px;
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr 1fr;
         gap: 24px;
         align-items: start;
 
@@ -422,7 +422,7 @@
               font-weight: 600;
               color: #111827;
               text-align: right;
-              font-size: 0.95rem;
+              font-size: 0.85rem;
             }
           }
         }
