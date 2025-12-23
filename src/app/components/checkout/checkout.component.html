@@ -279,6 +279,10 @@
               <span>Service Fee</span>
               <span>{{ formatPrice(cartSummary.serviceFee) }}</span>
             </div>
+              <div class="total-line" *ngIf="cartSummary.totalDiscount>0">
+              <span>Discount</span>
+              <span>{{ formatPrice(cartSummary.totalDiscount) }}</span>
+            </div>
             <div class="total-line grand-total">
               <span>Total</span>
               <span>{{ formatPrice(cartSummary.total) }}</span>

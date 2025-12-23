@@ -1,5 +1,6 @@
 export interface CartItemDto {
-  id: string;
+  cartItemId: string;
+  cartId: string;
   seatId: string;
   seatNumber: string;
   sectionName: string;
@@ -52,6 +53,7 @@ export interface CartSummaryDto {
   subtotal: number;
   serviceFee: number;
   total: number;
+  totalDiscount: number;
   seats: Array<{
     seatId: string;
     seatNumber: string;
@@ -92,6 +94,7 @@ export interface CartDetailsResponse {
     total: number;
     expiresAt: string;
     seats: Array<{
+      id : string;
       seatId: string;
       seatNumber: string;
       section: string;

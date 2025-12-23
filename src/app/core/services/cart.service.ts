@@ -46,7 +46,7 @@ export class CartService {
   }
 
   // Add seats to cart via API
-  addSeatsToCart(eventId: string, seatIds: string[]): void {
+  addToCart(eventId: string, seatIds: string[]): void {
     const sessionId = this.getOrCreateSessionId();
     const request: AddToCartRequest = { eventId, seatIds, sessionId };
     
@@ -110,42 +110,15 @@ export class CartService {
       });
   }
 
-  // Update quantity via API
-  updateQuantity(seatId: string, quantity: number): void {
-    const cartId = this.currentCartId;
-    if (!cartId) {
-      console.error('No cart ID available');
-      return;
-    }
-    
-    this.http.put<CartDetailsResponse>(`${this.baseUrl}/cart/${cartId}/seat/${seatId}`, { quantity })
-      .subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.updateCartState(response.data);
-          }
-          this.cartDetailsSubject.next(response);
-        },
-        error: (error) => {
-          console.error('Error updating quantity:', error);
-          this.cartDetailsSubject.next({ 
-            success: false, 
-            error: error.message,
-            data: undefined 
-          });
-        }
-      });
-  }
-
   // Remove seat via API
-  removeSeat(seatId: string): void {
-    const cartId = this.currentCartId;
-    if (!cartId) {
+  removeCartItem(cartItemId : string): void {
+    const currentCartId = this.currentCartId;
+    if (!currentCartId) {
       console.error('No cart ID available');
       return;
     }
     
-    this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/${cartId}/seat/${seatId}`)
+    this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/remove/${currentCartId}/${cartItemId}`)
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
@@ -193,7 +166,7 @@ export class CartService {
 
   // Complete checkout
   checkout(checkoutData: CheckoutRequest): void {
-    this.http.post<CheckoutResponse>(`${this.baseUrl}/checkout`, checkoutData)
+    this.http.post<CheckoutResponse>(`${this.baseUrl}/checkout/complete`, checkoutData)
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -241,7 +214,8 @@ export class CartService {
 
   // Private helper methods
   private updateCartState(data: any): void {
-    const items = (data.seats || []).map((seat: any) => ({
+    const items = (data.cartItems || []).map((seat: any) => ({
+      cartItemId : seat.cartItemId,
       seatId: seat.seatId,
       seatNumber: seat.seatNumber,
       sectionName: seat.section,
@@ -257,7 +231,8 @@ export class CartService {
       eventId: data.eventId || '',
       subtotal: data.subtotal || 0,
       serviceFee: data.serviceFee || 0,
-      total: data.subtotal || 0,
+      total: data.total|| 0,
+      totalDiscount : data.totalDiscount || 0,
       seatCount: data.seatCount || items.length,
       seats: data.seats || []
     };
@@ -279,6 +254,7 @@ export class CartService {
       subtotal: 0, 
       serviceFee: 0, 
       total: 0, 
+      totalDiscount :0,
       seatCount: 0, 
       seats: [] 
     };

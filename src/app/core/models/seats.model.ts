@@ -34,7 +34,7 @@ export interface VenueSection {
   sectionLabel?: string;
   seatSectionType?: SeatSectionType;
   rowOffset?: number;
-  
+  numberingDirection ? : string;
   rowConfigs: SectionRowConfig[];
 }
 
@@ -47,6 +47,7 @@ export interface SectionRowConfig {
   type: TicketType;
   customPrice?: number;
   color: string; // Color specific to this ticket type in this row group
+  numberingDirection ? : string;
 }
 
 // seats.model.ts
@@ -93,6 +94,9 @@ export interface Seat {
   isFirstInSection?: boolean;
   isLastInSection?: boolean;
   rowRangeIndex? :number;
+  columnSectionNumber?: number; // 1, 2, 3, 4
+  rowRangeNumber?: number; // 1, 2
+  numberingDirection? :string;
 }
 
 export interface SelectedSeat {

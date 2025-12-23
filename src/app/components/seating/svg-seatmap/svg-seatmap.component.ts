@@ -79,72 +79,107 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   }
 
   // ========== SEAT GENERATION ==========
-  generateSeats() {
-    this.seats = [];
-    this.middleMinX = Number.MAX_VALUE;
-    this.middleMaxX = 0;
-    this.middleBottomY = 0;
-    
-    const statusMap = new Map<string, SeatOverride>();
-    const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
-    
-    categories.forEach(category => {
-      this.venueData.seatManagement[category].forEach(seatOverride => {
-        statusMap.set(seatOverride.seatId, seatOverride);
-      });
+generateSeats() {
+  this.seats = [];
+  this.middleMinX = Number.MAX_VALUE;
+  this.middleMaxX = 0;
+  this.middleBottomY = 0;
+  
+  const statusMap = new Map<string, SeatOverride>();
+  const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
+  
+  categories.forEach(category => {
+    this.venueData.seatManagement[category].forEach(seatOverride => {
+      statusMap.set(seatOverride.seatId, seatOverride);
     });
+  });
+  
+  this.venueData.sections.forEach((section) => {
+    const sectionType = section.seatSectionType || SeatSectionType.SEAT;
+    const sectionNumberingDirection = section.numberingDirection || 'right';
     
-    this.venueData.sections.forEach((section) => {
-      const sectionType = section.seatSectionType || SeatSectionType.SEAT;
-      
-      if (sectionType === SeatSectionType.FOH) {
-        return;
-      }
-      
-      if (sectionType === SeatSectionType.STANDING) {
-        const sectionPrefix = section.name.toUpperCase();
-        const seatId = `${sectionPrefix}-ST`;
-        
-        const cx = section.x+ 22;
-        const cy = section.y;
-        
-        const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
-        
-        const seat: Seat = {
-          id: seatId,
-          cx,
-          cy,
-          r: Math.max(section.seatsPerRow, section.rows) * 22 / 4,
-          rowLabel: 'ST',
-          seatNumber: 0,
-          sectionId: section.id,
-          sectionName: section.sectionLabel || section.name,
-          sectionConfigId: rowConfig.id,
-          ticketType: rowConfig.type, 
-          status: SeatStatus.AVAILABLE,
-          price: rowConfig.customPrice || 0,
-          color: rowConfig.color,
-          gridRow: section.rows,
-          gridColumn: section.seatsPerRow,
-          isStandingArea: true
-        };
-        
-        this.seats.push(seat);
-        return;
-      }
-      
-      // Original logic for SEAT sections
-      const rowOffset = section.rowOffset || 0;
+    if (sectionType === SeatSectionType.FOH) {
+      return;
+    }
+    
+    if (sectionType === SeatSectionType.STANDING) {
       const sectionPrefix = section.name.toUpperCase();
+      const seatId = `${sectionPrefix}-ST`;
       
-      for (let r = 0; r < section.rows; r++) {
+      const cx = section.x + 22;
+      const cy = section.y;
+      
+      const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
+      
+      const seat: Seat = {
+        id: seatId,
+        cx,
+        cy,
+        r: Math.max(section.seatsPerRow, section.rows) * 22 / 4,
+        rowLabel: 'ST',
+        seatNumber: 0,
+        sectionId: section.id,
+        sectionName: section.sectionLabel || section.name,
+        sectionConfigId: rowConfig.id,
+        ticketType: rowConfig.type, 
+        status: SeatStatus.AVAILABLE,
+        price: rowConfig.customPrice || 0,
+        color: rowConfig.color,
+        gridRow: section.rows,
+        gridColumn: section.seatsPerRow,
+        isStandingArea: true
+      };
+      
+      this.seats.push(seat);
+      return;
+    }
+    
+    // SEAT sections with row/column configs
+    const sectionPrefix = section.name.toUpperCase();
+    const rowOffset = section.rowOffset || 0;
+    
+    // Get all row configs for this section
+    const rowConfigs = section.rowConfigs || [];
+    
+    // Process each row config
+    rowConfigs.forEach(rowConfig => {
+      const fromRow = rowConfig.fromRow;
+      const toRow = rowConfig.toRow;
+      const fromColumn = rowConfig.fromColumn || 1;
+      const toColumn = rowConfig.toColumn || section.seatsPerRow;
+      const numberingDirection = rowConfig.numberingDirection || sectionNumberingDirection;
+      
+      // Calculate numbering based on direction
+      const calculateSeatNumber = (col: number): number => {
+        if (numberingDirection === 'center') {
+          // Center-based numbering: seats are numbered from center outward
+          const middle = (fromColumn + toColumn) / 2;
+          const distanceFromCenter = Math.abs(col - middle);
+          const isLeftSide = col < middle;
+          
+          if (middle % 1 === 0) {
+            // Odd number of seats in range (exact center exists)
+            if (col === middle) return 1;
+            return isLeftSide ? (middle - col) * 2 + 2 : (col - middle) * 2;
+          } else {
+            // Even number of seats in range (no exact center)
+            return isLeftSide ? (middle - col) * 2 : (col - middle) * 2 - 1;
+          }
+        } else if (numberingDirection === 'right') {
+          // Right-to-left numbering (highest number on left)
+          return toColumn - col + 1;
+        } else {
+          // Left-to-right numbering (default, lowest number on left)
+          return col - fromColumn + 1;
+        }
+      };
+      
+      // Generate seats for this config
+      for (let r = fromRow; r <= toRow; r++) {
         const globalRow = r + rowOffset;
         const rowLetter = this.getRowLetter(r);
         
-        const rowConfig = this.getRowConfigForSeat(section, r);
-        const seatPrice = rowConfig.customPrice || 0;
-        
-        for (let c = 1; c <= section.seatsPerRow; c++) {
+        for (let c = fromColumn; c <= toColumn; c++) {
           const seatId = `${sectionPrefix}-${rowLetter}-${c}`;
           const cx = section.x + (c * 22);
           const cy = section.y + (globalRow * 22);
@@ -152,31 +187,37 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
           const seatOverride = statusMap.get(seatId);
           const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
           
+          // Calculate seat number based on numbering direction
+          const seatNumber = calculateSeatNumber(c);
+          
           const seat: Seat = {
             id: seatId,
             cx,
             cy,
             r: 8,
             rowLabel: rowLetter,
-            seatNumber: c,
+            seatNumber: seatNumber,
             sectionId: section.id,
             sectionName: section.sectionLabel || section.name,
             sectionConfigId: rowConfig.id,
             ticketType: rowConfig.type, 
             status: seatStatus,
-            price: seatPrice,
+            price: rowConfig.customPrice || 0,
             color: rowConfig.color,
             gridRow: globalRow,
             gridColumn: c,
-            isStandingArea: false
+            isStandingArea: false,
+            originalColumn: c, // Store original column for reference
+            numberingDirection: numberingDirection
           };
           
           this.seats.push(seat);
         }
       }
     });
-  }
-  
+  });
+}
+
   private getRowConfigForSeat(section: VenueSection, rowIndex: number): SectionRowConfig {
     const config = section.rowConfigs.find(rc => 
       rowIndex >= rc.fromRow && rowIndex <= rc.toRow
@@ -344,7 +385,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     
     // Add ALL seats to cart at once
     if (seatIdsArray.length > 0) {
-      this.cartService.addSeatsToCart(this.eventId, seatIdsArray);
+      this.cartService.addToCart(this.eventId, seatIdsArray);
     }
     
     this.clearSelection();

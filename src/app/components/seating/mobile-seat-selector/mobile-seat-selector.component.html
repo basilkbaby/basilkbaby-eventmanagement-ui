@@ -75,7 +75,7 @@
          class="seat-chip"
          [style.background-color]="seat.tier.color + '15'"
          [style.border-color]="seat.tier.color">
-      <span class="seat-number">{{ seat.id }}</span>
+      <span class="seat-number">{{ seat.row }}{{ seat.id }}</span>
       <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
       <span class="seat-price-chip">{{ formatPrice(seat.price) }}</span>
     </div>

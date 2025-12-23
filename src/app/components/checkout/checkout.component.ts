@@ -39,6 +39,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     subtotal: 0, 
     serviceFee: 0, 
     total: 0, 
+    totalDiscount : 0,
     seatCount: 0, 
     seats: [] 
   };
@@ -290,7 +291,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private async createPaymentIntent(amount: number): Promise<any> {
     try {
       const response = await lastValueFrom(
-        this.http.post<any>(`${environment.apiUrl}/api/orders/create-payment-intent`, {
+        this.http.post<any>(`${environment.apiUrl}/api/checkout/create-payment-intent`, {
           amount: amount, // Convert to pence/cents
           currency: 'gbp',
           metadata: {

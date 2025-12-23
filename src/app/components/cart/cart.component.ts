@@ -71,20 +71,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.getCartDetails();
   }
 
-  updateQuantity(seatId: string, change: number): void {
-    const item = this.cartItems.find(item => item.seatId === seatId);
-    if (item) {
-      const newQuantity = item.quantity + change;
-      if (newQuantity >= 1 && newQuantity <= 10) {
-        this.cartService.updateQuantity(seatId, newQuantity);
-        this.loading = true;
-      }
-    }
-  }
 
-  removeItem(seatId: string): void {
+  removeCartItem(cartItemId: string): void {
     if (confirm('Are you sure you want to remove this seat?')) {
-      this.cartService.removeSeat(seatId);
+      this.cartService.removeCartItem(cartItemId);
       this.loading = true;
     }
   }
@@ -97,9 +87,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-UK', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'GBP',
       minimumFractionDigits: 2
     }).format(price);
   }
@@ -164,6 +154,7 @@ export class CartComponent implements OnInit, OnDestroy {
       subtotal: 0, 
       serviceFee: 0, 
       total: 0, 
+      totalDiscount : 0,
       seatCount: 0, 
       seats: [] 
     };

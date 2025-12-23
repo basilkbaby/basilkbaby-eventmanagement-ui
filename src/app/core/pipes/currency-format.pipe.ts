@@ -6,16 +6,21 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class CurrencyFormatPipe implements PipeTransform {
-  transform(price: number, currency: string = 'GBP', locale: string = 'en-UK'): string {
-    if (price === null || price === undefined) {
+  transform(
+    price: number | null | undefined, 
+    currency: string = 'GBP', 
+    locale: string = 'en-GB',
+    decimalPlaces: number = 2
+  ): string {
+    if (price === null || price === undefined || isNaN(price)) {
       return 'Price Varies';
     }
     
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces
     }).format(price);
   }
 }
