@@ -1,0 +1,177 @@
+<div class="mobile-svg-seat-selector" *ngIf="!loading && section">
+  <!-- Header -->
+  <header class="mobile-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <h2>{{ section.sectionLabel || section.name || 'Loading...' }}</h2>
+      <p class="seat-stats">
+        <span>{{ getAvailableSeatsCount() }}</span> seats • 
+        <span>{{ formatPrice(getMinPrice()) }}+</span>
+      </p>
+    </div>
+    
+    <!-- Section Selector -->
+    <!-- <div class="section-selector" *ngIf="availableSections.length > 1">
+      <select [(ngModel)]="currentSectionId" (change)="onSectionChange()">
+        <option *ngFor="let sec of availableSections" [value]="sec.id">
+          {{ sec.sectionLabel || sec.name }}
+        </option>
+      </select>
+    </div> -->
+  </header>
+
+  <!-- Error Message -->
+  <div class="mobile-error" *ngIf="selectionError">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+    </svg>
+    <span>{{ selectionError }}</span>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content-wrapper" *ngIf="seats.length > 0">
+    <!-- SVG Container -->
+    <div class="svg-pan-container">
+      <svg #seatMapSvg class="seat-map-svg">
+        
+        <!-- Stage -->
+        <g class="stage">
+          <rect class="stage-rect" x="100" y="20" width="800" height="60" rx="10" ry="10" [attr.rx]="8" 
+                stroke="#bebebe" 
+                 fill="#ffffff" 
+                [attr.stroke-width]="2" />
+          <text class="stage-text" x="500" y="50"  text-anchor="middle" 
+                font-family="Arial"
+                [attr.font-size]="18" 
+                font-weight="bold" 
+                fill="#bebebe">STAGE</text>
+        </g>
+        
+        <!-- Row Labels -->
+        <g class="row-labels">
+          <text *ngFor="let label of rowLabels"
+                class="row-label"
+                [attr.x]="label.x"
+                [attr.y]="label.y"
+                [attr.text-anchor]="label.side === 'left' ? 'end' : 'start'"
+                dominant-baseline="middle">
+            {{ label.label }}
+          </text>
+        </g>
+
+        <!-- Seats - Using Seat model directly -->
+        <g class="seats-container">
+          <g *ngFor="let seat of seats; trackBy: trackBySeatId"
+             class="seat-wrapper"
+             [attr.transform]="'translate(' + seat.cx + ',' + seat.cy + ')'">
+            
+            <!-- Seat Circle -->
+            <circle class="seat-circle"
+                    [attr.r]="seat.r"
+                    [class]="getSeatStatusClass(seat)"
+                    [attr.fill]="getSeatFillColor(seat)"
+                    [attr.stroke]="getSeatStrokeColor(seat)"
+                    (click)="toggleSeat(seat)">
+            </circle>
+            
+            <!-- Seat Number (visible on selected seats) -->
+            <text *ngIf="seat.status === SeatStatus.SELECTED"
+                  class="seat-number"
+                  x="0"
+                  y="5"
+                  text-anchor="middle"
+                  dominant-baseline="middle">
+              {{ getSeatStatusText(seat.status, seat.ticketType) }}
+            </text>
+
+            <!-- Block Indicator (show on first seat of each block) -->
+
+          </g>
+        </g>
+
+
+        
+
+      </svg>
+      
+      <!-- Legend - Inside SVG container -->
+      <div class="mobile-legend" *ngIf="seats.length > 0">
+        <!-- Section colors -->
+        <div class="legend-item" *ngFor="let block of getUniqueBlocks()">
+          <div class="legend-color" 
+               [style.background]="getBlockColor(block)" 
+               [style.border-color]="getBlockStroke(block)"></div>
+          <span>{{ block }}</span>
+        </div>
+        <!-- Status colors -->
+        <div class="legend-item" *ngFor="let item of legendItems">
+          <div class="legend-color" 
+               [style.background]="item.color" 
+               [style.border-color]="item.stroke"></div>
+          <span>{{ item.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Seats Message -->
+  <div class="no-seats-message" *ngIf="!loading && seats.length === 0">
+    <div class="message-content">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <h3>No Seats Available</h3>
+      <p>There are no seats to display for this section.</p>
+    </div>
+  </div>
+
+  <!-- Selection Summary -->
+  <div class="mobile-summary" [class.visible]="summaryVisible" *ngIf="selectedSeats.length > 0">
+    <div class="summary-header">
+      <div class="selected-count">
+        <span class="count">{{ selectedSeats.length }}</span>
+        <span class="label">seats selected</span>
+      </div>
+      <div class="total-price">
+        {{ formatPrice(getTotalPrice()) }}
+      </div>
+    </div>
+  
+    
+    <!-- Seat chips for more seats -->
+    <div class="seats-list" *ngIf="selectedSeats.length > 0">
+      <div class="seat-chips">
+        <div class="seat-chip" *ngFor="let seat of selectedSeats">
+          <span class="block-letter">seat</span>
+          <span>{{ seat.id }}</span>
+          <button class="remove-btn" (click)="removeSingleSeat(seat)">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="summary-actions">
+      <button class="btn clear-btn" (click)="clearSelection()">
+        Clear All
+      </button>
+      <button class="btn add-btn" (click)="addToCart()">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="loading">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <p>Loading seat map...</p>
+  </div>
+</div>

@@ -33,20 +33,20 @@
 
             <!-- Section Labels -->
             <g *ngFor="let section of venueData?.sections || []">
-                <text *ngIf="section.seatSectionType != SeatSectionType.FOH" 
-                    [attr.x]="section.x + (section.seatsPerRow * BASE_SEAT_GAP / 2)" 
-                    [attr.y]="section.y - 20"
-                    text-anchor="center" 
-                    font-family="Arial" 
-                    font-size="16" 
-                    font-weight="bold" 
-                    fill="#bebebe">
-                    {{ section.sectionLabel || section.name }}
-                </text>
+            <text *ngIf="section.seatSectionType != SeatSectionType.FOH" 
+                [attr.x]="getSectionCenterX(section)" 
+                [attr.y]="section.y - 20"
+                text-anchor="center" 
+                font-family="Arial" 
+                font-size="16" 
+                font-weight="bold" 
+                fill="#bebebe">
+                {{ section.sectionLabel || section.name }}
+            </text>
             </g>
 
             <!-- Row Labels (only for SEAT sections) -->
-            <ng-container *ngFor="let section of venueData?.sections || []">
+            <!-- <ng-container *ngFor="let section of venueData?.sections || []">
                 <g *ngIf="section.seatSectionType === SeatSectionType.SEAT">
                     <g *ngFor="let row of getRowArray(section.rows); let i = index">
                         <text 
@@ -60,7 +60,22 @@
                         </text>
                     </g>
                 </g>
-            </ng-container>
+            </ng-container> -->
+
+            <g class="row-labels">
+                <text 
+                    *ngFor="let rowLabel of rowLabels" 
+                    [attr.x]="rowLabel.x" 
+                    [attr.y]="rowLabel.y" 
+                    [attr.text-anchor]="rowLabel.side === 'left' ? 'end' : 'start'"
+                    font-family="Arial" 
+                    font-size="12" 
+                    font-weight="bold" 
+                    fill="#333"
+                    [attr.data-side]="rowLabel.side">
+                    {{ rowLabel.label }}
+                </text>
+            </g>
 
             <!-- FOH Sections -->
             <g *ngFor="let section of venueData?.sections || []">

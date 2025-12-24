@@ -1,98 +1,148 @@
 <div class="mobile-seat-selector" *ngIf="!loading">
   <!-- Header -->
-  <header class="mobile-header">
-    <button class="back-button" (click)="goBack()">‹</button>
-    <div class="header-title">
-      <h1>{{ section.sectionLabel || section.name }}</h1>
-      <p class="available-count">{{ getAvailableSeatsCount() }} seats available</p>
+  <header class="simple-header">
+    <button class="back-btn" (click)="goBack()">
+      <span class="back-icon">‹</span>
+    </button>
+    <div class="title-section">
+      <h1 class="section-title">{{ section.sectionLabel || section.name }}</h1>
+      <div class="header-stats">
+        <span class="stat">
+          <span class="stat-icon">🎯</span>
+          {{ getAvailableSeatsCount() }} available
+        </span>
+        <span class="stat">
+          <span class="stat-icon">💰</span>
+          {{ formatPrice(getMinPrice()) }}+
+        </span>
+        <span class="stat">
+          <span class="stat-icon">📊</span>
+          {{ getLeftRows().length + getRightRows().length }} rows
+        </span>
+      </div>
     </div>
-    <button class="cart-button" (click)="goToCart()">🛒</button>
   </header>
 
   <!-- Error Message -->
-  <div class="error-message" *ngIf="selectionError">
+  <div class="error-message" *ngIf="selectionError" @fadeInOut>
+    <span class="error-icon">!</span>
     {{ selectionError }}
   </div>
-<div class="content-wrapper">
+
   <!-- Stage Indicator -->
-  <div class="stage-indicator">
-    <div class="stage-line"></div>
-    <div class="stage-label">STAGE</div>
-    <div class="view-direction">Looking towards stage</div>
+  <div class="stage-area">
+    <div class="stage-container">
+      <div class="stage-text">STAGE</div>
+      <div class="stage-direction">↓ VIEW ↓</div>
+    </div>
   </div>
 
-  <!-- Seat Grid -->
-  <div class="seat-grid">
-    <div class="grid-container">
+  <!-- Main Seat Map - Continuous Layout -->
+  <div class="seat-map-container continuous-layout">
+    <div class="seat-map-wrapper">
+      <!-- All Rows Combined - No Left/Right Separation -->
+      <div class="all-rows-container">
+        <!-- Row Labels Column -->
+        <div class="row-labels">
+          <div *ngFor="let row of getAllRows()" class="row-label">
+            {{ row.letter }}
+          </div>
+        </div>
 
-      <!-- Seat rows -->
-      <div *ngFor="let row of rows" class="seat-row">
-        <div class="row-letter">{{ row.letter }}</div>
-        
-        <div class="seats-container">
-          <div *ngFor="let seat of row.seats" 
-               class="seat"
-               [class]="'seat-' + seat.status.toLowerCase()"
-               [style.background-color]="getSeatColor(seat)"
-               (click)="toggleSeatSelection(seat)"
-               [title]="getSeatStatusText(seat) + ' - £' + seat.price">
-            
-              <ng-container *ngIf="seat.status !== SeatStatus.BLOCKED">
-                  <div class="seat-number">{{ seat.seatNumber }}</div>
-              
-            
-                <!-- Status indicator -->
-                <div class="seat-status" *ngIf="seat.status !== SeatStatus.AVAILABLE && seat.status !== SeatStatus.SELECTED">
-                  {{ getSeatStatusText(seat).charAt(0) }}
+        <!-- Combined Seats Grid -->
+        <div class="combined-seats-grid">
+          <div *ngFor="let row of getAllRows()" class="combined-seat-row">
+            <div class="seats-in-row">
+              <!-- Left Side Seats -->
+              <div class="seats-group left-seats" *ngIf="isLeftSideBlock(row.blockLetter)">
+                <div *ngFor="let seat of row.seats" 
+                     class="seat"
+                     [class]="getSeatClass(seat)"
+                     (click)="toggleSeatSelection(seat)"
+                     [title]="getSeatTooltip(seat)">
+                  {{ seat.seatNumber }}
                 </div>
-              </ng-container>
-            
-            <!-- Selected checkmark -->
-            <div class="seat-selected" *ngIf="seat.status === SeatStatus.SELECTED">
-              ✓
+                <div class="aisle-marker left">← Aisle</div>
+              </div>
+
+              <!-- Center Gap -->
+              <div class="center-gap" *ngIf="hasBothSides()">
+                <div class="row-number">{{ row.letter }}</div>
+                <div class="view-direction">VIEW →</div>
+              </div>
+
+              <!-- Right Side Seats -->
+              <div class="seats-group right-seats" *ngIf="isRightSideBlock(row.blockLetter)">
+                <div class="aisle-marker right">Aisle →</div>
+                <div *ngFor="let seat of row.seats" 
+                     class="seat"
+                     [class]="getSeatClass(seat)"
+                     (click)="toggleSeatSelection(seat)"
+                     [title]="getSeatTooltip(seat)">
+                  {{ seat.seatNumber }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <!-- Row info -->
-        <div class="row-info">
-          <span class="ticket-type">{{ row.ticketType }}</span>
-          <span class="row-price">{{ formatPrice(row.price) }}</span>
-        </div>
+      </div>
+    </div>
+
+    <!-- Side Indicators -->
+    <div class="side-indicators">
+      <div class="side left-side">
+        <div class="side-marker"></div>
+        <span class="side-label">Left Section</span>
+      </div>
+      <div class="side right-side">
+        <span class="side-label">Right Section</span>
+        <div class="side-marker"></div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Status Legend -->
+  <div class="status-legend compact">
+    <div class="status-item">
+      <div class="status-indicator available"></div>
+      <span>Available</span>
+    </div>
+    <div class="status-item">
+      <div class="status-indicator selected"></div>
+      <span>Selected</span>
+    </div>
+    <div class="status-item">
+      <div class="status-indicator sold"></div>
+      <span>Sold</span>
+    </div>
+    <div class="status-item">
+      <div class="status-indicator blocked"></div>
+      <span>Unavailable</span>
+    </div>
+  </div>
+
   <!-- Selection Summary -->
-  <div class="selection-summary sticky-bottom" *ngIf="selectedSeats.length > 0">
+  <div class="selection-summary" *ngIf="selectedSeats.length > 0" @slideUp>
     <div class="summary-header">
-      <h3>{{ selectedSeats.length }} Seat{{ selectedSeats.length > 1 ? 's' : '' }} Selected</h3>
-      <button class="btn-clear" (click)="clearSelection()">Clear All</button>
+      <div class="selection-count">
+        <span class="count-badge">{{ selectedSeats.length }}</span>
+        <span class="count-text">seat{{ selectedSeats.length > 1 ? 's' : '' }} selected</span>
+      </div>
+      <div class="total-price-display">
+        <span class="total-label">Total:</span>
+        <span class="total-amount">{{ formatPrice(getTotalPrice()) }}</span>
+      </div>
     </div>
     
- <div class="compact-seats">
-    <div *ngFor="let seat of selectedSeats; let i = index" 
-         class="seat-chip"
-         [style.background-color]="seat.tier.color + '15'"
-         [style.border-color]="seat.tier.color">
-      <span class="seat-number">{{ seat.row }}{{ seat.id }}</span>
-      <span class="seat-tier" [style.color]="seat.tier.color">{{ seat.tier.name }}</span>
-      <span class="seat-price-chip">{{ formatPrice(seat.price) }}</span>
+    <div class="action-buttons">
+      <button class="btn btn-clear" (click)="clearSelection()">
+        <span class="btn-icon">🗑️</span>
+        Clear
+      </button>
+      <button class="btn btn-primary" (click)="addToCart()">
+        <span class="btn-icon">🛒</span>
+        Add to Cart
+      </button>
     </div>
   </div>
-    
-    <div class="summary-total">
-      <span>Total:</span>
-      <span class="total-amount">{{ formatPrice(getTotalPrice()) }}</span>
-          <div class="summary-actions">
-        <button class="btn-primary" (click)="addToCart()">
-          Add to Cart
-        </button>
-    </div>
-    </div>
-    
-
-  </div>
-
-
 </div>

@@ -25,6 +25,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy {
   @Input() scale = 1;
   @Input() offsetX = 0;
   @Input() offsetY = 0;
+  @Input() rowLabels: {x: number, y: number, label: string, side: 'left' | 'right'}[] = [];
 
   // Outputs - Events to parent
   @Output() seatClicked = new EventEmitter<Seat>();
@@ -163,6 +164,24 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy {
 
   }
 
+getSectionCenterX(section: any): number {
+  const sectionSeats = this.seats.filter(seat => seat.sectionId === section.id);
+  
+  if (sectionSeats.length === 0) {
+    // Fallback to original calculation
+    return section.x + (section.seatsPerRow * this.BASE_SEAT_GAP / 2);
+  }
+  
+  // Get leftmost and rightmost seat centers
+  const minX = Math.min(...sectionSeats.map(seat => seat.cx));
+  const maxX = Math.max(...sectionSeats.map(seat => seat.cx));
+  
+  // Center between leftmost and rightmost seats
+  if(section.rowConfigs && section.rowConfigs.length > 1) {
+    return ((minX + maxX) / 2)-25;
+  }
+  return ((minX + maxX) / 2)-20;
+}
 
   // Helper methods for template
   getSeatColor(seat: Seat): string {

@@ -1,5 +1,5 @@
   import { Injectable } from "@angular/core";
-  import { SeatStatus, VenueData } from "../models/seats.model";
+  import { SeatSectionType, SeatStatus, VenueData } from "../models/seats.model";
   import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
@@ -240,223 +240,251 @@ import { environment } from "../../../environments/environment";
       };
     }
 
-    getSeatMapConfig(): VenueData {
-      return {
-        eventName : "event name",
-        eventDate : new Date('2026-01-15'),
-        sections: [
+getSeatMapConfig(): VenueData {
+  return {
+    eventName: "Event Name",
+    eventDate: new Date('2026-01-15'),
+    sections: [
+      // LEFT SILVER SECTION - Split into 2 blocks with a gap
+      {
+        id: "1",
+        name: 'SILVER',
+        x: 50,
+        y: 250,
+        mx: 50,
+        my: 250,
+        rows: 20,
+        seatsPerRow: 5, // Total seats including gaps
+        sectionLabel: 'Silver',
+        numberingDirection: 'right', // Will auto-set to 'right' (right-to-left)
+        rowConfigs: [
+          // First block: columns 1-3
           {
-            id: "1",
-            name: 'SILVER',
-            x: 50,
-            y: 250,
-            mx: 50,
-            my: 250,
-            rows: 20,
-            seatsPerRow: 5,
-            sectionLabel: 'Silver',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 19,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'SILVER',
-                customPrice: 25,
-                color: '#4a8bc9'
-              }
-            ]
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 19,
+            fromColumn: 0,
+            toColumn: 5,
+            type: 'SILVER',
+            customPrice: 25,
+            color: '#4a8bc9',
+            blockLetter: 'L', // Explicitly set to L
+            numberingDirection : 'right'
+          }
+        ]
+      },
+      // LEFT GOLD SECTION - Split into 3 blocks
+      {
+        id: "2",
+        name: 'GOLD',
+        x: 200,
+        y: 200,
+        mx: 200,
+        my: 200,
+        rows: 19,
+        seatsPerRow: 10, // Total seats including gaps
+        rowOffset: 0,
+        sectionLabel: 'Gold',
+        numberingDirection: 'auto', // Will auto-set to 'right'
+        rowConfigs: [
+          // First block
+          {
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 18,
+            fromColumn: 1,
+            toColumn: 10,
+            type: 'GOLD',
+            customPrice: 30,
+            color: '#b3543a',
+            blockLetter: 'L',
+            numberingDirection : 'right'
+          }
+        ]
+      },
+      // VIP SECTION (Middle - Center numbering)
+      {
+        id: "3",
+        name: 'VIP',
+        x: 460,
+        y: 150,
+        mx: 450,
+        my: 150,
+        rows: 3,
+        seatsPerRow: 20,
+        sectionLabel: 'VIP',
+        numberingDirection: 'right', // Center-outward numbering
+        rowConfigs: [
+          {
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 2,
+            fromColumn: 1,
+            toColumn: 11,
+            type: 'VIP',
+            customPrice: 75,
+            color: '#8a6b8c',
+            blockLetter: 'L',
+            numberingDirection : 'right'
+          },  
+          {
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 2,
+            fromColumn: 10,
+            toColumn: 19,
+            type: 'VIP',
+            customPrice: 75,
+            color: '#8a6b8c',
+            blockLetter: 'R',
+            numberingDirection : 'left'
+          }
+        ]
+      },
+      // LEFT DIAMOND SECTION
+      {
+        id: "4",
+        name: 'DIAMOND',
+        x: 460,
+        y: 250,
+        mx: 450,
+        my: 250,
+        rows: 12,
+        seatsPerRow: 15, // With gaps
+        sectionLabel: 'DIAMOND',
+        numberingDirection: 'right', // Explicitly right-to-left
+        rowConfigs: [
+          {
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 11,
+            fromColumn: 1,
+            toColumn: 10,
+            type: 'DIAMOND',
+            customPrice: 50,
+            color: '#8a9a5b',
+            blockLetter: 'L',
+            numberingDirection : 'right'
           },
           {
-            id: "2",
-            name: 'GOLD',
-            x: 200,
-            y: 200,
-            mx: 200,
-            my: 200,
-            rows: 19,
-            seatsPerRow: 10,
-            rowOffset: 0,
-            sectionLabel: 'Gold',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 18,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'GOLD',
-                customPrice: 30,
-                color: '#b3543a'
-              }
-            ]
-          },
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 11,
+            fromColumn: 10,
+            toColumn: 19,
+            type: 'DIAMOND',
+            customPrice: 50,
+            color: '#8a9a5b',
+            blockLetter: 'R',
+            numberingDirection : 'left'
+          }
+        ]
+      },
+      // RIGHT GOLD SECTION
+      {
+        id: "6",
+        name: 'GOLD',
+        x: 1000,
+        y: 200,
+        mx: 950,
+        my: 200,
+        rows: 19,
+        seatsPerRow: 10,
+        rowOffset: 0,
+        sectionLabel: 'Gold',
+        numberingDirection: 'left', // Left-to-right
+        rowConfigs: [
           {
-            id: "3",
-            name: 'VIP',
-            x: 450,
-            y: 150,
-            mx: 450,
-            my: 150,
-            rows: 3,
-            seatsPerRow: 21,
-            sectionLabel: 'VIP',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 2,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'VIP',
-                customPrice: 75,
-                color: '#8a6b8c'
-              }
-            ]
-          },
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 18,
+            fromColumn: 1,
+            toColumn: 10,
+            type: 'GOLD',
+            customPrice: 30,
+            color: '#b3543a',
+            blockLetter: 'R',
+            numberingDirection : 'left'
+          }
+        ]
+      },
+      // RIGHT SILVER SECTION
+      {
+        id: "7",
+        name: 'SILVER',
+        x: 1250,
+        y: 250,
+        mx: 1200,
+        my: 250,
+        rows: 20,
+        seatsPerRow: 5,
+        sectionLabel: 'Silver',
+        numberingDirection: 'left', // Left-to-right
+        rowConfigs: [
           {
-            id: "3",
-            name: 'DIAMOND',
-            x: 450,
-            y: 250,
-            mx: 450,
-            my: 250,
-            rows: 12,
-            seatsPerRow: 10,
-            sectionLabel: 'DIAMOND',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 11,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'DIAMOND',
-                customPrice: 50,
-                color: '#8a9a5b'
-              }
-            ]
-          },
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 19,
+            fromColumn: 1,
+            toColumn: 5,
+            type: 'SILVER',
+            customPrice: 25,
+            color: '#4a8bc9',
+            blockLetter: 'R',
+            numberingDirection : 'left'
+          }
+        ]
+      },
+      {
+        id: "8",
+        name: 'FOH',
+        x: 450,
+        y: 550,
+        mx: 450,
+        my: 550,
+        rows: 2,
+        seatsPerRow: 21,
+        sectionLabel: 'FOH',
+        seatSectionType: SeatSectionType.FOH,
+        rowConfigs: [
           {
-            id: "4",
-            name: 'DIAMOND',
-            x: 700,
-            y: 250,
-            mx: 700,
-            my: 250,
-            rows: 12,
-            seatsPerRow: 10,
-            sectionLabel: 'DIAMOND',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 11,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'DIAMOND',
-                customPrice: 50,
-                color: '#8a9a5b'
-              }
-            ]
-          },
-          {
-            id: "5",
-            name: 'GOLD',
-            x: 950,
-            y: 200,
-            mx: 950,
-            my: 200,
-            rows: 19,
-            seatsPerRow: 10,
-            rowOffset: 0,
-            sectionLabel: 'Gold',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 18,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'GOLD',
-                customPrice: 30,
-                color: '#b3543a'
-              }
-            ]
-          },
-          {
-            id: "6",
-            name: 'SILVER',
-            x: 1200,
-            y: 250,
-            mx: 1200,
-            my: 250,
-            rows: 20,
-            seatsPerRow: 5,
-            sectionLabel: 'Silver',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 19,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'SILVER',
-                customPrice: 25,
-                color: '#4a8bc9'
-              }
-            ]
-          },
-          {
-            id: "4",
-            name: 'FOH',
-            x: 450,
-            y: 550,
-            mx: 450,
-            my: 550,
-            rows: 2,
-            seatsPerRow: 21,
-            sectionLabel: 'FOH',
-            rowConfigs: [
-              {
-                id: crypto.randomUUID(),
-                fromRow: 0,
-                toRow: 2,
-                fromColumn : 0,
-                toColumn : 0,
-                type: 'FOH',
-                customPrice: 0,
-                color: '#d4d4d4ff'
-              }
-            ]
-          },
-        ],
+            id: crypto.randomUUID(),
+            fromRow: 0,
+            toRow: 1,
+            fromColumn: 0,
+            toColumn: 0,
+            type: 'FOH',
+            customPrice: 0,
+            color: '#d4d4d4ff'
+          }
+        ]
+      }
+    ],
 
-        seatManagement: {
-          reservedSeats: [
-            { seatId: 'VIP-A-1', status: SeatStatus.RESERVED, reason: 'VIP_GUEST', reservationId: 'RES-001' },
-            { seatId: 'VIP-A-2', status: SeatStatus.RESERVED, reason: 'ARTIST_GUEST', reservationId: 'RES-002' },
-            { seatId: 'DIAMOND-D-5', status: SeatStatus.RESERVED, reason: 'PRESS', reservationId: 'RES-003' }
-          ],
+    seatManagement: {
+      reservedSeats: [
+        { seatId: 'VIP-A-1', status: SeatStatus.RESERVED, reason: 'VIP_GUEST', reservationId: 'RES-001' },
+        { seatId: 'VIP-A-2', status: SeatStatus.RESERVED, reason: 'ARTIST_GUEST', reservationId: 'RES-002' },
+        { seatId: 'DIAMOND-D-5', status: SeatStatus.RESERVED, reason: 'PRESS', reservationId: 'RES-003' }
+      ],
 
-          blockedSeats: [
-            { seatId: 'GOLD-A-1', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
-            { seatId: 'SILVER-B-3', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
-            { seatId: 'GOLD-C-5', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
-          ],
+      blockedSeats: [
+        { seatId: 'GOLD-A-1', status: SeatStatus.BLOCKED, reason: 'EQUIPMENT_AREA', blockedBy: 'admin' },
+        { seatId: 'SILVER-B-3', status: SeatStatus.BLOCKED, reason: 'MAINTENANCE', blockedBy: 'admin' },
+        { seatId: 'GOLD-C-5', status: SeatStatus.BLOCKED, reason: 'SAFETY', blockedBy: 'admin' }
+      ],
 
-          soldSeats: [
-            { seatId: 'VIP-A-5', status: SeatStatus.BOOKED, bookingId: 'BK001' },
-            { seatId: 'VIP-A-6', status: SeatStatus.BOOKED, bookingId: 'BK002' },
-            { seatId: 'DIAMOND-D-8', status: SeatStatus.BOOKED, bookingId: 'BK003' },
-            { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
-            { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
-            { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
-          ]
-        }
-      };
+      soldSeats: [
+        { seatId: 'VIP-A-5', status: SeatStatus.BOOKED, bookingId: 'BK001' },
+        { seatId: 'VIP-A-6', status: SeatStatus.BOOKED, bookingId: 'BK002' },
+        { seatId: 'DIAMOND-D-8', status: SeatStatus.BOOKED, bookingId: 'BK003' },
+        { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
+        { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
+        { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
+      ]
     }
+  };
+}
 
     getSeatMapConfigLeicester(): VenueData {
       return {

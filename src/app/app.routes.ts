@@ -36,6 +36,12 @@ export const routes: Routes = [
   },
   {
     path: 'events/:id/section/:sectionId',
+    loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-svg-seat-selector/mobile-svg-seat-selector.component').then(
+        m => m.MobileSvgSeatSelectorComponent),
+    title: 'Select Selection'
+  },
+  {
+    path: 'events/:id/section1/:sectionId',
     loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-seat-selector.component').then(
         m => m.MobileSeatSelectorComponent),
     title: 'Select Selection'

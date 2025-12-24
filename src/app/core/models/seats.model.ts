@@ -48,6 +48,7 @@ export interface SectionRowConfig {
   customPrice?: number;
   color: string; // Color specific to this ticket type in this row group
   numberingDirection ? : string;
+  blockLetter?: string; // Add this: L, R, A, B, etc.
 }
 
 // seats.model.ts
@@ -97,6 +98,10 @@ export interface Seat {
   columnSectionNumber?: number; // 1, 2, 3, 4
   rowRangeNumber?: number; // 1, 2
   numberingDirection? :string;
+  blockIndex : number;
+  blockStartSeat: number;
+  blockTotalSeats: number;
+  blockLetter : string;
 }
 
 export interface SelectedSeat {

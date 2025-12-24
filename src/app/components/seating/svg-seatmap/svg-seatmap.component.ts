@@ -24,7 +24,6 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   selectedSeatIds: string[] = [];
   hoveredSeatId: string | null = null;
   eventId: string = "";
-  
   // Zoom & Pan
   scale = 1;
   offsetX = 0;
@@ -32,7 +31,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   private zoomSpeed = 0.1;
   private isDragging = false;
   private lastMousePos = { x: 0, y: 0 };
-  
+  public rowLabels: {x: number, y: number, label: string, side: 'left' | 'right'}[] = [];
+
   
   // Seat status configuration
   readonly seatStatusConfig = SEAT_STATUS_CONFIG;
@@ -49,7 +49,9 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     private seatService: SeatService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) {
+
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -78,9 +80,10 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ========== SEAT GENERATION ==========
+// ========== SEAT GENERATION ==========
 generateSeats() {
   this.seats = [];
+  this.rowLabels = []; // Clear previous row labels
   this.middleMinX = Number.MAX_VALUE;
   this.middleMaxX = 0;
   this.middleBottomY = 0;
@@ -94,101 +97,125 @@ generateSeats() {
     });
   });
   
+  // Helper function to get default block letter if not specified
+  const getDefaultBlockLetter = (index: number): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return letters[index % letters.length];
+  };
+  
   this.venueData.sections.forEach((section) => {
     const sectionType = section.seatSectionType || SeatSectionType.SEAT;
-    const sectionNumberingDirection = section.numberingDirection || 'right';
     
     if (sectionType === SeatSectionType.FOH) {
       return;
     }
     
+    // Handle STANDING sections
     if (sectionType === SeatSectionType.STANDING) {
-      const sectionPrefix = section.name.toUpperCase();
-      const seatId = `${sectionPrefix}-ST`;
-      
-      const cx = section.x + 22;
-      const cy = section.y;
-      
-      const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
-      
-      const seat: Seat = {
-        id: seatId,
-        cx,
-        cy,
-        r: Math.max(section.seatsPerRow, section.rows) * 22 / 4,
-        rowLabel: 'ST',
-        seatNumber: 0,
-        sectionId: section.id,
-        sectionName: section.sectionLabel || section.name,
-        sectionConfigId: rowConfig.id,
-        ticketType: rowConfig.type, 
-        status: SeatStatus.AVAILABLE,
-        price: rowConfig.customPrice || 0,
-        color: rowConfig.color,
-        gridRow: section.rows,
-        gridColumn: section.seatsPerRow,
-        isStandingArea: true
-      };
-      
-      this.seats.push(seat);
+      this.createStandingSection(section);
       return;
     }
     
-    // SEAT sections with row/column configs
-    const sectionPrefix = section.name.toUpperCase();
+    // For SEAT sections
+    const sectionName = section.name.toUpperCase();
     const rowOffset = section.rowOffset || 0;
     
     // Get all row configs for this section
     const rowConfigs = section.rowConfigs || [];
     
-    // Process each row config
-    rowConfigs.forEach(rowConfig => {
+    // Track current column position for creating gaps
+    let currentColumnPosition = 0;
+    
+    // Sort row configs by fromColumn to process them in order
+    const sortedConfigs = [...rowConfigs].sort((a, b) => 
+      (a.fromColumn || 0) - (b.fromColumn || 0)
+    );
+    
+    // Track row label positions for each block
+    const rowLabelPositions = new Map<string, {
+      minX: number,
+      maxX: number,
+      y: number,
+      numberingDirection: 'left' | 'right' | 'center',
+      blockLetter: string,
+      rowLetter: string
+    }>();
+    
+    // Process each row config (each represents a block)
+    sortedConfigs.forEach((rowConfig, configIndex) => {
       const fromRow = rowConfig.fromRow;
       const toRow = rowConfig.toRow;
       const fromColumn = rowConfig.fromColumn || 1;
       const toColumn = rowConfig.toColumn || section.seatsPerRow;
-      const numberingDirection = rowConfig.numberingDirection || sectionNumberingDirection;
       
-      // Calculate numbering based on direction
+      // Get block letter from config, or use default
+      const blockLetter = rowConfig.blockLetter || getDefaultBlockLetter(configIndex);
+      
+      // Get numbering direction from row config
+      // const numberingDirection = rowConfig.numberingDirection || 'left';
+      const numberingDirection: 'left' | 'right' | 'center' = 
+  (rowConfig.numberingDirection as 'left' | 'right' | 'center') || 'left';
+      // Add gap before this block (except first block)
+      if (configIndex > 0) {
+        currentColumnPosition += 2; // 2 columns gap (adjust as needed)
+      }
+      
+      // Calculate seat number based on direction - EACH BLOCK STARTS FROM 1
       const calculateSeatNumber = (col: number): number => {
-        if (numberingDirection === 'center') {
-          // Center-based numbering: seats are numbered from center outward
-          const middle = (fromColumn + toColumn) / 2;
-          const distanceFromCenter = Math.abs(col - middle);
-          const isLeftSide = col < middle;
-          
-          if (middle % 1 === 0) {
-            // Odd number of seats in range (exact center exists)
-            if (col === middle) return 1;
-            return isLeftSide ? (middle - col) * 2 + 2 : (col - middle) * 2;
-          } else {
-            // Even number of seats in range (no exact center)
-            return isLeftSide ? (middle - col) * 2 : (col - middle) * 2 - 1;
-          }
-        } else if (numberingDirection === 'right') {
-          // Right-to-left numbering (highest number on left)
-          return toColumn - col + 1;
-        } else {
-          // Left-to-right numbering (default, lowest number on left)
-          return col - fromColumn + 1;
+        const actualCol = col - fromColumn + 1;
+        const totalSeatsInBlock = toColumn - fromColumn + 1;
+        
+        switch (numberingDirection) {
+          case 'right':
+            return totalSeatsInBlock - actualCol + 1;
+          case 'center':
+            const middle = totalSeatsInBlock / 2;
+            if (totalSeatsInBlock % 2 === 1) {
+              const centerSeat = Math.ceil(middle);
+              const distanceFromCenter = Math.abs(actualCol - centerSeat);
+              const isLeftSide = actualCol < centerSeat;
+              if (actualCol === centerSeat) return 1;
+              return isLeftSide ? distanceFromCenter * 2 : distanceFromCenter * 2 + 1;
+            } else {
+              const leftCenter = Math.floor(middle);
+              const rightCenter = Math.ceil(middle);
+              if (actualCol <= leftCenter) {
+                return (leftCenter - actualCol + 1) * 2;
+              } else {
+                return (actualCol - rightCenter) * 2 + 1;
+              }
+            }
+          case 'left':
+          default:
+            return actualCol;
         }
       };
       
-      // Generate seats for this config
+      // Generate seats for this block
       for (let r = fromRow; r <= toRow; r++) {
         const globalRow = r + rowOffset;
         const rowLetter = this.getRowLetter(r);
         
+        // Track min/max X for this row in this block
+        let rowMinX = Infinity;
+        let rowMaxX = -Infinity;
+        
         for (let c = fromColumn; c <= toColumn; c++) {
-          const seatId = `${sectionPrefix}-${rowLetter}-${c}`;
-          const cx = section.x + (c * 22);
+          const numericSeatNumber = calculateSeatNumber(c);
+          const shortSectionName = sectionName.charAt(0); // Just take first character
+
+          const seatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
+          
+          const columnPosition = currentColumnPosition + (c - fromColumn);
+          const cx = section.x + (columnPosition * 22);
           const cy = section.y + (globalRow * 22);
+          
+          // Update row min/max X
+          rowMinX = Math.min(rowMinX, cx);
+          rowMaxX = Math.max(rowMaxX, cx);
           
           const seatOverride = statusMap.get(seatId);
           const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
-          
-          // Calculate seat number based on numbering direction
-          const seatNumber = calculateSeatNumber(c);
           
           const seat: Seat = {
             id: seatId,
@@ -196,7 +223,7 @@ generateSeats() {
             cy,
             r: 8,
             rowLabel: rowLetter,
-            seatNumber: seatNumber,
+            seatNumber: numericSeatNumber,
             sectionId: section.id,
             sectionName: section.sectionLabel || section.name,
             sectionConfigId: rowConfig.id,
@@ -205,19 +232,115 @@ generateSeats() {
             price: rowConfig.customPrice || 0,
             color: rowConfig.color,
             gridRow: globalRow,
-            gridColumn: c,
+            gridColumn: columnPosition + 1,
             isStandingArea: false,
-            originalColumn: c, // Store original column for reference
-            numberingDirection: numberingDirection
+            originalColumn: c,
+            numberingDirection: numberingDirection,
+            blockIndex: configIndex,
+            blockLetter: blockLetter,
+            blockStartSeat: 1,
+            blockTotalSeats: toColumn - fromColumn + 1
           };
           
           this.seats.push(seat);
         }
+        
+        // Store row label position for this block
+        const rowKey = `${section.id}-${blockLetter}-${rowLetter}`;
+        
+        rowLabelPositions.set(rowKey, {
+          minX: rowMinX,
+          maxX: rowMaxX,
+          y: section.y + (globalRow * 22),
+          numberingDirection: numberingDirection,
+          blockLetter: blockLetter,
+          rowLetter: rowLetter
+        });
       }
+      
+      currentColumnPosition += (toColumn - fromColumn + 1);
+    });
+    
+    // Create row labels from the collected positions
+    rowLabelPositions.forEach((position) => {
+      let labelX: number;
+      let side: 'left' | 'right';
+      
+      // Determine label position based on numbering direction
+      if (position.numberingDirection === 'right') {
+        // Right-to-left numbering: label goes on the RIGHT side
+        labelX = position.maxX + 15;
+        side = 'right';
+      } else if (position.numberingDirection === 'left') {
+        // Left-to-right numbering: label goes on the LEFT side
+        labelX = position.minX - 15;
+        side = 'left';
+      } else {
+        // Center numbering: decide based on block letter
+        if (position.blockLetter === 'C') {
+          labelX = position.minX - 15;
+          side = 'left';
+        } else if (position.blockLetter === 'L') {
+          labelX = position.minX - 15;
+          side = 'left';
+        } else if (position.blockLetter === 'R') {
+          labelX = position.maxX + 15;
+          side = 'right';
+        } else {
+          labelX = position.minX - 15;
+          side = 'left';
+        }
+      }
+        const adjustedY = position.y + 4; // Adjust this value as needed
+
+      this.rowLabels.push({
+        x: labelX,
+        y: adjustedY,
+        label: position.rowLetter,
+        side: side
+      });
     });
   });
 }
 
+
+// ========== STANDING SECTION CREATION ==========
+  private createStandingSection(section: VenueSection): void {
+    const sectionPrefix = section.name.toUpperCase();
+    const seatId = `${sectionPrefix}-ST`;
+    
+    // Calculate center position for standing area
+    const cx = section.x + (section.seatsPerRow * 22) / 2;
+    const cy = section.y + (section.rows * 22) / 2;
+    
+    const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
+    
+    const seat: Seat = {
+      id: seatId,
+      cx,
+      cy,
+      r: Math.max(section.seatsPerRow, section.rows) * 22 / 4,
+      rowLabel: 'ST',
+      seatNumber: 0,
+      sectionId: section.id,
+      sectionName: section.sectionLabel || section.name,
+      sectionConfigId: rowConfig.id,
+      ticketType: rowConfig.type, 
+      status: SeatStatus.AVAILABLE,
+      price: rowConfig.customPrice || 0,
+      color: rowConfig.color,
+      gridRow: section.rows,
+      gridColumn: section.seatsPerRow,
+      isStandingArea: true,
+      blockIndex : 0,
+      blockStartSeat : 0,
+      blockTotalSeats : 0,
+      blockLetter: 'A'
+    };
+    
+    this.seats.push(seat);
+  }
+  
   private getRowConfigForSeat(section: VenueSection, rowIndex: number): SectionRowConfig {
     const config = section.rowConfigs.find(rc => 
       rowIndex >= rc.fromRow && rowIndex <= rc.toRow
@@ -446,6 +569,11 @@ generateSeats() {
     
     this.venueData.sections.forEach(section => {
       section.rowConfigs.forEach(rowConfig => {
+        // Skip rows with type 'foh'
+        if (rowConfig.type === 'FOH') {
+          return;
+        }
+        
         const key = rowConfig.type;
         if (!tiers.has(key)) {
           tiers.set(key, {
@@ -457,8 +585,9 @@ generateSeats() {
       });
     });
     
-    return Array.from(tiers.values());
-  }
+    // Convert to array and sort by price (low to high)
+    return Array.from(tiers.values()).sort((a, b) => a.price - b.price);
+}
   
   getDisplayStatuses() {
     const statuses = [
