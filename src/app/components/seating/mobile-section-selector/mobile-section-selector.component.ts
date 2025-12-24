@@ -64,8 +64,8 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     this.loading = true;
     this.seatService.getSeatMap(eventId).subscribe({
       next: (seatmap) => {
-        //this.venueData = seatmap;
-        this.venueData = this.seatService.getSeatMapConfig();
+        this.venueData = seatmap;
+        //this.venueData = this.seatService.getSeatMapConfig();
         this.loading = false;
       },
       error: (error) => {
