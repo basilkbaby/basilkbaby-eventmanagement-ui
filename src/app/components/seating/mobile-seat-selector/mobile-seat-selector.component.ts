@@ -73,7 +73,7 @@ export class MobileSeatSelectorComponent implements OnInit {
     this.loading = true;
     this.seatService.getSeatMap(this.eventId).subscribe({
       next: (seatmap) => {
-        const venueData = this.seatService.getSeatMapConfig();
+        const venueData = seatmap;
         const foundSection = venueData.sections.find(s =>
           s.id.toLowerCase() === this.sectionId.toLowerCase() ||
           (s.sectionLabel && s.sectionLabel.toLowerCase().replace(/\s+/g, '-') === this.sectionId.toLowerCase())
