@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled', // Enable anchor scrolling
       })), 
     provideHttpClient(),
-    provideNgxStripe('pk_test_51SMxCVKClB5pCEwzfo7VTduHojAbIKDuFiLI8UT10766EJ7Zy7ksEVJvOCG9EiNLxjbsD6wSKUol5sSBL9t7aofU00BRnvQkWT'), // e.g., pk_test_...
+    provideNgxStripe('pk_live_51Sd8PIF1Dtz3Qz6bNcA2zmuFlkxPCYoxN5VG3crZpmv6zSIFddHtW0ybqmJVCUuWjexz9EETvOcJySaeOvwGwYrW00oLkYHolM'), // e.g., pk_test_...
     ConfigService,
     
   ]
