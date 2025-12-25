@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Ticket } from '../models/order.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketService {
-  private apiUrl = 'https://your-api.com/api/tickets';
+  private apiUrl = environment.apiUrl + '/api';
 
   constructor(private http: HttpClient) {}
 
@@ -26,7 +27,7 @@ export class TicketService {
   }
 
   resendEmail(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/resend-email`, {});
+    return this.http.get(`${this.apiUrl}/orders/resend/${id}`, {});
   }
 
   validateTicket(qrCode: string): Observable<{ valid: boolean; ticket?: Ticket }> {

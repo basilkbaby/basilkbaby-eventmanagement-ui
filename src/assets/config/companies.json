@@ -34,12 +34,14 @@
       },
       {
         "label": "About Us",
-        "routerLink": "/about",
-        "type": "about"
+        "routerLink": "https://v4entertainments.co.uk/about-us",
+        "type": "about" ,      
+        "external": true
       },
       {
         "label": "Contact Us",
-        "routerLink": "/contact",
+        "routerLink": "https://v4entertainments.co.uk/contact-us",
+        "external": true,
         "type": "contact"
       }
     ],

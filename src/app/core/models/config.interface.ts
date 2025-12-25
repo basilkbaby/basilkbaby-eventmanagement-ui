@@ -21,6 +21,7 @@ export interface HeaderConfig {
       label: string;
       routerLink: string;
       type: 'events' | 'concerts' | 'sports' | 'theater' | 'custom';
+      external?: boolean;
     }>;
     showSearch: boolean;
     showCart: boolean;

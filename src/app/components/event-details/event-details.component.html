@@ -353,10 +353,10 @@
               </div>
               
               <div class="venue-amenities">
-                <h4>Venue Address</h4>
+                <h4>Venue Highlights</h4>
                 <ul>
-                  <li>Contact : {{ venue.contactPhone }}</li>
-                  <li>Email : {{ venue.contactEmail }}</li>
+                  <li *ngIf="venue.contactPhone">Contact : {{ venue.contactPhone }}</li>
+                  <li *ngIf="venue.contactEmail">Email : {{ venue.contactEmail }}</li>
                   <li>{{venue.description}}</li>
                 </ul>
               </div>

@@ -21,6 +21,11 @@ export class ConfirmationComponent implements OnInit {
   tickets: Ticket[] = [];
   loading: boolean = true;
 Math = Math;
+resending: boolean = false;
+  resendSuccess: boolean = false;
+  resendError: boolean = false;
+  resendMessage: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -61,7 +66,43 @@ Math = Math;
     });
   }
 
-  
+  resendConfirmationEmail(): void {
+    if (!this.orderId) return;
+    
+    this.resending = true;
+    this.resendSuccess = false;
+    this.resendError = false;
+    this.resendMessage = '';
+    
+    this.ticketService.resendEmail(this.orderId).subscribe({
+      next: (tickets) => {
+        this.resending = false;
+        this.resendSuccess = true;
+        this.resendMessage = 'Confirmation email has been resent successfully!';
+        
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          this.resendSuccess = false;
+          this.resendMessage = '';
+        }, 5000);
+        
+        console.log('Confirmation email resent for order:', this.orderId);
+      },
+      error: (error) => {
+        this.resending = false;
+        this.resendError = true;
+        this.resendMessage = 'Failed to resend confirmation email. Please try again.';
+        
+        console.error('Error resending confirmation:', error);
+        
+        // Auto-hide error message after 5 seconds
+        setTimeout(() => {
+          this.resendError = false;
+          this.resendMessage = '';
+        }, 5000);
+      }
+    });
+  }
 
   downloadTickets(): void {
     // Create a downloadable PDF or file of tickets

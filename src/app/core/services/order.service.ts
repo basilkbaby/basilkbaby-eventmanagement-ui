@@ -187,6 +187,15 @@ lookupOrder(orderNumber: string, lastName: string, email?: string): Observable<O
     return of(false);
   }
 
+
+    // Get tickets by order ID
+  resendConfirmation(orderId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/${orderId}/resend`).pipe(
+      tap(tickets => {
+        console.log('Resent confirmation success');
+      })
+    );
+  }
   // Payment Gateway Integration
 
   // Create payment intent with Stripe
