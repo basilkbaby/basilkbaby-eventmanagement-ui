@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, Observable, Subject, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { 
   AddToCartRequest, 
@@ -47,32 +47,36 @@ export class CartService {
   }
 
   // Add seats to cart via API
-  addToCart(eventId: string,  selectedSeats :SelectedSeat[]): void {
-    const sessionId = this.getOrCreateSessionId();
-    const request: AddToCartRequest = { eventId, sessionId, cartItems : selectedSeats};
-    
-    this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
-      .subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.currentCartId = response.data.cartId;
-            this.currentEventId = response.data.eventId;
-            this.saveCartIdToStorage();
-            this.updateCartState(response.data);
-          }
-          this.cartDetailsSubject.next(response);
-          this.router.navigate(['/cart']);
-        },
-        error: (error) => {
-          console.error('API Error:', error);
-          this.cartDetailsSubject.next({ 
-            success: false, 
-            error: error.message,
-            data: undefined 
-          });
+  addToCart(eventId: string, selectedSeats: SelectedSeat[]): Observable<CartDetailsResponse> {
+  const sessionId = this.getOrCreateSessionId();
+  const request: AddToCartRequest = { eventId, sessionId, cartItems: selectedSeats };
+  
+  return this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
+    .pipe(
+      tap(response => {
+        // Only update internal state, no navigation
+        if (response.success && response.data) {
+          this.currentCartId = response.data.cartId;
+          this.currentEventId = response.data.eventId;
+          this.saveCartIdToStorage();
+          this.updateCartState(response.data);
         }
-      });
-  }
+        // Update subject for other components
+        this.cartDetailsSubject.next(response);
+      }),
+      catchError(error => {
+        console.error('API Error:', error);
+        const errorResponse: CartDetailsResponse = { 
+          success: false, 
+          error: error.message,
+          data: undefined 
+        };
+        this.cartDetailsSubject.next(errorResponse);
+        return throwError(() => error);
+      })
+    );
+}
+
 
   // Get cart details from API
   getCartDetails(cartId?: string): void {

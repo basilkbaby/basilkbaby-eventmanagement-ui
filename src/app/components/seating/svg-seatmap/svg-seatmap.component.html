@@ -84,14 +84,32 @@
         </div>
       </div>
       
-      <div class="action-buttons-compact">
-        <button class="btn-add-compact" (click)="addToCart()">
-          Add {{ selectedSeats.length }} to Cart
-        </button>
-        <button class="btn-view-cart-compact" [routerLink]="['/cart']">
-          View Cart
-        </button>
-      </div>
+<div class="action-buttons-compact">
+  <button 
+    class="btn-add-compact" 
+    (click)="addToCart()"
+    [disabled]="isLoading || selectedSeats.length === 0"
+    [class.loading]="isLoading">
+    
+    <!-- Default content -->
+    <span class="default-content" *ngIf="!isLoading">
+      Add {{ selectedSeats.length }} to Cart
+    </span>
+    
+    <!-- Loading content -->
+    <span class="loading-content" *ngIf="isLoading">
+      <span class="spinner"></span>
+      Adding...
+    </span>
+  </button>
+  
+  <button 
+    class="btn-view-cart-compact" 
+    [routerLink]="['/cart']"
+    [disabled]="isLoading">
+    View Cart
+  </button>
+</div>
     </div>
 
     <!-- Empty State -->

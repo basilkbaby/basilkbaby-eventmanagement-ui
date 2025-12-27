@@ -24,6 +24,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   selectedSeatIds: string[] = [];
   hoveredSeatId: string | null = null;
   eventId: string = "";
+  isLoading: boolean = false;
+
   // Zoom & Pan
   scale = 1;
   offsetX = 0;
@@ -478,43 +480,37 @@ generateSeats() {
   }
   
   addToCart() {
-    if (this.selectedSeatIds.length === 0) return;
+    if (this.selectedSeatIds.length === 0 || this.isLoading) return;
     
-    // Collect all seat IDs
-    const seatIdsArray: string[] = [];
+    // Start loading
+    this.isLoading = true;
     
-    this.selectedSeats.forEach(seat => {
-      const svgSeat = this.seats.find(s => s.id === seat.seatId);
-      if (svgSeat) {
-        const cartSeat = {
-          seatId: seat.seatId,
-          sectionName: seat.sectionName,
-          sectionId: seat.sectionId,
-          row: seat.row,
-          number: seat.number,
-          price: seat.price,
-          type: this.mapTicketTypeToCartType(svgSeat.ticketType) as 'standard' | 'vip' | 'accessible'| 'standing' | 'seated',
-          status: 'SELECTED' as 'available' | 'selected' | 'taken' | 'reserved',
-          x: svgSeat.cx,
-          y: svgSeat.cy,
-          rowLabel: svgSeat.rowLabel,
-          seatNumber: svgSeat.seatNumber,
-          ticketType: svgSeat.ticketType,
-          color: svgSeat.color,
-          features: seat.features || [],
-          isStandingArea: svgSeat.isStandingArea || false
-        };
-        
-        seatIdsArray.push(seat.seatId);
-      }
-    });
     
-    // Add ALL seats to cart at once
-    if (this.selectedSeats.length > 0) {
-      this.cartService.addToCart(this.eventId, this.selectedSeats);
-    }
-    
-    this.clearSelection();
+    this.cartService.addToCart(this.eventId, this.selectedSeats)
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          
+          if (response.success && response.data) {
+            // Success - navigate to cart
+            this.clearSelection();
+            this.router.navigate(['/cart']);
+          } else {
+            // API returned success: false
+            this.showError(response.error || 'Failed to add seats to cart');
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Failed to add to cart:', error);
+          this.showError(error.message || 'An error occurred. Please try again.');
+        }
+      });
+  }
+  
+  private showError(message: string): void {
+    // Use toast/notification service
+    //this.notificationService.showError(message);
   }
   
   private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' {
