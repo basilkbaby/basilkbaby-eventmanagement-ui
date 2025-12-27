@@ -21,6 +21,7 @@ import {
   VenueData, 
   VenueSection 
 } from '../../../../core/models/seats.model';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-mobile-svg-seat-selector',
@@ -79,12 +80,14 @@ export class MobileSvgSeatSelectorComponent implements OnInit {
     { label: 'Blocked', color: '#F5F5F5', stroke: '#BDBDBD' }
   ];
 
+  isLoading : boolean = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private cartService: CartService,
     private seatService: SeatService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -650,11 +653,38 @@ console.log('Processing row config:', {
 
   addToCart() {
     if (this.selectedSeats.length === 0) return;
-    
-    const seatIds = this.selectedSeats.map(seat => seat.seatId);
+
     const eventId = this.route.snapshot.params['id'];
-    this.cartService.addToCart(eventId, this.selectedSeats);
-    this.router.navigate(['/cart']);
+    if (this.selectedSeats.length === 0 || this.isLoading) return;  
+    // Start loading
+    this.isLoading = true;
+       
+    this.cartService.addToCart(eventId, this.selectedSeats)
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          
+          if (response.success && response.data) {
+            // Success - navigate to cart
+            this.clearSelection();
+            this.router.navigate(['/cart']);
+          } else {
+            // API returned success: false
+            this.showError(response.error || 'Failed to add seats to cart');
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Failed to add to cart:', error);
+          this.showError(error.message || 'An error occurred. Please try again.');
+        }
+      });
+
+  }
+
+  private showError(message: string): void {
+    // Use toast/notification service
+    this.notificationService.showError(message);
   }
 
   // Get unique blocks for legend
