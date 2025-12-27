@@ -179,7 +179,7 @@
       </ul>
 
       <div class="mobile-actions" *ngIf="config.features.enableAuth">
-        <button class="auth-btn primary" (click)="toggleMenu()">Sign In</button>
+        <!-- <button class="auth-btn primary" (click)="toggleMenu()">Sign In</button> -->
         <button class="auth-btn tickets-btn" (click)="toggleMenu()">Get Tickets</button>
       </div>
     </div>
@@ -189,7 +189,7 @@
   <nav class="mobile-footer-menu" *ngIf="config">
     <ul class="footer-nav">
       <li class="nav-item">
-        <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <a href="https://v4entertainments.co.uk" class="nav-link" >
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
@@ -199,7 +199,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a routerLink="/events" class="nav-link" routerLinkActive="active">
+        <a href="https://v4entertainments.co.uk/whats-on" class="nav-link" routerLinkActive="active">
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>

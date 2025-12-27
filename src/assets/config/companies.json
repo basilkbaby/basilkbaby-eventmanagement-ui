@@ -24,8 +24,9 @@
     "menuItems": [
       {
         "label": "Home",
-        "routerLink": "/",
-        "type": "home"
+        "routerLink": "https://v4entertainments.co.uk",
+        "type": "home" ,      
+        "external": true
       },
       {
         "label": "Events",
