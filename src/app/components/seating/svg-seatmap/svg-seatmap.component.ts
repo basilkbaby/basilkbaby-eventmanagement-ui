@@ -7,6 +7,7 @@ import { SeatService } from '../../../core/services/seat.service';
 import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatSectionType, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
 import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.component';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-svg-seatmap',
@@ -50,7 +51,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private seatService: SeatService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
 
   }
@@ -510,7 +512,7 @@ generateSeats() {
   
   private showError(message: string): void {
     // Use toast/notification service
-    //this.notificationService.showError(message);
+    this.notificationService.showError(message);
   }
   
   private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' {

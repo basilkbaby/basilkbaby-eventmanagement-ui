@@ -7,11 +7,12 @@ import { EventListComponent } from './components/event-list/event-list.component
 import { filter, Subscription } from 'rxjs';
 import { ConfigService } from './core/services/config.service';
 import { FooterComponent } from './components/common/footer/footer.component';
+import { NotificationComponent } from './components/common/notification/notification.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, NotificationComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
