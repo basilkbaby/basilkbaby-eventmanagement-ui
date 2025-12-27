@@ -12,6 +12,7 @@ import {
   OrderConfirmationResponse,
 } from '../models/DTOs/cart.DTO.model';
 import { Router } from '@angular/router';
+import { SelectedSeat } from '../models/seats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,9 +47,9 @@ export class CartService {
   }
 
   // Add seats to cart via API
-  addToCart(eventId: string, seatIds: string[]): void {
+  addToCart(eventId: string,  selectedSeats :SelectedSeat[]): void {
     const sessionId = this.getOrCreateSessionId();
-    const request: AddToCartRequest = { eventId, seatIds, sessionId };
+    const request: AddToCartRequest = { eventId, sessionId, cartItems : selectedSeats};
     
     this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
       .subscribe({

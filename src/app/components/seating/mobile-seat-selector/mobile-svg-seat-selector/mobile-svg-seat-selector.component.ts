@@ -570,10 +570,12 @@ console.log('Processing row config:', {
     
     // Create SelectedSeat object matching web format
     const selectedSeat: SelectedSeat = {
-      id: seat.id,
+      seatId: seat.id,
       row: seat.rowLabel,
       number: seat.seatNumber,
       sectionName: seat.sectionName,
+      sectionId: seat.sectionId,
+      sectionConfigId: seat.sectionConfigId,
       price: seat.price,
       tier: {
         id: '1',
@@ -590,17 +592,17 @@ console.log('Processing row config:', {
 
   private deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
-    this.selectedSeats = this.selectedSeats.filter(s => s.id !== seat.id);
+    this.selectedSeats = this.selectedSeats.filter(s => s.seatId !== seat.id);
   }
 
   // Remove single seat
   removeSingleSeat(seatToRemove: SelectedSeat) {
-    const seat = this.seats.find(s => s.id === seatToRemove.id);
+    const seat = this.seats.find(s => s.id === seatToRemove.seatId);
     if (seat && seat.status === SeatStatus.SELECTED) {
       seat.status = SeatStatus.AVAILABLE;
     }
     
-    this.selectedSeats = this.selectedSeats.filter(s => s.id !== seatToRemove.id);
+    this.selectedSeats = this.selectedSeats.filter(s => s.seatId !== seatToRemove.seatId);
     this.summaryVisible = this.selectedSeats.length > 0;
     this.cdRef.detectChanges();
   }
@@ -649,9 +651,9 @@ console.log('Processing row config:', {
   addToCart() {
     if (this.selectedSeats.length === 0) return;
     
-    const seatIds = this.selectedSeats.map(seat => seat.id);
+    const seatIds = this.selectedSeats.map(seat => seat.seatId);
     const eventId = this.route.snapshot.params['id'];
-    this.cartService.addToCart(eventId, seatIds);
+    this.cartService.addToCart(eventId, this.selectedSeats);
     this.router.navigate(['/cart']);
   }
 

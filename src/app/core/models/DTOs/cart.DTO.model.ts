@@ -1,3 +1,5 @@
+import { SelectedSeat } from "../seats.model";
+
 export interface CartItemDto {
   cartItemId: string;
   cartId: string;
@@ -12,7 +14,7 @@ export interface CartItemDto {
 
 export interface AddToCartRequest {
   eventId: string;
-  seatIds: string[];  
+  cartItems: SelectedSeat[];  
   sessionId: string;
 }
 

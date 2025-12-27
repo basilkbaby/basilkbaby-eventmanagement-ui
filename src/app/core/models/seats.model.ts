@@ -105,10 +105,12 @@ export interface Seat {
 }
 
 export interface SelectedSeat {
-  id: string;
+  seatId : string;
   row: string;
   number: number;
   sectionName: string;
+  sectionId: string;
+  sectionConfigId : string;
   tier: {
     id: string;
     name: string;

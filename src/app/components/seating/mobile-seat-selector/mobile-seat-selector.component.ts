@@ -229,10 +229,12 @@ export class MobileSeatSelectorComponent implements OnInit {
 
     seat.status = SeatStatus.SELECTED;
     this.selectedSeats.push({
-      id: seat.id,
+      seatId: seat.id,
       row: seat.rowLabel,
       number: seat.seatNumber,
       sectionName: seat.sectionName,
+      sectionId: seat.sectionId,
+      sectionConfigId: seat.sectionConfigId,
       tier: {
         id: seat.ticketType,
         name: seat.ticketType,
@@ -247,7 +249,7 @@ export class MobileSeatSelectorComponent implements OnInit {
 
   private deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
-    this.selectedSeats = this.selectedSeats.filter(s => s.id !== seat.id);
+    this.selectedSeats = this.selectedSeats.filter(s => s.seatId !== seat.id);
   }
 
   // Error Handling
@@ -263,7 +265,7 @@ export class MobileSeatSelectorComponent implements OnInit {
 
   clearSelection() {
     this.selectedSeats.forEach(selectedSeat => {
-      const seat = this.findSeatById(selectedSeat.id);
+      const seat = this.findSeatById(selectedSeat.seatId);
       if (seat) {
         seat.status = SeatStatus.AVAILABLE;
       }
@@ -273,8 +275,8 @@ export class MobileSeatSelectorComponent implements OnInit {
 
   addToCart() {
     if (this.selectedSeats.length === 0) return;
-    const seatIds = this.selectedSeats.map(seat => seat.id);
-    this.cartService.addToCart(this.eventId, seatIds);
+    const seatIds = this.selectedSeats.map(seat => seat.seatId);
+    this.cartService.addToCart(this.eventId, this.selectedSeats);
     this.router.navigate(['/cart']);
   }
 

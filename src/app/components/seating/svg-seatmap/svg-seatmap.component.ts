@@ -433,10 +433,12 @@ generateSeats() {
     seat.status = SeatStatus.SELECTED;
     
     const selectedSeat: SelectedSeat = {
-      id: seat.id,
+      seatId: seat.id,
       row: seat.rowLabel,
       number: seat.seatNumber,
       sectionName: seat.sectionName,
+      sectionId: seat.sectionId,
+      sectionConfigId : seat.sectionConfigId,
       tier: {
         id: seat.id,
         name: seat.ticketType,
@@ -454,7 +456,7 @@ generateSeats() {
   
   deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
-    this.selectedSeats = this.selectedSeats.filter(s => s.id !== seat.id);
+    this.selectedSeats = this.selectedSeats.filter(s => s.seatId !== seat.id);
     this.selectedSeatIds = this.selectedSeatIds.filter(id => id !== seat.id);
   }
   
@@ -482,11 +484,12 @@ generateSeats() {
     const seatIdsArray: string[] = [];
     
     this.selectedSeats.forEach(seat => {
-      const svgSeat = this.seats.find(s => s.id === seat.id);
+      const svgSeat = this.seats.find(s => s.id === seat.seatId);
       if (svgSeat) {
         const cartSeat = {
-          id: seat.id,
+          seatId: seat.seatId,
           sectionName: seat.sectionName,
+          sectionId: seat.sectionId,
           row: seat.row,
           number: seat.number,
           price: seat.price,
@@ -502,13 +505,13 @@ generateSeats() {
           isStandingArea: svgSeat.isStandingArea || false
         };
         
-        seatIdsArray.push(seat.id);
+        seatIdsArray.push(seat.seatId);
       }
     });
     
     // Add ALL seats to cart at once
-    if (seatIdsArray.length > 0) {
-      this.cartService.addToCart(this.eventId, seatIdsArray);
+    if (this.selectedSeats.length > 0) {
+      this.cartService.addToCart(this.eventId, this.selectedSeats);
     }
     
     this.clearSelection();
@@ -529,7 +532,7 @@ generateSeats() {
   
   clearSelection() {
     this.selectedSeats.forEach(seat => {
-      const seatElement = this.seats.find(s => s.id === seat.id);
+      const seatElement = this.seats.find(s => s.id === seat.seatId);
       if (seatElement) {
         seatElement.status = SeatStatus.AVAILABLE;
       }
