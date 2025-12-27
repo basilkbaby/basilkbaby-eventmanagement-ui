@@ -19,6 +19,8 @@ export interface CouponResponse {
     discountAmount: number;
     discountType: 'percentage' | 'fixed';
     description?: string;
+    applied : boolean;
+    message : string;
   };
   error?: string;
 }

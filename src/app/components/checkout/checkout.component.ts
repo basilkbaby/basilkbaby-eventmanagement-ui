@@ -431,20 +431,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.couponLoading = false;
         
         if (response.success) {
-          // Show success notification
+
+          if (response.data && response.data.applied) {
           this.notificationService.showSuccess('Coupon applied successfully!');
-          
-          // Store coupon data
-          //this.couponData = response.data || null;
-          //this.couponApplied = true;
+          }
+          else{
+            this.notificationService.showError(response.data?.message || 'Failed to apply coupon');
+          }
+
           
           // Refresh cart summary to get updated prices
           this.loadCartSummary();
           
-          // Update payment intent with new amount
-          // this.updatePaymentIntent().then(() => {
-          //   this.cdr.detectChanges();
-          // });
         } else {
           // Show error notification
           this.notificationService.showError(response.error || 'Failed to apply coupon');
