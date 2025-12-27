@@ -9,9 +9,6 @@ export interface Order {
   eventName : string;
   eventDate?: Date;
   venue : string;
-  subtotal: number;
-  serviceFee: number;
-  totalAmount: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'refunded';
   paymentMethod: string;
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
@@ -19,6 +16,15 @@ export interface Order {
   updatedAt: Date;
   seats: OrderSeatDto[];
   qrCodeData :string;
+  subtotal: number;
+  serviceFee: number;
+  serviceFeeType: string;
+  serviceFeeValue: number;
+  couponCode : string;
+  couponDiscount : number;
+  discount: number;
+  totalDiscount: number;  
+  totalAmount: number;
 }
 
 export interface OrderSeatDto{

@@ -52,13 +52,21 @@
             <span>Subtotal</span>
             <span>{{ formatPrice(order?.subtotal) }}</span>
           </div>
-          <div class="total-line">
+          <div class="total-line" *ngIf="order && (order?.discount ?? 0) > 0">
+            <span>Discount</span>
+            <span>{{ formatPrice(order.discount) }}</span>
+          </div>
+          <div class="total-line" *ngIf="order && (order?.couponDiscount ?? 0) > 0">
+            <span>Coupon Discount</span>
+            <span>{{ formatPrice(order.couponDiscount) }} - {{order.couponCode}}</span>
+          </div>
+          <div class="total-line" *ngIf="order && (order?.serviceFee ?? 0) > 0">
             <span>Service Fee</span>
-            <span>{{ formatPrice(order?.serviceFee) }}</span>
+            <span>{{ formatPrice(order.serviceFee) }}</span>
           </div>
           <div class="total-line grand-total">
             <span>Total Paid</span>
-            <span>{{ formatPrice(order?.totalAmount ) }}</span>
+            <span>{{ formatPrice(order?.totalAmount ?? 0) }}</span>
           </div>
         </div>
       </div>

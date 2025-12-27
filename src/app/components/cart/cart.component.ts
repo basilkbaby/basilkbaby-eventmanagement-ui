@@ -156,7 +156,9 @@ export class CartComponent implements OnInit, OnDestroy {
       total: 0, 
       totalDiscount : 0,
       seatCount: 0, 
-      seats: [] 
+      seats: [],
+      couponCode: '',
+      couponDiscount: 0
     };
   }
 }

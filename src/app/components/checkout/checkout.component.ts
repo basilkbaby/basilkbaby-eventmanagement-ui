@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom, Subscription } from 'rxjs';
 
@@ -19,6 +19,8 @@ import { environment } from '../../../environments/environment';
 import { CartService } from '../../core/services/cart.service';
 import { CartSummaryDto, CartDetailsResponse } from '../../core/models/DTOs/cart.DTO.model';
 import { emailMatchValidator } from '../../core/validators/email-match-validator';
+import { CouponData, CouponResponse } from '../../core/models/DTOs/checkout.DTo.model';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-checkout',
@@ -26,7 +28,8 @@ import { emailMatchValidator } from '../../core/validators/email-match-validator
   imports: [
     CommonModule, 
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
@@ -41,7 +44,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     total: 0, 
     totalDiscount : 0,
     seatCount: 0, 
-    seats: [] 
+    seats: [] ,
+    couponCode: '',
+    couponDiscount: 0
   };
   loading: boolean = true;
   processing: boolean = false;
@@ -63,12 +68,20 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private cartStateSubscription: Subscription | undefined;
   private cartDetailsSubscription: Subscription | undefined;
 
+   // Coupon properties
+  couponCode: string = '';
+  couponApplied: boolean = false;
+  couponLoading: boolean = false;
+  couponError: string = '';
+  couponData: CouponData | null = null;
+  
   constructor(
     private fb: FormBuilder,
     private cartService: CartService,
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {
     this.checkoutForm = this.createCheckoutForm();
   }
@@ -82,6 +95,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         // Initialize payment if we have cart data and Stripe is not yet initialized
         if (this.cartSummary.seatCount > 0) {
           this.initializePayment();
+          
+          this.couponApplied = this.cartSummary.couponDiscount > 0;
         }
       }
     });
@@ -93,6 +108,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         if (!response.success) {
           this.stripeError = response.error || 'Failed to load cart';
           this.cdr.detectChanges();
+          
         }
       },
       error: () => {
@@ -160,7 +176,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private async initializePayment(): Promise<void> {
     try {
       // Load Stripe
-      this.stripe = await loadStripe(environment.stripe.publishableKey);
+      this.stripe = await loadStripe(environment.stripe.testmode? environment.stripe.testpublishableKey : environment.stripe.publishableKey);
       
       if (!this.stripe) {
         throw new Error('Failed to load Stripe');
@@ -393,5 +409,99 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         postcodeControl.setValue(formatted, { emitEvent: false });
       }
     }
+  }
+
+   // Apply coupon code
+  applyCoupon(): void {
+    if (!this.couponCode.trim()) {
+      this.notificationService.showError('Please enter a coupon code');
+      return;
+    }
+
+    if (!this.cartSummary.cartId) {
+      this.notificationService.showError('Cart not found');
+      return;
+    }
+
+    this.couponLoading = true;
+    
+    // Call service to apply coupon
+    this.cartService.applyCoupon(this.cartSummary.cartId, this.couponCode.trim()).subscribe({
+      next: (response: CouponResponse) => {
+        this.couponLoading = false;
+        
+        if (response.success) {
+          // Show success notification
+          this.notificationService.showSuccess('Coupon applied successfully!');
+          
+          // Store coupon data
+          //this.couponData = response.data || null;
+          //this.couponApplied = true;
+          
+          // Refresh cart summary to get updated prices
+          this.loadCartSummary();
+          
+          // Update payment intent with new amount
+          // this.updatePaymentIntent().then(() => {
+          //   this.cdr.detectChanges();
+          // });
+        } else {
+          // Show error notification
+          this.notificationService.showError(response.error || 'Failed to apply coupon');
+          this.couponData = null;
+          this.couponApplied = false;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.couponLoading = false;
+        this.notificationService.showError('Failed to apply coupon. Please try again.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Remove coupon
+  removeCoupon(): void {
+    if (!this.cartSummary.cartId) {
+      this.notificationService.showError('Cart not found');
+      return;
+    }
+
+    this.couponLoading = true;
+    
+    // Call service to remove coupon
+    this.cartService.removeCoupon(this.cartSummary.cartId).subscribe({
+      next: (response: CouponResponse) => {
+        this.couponLoading = false;
+        
+        if (response.success) {
+          // Show success notification
+          this.notificationService.showSuccess('Coupon removed successfully');
+          
+          // Clear coupon data
+          this.couponData = null;
+          this.couponApplied = false;
+          this.couponCode = '';
+          this.loadCartSummary();
+          // Refresh cart summary to get original prices
+          //this.refreshCartSummary();
+          
+          // Update payment intent with original amount
+          // this.updatePaymentIntent().then(() => {
+          //   this.cdr.detectChanges();
+          // });
+        } else {
+          // Show error notification
+          this.notificationService.showError(response.error || 'Failed to remove coupon');
+        }
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.couponLoading = false;
+        this.notificationService.showError('Failed to remove coupon. Please try again.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

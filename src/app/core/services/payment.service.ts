@@ -14,7 +14,6 @@ export class PaymentService {
 
   async initialize(): Promise<boolean> {
     try {
-      //this.stripe = await loadStripe(environment.stripe.publishableKey);
       return !!this.stripe;
     } catch (error) {
       console.error('Failed to initialize Stripe:', error);

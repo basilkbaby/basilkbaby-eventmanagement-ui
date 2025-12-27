@@ -56,6 +56,8 @@ export interface CartSummaryDto {
   serviceFee: number;
   total: number;
   totalDiscount: number;
+  couponCode: string;
+  couponDiscount: number;
   seats: Array<{
     seatId: string;
     seatNumber: string;

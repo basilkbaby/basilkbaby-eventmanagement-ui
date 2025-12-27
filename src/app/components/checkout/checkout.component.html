@@ -279,6 +279,59 @@
               <span>Service Fee</span>
               <span>{{ formatPrice(cartSummary.serviceFee) }}</span>
             </div>
+
+            <!-- Add Coupon Section -->
+<div class="coupon-section">
+  <div class="coupon-header">
+    <h4>Apply Coupon Code</h4>
+  </div>
+  <div class="coupon-input-group" *ngIf="!couponApplied">
+    <input
+      type="text"
+      [(ngModel)]="couponCode"
+      [ngModelOptions]="{standalone: true}"
+      placeholder="Enter coupon code"
+      [class.invalid]="couponError"
+      (keyup.enter)="applyCoupon()"
+    >
+    <button
+      class="apply-coupon-btn"
+      (click)="applyCoupon()"
+      [disabled]="!couponCode || couponLoading"
+    >
+      <span *ngIf="!couponLoading">Apply</span>
+      <span *ngIf="couponLoading" class="coupon-loading">
+        <div class="processing-spinner"></div>
+      </span>
+    </button>
+  </div>
+  
+  <div class="coupon-error" *ngIf="couponError">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    {{ couponError }}
+  </div>
+  
+  <div class="coupon-success" *ngIf="couponApplied">
+    <div class="coupon-applied">
+      <div class="coupon-info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="coupon-code">{{ cartSummary.couponCode }}</span>
+        <span class="coupon-description">- {{ formatPrice(cartSummary.couponDiscount || 0) }} coupon applied</span>
+      </div>
+      <button class="remove-coupon-btn" (click)="removeCoupon()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
               <div class="total-line" *ngIf="cartSummary.totalDiscount>0">
               <span>Discount</span>
               <span>{{ formatPrice(cartSummary.totalDiscount) }}</span>

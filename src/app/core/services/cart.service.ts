@@ -2,17 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, finalize, map, Observable, Subject, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { 
-  AddToCartRequest, 
-  CartDetailsResponse, 
-  CartItemDto, 
-  CartSummaryDto, 
-  CheckoutRequest, 
-  CheckoutResponse, 
+import {
+  AddToCartRequest,
+  CartDetailsResponse,
+  CartItemDto,
+  CartSummaryDto,
+  CheckoutRequest,
+  CheckoutResponse,
   OrderConfirmationResponse,
 } from '../models/DTOs/cart.DTO.model';
 import { Router } from '@angular/router';
 import { SelectedSeat } from '../models/seats.model';
+import { CouponRequest, CouponResponse } from '../models/DTOs/checkout.DTo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +26,10 @@ export class CartService {
   // Subject for API responses only
   private cartDetailsSubject = new Subject<CartDetailsResponse>();
   cartDetails$ = this.cartDetailsSubject.asObservable();
-  
+
   private checkoutSubject = new Subject<CheckoutResponse>();
   checkout$ = this.checkoutSubject.asObservable();
-  
+
   private orderConfirmationSubject = new Subject<OrderConfirmationResponse>();
   orderConfirmation$ = this.orderConfirmationSubject.asObservable();
 
@@ -42,55 +43,55 @@ export class CartService {
   });
   currentCartState$ = this.currentCartStateSubject.asObservable();
 
-  constructor(private http: HttpClient, private router : Router) {
+  constructor(private http: HttpClient, private router: Router) {
     this.loadCartIdFromStorage();
   }
 
   // Add seats to cart via API
   addToCart(eventId: string, selectedSeats: SelectedSeat[]): Observable<CartDetailsResponse> {
-  const sessionId = this.getOrCreateSessionId();
-  const request: AddToCartRequest = { eventId, sessionId, cartItems: selectedSeats };
-  
-  return this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
-    .pipe(
-      tap(response => {
-        // Only update internal state, no navigation
-        if (response.success && response.data) {
-          this.currentCartId = response.data.cartId;
-          this.currentEventId = response.data.eventId;
-          this.saveCartIdToStorage();
-          this.updateCartState(response.data);
-        }
-        // Update subject for other components
-        this.cartDetailsSubject.next(response);
-      }),
-      catchError(error => {
-        console.error('API Error:', error);
-        const errorResponse: CartDetailsResponse = { 
-          success: false, 
-          error: error.message,
-          data: undefined 
-        };
-        this.cartDetailsSubject.next(errorResponse);
-        return throwError(() => error);
-      })
-    );
-}
+    const sessionId = this.getOrCreateSessionId();
+    const request: AddToCartRequest = { eventId, sessionId, cartItems: selectedSeats };
+
+    return this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart`, request)
+      .pipe(
+        tap(response => {
+          // Only update internal state, no navigation
+          if (response.success && response.data) {
+            this.currentCartId = response.data.cartId;
+            this.currentEventId = response.data.eventId;
+            this.saveCartIdToStorage();
+            this.updateCartState(response.data);
+          }
+          // Update subject for other components
+          this.cartDetailsSubject.next(response);
+        }),
+        catchError(error => {
+          console.error('API Error:', error);
+          const errorResponse: CartDetailsResponse = {
+            success: false,
+            error: error.message,
+            data: undefined
+          };
+          this.cartDetailsSubject.next(errorResponse);
+          return throwError(() => error);
+        })
+      );
+  }
 
 
   // Get cart details from API
   getCartDetails(cartId?: string): void {
     const idToUse = cartId || this.currentCartId;
     if (!idToUse) {
-      this.cartDetailsSubject.next({ 
-        success: false, 
+      this.cartDetailsSubject.next({
+        success: false,
         error: 'No cart ID available',
-        data: undefined 
+        data: undefined
       });
       this.updateCartStateWithError();
       return;
     }
-    
+
     this.http.get<CartDetailsResponse>(`${this.baseUrl}/cart/${idToUse}`)
       .subscribe({
         next: (response) => {
@@ -105,10 +106,10 @@ export class CartService {
         },
         error: (error) => {
           console.error('Error getting cart details:', error);
-          this.cartDetailsSubject.next({ 
-            success: false, 
+          this.cartDetailsSubject.next({
+            success: false,
             error: error.message,
-            data: undefined 
+            data: undefined
           });
           this.updateCartStateWithError();
         }
@@ -116,13 +117,13 @@ export class CartService {
   }
 
   // Remove seat via API
-  removeCartItem(cartItemId : string): void {
+  removeCartItem(cartItemId: string): void {
     const currentCartId = this.currentCartId;
     if (!currentCartId) {
       console.error('No cart ID available');
       return;
     }
-    
+
     this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/remove/${currentCartId}/${cartItemId}`)
       .subscribe({
         next: (response) => {
@@ -133,10 +134,10 @@ export class CartService {
         },
         error: (error) => {
           console.error('Error removing seat:', error);
-          this.cartDetailsSubject.next({ 
-            success: false, 
+          this.cartDetailsSubject.next({
+            success: false,
             error: error.message,
-            data: undefined 
+            data: undefined
           });
         }
       });
@@ -149,7 +150,7 @@ export class CartService {
       console.error('No cart ID available');
       return;
     }
-    
+
     this.http.delete<CartDetailsResponse>(`${this.baseUrl}/cart/clear/${cartId}`)
       .subscribe({
         next: (response) => {
@@ -160,10 +161,10 @@ export class CartService {
         },
         error: (error) => {
           console.error('Error clearing cart:', error);
-          this.cartDetailsSubject.next({ 
-            success: false, 
+          this.cartDetailsSubject.next({
+            success: false,
             error: error.message,
-            data: undefined 
+            data: undefined
           });
         }
       });
@@ -181,10 +182,10 @@ export class CartService {
         },
         error: (error) => {
           console.error('Checkout error:', error);
-          this.checkoutSubject.next({ 
-            success: false, 
+          this.checkoutSubject.next({
+            success: false,
             error: error.message,
-            data: undefined 
+            data: undefined
           });
         }
       });
@@ -199,10 +200,10 @@ export class CartService {
         },
         error: (error) => {
           console.error('Error getting order confirmation:', error);
-          this.orderConfirmationSubject.next({ 
-            success: false, 
+          this.orderConfirmationSubject.next({
+            success: false,
             error: error.message,
-            data: undefined 
+            data: undefined
           });
         }
       });
@@ -217,10 +218,28 @@ export class CartService {
     return this.currentEventId;
   }
 
+  applyCoupon(cartId: string, couponCode: string): Observable<CouponResponse> {
+    var request : CouponRequest = {
+      couponCode: couponCode,
+      cartId: cartId
+    }
+    return this.http.post<CouponResponse>(
+      `${this.baseUrl}/checkout/apply-coupon`,
+      request
+    );
+  }
+
+  // Remove coupon from cart
+  removeCoupon(cartId: string): Observable<CouponResponse> {
+    return this.http.post<CouponResponse>(
+      `${this.baseUrl}/checkout/remove-coupon/${cartId}`, {}
+    );
+  }
+
   // Private helper methods
   private updateCartState(data: any): void {
     const items = (data.cartItems || []).map((seat: any) => ({
-      cartItemId : seat.cartItemId,
+      cartItemId: seat.cartItemId,
       seatId: seat.seatId,
       seatNumber: seat.seatNumber,
       sectionName: seat.section,
@@ -236,10 +255,13 @@ export class CartService {
       eventId: data.eventId || '',
       subtotal: data.subtotal || 0,
       serviceFee: data.serviceFee || 0,
-      total: data.total|| 0,
-      totalDiscount : data.totalDiscount || 0,
+      total: data.total || 0,
+      totalDiscount: data.totalDiscount || 0,
       seatCount: data.seatCount || items.length,
-      seats: data.seats || []
+      seats: data.seats || [],
+      couponCode: data.couponCode,
+      couponDiscount: data.couponDiscount
+
     };
 
     this.currentCartStateSubject.next({ items, summary });
@@ -253,15 +275,17 @@ export class CartService {
   }
 
   private getEmptyCartSummary(): CartSummaryDto {
-    return { 
-      cartId: '', 
-      eventId: '', 
-      subtotal: 0, 
-      serviceFee: 0, 
-      total: 0, 
-      totalDiscount :0,
-      seatCount: 0, 
-      seats: [] 
+    return {
+      cartId: '',
+      eventId: '',
+      subtotal: 0,
+      serviceFee: 0,
+      total: 0,
+      totalDiscount: 0,
+      seatCount: 0,
+      seats: [],
+      couponCode: '',
+      couponDiscount: 0
     };
   }
 
@@ -299,4 +323,7 @@ export class CartService {
     localStorage.removeItem('current_event_id');
     this.updateCartStateWithError();
   }
+
+
+  
 }
