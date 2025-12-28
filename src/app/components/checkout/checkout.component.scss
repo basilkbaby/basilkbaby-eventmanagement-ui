@@ -888,3 +888,84 @@
     transform: rotate(360deg);
   }
 }
+
+
+// Mobile layout fixes
+@media (max-width: 968px) {
+  .checkout-main {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  // Show order summary BEFORE checkout form on mobile
+  .order-summary-column {
+    order: -1; // This moves the summary to the top
+    margin-bottom: var(--space-xl);
+    
+    .order-summary-card {
+      position: static; // Remove sticky on mobile
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-medium);
+    }
+  }
+  
+  .checkout-form-column {
+    order: 1; // This keeps the form after the summary
+  }
+}
+
+// Further mobile optimizations
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: var(--space-md);
+  }
+  
+  .checkout-header {
+    margin-bottom: var(--space-xl);
+    
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: var(--space-md);
+    }
+  }
+  
+  .step-indicator {
+    justify-content: space-between;
+    gap: 0;
+    
+    .step {
+      flex: 1;
+      text-align: center;
+      font-size: 0.8rem;
+      
+      &::after {
+        position: absolute;
+        margin-left: 0;
+        right: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
+  
+  .form-section {
+    padding: var(--space-lg);
+  }
+  
+  .order-summary-card {
+    padding: var(--space-lg);
+  }
+  
+  // Coupon section mobile fixes
+  .coupon-section {
+    padding: var(--space-md);
+    
+    .coupon-input-group {
+      flex-direction: column;
+      
+      .apply-coupon-btn {
+        width: 100%;
+      }
+    }
+  }
+}
