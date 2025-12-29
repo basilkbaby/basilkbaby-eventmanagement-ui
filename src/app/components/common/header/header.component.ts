@@ -156,9 +156,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   getContactInfo() {
     return this.config?.company?.contact || {
-      phone: '+44 123 456 7890',
-      email: 'info@v4entertainments.co.uk',
-      address: 'London, UK'
+      phone: '+44 7878896384',
+      email: 'events@v4entertainments.co.uk',
+      address: 'E6 1LW, London'
     };
   }
 
