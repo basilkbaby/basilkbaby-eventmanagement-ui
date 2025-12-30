@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { SeatService } from '../../../core/services/seat.service';
-import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatSectionType, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
+import { getSeatColor, getSeatDisplayText, getSeatStatusConfig, isSeatSelectable, RowNumberingType, Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride, SeatSectionType, SeatStatus, SectionRowConfig, SelectedSeat, TicketType, VenueData, VenueSection } from '../../../core/models/seats.model';
 import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.component';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -28,7 +28,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
   // Zoom & Pan
-  scale = 1;
+  scale = .75;
   offsetX = 0;
   offsetY = 0;
   private zoomSpeed = 0.1;
@@ -72,6 +72,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.seatService.getSeatMap(eventId).subscribe({
       next: (seatmap) => {
+
+        //this.venueData = this.seatService.getSeatMapConfigContinous();
         this.venueData = seatmap;
         this.generateSeats();
 
@@ -87,7 +89,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 // ========== SEAT GENERATION ==========
 generateSeats() {
   this.seats = [];
-  this.rowLabels = []; // Clear previous row labels
+  this.rowLabels = [];
   this.middleMinX = Number.MAX_VALUE;
   this.middleMaxX = 0;
   this.middleBottomY = 0;
@@ -107,7 +109,19 @@ generateSeats() {
     return letters[index % letters.length];
   };
   
-  this.venueData.sections.forEach((section) => {
+  // Get global row numbering type (fallback)
+  const defaultRowNumberingType = RowNumberingType.PERSECTION;
+  
+  // Create letter generator for CONTINUOUS sections (across sections)
+  const continuousLetterGenerator = this.createLetterGenerator();
+  
+  // Sort sections by position for proper continuous row ordering
+  const sortedSections = [...this.venueData.sections].sort((a, b) => {
+    if (a.y !== b.y) return a.y - b.y;
+    return a.x - b.x;
+  });
+  
+  sortedSections.forEach((section) => {
     const sectionType = section.seatSectionType || SeatSectionType.SEAT;
     
     if (sectionType === SeatSectionType.FOH) {
@@ -120,22 +134,21 @@ generateSeats() {
       return;
     }
     
-    // For SEAT sections
     const sectionName = section.name.toUpperCase();
     const rowOffset = section.rowOffset || 0;
-    
-    // Get all row configs for this section
     const rowConfigs = section.rowConfigs || [];
     
-    // Track current column position for creating gaps
-    let currentColumnPosition = 0;
+    // Get section's numbering type
+    const sectionRowNumberingType = section.rowNumberingType || defaultRowNumberingType;
     
-    // Sort row configs by fromColumn to process them in order
+    // Get section-level skip letters
+    const sectionSkipLetters = section.skipRowLetters || [];
+    
+    // Sort row configs by fromColumn
     const sortedConfigs = [...rowConfigs].sort((a, b) => 
       (a.fromColumn || 0) - (b.fromColumn || 0)
     );
     
-    // Track row label positions for each block
     const rowLabelPositions = new Map<string, {
       minX: number,
       maxX: number,
@@ -145,26 +158,34 @@ generateSeats() {
       rowLetter: string
     }>();
     
-    // Process each row config (each represents a block)
+    let currentColumnPosition = 0;
+    
     sortedConfigs.forEach((rowConfig, configIndex) => {
       const fromRow = rowConfig.fromRow;
       const toRow = rowConfig.toRow;
       const fromColumn = rowConfig.fromColumn || 1;
       const toColumn = rowConfig.toColumn || section.seatsPerRow;
       
-      // Get block letter from config, or use default
       const blockLetter = rowConfig.blockLetter || getDefaultBlockLetter(configIndex);
-      
-      // Get numbering direction from row config
-      // const numberingDirection = rowConfig.numberingDirection || 'left';
       const numberingDirection: 'left' | 'right' | 'center' = 
-  (rowConfig.numberingDirection as 'left' | 'right' | 'center') || 'left';
+        (rowConfig.numberingDirection as 'left' | 'right' | 'center') || 'left';
+      
+      // Get gap configuration
+      const gapAfterColumn = rowConfig.gapAfterColumn;
+      const gapSize = rowConfig.gapSize || 1;
+      
+      // Get skip letters (row config overrides section)
+      const skipLetters = rowConfig.skipRowLetters || sectionSkipLetters;
+      
       // Add gap before this block (except first block)
       if (configIndex > 0) {
-        currentColumnPosition += 2; // 2 columns gap (adjust as needed)
+        currentColumnPosition += 2; // 2 columns gap between blocks
       }
       
-      // Calculate seat number based on direction - EACH BLOCK STARTS FROM 1
+      // Reset row counter for EACH row config in PERSECTION mode
+      let perConfigRowIndex = 0;
+      
+      // Calculate seat number
       const calculateSeatNumber = (col: number): number => {
         const actualCol = col - fromColumn + 1;
         const totalSeatsInBlock = toColumn - fromColumn + 1;
@@ -198,23 +219,45 @@ generateSeats() {
       // Generate seats for this block
       for (let r = fromRow; r <= toRow; r++) {
         const globalRow = r + rowOffset;
-        const rowLetter = this.getRowLetter(r);
+        let rowLetter: string;
         
-        // Track min/max X for this row in this block
+        // Calculate correct row letter based on numbering type
+        if (sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+          // CONTINUOUS: Get next letter from continuous generator (across sections)
+          rowLetter = continuousLetterGenerator.getNextLetter(skipLetters);
+          console.log(`CONTINUOUS: Section ${section.name}, Config ${configIndex}, Row ${r}, letter ${rowLetter}`);
+        } else {
+          // PERSECTION: Each row config starts with A
+          rowLetter = this.getRowLetterForIndex(perConfigRowIndex, skipLetters);
+          console.log(`PERSECTION: Section ${section.name}, Config ${configIndex}, Row ${r}, index ${perConfigRowIndex}, letter ${rowLetter}`);
+          perConfigRowIndex++;
+        }
+        
         let rowMinX = Infinity;
         let rowMaxX = -Infinity;
         
         for (let c = fromColumn; c <= toColumn; c++) {
-          const numericSeatNumber = calculateSeatNumber(c);
-          const shortSectionName = sectionName.charAt(0); // Just take first character
-
-          const seatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
+          // Calculate column offset for gap
+          let columnOffset = 0;
+          if (gapAfterColumn && c > gapAfterColumn) {
+            columnOffset = gapSize;
+          }
           
-          const columnPosition = currentColumnPosition + (c - fromColumn);
+          const numericSeatNumber = calculateSeatNumber(c);
+          const shortSectionName = sectionName.charAt(0);
+          
+          // Generate seat ID based on numbering type
+          let seatId: string;
+          if (sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+            seatId = `${shortSectionName}-${rowLetter}${numericSeatNumber}`;
+          } else {
+            seatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
+          }
+          
+          const columnPosition = currentColumnPosition + (c - fromColumn) + columnOffset;
           const cx = section.x + (columnPosition * 22);
           const cy = section.y + (globalRow * 22);
           
-          // Update row min/max X
           rowMinX = Math.min(rowMinX, cx);
           rowMaxX = Math.max(rowMaxX, cx);
           
@@ -243,15 +286,15 @@ generateSeats() {
             blockIndex: configIndex,
             blockLetter: blockLetter,
             blockStartSeat: 1,
-            blockTotalSeats: toColumn - fromColumn + 1
+            blockTotalSeats: toColumn - fromColumn + 1,
+            rowNumberingType: sectionRowNumberingType
           };
           
           this.seats.push(seat);
         }
         
-        // Store row label position for this block
+        // Store row label position
         const rowKey = `${section.id}-${blockLetter}-${rowLetter}`;
-        
         rowLabelPositions.set(rowKey, {
           minX: rowMinX,
           maxX: rowMaxX,
@@ -262,29 +305,26 @@ generateSeats() {
         });
       }
       
+      // Update column position for next block
       currentColumnPosition += (toColumn - fromColumn + 1);
+      if (gapAfterColumn) {
+        currentColumnPosition += gapSize; // Account for gap in total width
+      }
     });
     
-    // Create row labels from the collected positions
+    // Create row labels
     rowLabelPositions.forEach((position) => {
       let labelX: number;
       let side: 'left' | 'right';
       
-      // Determine label position based on numbering direction
       if (position.numberingDirection === 'right') {
-        // Right-to-left numbering: label goes on the RIGHT side
         labelX = position.maxX + 15;
         side = 'right';
       } else if (position.numberingDirection === 'left') {
-        // Left-to-right numbering: label goes on the LEFT side
         labelX = position.minX - 15;
         side = 'left';
       } else {
-        // Center numbering: decide based on block letter
-        if (position.blockLetter === 'C') {
-          labelX = position.minX - 15;
-          side = 'left';
-        } else if (position.blockLetter === 'L') {
+        if (position.blockLetter === 'C' || position.blockLetter === 'L') {
           labelX = position.minX - 15;
           side = 'left';
         } else if (position.blockLetter === 'R') {
@@ -295,8 +335,9 @@ generateSeats() {
           side = 'left';
         }
       }
-        const adjustedY = position.y + 4; // Adjust this value as needed
-
+      
+      const adjustedY = position.y + 4;
+      
       this.rowLabels.push({
         x: labelX,
         y: adjustedY,
@@ -305,6 +346,292 @@ generateSeats() {
       });
     });
   });
+}
+
+
+private getRowLetterForIndex(index: number, skipLetters: string[] = []): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const uppercaseSkip = skipLetters.map(l => l.toUpperCase());
+  
+  let currentIndex = 0;
+  let foundCount = -1;
+  
+  while (foundCount < index) {
+    let letter: string;
+    
+    if (currentIndex < 26) {
+      letter = letters[currentIndex];
+    } else {
+      const doubleIndex = currentIndex - 26;
+      const firstCharIndex = Math.floor(doubleIndex / 26);
+      const secondCharIndex = doubleIndex % 26;
+      
+      if (firstCharIndex >= 26) {
+        return `Row${index + 1}`;
+      }
+      
+      letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+    }
+    
+    // Check if this letter should be included
+    if (!uppercaseSkip.includes(letter)) {
+      foundCount++;
+    }
+    
+    // If we found the right letter
+    if (foundCount === index) {
+      return letter;
+    }
+    
+    currentIndex++;
+    
+    // Safety check
+    if (currentIndex > 1000) {
+      console.warn('getRowLetterForIndex: Infinite loop prevented');
+      return `Row${index + 1}`;
+    }
+  }
+  
+  return `Row${index + 1}`;
+}
+// Updated getRowLetter method that handles skipping properly
+public getRowLetterWithSkip(rowIndex: number, rowConfig?: SectionRowConfig): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  
+  // Get skip letters from rowConfig (ensure uppercase)
+  const skipLetters = rowConfig?.skipRowLetters 
+    ? rowConfig.skipRowLetters.map(letter => letter.toUpperCase())
+    : [];
+  
+  console.log(`getRowLetterWithSkip: rowIndex=${rowIndex}, skipLetters=`, skipLetters);
+  
+  // Simple case: no skipping needed
+  if (skipLetters.length === 0) {
+    if (rowIndex < letters.length) {
+      return letters[rowIndex];
+    }
+    
+    // Handle beyond Z
+    const firstIndex = Math.floor((rowIndex - letters.length) / letters.length);
+    const secondIndex = (rowIndex - letters.length) % letters.length;
+    return `${letters[firstIndex]}${letters[secondIndex]}`;
+  }
+  
+  // For continuous numbering with skipped letters, we need a different approach
+  // Generate letters sequentially and count only valid ones
+  let letterIndex = 0;
+  let validCount = -1;
+  
+  while (validCount < rowIndex) {
+    let letter: string;
+    
+    if (letterIndex < 26) {
+      // Single letters A-Z
+      letter = letters[letterIndex];
+    } else {
+      // Double letters AA, AB, etc.
+      const doubleIndex = letterIndex - 26;
+      const firstCharIndex = Math.floor(doubleIndex / 26);
+      const secondCharIndex = doubleIndex % 26;
+      
+      if (firstCharIndex >= 0 && firstCharIndex < 26 && 
+          secondCharIndex >= 0 && secondCharIndex < 26) {
+        letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+      } else {
+        letterIndex++;
+        continue;
+      }
+    }
+    
+    // Check if this letter should be included
+    if (!skipLetters.includes(letter)) {
+      validCount++;
+      
+      // If this is the letter we're looking for
+      if (validCount === rowIndex) {
+        return letter;
+      }
+    }
+    
+    letterIndex++;
+    
+    // Safety check
+    if (letterIndex > 1000) {
+      console.warn('getRowLetterWithSkip: Infinite loop prevented');
+      return `Row${rowIndex + 1}`;
+    }
+  }
+  
+  return `Row${rowIndex + 1}`;
+}
+
+
+public getRowLetter(rowIndex: number, rowConfig?: SectionRowConfig): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  
+  // Get skip letters from rowConfig (ensure uppercase)
+  const skipLetters = rowConfig?.skipRowLetters 
+    ? rowConfig.skipRowLetters.map(letter => letter.toUpperCase())
+    : [];
+  
+  // Simple case: no skipping needed
+  if (skipLetters.length === 0) {
+    if (rowIndex < letters.length) {
+      return letters[rowIndex];
+    }
+    
+    // Handle beyond Z
+    const firstIndex = Math.floor((rowIndex - letters.length) / letters.length);
+    const secondIndex = (rowIndex - letters.length) % letters.length;
+    return `${letters[firstIndex]}${letters[secondIndex]}`;
+  }
+  
+  // Build sequence of letters, skipping specified ones
+  let currentLetterIndex = 0;
+  let validLetterCount = -1;
+  
+  while (validLetterCount < rowIndex) {
+    let letter: string;
+    
+    if (currentLetterIndex < 26) {
+      // Single letters A-Z
+      letter = letters[currentLetterIndex];
+    } else {
+      // Double letters AA, AB, etc.
+      const doubleIndex = currentLetterIndex - 26;
+      const firstCharIndex = Math.floor(doubleIndex / 26);
+      const secondCharIndex = doubleIndex % 26;
+      
+      // Check bounds
+      if (firstCharIndex < 0 || firstCharIndex >= 26 || 
+          secondCharIndex < 0 || secondCharIndex >= 26) {
+        currentLetterIndex++;
+        continue;
+      }
+      
+      letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+    }
+    
+    // Check if this letter should be included
+    if (!skipLetters.includes(letter)) {
+      validLetterCount++;
+      
+      // If this is the letter we're looking for
+      if (validLetterCount === rowIndex) {
+        return letter;
+      }
+    }
+    
+    currentLetterIndex++;
+    
+    // Safety check
+    if (currentLetterIndex > 1000) {
+      console.warn('getRowLetter: Infinite loop prevented');
+      return `Row${rowIndex + 1}`;
+    }
+  }
+  
+  return `Row${rowIndex + 1}`;
+}
+
+private applySeatNumberGap(seatNumber: number): number {
+  // Add this method if you still need it for seat number gaps
+  // If you're only doing column gaps (visual spacing), this can be simplified
+  return seatNumber;
+}
+
+private createLetterGenerator() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let singleLetterIndex = 0;
+  let doubleLetterIndex = 0;
+  
+  return {
+    getNextLetter: (skipLetters: string[] = []) => {
+      const uppercaseSkip = skipLetters.map(l => l.toUpperCase());
+      
+      while (true) {
+        let letter: string;
+        
+        // First try single letters A-Z
+        if (singleLetterIndex < 26) {
+          letter = letters[singleLetterIndex];
+          singleLetterIndex++;
+        } 
+        // Then try double letters AA, AB, etc.
+        else {
+          const firstCharIndex = Math.floor(doubleLetterIndex / 26);
+          const secondCharIndex = doubleLetterIndex % 26;
+          
+          if (firstCharIndex >= 26) {
+            // We've exhausted all possibilities
+            return `Row${singleLetterIndex + doubleLetterIndex}`;
+          }
+          
+          letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+          doubleLetterIndex++;
+        }
+        
+        // Check if this letter should be included
+        if (!uppercaseSkip.includes(letter)) {
+          return letter;
+        }
+        
+        // If we've tried too many letters
+        if (singleLetterIndex + doubleLetterIndex > 1000) {
+          console.warn('Letter generator: Too many skipped letters');
+          return `Row${singleLetterIndex + doubleLetterIndex}`;
+        }
+      }
+    },
+    
+    // Reset the generator if needed
+    reset: () => {
+      singleLetterIndex = 0;
+      doubleLetterIndex = 0;
+    }
+  };
+}
+
+private getRowLetterForSection(rowIndex: number, skipLetters: string[] = []): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const uppercaseSkip = skipLetters.map(l => l.toUpperCase());
+  
+  let letterCount = 0;
+  let currentIndex = 0;
+  
+  while (letterCount <= rowIndex) {
+    let letter: string;
+    
+    if (currentIndex < 26) {
+      letter = letters[currentIndex];
+    } else {
+      const doubleIndex = currentIndex - 26;
+      const firstCharIndex = Math.floor(doubleIndex / 26);
+      const secondCharIndex = doubleIndex % 26;
+      
+      if (firstCharIndex >= 26) {
+        return `Row${rowIndex + 1}`;
+      }
+      
+      letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+    }
+    
+    if (!uppercaseSkip.includes(letter)) {
+      if (letterCount === rowIndex) {
+        return letter;
+      }
+      letterCount++;
+    }
+    
+    currentIndex++;
+    
+    if (currentIndex > 1000) {
+      console.warn('getRowLetterForSection: Infinite loop prevented');
+      return `Row${rowIndex + 1}`;
+    }
+  }
+  
+  return `Row${rowIndex + 1}`;
 }
 
 
@@ -379,10 +706,8 @@ generateSeats() {
     };
   }
   
-  public getRowLetter(rowIndex: number): string {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return letters[rowIndex % letters.length];
-  }
+
+
   
   // ========== EVENT HANDLERS FROM VISUAL COMPONENT ==========
   onSeatClicked(seat: Seat) {
@@ -515,14 +840,16 @@ generateSeats() {
     this.notificationService.showError(message);
   }
   
-  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' {
-    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh'> = {
+  private mapTicketTypeToCartType(ticketType: TicketType): 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh' | 'balcony' | 'general' {
+    const typeMap: Record<TicketType, 'standard' | 'vip' | 'accessible' | 'standing' | 'seated' | 'foh'| 'balcony' | 'general'> = {
       VIP: 'vip',
       DIAMOND: 'vip',
       GOLD: 'standard',
       SILVER: 'standard',
       FOH: 'foh',
-      STANDING: 'standing'
+      STANDING: 'standing',
+      BALCONY: 'balcony',
+      GENERAL: 'general'
     };
     
     return typeMap[ticketType] || 'standard';

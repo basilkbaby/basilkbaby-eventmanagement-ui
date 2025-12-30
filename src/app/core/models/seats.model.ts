@@ -36,6 +36,11 @@ export interface VenueSection {
   rowOffset?: number;
   numberingDirection ? : string;
   rowConfigs: SectionRowConfig[];
+  rowNumberingType?: RowNumberingType;
+  skipRowLetters?: string[];       // Row letters to skip (e.g., ["I"])
+  hasColumnGap?: boolean;          // Enable column gap
+  gapAfterColumn?: number;         // Gap after this column (e.g., 12)
+  gapSize?: number;                // Size of gap (default: 1)
 }
 
 export interface SectionRowConfig {
@@ -49,6 +54,10 @@ export interface SectionRowConfig {
   color: string; // Color specific to this ticket type in this row group
   numberingDirection ? : string;
   blockLetter?: string; // Add this: L, R, A, B, etc.
+  skipRowLetters?: string[];       // Row letters to skip (e.g., ["I"])
+  hasColumnGap?: boolean;          // Enable column gap
+  gapAfterColumn?: number;         // Gap after this column (e.g., 12)
+  gapSize?: number;                // Size of gap (default: 1)
 }
 
 // seats.model.ts
@@ -70,7 +79,13 @@ export enum SeatStatus {
       FOH
   }
 
-export type TicketType = 'VIP' | 'DIAMOND' | 'GOLD' | 'SILVER' | 'FOH' | 'STANDING';
+export enum RowNumberingType  {
+  PERSECTION,
+  CONTINUOUS
+}
+
+
+export type TicketType = 'VIP' | 'DIAMOND' | 'GOLD' | 'SILVER' | 'FOH' | 'STANDING' | 'GENERAL' | 'BALCONY';
 
 export interface Seat {
   id: string;
@@ -102,6 +117,9 @@ export interface Seat {
   blockStartSeat: number;
   blockTotalSeats: number;
   blockLetter : string;
+  rowNumberingType?: RowNumberingType;
+  hasGapBefore ?: boolean;
+  gapSize ?: number;
 }
 
 export interface SelectedSeat {

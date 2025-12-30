@@ -19,7 +19,8 @@ import {
   SelectedSeat, 
   TicketType, 
   VenueData, 
-  VenueSection 
+  VenueSection,
+  RowNumberingType  // Add this import
 } from '../../../../core/models/seats.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 
@@ -34,6 +35,7 @@ export class MobileSvgSeatSelectorComponent implements OnInit {
   @ViewChild('seatMapSvg') seatMapSvg!: ElementRef<SVGSVGElement>;
   readonly SeatStatus = SeatStatus;
   readonly SeatSectionType = SeatSectionType;
+  readonly RowNumberingType = RowNumberingType; // Make it available in template
   
   section: VenueSection | null = null;
   loading: boolean = true;
@@ -80,7 +82,8 @@ export class MobileSvgSeatSelectorComponent implements OnInit {
     { label: 'Blocked', color: '#F5F5F5', stroke: '#BDBDBD' }
   ];
 
-  isLoading : boolean = false;
+  isLoading: boolean = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -102,7 +105,8 @@ export class MobileSvgSeatSelectorComponent implements OnInit {
     this.loading = true;
     this.seatService.getSeatMap(eventId).subscribe({
       next: (seatmap: VenueData) => {
-        this.venueData = seatmap;//this.seatService.getSeatMapConfig();
+        this.venueData = seatmap;
+        //this.venueData = this.seatService.getSeatMapConfigContinous();
         
         if (this.venueData?.sections) {
           this.availableSections = this.venueData.sections.filter((section: VenueSection) => 
@@ -157,147 +161,228 @@ export class MobileSvgSeatSelectorComponent implements OnInit {
     }
   }
 
-  // EXACT SAME LOGIC AS WEB COMPONENT
-  private generateSeats() {
-    if (!this.section) {
-      console.warn('Cannot generate seats: section is null');
-      return;
-    }
+private generateSeats() {
+  if (!this.section || !this.venueData) {
+    console.warn('Cannot generate seats: section or venueData is null');
+    return;
+  }
+  
+  this.seats = [];
+  this.rowLabels = [];
+  this.gridLines = [];
+  this.middleMinX = Number.MAX_VALUE;
+  this.middleMaxX = 0;
+  this.middleBottomY = 0;
+  
+  const statusMap = new Map<string, SeatOverride>();
+  
+  if (this.venueData.seatManagement) {
+    const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
     
-    this.seats = [];
-    this.rowLabels = [];
-    this.gridLines = [];
-    this.middleMinX = Number.MAX_VALUE;
-    this.middleMaxX = 0;
-    this.middleBottomY = 0;
+    categories.forEach(category => {
+      if (this.venueData?.seatManagement[category]) {
+        this.venueData.seatManagement[category].forEach((seatOverride: SeatOverride) => {
+          statusMap.set(seatOverride.seatId, seatOverride);
+        });
+      }
+    });
+  }
+  
+  // Helper function to get default block letter if not specified
+  const getDefaultBlockLetter = (index: number): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return letters[index % letters.length];
+  };
+  
+  // Get global row numbering type (fallback)
+  const defaultRowNumberingType = RowNumberingType.PERSECTION;
+  
+  // Process the single section
+  const section = this.section;
+  const sectionType = section.seatSectionType || SeatSectionType.SEAT;
+  
+  if (sectionType === SeatSectionType.FOH) {
+    return;
+  }
+  
+  if (sectionType === SeatSectionType.STANDING) {
+    this.createStandingSection(section);
+    return;
+  }
+  
+  const sectionName = section.name.toUpperCase();
+  const rowOffset = section.rowOffset || 0;
+  
+  // Get section's numbering type
+  const sectionRowNumberingType = section.rowNumberingType || defaultRowNumberingType;
+  
+  // Get section-level skip letters
+  const sectionSkipLetters = section.skipRowLetters || [];
+  
+  // Get all row configs for this section
+  const rowConfigs = section.rowConfigs || [];
+  
+  // Sort row configs by fromColumn to process them in order
+  const sortedConfigs = [...rowConfigs].sort((a, b) => 
+    (a.fromColumn || 0) - (b.fromColumn || 0)
+  );
+  
+  // For CONTINUOUS numbering on mobile, we need a deterministic approach
+  // Since mobile shows one section at a time, we'll calculate based on section position
+  let startingRowIndex = 0;
+  
+  if (sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+    // Calculate starting index based on section's position in the venue
+    const allSections = this.venueData.sections || [];
     
-    const statusMap = new Map<string, SeatOverride>();
-    
-    if (this.venueData?.seatManagement) {
-      const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
-      
-      categories.forEach(category => {
-        if (this.venueData?.seatManagement[category]) {
-          this.venueData.seatManagement[category].forEach((seatOverride: SeatOverride) => {
-            statusMap.set(seatOverride.seatId, seatOverride);
-          });
-        }
-      });
-    }
-    
-    // Helper function to get default block letter if not specified
-    const getDefaultBlockLetter = (index: number): string => {
-      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      return letters[index % letters.length];
-    };
-    
-    // Process the single section (mobile shows one section at a time)
-    const section = this.section;
-    const sectionType = section.seatSectionType || SeatSectionType.SEAT;
-    
-    if (sectionType === SeatSectionType.FOH) {
-      return;
-    }
-    
-    // Handle STANDING sections
-    if (sectionType === SeatSectionType.STANDING) {
-      this.createStandingSection(section);
-      return;
-    }
-    
-    // For SEAT sections
-    const sectionName = section.name.toUpperCase();
-    const rowOffset = section.rowOffset || 0;
-    
-    // Get all row configs for this section
-    const rowConfigs = section.rowConfigs || [];
-    
-    // Track current column position for creating gaps
-    let currentColumnPosition = 0;
-    
-    // Sort row configs by fromColumn to process them in order
-    const sortedConfigs = [...rowConfigs].sort((a, b) => 
-      (a.fromColumn || 0) - (b.fromColumn || 0)
-    );
-    
-    
-    // Track row label positions for each block
-    const rowLabelPositions = new Map<string, {
-      minX: number,
-      maxX: number,
-      y: number,
-      numberingDirection: 'left' | 'right' | 'center',
-      blockLetter: string,
-      rowLetter: string
-    }>();
-    
-    // Calculate total width needed for SVG
-    let totalColumns = 0;
-    sortedConfigs.forEach((rowConfig) => {
-      const fromColumn = rowConfig.fromColumn || 1;
-      const toColumn = rowConfig.toColumn || section.seatsPerRow;
-      totalColumns += (toColumn - fromColumn + 1);
+    // Filter and sort only CONTINUOUS seat sections
+    const continuousSections = allSections.filter(s => {
+      if (s.seatSectionType === SeatSectionType.FOH || s.seatSectionType === SeatSectionType.STANDING) {
+        return false;
+      }
+      const sRowNumberingType = s.rowNumberingType || defaultRowNumberingType;
+      return sRowNumberingType === RowNumberingType.CONTINUOUS;
+    }).sort((a, b) => {
+      // Sort by position (Y then X)
+      if (a.y !== b.y) return a.y - b.y;
+      return a.x - b.x;
     });
     
-    // Add gaps between blocks (same as web - 2 columns gap)
-    const totalGaps = (sortedConfigs.length - 1) * 2;
-    totalColumns += totalGaps;
+    // Find this section's index and calculate rows before it
+    const currentSectionIndex = continuousSections.findIndex(s => s.id === section.id);
     
-    // Calculate SVG dimensions
-    const contentWidth = totalColumns * this.seatSpacing + this.paddingX * 2;
-    const contentHeight = (section.rows || 20) * this.rowSpacing + this.paddingY * 2 + this.stageHeight;
+    if (currentSectionIndex > 0) {
+      // Sum rows from all previous CONTINUOUS sections
+      for (let i = 0; i < currentSectionIndex; i++) {
+        const prevSection = continuousSections[i];
+        const prevRowConfigs = prevSection.rowConfigs || [];
+        
+        prevRowConfigs.forEach(config => {
+          const fromRow = config.fromRow || 0;
+          const toRow = config.toRow || (prevSection.rows || 0) - 1;
+          startingRowIndex += (toRow - fromRow + 1);
+        });
+      }
+    }
     
-    // Calculate optimal height for mobile
-    const viewportHeight = window.innerHeight;
-    const headerHeight = 120;
-    const legendHeight = 80;
-    const summaryHeight = 150;
-    const availableHeight = viewportHeight - headerHeight - legendHeight - summaryHeight - 40;
+    console.log(`CONTINUOUS: Section ${section.name} is at index ${currentSectionIndex}, starts at row ${startingRowIndex}`);
+  }
+  
+  // Calculate total width needed for SVG (with gaps)
+  let totalColumns = 0;
+  sortedConfigs.forEach((rowConfig) => {
+    const fromColumn = rowConfig.fromColumn || 1;
+    const toColumn = rowConfig.toColumn || section.seatsPerRow;
+    totalColumns += (toColumn - fromColumn + 1);
     
-    this.totalWidth = Math.max(800, contentWidth + 100);
-    this.totalHeight = Math.max(availableHeight, contentHeight + 100);
+    if (rowConfig.gapAfterColumn) {
+      totalColumns += (rowConfig.gapSize || 1);
+    }
+  });
+  
+  // Add gaps between blocks
+  const totalGaps = (sortedConfigs.length - 1) * 2;
+  totalColumns += totalGaps;
+  
+  // Calculate SVG dimensions
+  const contentWidth = totalColumns * this.seatSpacing + this.paddingX * 2;
+  const contentHeight = (section.rows || 20) * this.rowSpacing + this.paddingY * 2 + this.stageHeight;
+  
+  // Calculate optimal height for mobile
+  const viewportHeight = window.innerHeight;
+  const headerHeight = 120;
+  const legendHeight = 80;
+  const summaryHeight = 150;
+  const availableHeight = viewportHeight - headerHeight - legendHeight - summaryHeight - 40;
+  
+  this.totalWidth = Math.max(800, contentWidth + 100);
+  this.totalHeight = Math.max(availableHeight, contentHeight + 100);
+  
+  // Center content in SVG
+  const centerX = this.totalWidth / 2;
+  const startX = centerX - (contentWidth / 2);
+  
+  // Track column positions for each block
+  const blockColumnStarts: number[] = [];
+  let currentBlockStart = 0;
+  
+  // First pass: calculate column positions
+  sortedConfigs.forEach((rowConfig, configIndex) => {
+    const fromColumn = rowConfig.fromColumn || 1;
+    const toColumn = rowConfig.toColumn || section.seatsPerRow;
     
-    // Center content in SVG
-    const centerX = this.totalWidth / 2;
-    const startX = centerX - (contentWidth / 2);
+    if (configIndex > 0) {
+      currentBlockStart += 2; // 2 columns gap
+    }
     
-    // Process each row config (each represents a block)
+    blockColumnStarts[configIndex] = currentBlockStart;
+    currentBlockStart += (toColumn - fromColumn + 1);
+    
+    if (rowConfig.gapAfterColumn) {
+      currentBlockStart += (rowConfig.gapSize || 1);
+    }
+  });
+  
+  // Track row label positions
+  const rowLabelPositions = new Map<string, {
+    minX: number,
+    maxX: number,
+    y: number,
+    numberingDirection: 'left' | 'right' | 'center',
+    blockLetter: string,
+    rowLetter: string
+  }>();
+  
+  // Get maximum rows across all configs
+  const maxRows = sortedConfigs.reduce((max, config) => {
+    const fromRow = config.fromRow || 0;
+    const toRow = config.toRow || (section.rows || 0) - 1;
+    return Math.max(max, toRow - fromRow + 1);
+  }, 0);
+  
+  // Track current row index for CONTINUOUS numbering
+  let currentRowIndex = startingRowIndex;
+  
+  // Generate seats row by row
+  for (let rowNum = 0; rowNum < maxRows; rowNum++) {
+    let rowLetter: string;
+    const skipLetters = sectionSkipLetters;
+    
+    // Determine row letter based on numbering type
+    if (sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+      // Use the calculated starting index + row number
+      rowLetter = this.getRowLetterWithSkip(currentRowIndex, skipLetters);
+      currentRowIndex++;
+    } else {
+      // PERSECTION: Start from A for each row
+      rowLetter = this.getRowLetterWithSkip(rowNum, skipLetters);
+    }
+    
+    // Process each block for this row
     sortedConfigs.forEach((rowConfig, configIndex) => {
       const fromRow = rowConfig.fromRow || 0;
-      const toRow = rowConfig.toRow || (section.rows || 20) - 1;
+      const toRow = rowConfig.toRow || (section.rows || 0) - 1;
+      
+      if (rowNum < fromRow || rowNum > toRow) {
+        return;
+      }
+      
       const fromColumn = rowConfig.fromColumn || 1;
       const toColumn = rowConfig.toColumn || section.seatsPerRow;
       
-      // Get block letter from config, or use default
+      const gapAfterColumn = rowConfig.gapAfterColumn;
+      const gapSize = rowConfig.gapSize || 1;
+      
       const blockLetter = rowConfig.blockLetter || getDefaultBlockLetter(configIndex);
       
-      // Get numbering direction from row config
       const numberingDirection: 'left' | 'right' | 'center' = 
         (rowConfig.numberingDirection as 'left' | 'right' | 'center') || 'left';
       
-      // Add gap before this block (except first block)
-      if (configIndex > 0) {
-        currentColumnPosition += 2; // 2 columns gap (adjust as needed)
-      }
+      // Get row-specific skip letters (config overrides section)
+      const rowSpecificSkipLetters = rowConfig.skipRowLetters || sectionSkipLetters;
       
-      // In generateSeats(), add this debugging at the beginning:
-console.log('=== GENERATE SEATS DEBUG ===');
-console.log('Section:', this.section?.name);
-console.log('Row Configs:', rowConfigs);
-
-// Then in the rowConfig loop, add:
-console.log('Processing row config:', {
-  configIndex,
-  fromColumn: rowConfig.fromColumn,
-  toColumn: rowConfig.toColumn,
-  blockLetter: rowConfig.blockLetter,
-  seatsPerRow: section.seatsPerRow,
-  fromRow: rowConfig.fromRow,
-  toRow: rowConfig.toRow
-});
-
-// Simplified and corrected calculateSeatNumber:
-      const calculateSeatNumber = (col: number): number => {
+      const blockColumnStart = blockColumnStarts[configIndex];
+            const calculateSeatNumber = (col: number): number => {
         const actualCol = col - fromColumn + 1;
         const totalSeatsInBlock = toColumn - fromColumn + 1;
         
@@ -326,138 +411,294 @@ console.log('Processing row config:', {
             return actualCol;
         }
       };
-      
-      // Generate seats for this block
-      for (let r = fromRow; r <= toRow; r++) {
-        const globalRow = r + rowOffset;
-        const rowLetter = this.getRowLetter(r);
-        
-        // Track min/max X for this row in this block
-        let rowMinX = Infinity;
-        let rowMaxX = -Infinity;
-        
-        for (let c = fromColumn; c <= toColumn; c++) {
-          const numericSeatNumber = calculateSeatNumber(c);
-          const shortSectionName = sectionName.charAt(0); // Just take first character
 
-          const seatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
-          
-          const columnPosition = currentColumnPosition + (c - fromColumn);
-          const cx = startX + (columnPosition * this.seatSpacing);
-          const cy = this.paddingY + this.stageHeight + (globalRow * this.rowSpacing);
-          
-          // Update row min/max X
-          rowMinX = Math.min(rowMinX, cx);
-          rowMaxX = Math.max(rowMaxX, cx);
-          
-          const seatOverride = statusMap.get(seatId);
-          const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
-          
-          const seat: Seat = {
-            id: seatId,
-            cx,
-            cy,
-            r: this.seatRadius,
-            rowLabel: rowLetter,
-            seatNumber: numericSeatNumber,
-            sectionId: section.id,
-            sectionName: section.sectionLabel || section.name,
-            sectionConfigId: rowConfig.id || '',
-            ticketType: rowConfig.type,
-            status: seatStatus,
-            price: rowConfig.customPrice || 0,
-            color: rowConfig.color || this.getSectionColor(blockLetter),
-            gridRow: globalRow,
-            gridColumn: columnPosition + 1,
-            isStandingArea: false,
-            originalColumn: c,
-            numberingDirection: numberingDirection,
-            blockIndex: configIndex,
-            blockLetter: blockLetter,
-            blockStartSeat: 1,
-            blockTotalSeats: toColumn - fromColumn + 1
-          };
-          
-          this.seats.push(seat);
-          
-          // Track middle section for labels
-          if (['A', 'B', 'C', '4', '5', '6'].includes(blockLetter)) {
-            this.middleMinX = Math.min(this.middleMinX, cx);
-            this.middleMaxX = Math.max(this.middleMaxX, cx);
-            this.middleBottomY = Math.max(this.middleBottomY, cy);
-          }
+      let rowMinX = Infinity;
+      let rowMaxX = -Infinity;
+      let columnInCurrentRow = 0;
+      
+      for (let c = fromColumn; c <= toColumn; c++) {
+        if (gapAfterColumn && c === gapAfterColumn + 1) {
+          columnInCurrentRow += gapSize;
         }
         
-        // Store row label position for this block
-        const rowKey = `${section.id}-${blockLetter}-${rowLetter}`;
+        const numericSeatNumber = calculateSeatNumber(c);
+        const shortSectionName = sectionName.charAt(0);
+
+        // IMPORTANT: Generate seat ID matching web format
+        let seatId: string;
+        if (sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+          // Continuous format: VIP-A1 (no block letter)
+          seatId = `${shortSectionName}-${rowLetter}${numericSeatNumber}`;
+        } else {
+          // Per-section format: VIP-L-A1 (with block letter)
+          seatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
+        }
         
+        const columnPosition = blockColumnStart + columnInCurrentRow;
+        const cx = startX + (columnPosition * this.seatSpacing);
+        const cy = this.paddingY + this.stageHeight + (rowNum * this.rowSpacing);
+        
+        rowMinX = Math.min(rowMinX, cx);
+        rowMaxX = Math.max(rowMaxX, cx);
+        
+        // Check status map - try both formats for backward compatibility
+        let seatOverride = statusMap.get(seatId);
+        
+        // If not found with current format, try alternative format
+        if (!seatOverride && sectionRowNumberingType === RowNumberingType.CONTINUOUS) {
+          // Try per-section format as fallback
+          const altSeatId = `${shortSectionName}-${blockLetter}-${rowLetter}${numericSeatNumber}`;
+          seatOverride = statusMap.get(altSeatId);
+        } else if (!seatOverride && sectionRowNumberingType === RowNumberingType.PERSECTION) {
+          // Try continuous format as fallback
+          const altSeatId = `${shortSectionName}-${rowLetter}${numericSeatNumber}`;
+          seatOverride = statusMap.get(altSeatId);
+        }
+        
+        const seatStatus: SeatStatus = seatOverride?.status || SeatStatus.AVAILABLE;
+        
+        const seat: Seat = {
+          id: seatId,
+          cx,
+          cy,
+          r: this.seatRadius,
+          rowLabel: rowLetter,
+          seatNumber: numericSeatNumber,
+          sectionId: section.id,
+          sectionName: section.sectionLabel || section.name,
+          sectionConfigId: rowConfig.id || '',
+          ticketType: rowConfig.type,
+          status: seatStatus,
+          price: rowConfig.customPrice || 0,
+          color: rowConfig.color || this.getSectionColor(blockLetter),
+          gridRow: rowNum,
+          gridColumn: columnInCurrentRow + 1,
+          isStandingArea: false,
+          originalColumn: c,
+          numberingDirection: numberingDirection,
+          blockIndex: configIndex,
+          blockLetter: blockLetter,
+          blockStartSeat: 1,
+          blockTotalSeats: toColumn - fromColumn + 1,
+          rowNumberingType: sectionRowNumberingType
+        };
+        
+        this.seats.push(seat);
+        columnInCurrentRow++;
+      }
+      
+      // Store row label position
+      const rowKey = `${section.id}-${rowNum}`;
+      if (!rowLabelPositions.has(rowKey)) {
         rowLabelPositions.set(rowKey, {
           minX: rowMinX,
           maxX: rowMaxX,
-          y: this.paddingY + this.stageHeight + (globalRow * this.rowSpacing),
+          y: this.paddingY + this.stageHeight + (rowNum * this.rowSpacing),
           numberingDirection: numberingDirection,
           blockLetter: blockLetter,
           rowLetter: rowLetter
         });
+      } else {
+        const existing = rowLabelPositions.get(rowKey)!;
+        existing.minX = Math.min(existing.minX, rowMinX);
+        existing.maxX = Math.max(existing.maxX, rowMaxX);
       }
-      
-      currentColumnPosition += (toColumn - fromColumn + 1);
     });
+  }
+  
+  // Create row labels
+  rowLabelPositions.forEach((position) => {
+    let labelX: number;
+    let side: 'left' | 'right';
     
-    // Create row labels from the collected positions
-    rowLabelPositions.forEach((position) => {
-      let labelX: number;
-      let side: 'left' | 'right';
-      
-      // Determine label position based on numbering direction
-      if (position.numberingDirection === 'right') {
-        // Right-to-left numbering: label goes on the RIGHT side
-        labelX = position.maxX + 15;
-        side = 'right';
-      } else if (position.numberingDirection === 'left') {
-        // Left-to-right numbering: label goes on the LEFT side
+    if (position.numberingDirection === 'right') {
+      labelX = position.maxX + 15;
+      side = 'right';
+    } else if (position.numberingDirection === 'left') {
+      labelX = position.minX - 15;
+      side = 'left';
+    } else {
+      if (position.blockLetter === 'C' || position.blockLetter === 'L') {
         labelX = position.minX - 15;
         side = 'left';
+      } else if (position.blockLetter === 'R') {
+        labelX = position.maxX + 15;
+        side = 'right';
       } else {
-        // Center numbering: decide based on block letter
-        if (position.blockLetter === 'C') {
-          labelX = position.minX - 15;
-          side = 'left';
-        } else if (position.blockLetter === 'L') {
-          labelX = position.minX - 15;
-          side = 'left';
-        } else if (position.blockLetter === 'R') {
-          labelX = position.maxX + 15;
-          side = 'right';
-        } else {
-          labelX = position.minX - 15;
-          side = 'left';
-        }
+        labelX = position.minX - 15;
+        side = 'left';
       }
-      
-      const adjustedY = position.y + 4; // Adjust this value as needed
+    }
+    
+    const adjustedY = position.y + 4;
 
-      this.rowLabels.push({
-        x: labelX,
-        y: adjustedY,
-        label: position.rowLetter,
-        side: side
-      });
+    this.rowLabels.push({
+      x: labelX,
+      y: adjustedY,
+      label: position.rowLetter,
+      side: side
     });
-    
-    // Generate grid lines
-    this.generateGridLines(this.totalWidth, this.totalHeight);
-    
-    // Update SVG dimensions
-    this.updateSvgDimensions(this.totalWidth, this.totalHeight);
-    
-    console.log(`Generated ${this.seats.length} seats for section: ${section.name}`);
-    this.cdRef.detectChanges();
+  });
+  
+  // Generate grid lines
+  this.generateGridLines(this.totalWidth, this.totalHeight);
+  
+  // Update SVG dimensions
+  this.updateSvgDimensions(this.totalWidth, this.totalHeight);
+  
+  console.log(`Generated ${this.seats.length} seats for ${section.name}`);
+  console.log(`Row letters: ${Array.from(new Set(this.seats.map(s => s.rowLabel))).sort().join(', ')}`);
+  console.log(`First seat: ${this.seats[0]?.id}`);
+  console.log(`Last seat: ${this.seats[this.seats.length - 1]?.id}`);
+  
+  this.cdRef.detectChanges();
+}
+
+// Also update the seat selection methods to handle both formats:
+private selectSeat(seat: Seat) {
+  seat.status = SeatStatus.SELECTED;
+  
+  // Create SelectedSeat object - must match web format exactly!
+  const selectedSeat: SelectedSeat = {
+    seatId: seat.id,
+    row: seat.rowLabel,
+    number: seat.seatNumber,
+    sectionName: seat.sectionName,
+    sectionId: seat.sectionId,
+    sectionConfigId: seat.sectionConfigId,
+    price: seat.price,
+    tier: {
+      id: seat.sectionConfigId || '1',
+      name: seat.ticketType,
+      price: seat.price,
+      color: seat.color || '#10b981'
+    },
+    features: [],
+    isStandingArea: false
+  };
+  
+  this.selectedSeats.push(selectedSeat);
+}
+
+// Add a method to clear stored row index when needed
+clearStoredRowIndex() {
+  const storageKey = `section_${this.section?.id}_row_index`;
+  try {
+    localStorage.removeItem(storageKey);
+  } catch (e) {
+    console.warn('Could not clear localStorage:', e);
   }
+}
+// Also update the getRowLetterWithSkip method to be more robust:
+private getRowLetterWithSkip(rowIndex: number, skipLetters: string[] = []): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const uppercaseSkip = skipLetters.map(l => l.toUpperCase());
+  
+  // Handle simple case first
+  if (uppercaseSkip.length === 0) {
+    // Simple A-Z, AA, AB, etc.
+    if (rowIndex < 26) {
+      return letters[rowIndex];
+    } else {
+      const firstLetterIndex = Math.floor(rowIndex / 26) - 1;
+      const secondLetterIndex = rowIndex % 26;
+      return `${letters[firstLetterIndex]}${letters[secondLetterIndex]}`;
+    }
+  }
+  
+  // Build available letters excluding skipped ones
+  let availableLetters: string[] = [];
+  let currentIndex = 0;
+  
+  // Generate sequence until we have enough letters
+  while (availableLetters.length <= rowIndex) {
+    let letter: string;
+    
+    // Generate letter based on current index
+    if (currentIndex < 26) {
+      letter = letters[currentIndex];
+    } else {
+      // Generate double letters
+      const doubleIndex = currentIndex - 26;
+      const firstCharIndex = Math.floor(doubleIndex / 26);
+      const secondCharIndex = doubleIndex % 26;
+      
+      if (firstCharIndex >= 0 && firstCharIndex < 26 && 
+          secondCharIndex >= 0 && secondCharIndex < 26) {
+        letter = `${letters[firstCharIndex]}${letters[secondCharIndex]}`;
+      } else {
+        letter = `Row${currentIndex + 1}`;
+      }
+    }
+    
+    // Check if this letter should be included
+    if (!uppercaseSkip.includes(letter)) {
+      availableLetters.push(letter);
+    }
+    
+    currentIndex++;
+    
+    // Safety check
+    if (currentIndex > 1000) {
+      console.warn('getRowLetterWithSkip: Infinite loop prevented');
+      return `Row${rowIndex + 1}`;
+    }
+  }
+  
+  return availableLetters[rowIndex] || `Row${rowIndex + 1}`;
+}
+
+
 
   private createStandingSection(section: VenueSection) {
-    // Implement standing section logic if needed
-    console.log('Creating standing section:', section.name);
+    // Create standing area seat
+    const sectionName = section.name.toUpperCase();
+    const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
+    
+    const cx = this.paddingX + (section.seatsPerRow * this.seatSpacing) / 2;
+    const cy = this.paddingY + this.stageHeight + (section.rows * this.rowSpacing) / 2;
+    
+    const seatId = `${sectionName}-ST`;
+    
+    const seat: Seat = {
+      id: seatId,
+      cx,
+      cy,
+      r: Math.max(section.seatsPerRow, section.rows) * this.seatSpacing / 4,
+      rowLabel: 'ST',
+      seatNumber: 0,
+      sectionId: section.id,
+      sectionName: section.sectionLabel || section.name,
+      sectionConfigId: rowConfig.id || '',
+      ticketType: rowConfig.type,
+      status: SeatStatus.AVAILABLE,
+      price: rowConfig.customPrice || 0,
+      color: rowConfig.color || '#cccccc',
+      gridRow: section.rows,
+      gridColumn: section.seatsPerRow,
+      isStandingArea: true,
+      originalColumn: 0,
+      numberingDirection: 'left',
+      blockIndex: 0,
+      blockLetter: 'A',
+      blockStartSeat: 0,
+      blockTotalSeats: 0
+    };
+    
+    this.seats.push(seat);
+  }
+
+  private getDefaultRowConfig(): SectionRowConfig {
+    return {
+      id: 'default',
+      fromRow: 0,
+      toRow: 0,
+      fromColumn: 0,
+      toColumn: 0,
+      type: 'STANDING',
+      customPrice: 0,
+      color: '#cccccc'
+    };
   }
 
   private generateGridLines(width: number, height: number) {
@@ -493,11 +734,6 @@ console.log('Processing row config:', {
   }
 
   // Helper Methods
-  private getRowLetter(rowIndex: number): string {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return letters[rowIndex % letters.length];
-  }
-
   private getSectionColor(blockLetter: string): string {
     const colors: {[key: string]: string} = {
       'A': '#4F46E5', 'B': '#059669', 'C': '#DC2626',
@@ -539,7 +775,6 @@ console.log('Processing row config:', {
     return statusConfig.stroke;
   }
 
-
   getSeatStatusClass(seat: Seat): string {
     return seat.status.toLowerCase();
   }
@@ -568,30 +803,7 @@ console.log('Processing row config:', {
     this.cdRef.detectChanges();
   }
 
-  private selectSeat(seat: Seat) {
-    seat.status = SeatStatus.SELECTED;
-    
-    // Create SelectedSeat object matching web format
-    const selectedSeat: SelectedSeat = {
-      seatId: seat.id,
-      row: seat.rowLabel,
-      number: seat.seatNumber,
-      sectionName: seat.sectionName,
-      sectionId: seat.sectionId,
-      sectionConfigId: seat.sectionConfigId,
-      price: seat.price,
-      tier: {
-        id: '1',
-        name: seat.ticketType,
-        price: seat.price,
-        color: seat.color || '#10b981'
-      },
-      features: [],
-      isStandingArea: false
-    };
-    
-    this.selectedSeats.push(selectedSeat);
-  }
+
 
   private deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
@@ -679,11 +891,9 @@ console.log('Processing row config:', {
           this.showError(error.message || 'An error occurred. Please try again.');
         }
       });
-
   }
 
   private showError(message: string): void {
-    // Use toast/notification service
     this.notificationService.showError(message);
   }
 
@@ -705,7 +915,6 @@ console.log('Processing row config:', {
     const color = this.getBlockColor(blockLetter);
     return this.darkenColor(color, 20);
   }
-
 
   @HostListener('window:resize')
   onWindowResize() {

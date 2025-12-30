@@ -29,7 +29,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
   readonly CANVAS_HEIGHT = 1600;
   readonly STAGE_WIDTH = 500;
   readonly STAGE_HEIGHT = 60 *2;
-  readonly SEAT_SIZE = 22;
+  readonly SEAT_SIZE = 15;
   readonly HEIGHT_MULTIPLIER = 3; // Change this number to adjust height
 
   // Gesture state
@@ -65,7 +65,7 @@ export class MobileSectionSelectorComponent implements OnInit, AfterViewInit, On
     this.seatService.getSeatMap(eventId).subscribe({
       next: (seatmap) => {
         this.venueData = seatmap;
-        //this.venueData = this.seatService.getSeatMapConfig();
+        //this.venueData = this.seatService.getSeatMapConfigContinous();
         this.loading = false;
       },
       error: (error) => {
