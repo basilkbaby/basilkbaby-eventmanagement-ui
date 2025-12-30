@@ -175,15 +175,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   // Initialize payment flow
   private async initializePayment(): Promise<void> {
     try {
-      // Load Stripe
-      this.stripe = await loadStripe(environment.stripe.testmode? environment.stripe.testpublishableKey : environment.stripe.publishableKey);
+
+      
+      // Create payment intent
+      const paymentIntentResponse = await this.createPaymentIntent(this.cartSummary.total);
+
+            // Load Stripe
+      this.stripe = await loadStripe(paymentIntentResponse.publishableKey);
       
       if (!this.stripe) {
         throw new Error('Failed to load Stripe');
       }
-      
-      // Create payment intent
-      const paymentIntentResponse = await this.createPaymentIntent(this.cartSummary.total);
+
       this.clientSecret = paymentIntentResponse.clientSecret;
       this.paymentIntentId = paymentIntentResponse.paymentIntentId;
       
@@ -305,11 +308,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   // Create payment intent
   private async createPaymentIntent(amount: number): Promise<any> {
+    var eventId = this.cartSummary.eventId;
     try {
       const response = await lastValueFrom(
         this.http.post<any>(`${environment.apiUrl}/api/checkout/create-payment-intent`, {
           amount: amount, // Convert to pence/cents
           currency: 'gbp',
+          eventId: eventId,
           metadata: {
             cartId: this.cartSummary.cartId
           }
@@ -338,7 +343,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       fullName: `${this.customerForm.get('firstName')?.value} ${this.customerForm.get('lastName')?.value}`,
       email: this.customerForm.get('email')?.value,
       phone: this.customerForm.get('phone')?.value,
-      postcode: this.customerForm.get('postcode')?.value
+      postcode: this.customerForm.get('postcode')?.value,
+      paymentIntentId: paymentIntentId
     });
   }
 

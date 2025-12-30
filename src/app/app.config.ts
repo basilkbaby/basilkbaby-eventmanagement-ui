@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled', // Enable anchor scrolling
       })), 
     provideHttpClient(),
-    provideNgxStripe(environment.stripe.testmode? environment.stripe.testpublishableKey : environment.stripe.publishableKey), // e.g., pk_test_...
+    //provideNgxStripe(environment.stripe.testmode? environment.stripe.testpublishableKey : environment.stripe.publishableKey), // e.g., pk_test_...
     ConfigService,
     
   ]
