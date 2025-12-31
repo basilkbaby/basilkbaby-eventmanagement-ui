@@ -46,6 +46,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   middleMinX = Number.MAX_VALUE;
   middleMaxX = 0;
   middleBottomY = 0;
+  usedStandingIds: string[] = [];
 
   constructor(
     private cartService: CartService,
@@ -534,11 +535,7 @@ public getRowLetter(rowIndex: number, rowConfig?: SectionRowConfig): string {
   return `Row${rowIndex + 1}`;
 }
 
-private applySeatNumberGap(seatNumber: number): number {
-  // Add this method if you still need it for seat number gaps
-  // If you're only doing column gaps (visual spacing), this can be simplified
-  return seatNumber;
-}
+
 
 private createLetterGenerator() {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -637,12 +634,12 @@ private getRowLetterForSection(rowIndex: number, skipLetters: string[] = []): st
 
 // ========== STANDING SECTION CREATION ==========
   private createStandingSection(section: VenueSection): void {
-    const sectionPrefix = section.name.toUpperCase();
-    const seatId = `${sectionPrefix}-ST`;
+    const seatId = this.generateStandingTicketId(section);
+
     
     // Calculate center position for standing area
-    const cx = section.x + (section.seatsPerRow * 22) / 2;
-    const cy = section.y + (section.rows * 22) / 2;
+    const cx = section.x ;
+    const cy = section.y;
     
     const rowConfig = section.rowConfigs[0] || this.getDefaultRowConfig();
     
@@ -672,27 +669,54 @@ private getRowLetterForSection(rowIndex: number, skipLetters: string[] = []): st
     this.seats.push(seat);
   }
   
-  private getRowConfigForSeat(section: VenueSection, rowIndex: number): SectionRowConfig {
-    const config = section.rowConfigs.find(rc => 
-      rowIndex >= rc.fromRow && rowIndex <= rc.toRow
-    );
-    
-    if (!config) {
-      return {
-        id: crypto.randomUUID(),
-        fromRow: 0,
-        toRow: section.rows - 1,
-        fromColumn: 0,
-        toColumn: 0,
-        type: 'SILVER',
-        customPrice: 0,
-        color: '#cccccc'
-      };
-    }
-    
-    return config;
-  }
+generateStandingTicketId(section: any): string {
+  const sectionPrefix = section.name.charAt(0).toUpperCase();
+  let seatId: string;
+  
+  do {
+    const randomNum = Math.floor(Math.random() * 1000) + 1; // 1-1000
+    seatId = `${sectionPrefix}-ST-${randomNum.toString().padStart(3, '0')}`;
+  } while (this.usedStandingIds.includes(seatId));
+  
+  this.usedStandingIds.push(seatId);
+  return seatId;
+}
 
+hasStandingTickets(): boolean {
+  return this.selectedSeats.some(seat => seat.isStandingArea);
+}
+
+// Method to add another standing ticket
+addAnotherStandingTicket(): void {
+  // Find the first standing ticket in selected seats
+  const standingSeat = this.selectedSeats.find(seat => seat.isStandingArea);
+  if (!standingSeat) return;
+  
+  // Find the original seat object
+  const originalStandingSeat = this.seats.find(seat => seat.id === standingSeat.seatId);
+  if (!originalStandingSeat) return;
+
+  // Find the section
+  const section = this.venueData.sections.find(s => s.id === originalStandingSeat.sectionId);
+  if (!section) return;
+
+  // Generate a new seat ID
+  const newSeatId = this.generateStandingTicketId(section);
+  
+  // Create a new standing seat object
+  const newSeat: Seat = {
+    ...originalStandingSeat, // Copy all properties
+    id: newSeatId, // New unique ID
+    cx: originalStandingSeat.cx + (Math.random() * 20 - 10), // Slightly offset position
+    cy: originalStandingSeat.cy + (Math.random() * 20 - 10), // Slightly offset position
+  };
+  
+  // Add to seats array
+  //this.seats.push(newSeat);
+  
+  // Select this new seat
+  this.selectSeat(newSeat);
+}
   private getDefaultRowConfig(): SectionRowConfig {
     return {
       id: crypto.randomUUID(),

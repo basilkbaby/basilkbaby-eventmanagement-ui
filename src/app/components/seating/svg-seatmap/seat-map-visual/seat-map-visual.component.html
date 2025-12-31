@@ -33,7 +33,7 @@
 
             <!-- Section Labels -->
             <g *ngFor="let section of venueData?.sections || []">
-            <text *ngIf="section.seatSectionType != SeatSectionType.FOH" 
+            <text *ngIf="section.seatSectionType != SeatSectionType.FOH && section.seatSectionType != SeatSectionType.STANDING" 
                 [attr.x]="getSectionCenterX(section)" 
                 [attr.y]="section.y - 20"
                 text-anchor="center" 

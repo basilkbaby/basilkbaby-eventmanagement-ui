@@ -704,11 +704,12 @@ export class SeatService {
           name: 'STANDING',
           x: 50,
           y: 150,
-          mx: 50,
+          mx: 275,
           my: 150,
           rows: 20,
           seatsPerRow: 12,
           sectionLabel: 'Standing',
+          seatSectionType: SeatSectionType.STANDING,
           rowConfigs: [
             {
               id: crypto.randomUUID(),
@@ -726,44 +727,39 @@ export class SeatService {
         // Left Seating Section (A-V rows)
         {
           id: "left-seating",
-          name: 'LEFT_SECTION',
+          name: 'VIP',
           x: 350,
           y: 150,
-          mx: 350,
+          mx: 500,
           my: 150,
-          rows: 22,  // A to V = 22 rows
-          seatsPerRow: 12,
-          sectionLabel: 'Left',
+          rows: 3,  // A to V = 22 rows
+          seatsPerRow: 24,
+          sectionLabel: 'VIP',
+          numberingDirection: 'right',
           rowConfigs: [
             {
               id: crypto.randomUUID(),
               fromRow: 0,
               toRow: 2,
-              fromColumn: 0,
-              toColumn: 0,  // Rows A-C: VIP
+              fromColumn: 1,
+              toColumn: 12,  // Rows A-C: VIP
               type: 'VIP',
               customPrice: 75,
-              color: '#8a6b8c'
+              color: '#4a8bc9',
+              blockLetter: 'L',
+              numberingDirection: 'right',
             },
             {
               id: crypto.randomUUID(),
-              fromRow: 3,
-              toRow: 9,
-              fromColumn: 0,
-              toColumn: 0,  // Rows D-J: Diamond
-              type: 'DIAMOND',
-              customPrice: 50,
-              color: '#8a9a5b'
-            },
-            {
-              id: crypto.randomUUID(),
-              fromRow: 10,
-              toRow: 21,
-              fromColumn: 0,
-              toColumn: 0, // Rows K-V: Gold
-              type: 'GOLD',
-              customPrice: 30,
-              color: '#b3543a'
+              fromRow: 0,
+              toRow: 2,
+              fromColumn: 12,
+              toColumn: 24,  // Rows A-C: VIP
+              type: 'VIP',
+              customPrice: 75,
+              color: '#4a8bc9',
+              blockLetter: 'R',
+              numberingDirection: 'left',
             }
           ]
         },
@@ -771,47 +767,84 @@ export class SeatService {
         // Right Seating Section (A-V rows)
         {
           id: "right-seating",
-          name: 'RIGHT_SECTION',
-          x: 650,
-          y: 150,
-          mx: 650,
-          my: 150,
-          rows: 22,  // A to V = 22 rows
-          seatsPerRow: 12,
-          sectionLabel: 'Right',
+          name: 'Diamond',
+          x: 350,
+          y: 250,
+          mx: 500,
+          my: 300,
+          rows: 7,  // A to V = 22 rows
+          seatsPerRow: 24,
+          sectionLabel: 'Diamond',
+          numberingDirection: 'right',
           rowConfigs: [
             {
               id: crypto.randomUUID(),
               fromRow: 0,
-              toRow: 2,
-              fromColumn: 0,
-              toColumn: 0, // Rows A-C: VIP
-              type: 'VIP',
-              customPrice: 75,
-              color: '#8a6b8c'
-            },
-            {
-              id: crypto.randomUUID(),
-              fromRow: 3,
-              toRow: 9,
-              fromColumn: 0,
-              toColumn: 0,  // Rows D-J: Diamond
+              toRow: 6,
+              fromColumn: 1,
+              toColumn: 12, // Rows A-C: VIP
               type: 'DIAMOND',
-              customPrice: 50,
-              color: '#8a9a5b'
+              customPrice: 75,
+              color: '#8a6b8c',
+              blockLetter: 'L',
+              numberingDirection: 'right',
             },
+            
             {
               id: crypto.randomUUID(),
-              fromRow: 10,
-              toRow: 21,
-              fromColumn: 0,
-              toColumn: 0,  // Rows K-V: Gold
-              type: 'GOLD',
-              customPrice: 30,
-              color: '#b3543a'
+              fromRow: 0,
+              toRow: 6,
+              fromColumn: 12,
+              toColumn: 24, // Rows A-C: VIP
+              type: 'DIAMOND',
+              customPrice: 75,
+              color: '#8a6b8c',
+              blockLetter: 'R',
+              numberingDirection: 'left',
             }
           ]
         },
+
+        // Right Seating Section (A-V rows)
+        {
+          id: "right-seating",
+          name: 'Gold',
+          x: 350,
+          y: 450,
+          mx: 650,
+          my: 150,
+          rows: 7,  // A to V = 22 rows
+          seatsPerRow: 24,
+          sectionLabel: 'Gold',
+          numberingDirection: 'right',
+          rowConfigs: [
+            {
+              id: crypto.randomUUID(),
+              fromRow: 0,
+              toRow: 6,
+              fromColumn: 0,
+              toColumn: 12, // Rows A-C: VIP
+              type: 'GOLD',
+              customPrice: 75,
+              color: '#b3543a',
+              blockLetter: 'L',
+              numberingDirection: 'right',
+            },     
+            {
+              id: crypto.randomUUID(),
+              fromRow: 0,
+              toRow: 6,
+              fromColumn: 12,
+              toColumn: 24, // Rows A-C: VIP
+              type: 'GOLD',
+              customPrice: 75,
+              color: '#b3543a',
+              blockLetter: 'R',
+              numberingDirection: 'left',
+            }
+          ]
+        },
+
 
         // Right Standing Area
         {
@@ -824,6 +857,7 @@ export class SeatService {
           rows: 20,
           seatsPerRow: 12,
           sectionLabel: 'Standing',
+          seatSectionType: SeatSectionType.STANDING,
           rowConfigs: [
             {
               id: crypto.randomUUID(),
@@ -849,6 +883,7 @@ export class SeatService {
           rows: 2,
           seatsPerRow: 26,
           sectionLabel: 'FOH',
+          seatSectionType : SeatSectionType.FOH,
           rowConfigs: [
             {
               id: crypto.randomUUID(),

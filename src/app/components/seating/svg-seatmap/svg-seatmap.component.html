@@ -1,35 +1,24 @@
 <div class="seat-selection-layout" *ngIf="!loading">
 
   <!-- Main Canvas Area -->
- <main class="canvas-area">
+  <main class="canvas-area">
     <div class="canvas-wrapper">
       <!-- SVG Component -->
-      <app-seat-map-visual
-        [venueData]="venueData"
-        [seats]="seats"
-        [selectedSeatIds]="selectedSeatIds"
-        [hoveredSeatId]="hoveredSeatId"
-        [scale]="scale"
-        [offsetX]="offsetX"
-        [offsetY]="offsetY"
-        [rowLabels]="rowLabels"
-        (seatClicked)="onSeatClicked($event)"
-        (seatHovered)="onSeatHovered($event)"
-        (dragStarted)="onDragStarted($event)"
-        (dragMoved)="onDragMoved($event)"
-        (dragEnded)="onDragEnded()"
-        (zoomed)="onZoomed($event)"
-        class="seat-map-visual">
+      <app-seat-map-visual [venueData]="venueData" [seats]="seats" [selectedSeatIds]="selectedSeatIds"
+        [hoveredSeatId]="hoveredSeatId" [scale]="scale" [offsetX]="offsetX" [offsetY]="offsetY" [rowLabels]="rowLabels"
+        (seatClicked)="onSeatClicked($event)" (seatHovered)="onSeatHovered($event)"
+        (dragStarted)="onDragStarted($event)" (dragMoved)="onDragMoved($event)" (dragEnded)="onDragEnded()"
+        (zoomed)="onZoomed($event)" class="seat-map-visual">
       </app-seat-map-visual>
     </div>
   </main>
 
   <!-- Sidebar / Mobile Bottom Sheet -->
   <aside class="controls-sidebar expanded">
-    
+
     <!-- Desktop Header -->
     <div class="compact-header">
-      
+
       <div class="event-info-ultra-compact">
         <h1>{{ venueData.eventName }}</h1>
         <div class="event-details-minimal">
@@ -39,31 +28,40 @@
         </div>
       </div>
     </div>
-    
+
 
     <!-- Selected Seats Summary -->
-    <div class="selected-summary" 
-         *ngIf="(selectedSeats.length > 0)">
-      
+    <div class="selected-summary" *ngIf="(selectedSeats.length > 0)">
+
       <div class="summary-header">
         <h3>Selected Seats ({{ selectedSeats.length }})</h3>
         <button class="clear-btn" (click)="clearSelection()">Clear All</button>
       </div>
-      
+
       <div class="seats-grid">
         <div class="seat-tag" *ngFor="let seat of selectedSeats; let i = index">
           <span class="seat-label" *ngIf="!seat.isStandingArea">
             {{ seat.seatId }}
           </span>
           <span class="seat-label" *ngIf="seat.isStandingArea">
-            Standing Area
+           {{ seat.seatId }}
           </span>
-          <button class="remove-tag" 
-                  (click)="onRemoveSeat(seat.seatId, $event)" 
-                  title="Remove">×</button>
+          <button class="remove-tag" (click)="onRemoveSeat(seat.seatId, $event)" title="Remove">×</button>
         </div>
       </div>
-      
+
+    <!-- Standing ticket message and add button -->
+      <div class="standing-info-section" *ngIf="hasStandingTickets()">
+        <div class="standing-message">
+          <span class="info-icon">ℹ️</span>
+          <span>Standing tickets are for general admission areas and don't have specific seats.</span>
+        </div>
+        
+        <button class="add-more-standing-btn" (click)="addAnotherStandingTicket()">
+          + Add Another Standing Ticket
+        </button>
+      </div>
+
       <div class="quick-summary">
         <div class="price-breakdown">
           <div class="price-item" *ngFor="let seat of selectedSeats">
@@ -72,7 +70,7 @@
                 {{ seat.seatId }}
               </span>
               <span *ngIf="seat.isStandingArea">
-                {{ seat.seatId }} Standing
+                {{ seat.seatId }}
               </span>
             </span>
             <span>{{ formatPrice(seat.price) }}</span>
@@ -83,33 +81,27 @@
           <span class="amount">{{ formatPrice(getTotalPrice()) }}</span>
         </div>
       </div>
-      
-<div class="action-buttons-compact">
-  <button 
-    class="btn-add-compact" 
-    (click)="addToCart()"
-    [disabled]="isLoading || selectedSeats.length === 0"
-    [class.loading]="isLoading">
-    
-    <!-- Default content -->
-    <span class="default-content" *ngIf="!isLoading">
-      Add {{ selectedSeats.length }} to Cart
-    </span>
-    
-    <!-- Loading content -->
-    <span class="loading-content" *ngIf="isLoading">
-      <span class="spinner"></span>
-      Adding...
-    </span>
-  </button>
-  
-  <button 
-    class="btn-view-cart-compact" 
-    [routerLink]="['/cart']"
-    [disabled]="isLoading">
-    View Cart
-  </button>
-</div>
+
+      <div class="action-buttons-compact">
+        <button class="btn-add-compact" (click)="addToCart()" [disabled]="isLoading || selectedSeats.length === 0"
+          [class.loading]="isLoading">
+
+          <!-- Default content -->
+          <span class="default-content" *ngIf="!isLoading">
+            Add {{ selectedSeats.length }} to Cart
+          </span>
+
+          <!-- Loading content -->
+          <span class="loading-content" *ngIf="isLoading">
+            <span class="spinner"></span>
+            Adding...
+          </span>
+        </button>
+
+        <button class="btn-view-cart-compact" [routerLink]="['/cart']" [disabled]="isLoading">
+          View Cart
+        </button>
+      </div>
     </div>
 
     <!-- Empty State -->
@@ -117,7 +109,7 @@
       <div class="empty-icon">👆</div>
       <p>Click on seats to select them</p>
       <p class="hint" *ngIf="getUniqueTicketTiers().length > 0">
-        Available seats are shown in 
+        Available seats are shown in
         <span *ngFor="let tier of getUniqueTicketTiers(); let last = last">
           <span [style.color]="tier.color">{{ tier.name.toLowerCase() }}</span>
           <span *ngIf="!last">, </span>
@@ -128,7 +120,7 @@
     <!-- Legend -->
     <div class="compact-legend">
       <h4>Seat Types</h4>
-      
+
       <!-- Ticket Tiers -->
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
@@ -137,13 +129,12 @@
           <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
         </div>
       </div>
-      
+
       <!-- Seat Status -->
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
-          <div class="legend-color-compact" 
-               [style.background-color]="seatStatusConfig[status.status].color"
-               [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
+          <div class="legend-color-compact" [style.background-color]="seatStatusConfig[status.status].color"
+            [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
             <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
               <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
               <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
@@ -156,7 +147,7 @@
     </div>
 
     <!-- Desktop Zoom Controls -->
-    <div class="zoom-controls-compact" >
+    <div class="zoom-controls-compact">
       <h4>Controls</h4>
       <div class="zoom-buttons-compact">
         <button (click)="zoomIn()" title="Zoom In">
@@ -173,6 +164,6 @@
         </button>
       </div>
     </div>
-    
+
   </aside>
 </div>
