@@ -251,7 +251,9 @@ private generateSeats() {
     // Find this section's index and calculate rows before it
     const currentSectionIndex = continuousSections.findIndex(s => s.id === section.id);
     
+
     if (currentSectionIndex > 0) {
+      var skipLetterCount = 0;
       // Sum rows from all previous CONTINUOUS sections
       for (let i = 0; i < currentSectionIndex; i++) {
         const prevSection = continuousSections[i];
@@ -260,7 +262,8 @@ private generateSeats() {
         prevRowConfigs.forEach(config => {
           const fromRow = config.fromRow || 0;
           const toRow = config.toRow || (prevSection.rows || 0) - 1;
-          startingRowIndex += (toRow - fromRow + 1);
+          skipLetterCount += prevSection.skipRowLetters?.length || 0;
+          startingRowIndex += (toRow - fromRow + 1) + skipLetterCount;
         });
       }
     }
