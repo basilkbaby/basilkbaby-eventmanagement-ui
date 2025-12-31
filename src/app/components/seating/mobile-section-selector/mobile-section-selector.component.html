@@ -15,148 +15,92 @@
 
   <!-- SVG Container -->
   <div class="svg-container" #svgContainer>
-    <div class="svg-wrapper" 
-      [style.transform]="'scale(' + scale + ')'" 
-      [style.left.px]="offsetX"
+    <div class="svg-wrapper" [style.transform]="'scale(' + scale + ')'" [style.left.px]="offsetX"
       [style.top.px]="offsetY">
 
-      <svg class="venue-svg" 
-        [attr.width]="CANVAS_WIDTH" 
-        [attr.height]="CANVAS_HEIGHT">
+      <svg class="venue-svg" [attr.width]="CANVAS_WIDTH" [attr.height]="CANVAS_HEIGHT">
 
         <!-- Stage -->
-        <rect 
-          [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2" 
-          [attr.y]="10" 
-          [attr.width]="STAGE_WIDTH"
-          [attr.height]="STAGE_HEIGHT" 
-          rx="10" 
-          fill="#ffffff" 
-          stroke="#764ba2" 
-          stroke-width="3" />
+        <rect [attr.x]="(CANVAS_WIDTH - STAGE_WIDTH) / 2" [attr.y]="10" [attr.width]="STAGE_WIDTH"
+          [attr.height]="STAGE_HEIGHT" rx="10" fill="#ffffff" stroke="#764ba2" stroke-width="3" />
 
-        <text 
-          [attr.x]="CANVAS_WIDTH / 2" 
-          [attr.y]="10 + STAGE_HEIGHT / 2 + 8" 
-          text-anchor="middle" 
-          font-family="Arial"
-          font-size="24" 
-          font-weight="bold" 
-          fill="#764ba2">
+        <text [attr.x]="CANVAS_WIDTH / 2" [attr.y]="10 + STAGE_HEIGHT / 2 + 8" text-anchor="middle" font-family="Arial"
+          font-size="24" font-weight="bold" fill="#764ba2">
           STAGE
         </text>
 
         <!-- Section Blocks -->
         <g *ngFor="let section of venueData.sections">
           <!-- Group for the entire section -->
-          <g class="section-group" (click)="onSectionClick(section)">
+          <g class="section-group" (click)="section.seatSectionType !== SeatSectionType.FOH ? onSectionClick(section) : null">
 
             <!-- Background -->
-            <rect 
-              [attr.x]="section.mx" 
-              [attr.y]="section.my + (section.rowOffset || 0)"
-              [attr.width]="getSectionWidth(section)" 
-              [attr.height]="getSectionHeight(section)" 
-              fill="#f8f9fa"
-              stroke="#dee2e6" 
-              stroke-width="1" 
-              rx="6" />
+            <rect [attr.x]="section.mx" [attr.y]="section.my + (section.rowOffset || 0)"
+              [attr.width]="getSectionWidth(section)" [attr.height]="getSectionHeight(section)" fill="#f8f9fa"
+              stroke="#dee2e6" stroke-width="1" rx="6" />
 
             <!-- Row config visualization with text labels -->
             <g *ngFor="let rowConfig of getRowConfigVisual(section)">
-              <rect 
-                [attr.x]="section.mx" 
-                [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY"
-                [attr.width]="getSectionWidth(section)" 
-                [attr.height]="rowConfig.height" 
-                [attr.fill]="rowConfig.color"
-                [attr.opacity]="selectedSection === section ? 1 : 0.9" 
-                stroke="#ffffff" 
-                stroke-width="1" 
-                rx="4"
-                class="section-block" 
-                [class.selected]="selectedSection === section">
+              <rect [attr.x]="section.mx" [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY"
+                [attr.width]="getSectionWidth(section)" [attr.height]="rowConfig.height" [attr.fill]="rowConfig.color"
+                [attr.opacity]="selectedSection === section ? 1 : 0.9" stroke="#ffffff" stroke-width="1" rx="4"
+                class="section-block" [class.selected]="selectedSection === section">
               </rect>
 
               <!-- Type name -->
-<!-- Add this to calculate width once -->
-<ng-container *ngIf="getSectionWidth(section) as sectionWidth">
-  
-  <!-- For width > 200 - Single line -->
-  <text 
-    *ngIf="sectionWidth > 200"
-    [attr.x]="section.mx + sectionWidth / 2"
-    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 - 8"
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="30" 
-    font-weight="bold" 
-    fill="#ffffff"
-    style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-    {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}} - {{ (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
-  </text>
+              <!-- Add this to calculate width once -->
+              <ng-container *ngIf="getSectionWidth(section) as sectionWidth">
 
-  <!-- For width between 100 and 200 - Two lines -->
-  <g *ngIf="sectionWidth >= 100 && sectionWidth <= 200">
-    <!-- First line: Section name -->
-    <text 
-      [attr.x]="section.mx + sectionWidth / 2"
-      [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 - 15"
-      text-anchor="middle" 
-      font-family="Arial, sans-serif" 
-      font-size="25" 
-      font-weight="bold" 
-      fill="#ffffff"
-      style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-      {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}}
-    </text>
-    <!-- Second line: Price -->
-    <text 
-      [attr.x]="section.mx + sectionWidth / 2"
-      [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 15"
-      text-anchor="middle" 
-      font-family="Arial, sans-serif" 
-      font-size="25" 
-      font-weight="bold" 
-      fill="#ffffff"
-      style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-      {{ (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
-    </text>
-  </g>
+                <!-- For width > 200 - Single line -->
+                <text *ngIf="sectionWidth > 200" [attr.x]="section.mx + sectionWidth / 2"
+                  [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 - 8"
+                  text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#ffffff"
+                  style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                  {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}} - {{
+                  (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
+                </text>
 
-  <!-- For width < 100 - Vertical text -->
-  <g *ngIf="sectionWidth < 100">
-  <!-- Section name vertical -->
-  <text 
-    [attr.x]="section.mx + sectionWidth / 2"
-    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2"
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="30" 
-    font-weight="bold" 
-    fill="#ffffff"
-    style="writing-mode: vertical-lr; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-    {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}}
-  </text>
-  
-  <!-- Price further below -->
-  <text 
-    [attr.x]="section.mx + sectionWidth / 2"
-    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 100" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="30" 
-    font-weight="bold" 
-    fill="#ffffff"
-    style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-    {{ (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
-  </text>
-</g>
+                <!-- For width between 100 and 200 - Two lines -->
+                <g *ngIf="sectionWidth >= 100 && sectionWidth <= 200">
+                  <!-- First line: Section name -->
+                  <text [attr.x]="section.mx + sectionWidth / 2"
+                    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 - 15"
+                    text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="bold"
+                    fill="#ffffff" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}}
+                  </text>
+                  <!-- Second line: Price -->
+                  <text [attr.x]="section.mx + sectionWidth / 2"
+                    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 15"
+                    text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="bold"
+                    fill="#ffffff" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    {{ (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
+                  </text>
+                </g>
 
-</ng-container>
+                <!-- For width < 100 - Vertical text -->
+                <g *ngIf="sectionWidth < 100">
+                  <!-- Section name vertical -->
+                  <text [attr.x]="section.mx + sectionWidth / 2"
+                    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2"
+                    text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="bold"
+                    fill="#ffffff" style="writing-mode: vertical-lr; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    {{ section.seatSectionType == SeatSectionType.STANDING ? "Standing" : rowConfig.ticketType}}
+                  </text>
 
-                <!-- Price (only if > 0) -->
-                <!-- <text *ngIf="rowConfig.price > 0" 
+                  <!-- Price further below -->
+                  <text [attr.x]="section.mx + sectionWidth / 2"
+                    [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 100"
+                    text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="bold"
+                    fill="#ffffff" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    {{ (rowConfig.price) | currencyFormat:'GBP':'en-GB':0 }}
+                  </text>
+                </g>
+
+              </ng-container>
+
+              <!-- Price (only if > 0) -->
+              <!-- <text *ngIf="rowConfig.price > 0" 
                   [attr.x]="section.mx + getSectionWidth(section) / 2"
                   [attr.y]="section.my + (section.rowOffset || 0) + rowConfig.startY + rowConfig.height / 2 + 50"
                   text-anchor="middle" 

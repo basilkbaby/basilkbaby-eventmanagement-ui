@@ -206,6 +206,7 @@ private generateSeats() {
   }
   
   if (sectionType === SeatSectionType.STANDING) {
+    console.log('Generating standing section sectionType:', sectionType);
     this.createStandingSection(section);
     return;
   }
@@ -577,7 +578,7 @@ private selectSeat(seat: Seat) {
       color: seat.color || '#10b981'
     },
     features: [],
-    isStandingArea: false
+    isStandingArea: seat.isStandingArea
   };
   
   this.selectedSeats.push(selectedSeat);
@@ -661,7 +662,7 @@ private getRowLetterWithSkip(rowIndex: number, skipLetters: string[] = []): stri
     const cx = this.paddingX + (section.seatsPerRow * this.seatSpacing) / 2;
     const cy = this.paddingY + this.stageHeight + (section.rows * this.rowSpacing) / 2;
     
-    const seatId = `${sectionName}-ST`;
+    const seatId = this.generateStandingTicketId(section);
     
     const seat: Seat = {
       id: seatId,
@@ -690,6 +691,60 @@ private getRowLetterWithSkip(rowIndex: number, skipLetters: string[] = []): stri
     
     this.seats.push(seat);
   }
+
+  // Add these methods to your component
+
+// Helper method to check if there are any standing tickets
+hasStandingTickets(): boolean {
+  console.log('Checking for standing tickets in selectedSeats:', this.selectedSeats);
+  return this.selectedSeats.some(seat => seat.isStandingArea);
+}
+
+// Method to add another standing ticket
+addAnotherStandingTicket(): void {
+  // Find the first standing ticket in selected seats
+  const standingSeat = this.selectedSeats.find(seat => seat.isStandingArea);
+  if (!standingSeat) return;
+  
+  // Find the original seat object
+  const originalStandingSeat = this.seats.find(seat => seat.id === standingSeat.seatId);
+  if (!originalStandingSeat) return;
+
+  // Find the section
+  const section = this.venueData?.sections.find(s => s.id === originalStandingSeat.sectionId);
+  if (!section) return;
+
+  // Generate a new seat ID
+  const newSeatId = this.generateStandingTicketId(section);
+  
+  // Create a new standing seat object
+  const newSeat: Seat = {
+    ...originalStandingSeat, // Copy all properties
+    id: newSeatId, // New unique ID
+    cx: originalStandingSeat.cx + (Math.random() * 20 - 10), // Slightly offset position
+    cy: originalStandingSeat.cy + (Math.random() * 20 - 10), // Slightly offset position
+  };
+  
+  // Add to seats array
+  //this.seats.push(newSeat);
+  
+  // Select this new seat
+  this.selectSeat(newSeat);
+}
+
+// Generate standing ticket ID (matching web format)
+generateStandingTicketId(section: any): string {
+  const sectionPrefix = section.name.charAt(0).toUpperCase();
+  let seatId: string;
+  
+  do {
+    const randomNum = Math.floor(Math.random() * 1000) + 1; // 1-1000
+    seatId = `${sectionPrefix}-ST-${randomNum.toString().padStart(3, '0')}`;
+  } while (this.selectedSeats.some(s => s.seatId === seatId) || 
+           this.seats.some(s => s.id === seatId));
+  
+  return seatId;
+}
 
   private getDefaultRowConfig(): SectionRowConfig {
     return {
