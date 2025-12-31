@@ -30,8 +30,9 @@
       },
       {
         "label": "Events",
-        "routerLink": "/events",
-        "type": "events"
+        "routerLink": "https://v4entertainments.co.uk/whats-on",
+        "type": "events",     
+        "external": true
       },
       {
         "label": "About Us",
