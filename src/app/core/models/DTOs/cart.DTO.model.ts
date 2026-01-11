@@ -58,7 +58,8 @@ export interface CartSummaryDto {
   totalDiscount: number;
   couponCode: string;
   couponDiscount: number;
-  seats: Array<{
+  cartItems: Array<{
+    cartItemId: string;
     seatId: string;
     seatNumber: string;
     section: string;

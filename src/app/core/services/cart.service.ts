@@ -258,7 +258,7 @@ export class CartService {
       total: data.total || 0,
       totalDiscount: data.totalDiscount || 0,
       seatCount: data.seatCount || items.length,
-      seats: data.seats || [],
+      cartItems: data.cartItems || [],
       couponCode: data.couponCode,
       couponDiscount: data.couponDiscount
 
@@ -283,7 +283,7 @@ export class CartService {
       total: 0,
       totalDiscount: 0,
       seatCount: 0,
-      seats: [],
+      cartItems: [],
       couponCode: '',
       couponDiscount: 0
     };

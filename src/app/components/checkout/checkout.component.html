@@ -167,7 +167,7 @@
           </section>
 
           <!-- Payment Information Section -->
-          <section class="form-section">
+          <section class="form-section" *ngIf="showPaymentSection">
             <h2>Payment Information</h2>
             
             <div class="payment-methods">
@@ -256,7 +256,7 @@
           
           <div class="order-items">
             <!-- Show seats from cart summary -->
-            <div *ngFor="let seat of cartSummary.seats" class="order-item">
+            <div *ngFor="let seat of cartSummary.cartItems" class="order-item">
               <div class="item-details">
                 <span class="item-name">
                   Section : {{ seat.section }}
