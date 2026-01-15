@@ -243,7 +243,8 @@ export class MobileSeatSelectorComponent implements OnInit {
       },
       price: seat.price,
       features: seat.features || [],
-      isStandingArea: false
+      isStandingArea: false,
+      isGeneralAdmission : false
     });
   }
 

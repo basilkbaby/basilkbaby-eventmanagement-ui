@@ -578,7 +578,8 @@ private selectSeat(seat: Seat) {
       color: seat.color || '#10b981'
     },
     features: [],
-    isStandingArea: seat.isStandingArea
+    isStandingArea: seat.isStandingArea,
+    isGeneralAdmission: false
   };
   
   this.selectedSeats.push(selectedSeat);

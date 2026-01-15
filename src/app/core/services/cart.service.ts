@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, finalize, map, Observable, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   AddToCartRequest,
@@ -235,6 +235,16 @@ export class CartService {
       `${this.baseUrl}/checkout/remove-coupon/${cartId}`, {}
     );
   }
+
+  extendCartSession(cartId: string): Observable<any> {
+  return this.http.post(`${this.baseUrl}/extend/${cartId}`, {})
+    .pipe(
+      catchError(error => {
+        console.error('Failed to extend cart session:', error);
+        return of({ success: false, error: error.message });
+      })
+    );
+}
 
   // Private helper methods
   private updateCartState(data: any): void {

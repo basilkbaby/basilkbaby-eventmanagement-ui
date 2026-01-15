@@ -138,6 +138,7 @@ export interface SelectedSeat {
   price: number;
   features: string[];
   isStandingArea : boolean;
+  isGeneralAdmission : boolean;
 }
 
 export interface SeatStatusConfig {
@@ -164,8 +165,8 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
     tooltip: 'Available for selection'
   },
   [SeatStatus.SELECTED]: {
-    color: '#f8c51d',
-    stroke: '#333',
+    color: '#4CAF50',
+    stroke: '#4CAF50',
     strokeWidth: 2,
     opacity: 1,
     displayText: 'Selected',
@@ -174,10 +175,10 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
     tooltip: 'Selected - Click to deselect'
   },
   [SeatStatus.BOOKED]: {
-    color: '#888888',
-    stroke: '#666',
-    strokeWidth: 1,
-    opacity: 0.6,
+    color: '#e9eaec',
+    stroke: '#e9eaec',
+    strokeWidth: 2,
+    opacity: 1,
     displayText: 'Sold',
     cursor: 'not-allowed',
     canSelect: false,
@@ -185,9 +186,9 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
   },
   [SeatStatus.UNAVAILABLE]: {
     color: '#e9eaec',
-    stroke: '#ddd',
-    strokeWidth: 1,
-    opacity: 0.6,
+    stroke: '#e9eaec',
+    strokeWidth: 2,
+    opacity: 1,
     displayText: 'Unavailable',
     cursor: 'not-allowed',
     canSelect: false,
@@ -204,8 +205,8 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
     tooltip: 'Partial/obstructed view'
   },
   [SeatStatus.RESERVED]: {
-    color: '#ff9900',
-    stroke: '#ff6600',
+    color: '#e9eaec',
+    stroke: '#e9eaec',
     strokeWidth: 2,
     opacity: 1,
     displayText: 'Reserved',
@@ -214,8 +215,8 @@ export const SEAT_STATUS_CONFIG: Record<SeatStatus, SeatStatusConfig> = {
     tooltip: 'Reserved for special guests'
   },
   [SeatStatus.BLOCKED]: {
-    color: '#ff4444',
-    stroke: '#ff0000',
+    color: '#e9eaec',
+    stroke: '#e9eaec',
     strokeWidth: 2,
     opacity: 1,
     displayText: 'Blocked',
@@ -262,7 +263,7 @@ export function getSeatColor(seat: Seat): string {
     return seat.color || config.color;
   }
   else{
-    return "#ffff"
+    return config.color;
   }
   
   return config.color;

@@ -801,6 +801,7 @@ addAnotherStandingTicket(): void {
       price: seat.price,
       features: seat.features || [],
       isStandingArea: seat.isStandingArea || false,
+      isGeneralAdmission : false
     };
     
     this.selectedSeats.push(selectedSeat);
@@ -945,10 +946,10 @@ addAnotherStandingTicket(): void {
     const statuses = [
       SeatStatus.SELECTED,
       SeatStatus.BOOKED,
-      SeatStatus.UNAVAILABLE,
-      SeatStatus.PARTIAL_VIEW,
-      SeatStatus.RESERVED,
-      SeatStatus.BLOCKED
+      //SeatStatus.UNAVAILABLE,
+      //SeatStatus.PARTIAL_VIEW,
+      //SeatStatus.RESERVED,
+      //SeatStatus.BLOCKED
     ];
     
     return statuses.map(status => ({

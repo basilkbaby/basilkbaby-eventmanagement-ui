@@ -124,7 +124,7 @@
       <!-- Ticket Tiers -->
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
-          <div class="legend-color-compact" [style.background-color]="tier.color"></div>
+          <div class="legend-color-compact" [style.background-color]="tier.color" [style.border-radius]="'8px'"></div>
           <span class="legend-label-compact">{{ tier.name }}</span>
           <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
         </div>
@@ -134,7 +134,10 @@
       <div class="legend-container">
         <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
           <div class="legend-color-compact" [style.background-color]="seatStatusConfig[status.status].color"
-            [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : 'none'">
+            [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : '1px solid ' + seatStatusConfig[status.status].stroke"
+            [style.border-radius]="'8px'"
+            
+            >
             <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
               <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
               <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
