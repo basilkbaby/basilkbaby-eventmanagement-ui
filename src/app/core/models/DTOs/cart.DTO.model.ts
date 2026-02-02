@@ -74,6 +74,7 @@ export interface CheckoutRequest {
   phone: string;
   postcode : string;
   paymentIntentId : string;
+  eventId : string;
 }
 
 export interface OrderResultDto {

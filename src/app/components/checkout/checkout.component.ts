@@ -93,7 +93,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       if (status === 'VALID' && !this.showPaymentSection && this.cartSummary.seatCount > 0) {
         this.showPaymentSection = true;
         this.cdr.detectChanges();
-        
+        //this.extendCartSession();
         // Initialize payment only when customer info is valid
         setTimeout(() => {
           this.initializePayment();
@@ -257,6 +257,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  private extendCartSession(){
+    // Extend cart session before initializing payment
+    const cartId = this.cartSummary.cartId;
+    if (cartId) {
+      this.cartService.extendCartSession(cartId).subscribe({
+        next: (response) => {
+          if (!response.success) {
+            console.warn('Failed to extend cart session:', response.error);
+          }
+        },
+        error: (error) => {
+          console.error('Error extending cart session:', error);
+        }
+      });
+    }
+  }
   // Main checkout submission - KEPT EXACTLY AS IS
   async onSubmit(): Promise<void> {
     this.showFormErrors = true;
@@ -381,7 +398,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       email: this.customerForm.get('email')?.value,
       phone: this.customerForm.get('phone')?.value,
       postcode: this.customerForm.get('postcode')?.value,
-      paymentIntentId: paymentIntentId
+      paymentIntentId: paymentIntentId,
+      eventId: this.cartSummary.eventId ?? ""
     });
   }
 
