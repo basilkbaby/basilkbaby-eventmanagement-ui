@@ -22,6 +22,7 @@ export class CartService {
   private currentCartId?: string;
   private currentEventId?: string;
   private baseUrl = environment.apiUrl + '/api';
+  private readonly IP_FLAG_KEY = 'ip_details_collected';
 
   // Subject for API responses only
   private cartDetailsSubject = new Subject<CartDetailsResponse>();
@@ -303,9 +304,72 @@ export class CartService {
     let sessionId = localStorage.getItem('cart_session');
     if (!sessionId) {
       sessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('cart_session', sessionId);
+      localStorage.setItem('cart_session', sessionId); 
+    }
+
+    // Check if IP details have been collected
+    const ipCollected = localStorage.getItem(this.IP_FLAG_KEY);
+    if (!ipCollected || ipCollected === 'false') {
+      this.collectAndLogIPDetails(sessionId);
     }
     return sessionId;
+  }
+
+   private collectAndLogIPDetails(sessionId: string): void {
+    try {
+      
+      // Fetch IP details from public API
+      this.http.get<any>('https://api.ipify.org?format=json')
+        .pipe(
+          catchError(() => {
+            // Fallback if ipify fails
+            return this.http.get<any>('https://api64.ipify.org?format=json');
+          }),
+          catchError(() => {
+            // Return a dummy response if both fail
+            return of({ ip: 'unknown' });
+          })
+        )
+        .subscribe({
+          next: (ipResponse) => {
+            const ipAddress = ipResponse.ip;
+            
+            // Get additional browser info
+            const sessionData = {
+              sessionId: sessionId,
+              ipAddress: ipAddress,
+              userAgent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+              url: window.location.href,
+              referrer: document.referrer || 'direct'
+            };
+
+            // Send to your API
+            this.logToAPI(sessionData);
+            
+            // Set flag in localStorage
+            localStorage.setItem(this.IP_FLAG_KEY, 'true');
+          },
+          error: () => {
+            // Still set flag to avoid retrying constantly
+            localStorage.setItem(this.IP_FLAG_KEY, 'true');
+          }
+        });
+    } catch (error) {
+      console.log('Error collecting IP details:', error);
+    }
+  }
+
+  private logToAPI(sessionData: any): void {
+    this.http.post(`${this.baseUrl}/cart/session`, sessionData)
+      .pipe(
+        catchError(error => {
+          console.warn('Failed to log session to API:', error);
+          // You could store failed logs and retry later
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   private saveCartIdToStorage(): void {
