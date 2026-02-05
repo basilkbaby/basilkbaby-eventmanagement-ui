@@ -1,131 +1,159 @@
 <!-- hero-slider.component.html -->
 <section class="hero-slider" *ngIf="!isLoading && featuredEvents.length > 0">
   <div class="slider-container">
-    <!-- Loading State (optional) -->
-    <div *ngIf="isLoading" class="slider-loading">
-      <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Slides -->
+    <!-- Slides Wrapper -->
     <div class="slides-wrapper">
       <div 
         *ngFor="let event of featuredEvents; let i = index" 
         class="slide"
         [class.active]="i === currentSlide"
         [class.completed]="event.isPast"
-        [style.background-image]="'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(' + (event.bannerImage || event.thumbnailImage || '/assets/images/hero-default.jpg') + ')'"
       >
-        <div class="slide-content">
-          <div class="content-wrapper">
-            <!-- Featured Badge -->
-            <div class="featured-badge" *ngIf="event.featured">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-              Featured Event
-            </div>
-
-            <!-- Title -->
-            <h1 class="hero-title">{{ event.title }}</h1>
-            
-            <!-- Subtitle -->
-<p class="hero-subtitle">{{ event.shortDescription || event.description | slice:0:150 }}{{ event.description.length > 150 ? '...' : '' }}</p>
-
-            <!-- Event Info -->
-            <div class="event-meta">
-              <div class="meta-item" *ngIf="event.startDate">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
-                </svg>
-                <span>{{ event.startDate | formatDate }}</span>
+        <!-- Split Layout 70/30 -->
+        <div class="split-layout">
+          <!-- Left Side: Image (70%) -->
+          <div class="image-side">
+            <div class="image-container">
+              <img 
+                [src]="event.bannerImage || event.thumbnailImage || '/assets/images/hero-default.jpg'"
+                [alt]="event.title"
+                class="slide-image"
+                loading="lazy"
+              />
+              <!-- Event Status on Image -->
+              <div class="image-badge" *ngIf="event.isPast || !event.isActive">
+                <span class="badge" [class.completed]="event.isPast">
+                  {{ event.isPast ? 'Event Completed' : 'Sold Out' }}
+                </span>
               </div>
+            </div>
+          </div>
+
+          <!-- Right Side: Content (30%) - Blended Design -->
+          <div class="content-side">
+            <div class="content-wrapper">
+
+              <!-- Title -->
+              <h1 class="event-title">{{ event.title }}</h1>
               
-              <div class="meta-item" *ngIf="event.venueName || event.venueCity">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                <span>{{ (event.venueName || '') + (event.venueName && event.venueCity ? ', ' : '') + (event.venueCity || '') }}</span>
+              <!-- Description -->
+              <div class="event-description">
+                <p>{{ event.shortDescription || (event.description | slice:0:120) }}{{ event.description.length > 120 ? '...' : '' }}</p>
               </div>
 
-              <div class="meta-item" *ngIf="event.startingFromPrice && !event.isPast">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91 2.56.62 4.18 1.63 4.18 3.71 0 1.78-1.37 2.98-3.12 3.29z"/>
-                </svg>
-                <span>From {{ event.startingFromPrice }}</span>
+              <!-- Details Grid -->
+              <div class="details-grid">
+                <div class="detail-card" *ngIf="event.startDate">
+                  <div class="detail-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                  <div class="detail-content">
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value">{{ event.startDate | formatDate }}</div>
+                  </div>
+                </div>
+                
+                <div class="detail-card" *ngIf="event.venueName || event.venueCity">
+                  <div class="detail-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                  <div class="detail-content">
+                    <div class="detail-label">Location</div>
+                    <div class="detail-value">
+                      <span *ngIf="event.venueName">{{ event.venueName }}</span>
+                      <span *ngIf="event.venueCity">
+                        <span *ngIf="event.venueName">, </span>
+                        {{ event.venueCity }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="detail-card" *ngIf="event.startingFromPrice && !event.isPast">
+                  <div class="detail-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91 2.56.62 4.18 1.63 4.18 3.71 0 1.78-1.37 2.98-3.12 3.29z" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                  <div class="detail-content">
+                    <div class="detail-label">Price</div>
+                    <div class="detail-value price">{{ event.startingFromPrice }}</div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <!-- CTA Buttons -->
-            <div class="hero-actions">
-              <!-- For completed events -->
-              <button 
-                class="cta-btn completed" 
-                *ngIf="event.isPast"
-                [routerLink]="['/events', event.id]">
-                View Event Details
-              </button>
+              <!-- Action Buttons -->
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-primary" 
+                  [routerLink]="['/events', event.id]"
+                  [class.btn-disabled]="event.isPast || !event.isActive">
+                  <span *ngIf="event.isPast">View Details</span>
+                  <span *ngIf="!event.isPast && event.isActive">Get Tickets</span>
+                  <span *ngIf="!event.isPast && !event.isActive">Sold Out</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                
+                <button class="btn btn-secondary" (click)="onScrollToEvents()">
+                  Explore More
+                </button>
+              </div>
 
-              <!-- For active events -->
-              <button 
-                class="cta-btn primary" 
-                *ngIf="(!event.isPast && event.isActive)"
-                [routerLink]="['/events', event.id]">
-                Get Tickets
-              </button>
-
-              <!-- For inactive/sold out events -->
-              <button 
-                class="cta-btn sold-out" 
-                *ngIf="(!event.isPast && !event.isActive) || event.isPast"
-                [routerLink]="['/events', event.id]">
-                {{ event.isPast ? 'Event Ended' : 'Sold Out' }} - View Details
-              </button>
-
-              <button class="cta-btn secondary" (click)="onScrollToEvents()">
-                Explore More Events
-              </button>
+              <!-- Bottom Navigation -->
+              <div class="slider-bottom-nav" *ngIf="featuredEvents.length > 1">
+                <div class="nav-dots">
+                  <button 
+                    *ngFor="let ev of featuredEvents; let i = index" 
+                    class="dot"
+                    [class.active]="i === currentSlide"
+                    (click)="goToSlide(i)"
+                    [attr.aria-label]="'Go to slide ' + (i + 1)"
+                  ></button>
+                </div>
+                
+                <div class="nav-controls">
+                  <div class="slider-counter">
+                    <span class="current">{{ currentSlide + 1 }}</span>
+                    <span class="separator">/</span>
+                    <span class="total">{{ featuredEvents.length }}</span>
+                  </div>
+                  
+                  <div class="nav-buttons">
+                    <button class="nav-btn prev" (click)="prevSlide()" aria-label="Previous">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                    <button class="nav-btn next" (click)="nextSlide()" aria-label="Next">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Navigation Arrows (only show if multiple events) -->
-    <button 
-      *ngIf="featuredEvents.length > 1"
-      class="slider-nav prev" 
-      (click)="prevSlide()" 
-      aria-label="Previous slide">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </button>
-    
-    <button 
-      *ngIf="featuredEvents.length > 1"
-      class="slider-nav next" 
-      (click)="nextSlide()" 
-      aria-label="Next slide">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </button>
-
-    <!-- Dots Indicator (only show if multiple events) -->
-    <div *ngIf="featuredEvents.length > 1" class="slider-dots">
-      <button 
-        *ngFor="let event of featuredEvents; let i = index" 
-        class="dot"
-        [class.active]="i === currentSlide"
-        [class.completed]="event.isPast"
-        (click)="goToSlide(i)"
-        [attr.aria-label]="'Go to slide ' + (i + 1)"
-      ></button>
-    </div>
   </div>
 </section>
 
-<!-- Empty State (optional) -->
-<div *ngIf="!isLoading && featuredEvents.length === 0" class="no-featured-events">
-  <p>No featured events available</p>
+<!-- Empty State -->
+<div *ngIf="!isLoading && featuredEvents.length === 0" class="no-events">
+  <div class="empty-state">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke-width="1.5"/>
+      <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
+    </svg>
+    <h3>No Featured Events</h3>
+    <p>Check back soon for upcoming events</p>
+  </div>
 </div>

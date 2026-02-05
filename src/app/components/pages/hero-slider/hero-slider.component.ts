@@ -18,6 +18,7 @@ export class HeroSliderComponent implements OnInit, OnDestroy, OnChanges {
   @Output() scrollToEvents = new EventEmitter<void>();
 
   currentSlide = 0;
+  isDarkTheme = false;
   private autoSlideInterval: any;
 
   // Filter featured events
