@@ -255,13 +255,13 @@ flex: 1;
       opacity: 0.7;
     }
     
-    &.blocked {
-      fill: #e9eaec !important;
-      stroke: #e9eaec !important;
-      stroke-dasharray: 3, 2;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
+    // &.blocked {
+    //   fill: #e9eaec !important;
+    //   stroke: #e9eaec !important;
+    //   stroke-dasharray: 3, 2;
+    //   cursor: not-allowed;
+    //   opacity: 0.7;
+    // }
   }
   
   .seat-number {
