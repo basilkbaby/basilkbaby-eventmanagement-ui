@@ -121,7 +121,7 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 1,
     name: 'NADIR SHAH',
-    role: 'Show Director & Lead Artist',
+    role: 'Show Director',
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Nadirshah2016SOP.jpg',
     bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
     social: {
@@ -132,7 +132,7 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 2,
     name: 'Samad Sulaiman',
-    role: 'Lead Vocalist',
+    role: 'Actor',
     imageUrl: 'https://m3db.com/sites/default/files/styles/artist_profile_pic_zoom/public/artists-profile-photos/Samad%20Sulaiman.jpg?itok=94DSOywU',
     bio: 'Powerhouse vocalist with a range that captivates audiences. Has performed in over 500 shows worldwide and collaborated with top artists.',
     social: {
@@ -143,8 +143,8 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 3,
     name: 'RANJINI JOSE',
-    role: 'Lead Dancer & Choreographer',
-    imageUrl: 'http://ranjinijose.com/images/cover-3.jpg',
+    role: 'Lead Vocalist',
+    imageUrl: 'assets/images/events/nadirshow/artist/ranjini.jpg',
     bio: 'Acclaimed choreographer known for fusion of contemporary and traditional styles. Has won multiple dance awards and trained performers worldwide.',
     social: {
       instagram: '@ranjinijose',
@@ -154,7 +154,7 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 4,
     name: 'Dayyana Hameed',
-    role: 'Music Director',
+    role: 'Actress',
     imageUrl: 'https://m.media-amazon.com/images/M/MV5BODI0NmUyMzgtMzM2Yi00NzVlLWFmYmItYjcyMThmMDBkMzNjXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
     bio: 'Musical genius behind the live orchestra. Composer and producer with a unique ability to blend genres and create unforgettable musical experiences.',
     social: {
@@ -165,7 +165,7 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 5,
     name: 'Aswanth Anilkumar',
-    role: 'Lead Guitarist',
+    role: 'Mimic & Comedian',
     imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfpf_lXMy35GQ-s5Cw-I5lr8IS7KqJyO9b-g&s',
     bio: 'Guitar virtuoso known for electrifying solos and melodic compositions. Has shared stage with international artists and headlined major festivals.',
     social: {
@@ -176,8 +176,19 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 6,
     name: 'Bijesh Chelari',
-    role: 'Lead Vocalist',
+    role: 'Mimic & Comedian',
     imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiLkK7Hrg2BNEVhcZnrR1C-ZlUOrgP9GLomQ&s',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 7,
+    name: 'Dream Team UK',
+    role: 'Dance troupe',
+    imageUrl: 'assets/images/events/nadirshow/artist/dreamteam.jpg',
     bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
     social: {
       instagram: '@dayanahameed',
