@@ -1,0 +1,170 @@
+<section class="hero">
+
+  <div class="hero-bg" aria-hidden="true">
+    <div class="bg-circle bg-circle--1"></div>
+    <div class="bg-circle bg-circle--2"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="hero-wrap">
+
+    <!-- ═══ MAIN SPLIT ═══ -->
+    <div class="hero-container">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+
+        <div class="hero-eyebrow">
+          <span class="eyebrow-pip"></span>
+          R&amp;J Events Presents
+        </div>
+
+        <h1 class="hero-title">
+          <span class="title-main">NADIR 2K26</span>
+          <span class="title-sub">SHOW<span class="title-at">&#64;</span>UK</span>
+        </h1>
+
+        <div class="hero-tags">
+          <span class="tag">100% Entertainment</span>
+          <span class="tag">Nonstop Music</span>
+          <span class="tag">Dance &amp; Mimics</span>
+        </div>
+
+        <!-- Starring -->
+        <div class="artists-block">
+          <p class="micro-label">Starring</p>
+          <div class="artists-lead">
+            <span *ngFor="let a of leadArtists; let last = last">
+              {{ a }}<span *ngIf="!last" class="artist-sep"> · </span>
+            </span>
+          </div>
+          <p class="artists-support">
+            Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)
+          </p>
+          <p class="artists-support">
+            Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra &amp; Dancers
+          </p>
+        </div>
+
+        <!-- Venue Selector -->
+        <div class="venue-selector">
+          <p class="micro-label">Select your city</p>
+          <div class="venue-chips">
+            <button
+              *ngFor="let venue of venues"
+              (click)="selectVenue(venue.id)"
+              [class.active]="selectedVenueId === venue.id"
+              class="venue-chip"
+            >
+              <span class="chip-city">{{ venue.location }}</span>
+              <span class="chip-date">{{ venue.date | slice:0:6 }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Venue Detail Card -->
+        <div class="venue-card" *ngIf="selectedVenue">
+          <div class="vc-row">
+            <div class="vc-block">
+              <span class="vc-label">Date</span>
+              <span class="vc-value">{{ selectedVenue.date }}</span>
+            </div>
+            <div class="vc-block">
+              <span class="vc-label">Doors Open</span>
+              <span class="vc-value">{{ selectedVenue.time }}</span>
+            </div>
+          </div>
+          <div class="vc-divider"></div>
+          <div class="vc-block">
+            <span class="vc-label">Venue</span>
+            <span class="vc-value">{{ selectedVenue.name }}</span>
+            <span class="vc-address">{{ selectedVenue.address }}</span>
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="hero-ctas">
+          <button class="btn-primary" (click)="buyTickets.emit()">
+            Get Tickets
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="btn-ghost" (click)="scrollTo.emit('artists')">
+            Meet the Artists
+          </button>
+        </div>
+
+        <!-- Contact numbers -->
+        <div class="contact-strip">
+          <span class="micro-label" style="margin:0 8px 0 0">Info &amp; Tickets:</span>
+          <a href="tel:+447880111939" class="contact-num">+44 7880 111939</a>
+          <span class="contact-sep">·</span>
+          <a href="tel:+447480198786" class="contact-num">+44 7480 198786 <em>(Roxon)</em></a>
+          <span class="contact-sep">·</span>
+          <a href="tel:+447534446526" class="contact-num">+44 7534 446526 <em>(Jinso)</em></a>
+        </div>
+
+      </div>
+
+      <!-- RIGHT — Image Slider -->
+      <div class="hero-right">
+        <div class="slider-frame">
+
+          <div class="slider-track">
+            <div
+              class="slide"
+              *ngFor="let img of bannerImages; let i = index"
+              [class.slide--active]="i === currentSlide"
+            >
+              <img [src]="img" [alt]="'Nadir 2K26 Show UK – slide ' + (i + 1)" />
+            </div>
+          </div>
+
+          <button class="slider-arrow slider-arrow--prev" (click)="prevSlideAction()" aria-label="Previous" *ngIf="bannerImages.length > 1">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="slider-arrow slider-arrow--next" (click)="nextSlideAction()" aria-label="Next" *ngIf="bannerImages.length > 1">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="slider-dots" *ngIf="bannerImages.length > 1">
+            <button
+              class="dot"
+              *ngFor="let img of bannerImages; let i = index"
+              [class.dot--active]="i === currentSlide"
+              (click)="goToSlide(i)"
+              [attr.aria-label]="'Slide ' + (i + 1)"
+            ></button>
+          </div>
+
+          <div class="float-stats" *ngIf="stats.length">
+            <div class="fstat" *ngFor="let s of stats">
+              <span class="fstat-num">{{ s.number }}</span>
+              <span class="fstat-lbl">{{ s.label }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── SPONSORS — directly below the slider ── -->
+        <div class="slider-sponsors">
+          <p class="micro-label sponsors-micro">Proudly supported by</p>
+
+          <div class="sponsor-grid">
+            <div class="sponsor-item" *ngFor="let s of mainSponsors">
+              <div class="sponsor-item__logo">
+                <img *ngIf="s.logo" [src]="s.logo" [alt]="s.name" />
+                <span *ngIf="!s.logo" class="sponsor-item__initials">{{ s.name | slice:0:2 }}</span>
+              </div>
+              <span class="sponsor-item__name">{{ s.name }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>

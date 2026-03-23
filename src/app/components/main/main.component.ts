@@ -58,6 +58,18 @@ ngOnInit(): void {
     this.eventlistonly = newPath === 'events';
     console.log('Updated eventlistonly:', this.eventlistonly);
   });
+
+  this.activatedRoute.queryParams.subscribe(params => {
+      const hasTicketParams = params['orderId'] && params['ticketId'] && params['code'];
+      
+      if (hasTicketParams) {
+        // Redirect to ticket-info with the parameters
+        this.router.navigate(['/ticket-info'], {
+          queryParams: params,
+          replaceUrl: true // This replaces the current URL in history
+        });
+      }
+  });
   
   this.loadEvents();
 }

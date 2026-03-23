@@ -1,0 +1,171 @@
+// ─── Tokens ──────────────────────────────────────────────────────
+$slate:      #1E293B;
+$slate-mid:  #334155;
+$slate-pale: #F1F5F9;
+
+$white:      #FFFFFF;
+$border:     #E2E8F0;
+
+$r-sm:   8px;
+$r-pill: 999px;
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+// ─── Footer shell ────────────────────────────────────────────────
+.footer {
+  background: $slate-pale;
+  border-top: 1px solid $border;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.footer-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+// ─── Top row ─────────────────────────────────────────────────────
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 48px;
+  padding: 52px 0 40px;
+}
+
+// Brand block
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+
+  &__text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: $slate;
+    letter-spacing: -.01em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  &__year {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: $slate;
+    opacity: .5;
+    letter-spacing: .04em;
+  }
+}
+
+.footer-tagline {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.5;
+}
+
+// Social icons
+.footer-social {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: $r-sm;
+  background: $white;
+  border: 1px solid $border;
+  color: #64748B;
+  text-decoration: none;
+  transition: all .16s ease;
+
+  &:hover {
+    background: $slate;
+    border-color: $slate;
+    color: $white;
+  }
+}
+
+// Column
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-col__heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: $slate;
+  margin: 0;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-nav__link {
+  font-size: 13.5px;
+  color: #64748B;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .14s;
+  width: fit-content;
+
+  &:hover { color: $slate; }
+}
+
+// ─── Divider ─────────────────────────────────────────────────────
+.footer-divider {
+  height: 1px;
+  background: $border;
+}
+
+// ─── Bottom row ──────────────────────────────────────────────────
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-copy,
+.footer-made {
+  font-size: 12.5px;
+  color: #94A3B8;
+  margin: 0;
+}
+
+// ─── Responsive ──────────────────────────────────────────────────
+@media (max-width: 860px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding: 40px 0 32px;
+  }
+
+  .footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .footer-wrap { padding: 0 16px; }
+  .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}

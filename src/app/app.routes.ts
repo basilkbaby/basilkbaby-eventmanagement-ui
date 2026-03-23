@@ -5,14 +5,20 @@ import { TicketLookupComponent } from './components/ticket-lookup/ticket-lookup.
 import { AboutUsComponent } from './components/pages/about-us/about-us.component';
 import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
 import { SVGSeatmapComponent } from './components/seating/svg-seatmap/svg-seatmap.component';
+import { TicketInfoComponent } from './components/ticket-info/ticket-info.component';
 
 
 export const routes: Routes = [
   { 
     path: '', 
-    loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
+    loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent),  
     title: 'Home' 
   },
+  // { 
+  //   path: '', 
+  //   loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
+  //   title: 'Home' 
+  // },
   { 
     path: 'events', 
     loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
@@ -39,6 +45,12 @@ export const routes: Routes = [
     loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-svg-seat-selector/mobile-svg-seat-selector.component').then(
         m => m.MobileSvgSeatSelectorComponent),
     title: 'Select Selection'
+  },
+  {
+    path: 'events/generaladmission/:id/:sectionId',
+    loadComponent: () => import('./components/seating/general-admission/general-admission.component').then(
+        m => m.GeneralAdmissionComponent),
+    title: 'Choose General Admission Seats'
   },
   {
     path: 'events/:id/section1/:sectionId',
@@ -72,6 +84,10 @@ export const routes: Routes = [
   { 
     path: 'contact', 
     loadComponent: () => import('./components/pages/contact-us/contact-us.component').then(m => m.ContactUsComponent),
+  },
+  {
+    path: 'ticket-info',
+    component: TicketInfoComponent
   },
   { 
     path: '**', 

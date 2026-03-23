@@ -1,0 +1,482 @@
+// ─── Shared tokens ───────────────────────────────────────────────
+$slate:      #1E293B;
+$slate-mid:  #334155;
+$slate-pale: #F1F5F9;
+$slate-tint: #CBD5E1;
+
+$ink:        #0F172A;
+$ink-2:      #334155;
+$ink-3:      #64748B;
+$ink-4:      #94A3B8;
+
+$white:      #FFFFFF;
+$border:     #E2E8F0;
+$surface:    #F8FAFC;
+
+$green:      #10B981;
+$green-pale: #ECFDF5;
+$amber:      #F59E0B;
+$amber-pale: #FFFBEB;
+
+$r-sm:   10px;
+$r-md:   16px;
+$r-lg:   24px;
+$r-xl:   32px;
+$r-pill: 999px;
+
+$sh-sm:  0 1px 3px rgba(0,0,0,.06);
+$sh-md:  0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+$sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap');
+
+// ─── Section ─────────────────────────────────────────────────────
+.venues {
+  background: $white;
+  border-top: 1px solid $border;
+  padding: 36px 0 48px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.venues-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+// ─── Header ──────────────────────────────────────────────────────
+.section-header {
+  margin-bottom: 24px;
+}
+
+.header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: $slate;
+  margin-bottom: 8px;
+}
+
+.eyebrow-pip {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: $slate;
+  display: inline-block;
+}
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(22px, 2.8vw, 34px);
+  color: $ink;
+  line-height: 1;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: $ink-3;
+  margin: 0;
+}
+
+// ─── Layout ──────────────────────────────────────────────────────
+.venues-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+// ─── VENUE TABS (left column) ────────────────────────────────────
+.venue-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 100px;
+}
+
+.venue-tab {
+  display: grid;
+  grid-template-columns: 22px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: $white;
+  border: 1.5px solid $border;
+  border-radius: $r-sm;
+  cursor: pointer;
+  text-align: left;
+  transition: all .18s ease;
+  box-shadow: $sh-sm;
+
+  &:hover {
+    border-color: $slate-tint;
+    box-shadow: 0 4px 14px rgba($slate, .08);
+    transform: translateX(2px);
+
+    .tab-arrow { opacity: 1; transform: translateX(0); }
+  }
+
+  &.active {
+    background: $slate;
+    border-color: $slate;
+    box-shadow: 0 6px 20px rgba($slate, .22);
+
+    .tab-index { color: rgba($white, .5); }
+    .tab-city  { color: $white; }
+    .tab-date  { color: rgba($white, .6); }
+    .tab-arrow { opacity: 1; color: rgba($white, .7); transform: translateX(0); }
+  }
+}
+
+.tab-index {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: $ink-4;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tab-city {
+  font-size: 13px;
+  font-weight: 600;
+  color: $ink;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-date {
+  font-size: 10px;
+  color: $ink-4;
+}
+
+.tab-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: $r-pill;
+  background: $green-pale;
+  color: $green;
+  white-space: nowrap;
+
+  &--soon {
+    background: $amber-pale;
+    color: $amber;
+  }
+}
+
+.tab-arrow {
+  color: $ink-4;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .18s, transform .18s;
+}
+
+// ─── VENUE DETAIL (right column) — horizontal split ──────────────
+.venue-detail {
+  display: flex;
+  background: $white;
+  border: 1.5px solid $border;
+  border-radius: $r-lg;
+  overflow: hidden;
+  box-shadow: $sh-md;
+  animation: popIn .22s ease both;
+  min-height: 0;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── Venue image — left pane ──────────────────────────────────────
+.venue-image {
+  width: 42%;
+  flex-shrink: 0;
+  background-color: $slate-pale;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+
+  &--placeholder {
+    background: linear-gradient(135deg, $slate-pale 0%, #E2E8F0 100%);
+  }
+}
+
+.venue-placeholder-icon { color: $slate-tint; }
+
+// Image badges
+.img-badge {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: $r-pill;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: $sh-sm;
+
+  &--location {
+    bottom: 14px;
+    left: 16px;
+    background: $white;
+    color: $ink;
+    border: 1px solid $border;
+  }
+
+  &--featured {
+    top: 14px;
+    right: 16px;
+    background: $slate;
+    color: $white;
+  }
+}
+
+// ─── Venue info — right pane ─────────────────────────────────────
+.venue-info {
+  flex: 1;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  min-width: 0;
+}
+
+.venue-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 800;
+  color: $ink;
+  text-transform: uppercase;
+  letter-spacing: -.01em;
+  line-height: 1.05;
+  margin: 0 0 3px;
+}
+
+.venue-address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: $ink-3;
+  margin: 0 0 12px;
+  svg { color: $slate; flex-shrink: 0; }
+}
+
+// Detail blocks
+.venue-details {
+  display: flex;
+  gap: 0;
+  margin-bottom: 10px;
+  border: 1px solid $border;
+  border-radius: $r-sm;
+  overflow: hidden;
+}
+
+.detail-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+
+  & + & { border-left: 1px solid $border; }
+}
+
+.detail-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: $ink-4;
+}
+
+.detail-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: $ink;
+}
+
+// Feature tags
+.venue-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.feature-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: $ink-2;
+  padding: 3px 9px;
+  background: $slate-pale;
+  border: 1px solid $border;
+  border-radius: $r-pill;
+
+  svg { color: $green; flex-shrink: 0; }
+}
+
+// Actions
+.venue-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: $white;
+  color: $ink;
+  border: 1.5px solid $border;
+  border-radius: $r-pill;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .18s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $slate;
+    color: $slate;
+    background: $slate-pale;
+  }
+}
+
+.btn-ticket {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  background: $slate;
+  color: $white;
+  border: none;
+  border-radius: $r-pill;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba($slate, .22);
+  transition: all .2s ease;
+
+  svg { transition: transform .2s; }
+
+  &:hover:not(:disabled) {
+    background: $slate-mid;
+    box-shadow: 0 6px 20px rgba($slate, .32);
+    transform: translateY(-2px);
+    svg { transform: translateX(3px); }
+  }
+
+  &--disabled,
+  &:disabled {
+    background: $border;
+    color: $ink-4;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.ticket-notice {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  background: $amber-pale;
+  border: 1px solid #FDE68A;
+  border-radius: $r-sm;
+  font-size: 12px;
+  color: #92400E;
+  font-weight: 500;
+
+  svg { flex-shrink: 0; color: $amber; }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .venues-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .venue-tabs {
+    position: static;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .venue-tab {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    min-width: 160px;
+    flex-shrink: 0;
+
+    .tab-badge { grid-column: 2; grid-row: 2; justify-self: start; }
+    .tab-arrow { display: none; }
+    .tab-index { display: none; }
+  }
+}
+
+@media (max-width: 600px) {
+  .venues { padding: 28px 0 36px; }
+  .venues-wrap { padding: 0 16px; }
+
+  .venue-detail { flex-direction: column; }
+
+  .venue-image {
+    width: 100%;
+    min-height: 160px;
+    aspect-ratio: 16 / 7;
+  }
+
+  .venue-info { padding: 14px 14px 16px; justify-content: flex-start; }
+
+  .venue-details { flex-direction: column; }
+  .detail-block + .detail-block {
+    border-left: none;
+    border-top: 1px solid $border;
+  }
+
+  .venue-actions { flex-direction: column; }
+  .btn-map, .btn-ticket { width: 100%; justify-content: center; }
+}

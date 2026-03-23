@@ -1,0 +1,240 @@
+// ─── Shared tokens (keep in sync with hero) ──────────────────────
+$slate:      #1E293B;
+$slate-mid:  #334155;
+$slate-pale: #F1F5F9;
+$slate-tint: #CBD5E1;
+
+$ink:        #0F172A;
+$ink-2:      #334155;
+$ink-3:      #64748B;
+$ink-4:      #94A3B8;
+
+$white:      #FFFFFF;
+$border:     #E2E8F0;
+$surface:    #F8FAFC;
+
+$r-sm:   10px;
+$r-md:   16px;
+$r-lg:   24px;
+$r-pill: 999px;
+
+$sh-sm:  0 1px 3px rgba(0,0,0,.06);
+$sh-md:  0 4px 16px rgba(0,0,0,.07);
+$sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap');
+
+// ─── Section ─────────────────────────────────────────────────────
+.artists {
+  background: $surface;
+  border-top: 1px solid $border;
+  padding: 56px 0 64px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.artists-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+// ─── Header ──────────────────────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.header-left { display: flex; flex-direction: column; gap: 6px; }
+
+.header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: $slate;
+}
+
+.eyebrow-pip {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: $slate;
+  display: inline-block;
+}
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 3.5vw, 42px);
+  color: $ink;
+  line-height: 1;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: $ink-3;
+  margin: 0;
+}
+
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  background: $white;
+  color: $ink;
+  border: 1.5px solid $border;
+  border-radius: $r-pill;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .18s ease;
+  flex-shrink: 0;
+
+  svg { transition: transform .2s; }
+
+  &:hover {
+    border-color: $slate;
+    color: $slate;
+    background: $slate-pale;
+    svg { transform: translateX(3px); }
+  }
+}
+
+// ─── Grid — compact cards, many per row ──────────────────────────
+.artists-grid {
+  display: grid;
+  // Compact: ~160px min per card — fits 6-8 on desktop
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 14px;
+}
+
+// ─── Artist card ─────────────────────────────────────────────────
+.artist-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: $r-md;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: $sh-card;
+  outline: none;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba($slate, .12), 0 2px 8px rgba(0,0,0,.04);
+    border-color: $slate-tint;
+
+    .artist-overlay { opacity: 1; }
+    .artist-photo img { transform: scale(1.05); }
+    .ig-btn { opacity: 1; transform: translateY(0); }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $slate;
+    outline-offset: 2px;
+  }
+}
+
+// Photo area — compact square
+.artist-photo {
+  position: relative;
+  aspect-ratio: 3 / 4;  // portrait crop
+  overflow: hidden;
+  background: $slate-pale;
+
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform .4s ease;
+  }
+}
+
+// Hover overlay
+.artist-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, transparent 40%, rgba($slate, .55) 100%);
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  padding: 10px;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.overlay-icon {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: $white;
+  color: $slate;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: $sh-sm;
+}
+
+// Instagram button
+.ig-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: $white;
+  color: #E1306C;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  box-shadow: $sh-sm;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 2;
+
+  &:hover { background: #E1306C; color: $white; }
+}
+
+// Info strip
+.artist-info {
+  padding: 10px 12px 12px;
+  background: $white;
+}
+
+.artist-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: $ink;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist-role {
+  font-size: 11px;
+  color: $ink-4;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Responsive ──────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .artists { padding: 40px 0 48px; }
+  .artists-wrap { padding: 0 16px; }
+  .artists-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .btn-view-all { align-self: flex-start; }
+}
+
+@media (max-width: 420px) {
+  .artists-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+}

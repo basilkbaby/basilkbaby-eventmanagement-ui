@@ -1,0 +1,113 @@
+<!-- general-admission.component.html -->
+<div class="ga-container">
+  <!-- Header -->
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">
+      ← Back to Seat Map
+    </button>
+    
+    <div class="header-content">
+      <h1>General Admission Tickets</h1>
+      <p class="subtitle">Standing Room Only • No Allocated Seats</p>
+    </div>
+  </div>
+  
+  <!-- Standing Info -->
+  <div class="standing-info">
+    <div class="warning">
+      <strong>⚠️ Important Information:</strong> These tickets provide standing access only. No seats or chairs are provided.
+    </div>
+  </div>
+  
+  <!-- Ticket Options -->
+  <div class="options">
+    @for (option of gaOptions; track option.id) {
+    <div class="option-card">
+      <div class="option-header">
+        <h3>{{ option.name }}</h3>
+        <div class="price">{{ option.price | currencyFormat }}</div>
+      </div>
+      
+      <p class="description">{{ option.description }}</p>
+      
+      <!-- Quantity Selector -->
+      <div class="quantity-section">
+        <div class="quantity-selector">
+          <button 
+            class="qty-btn minus"
+            (click)="decrement(option.id)"
+            [disabled]="(selections[option.id] || 0) === 0">
+            -
+          </button>
+          
+          <span class="quantity">
+            {{ selections[option.id] || 0 }}
+          </span>
+          
+          <button 
+            class="qty-btn plus"
+            (click)="increment(option.id)"
+            [disabled]="!canIncrement(option.id)">
+            +
+          </button>
+        </div>
+        
+        <div class="max-info">
+          Max {{ option.maxPerOrder }} per order
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  
+  <!-- Selection Summary -->
+  <div class="selection-summary">
+    <div class="summary-header">
+      <h3>Your Selection</h3>
+      @if (totalQuantity > 0) {
+      <button class="clear-btn" (click)="clearAll()">
+        Clear All
+      </button>
+      }
+    </div>
+    
+    @if (totalQuantity > 0) {
+    <div class="selected-items">
+      @for (option of gaOptions; track option.id) {
+        @if (selections[option.id] > 0) {
+        <div class="selected-item">
+          <span class="item-name">{{ option.name }}</span>
+          <span class="item-qty">× {{ selections[option.id] }}</span>
+          <span class="item-total">
+            {{ (option.price * selections[option.id]) | currencyFormat }}
+          </span>
+        </div>
+        }
+      }
+      
+      <div class="total-row">
+        <span>Total:</span>
+        <span class="total-price">{{ totalPrice | currencyFormat }}</span>
+      </div>
+    </div>
+    } @else {
+    <div class="empty-selection">
+      Select tickets above to continue
+    </div>
+    }
+  </div>
+  
+  <!-- Action Button -->
+  <div class="action-section">
+    <button 
+      class="add-to-cart-btn"
+      (click)="addToCart()"
+      [disabled]="totalQuantity === 0 || isLoading">
+      @if (isLoading) {
+      Adding to Cart...
+      } @else {
+      Add {{ totalQuantity }} Ticket(s) to Cart
+      }
+    </button>
+  </div>
+</div>

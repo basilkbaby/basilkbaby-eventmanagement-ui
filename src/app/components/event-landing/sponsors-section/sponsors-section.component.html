@@ -1,0 +1,55 @@
+<section class="sponsors-section">
+  <div class="section-header">
+    <h2>OUR SPONSORS & PARTNERS</h2>
+    <p>Proudly supported by these amazing brands</p>
+  </div>
+
+  <div class="sponsors-showcase">
+    <!-- Platinum Sponsors -->
+    <div class="sponsor-tier-group platinum">
+      <h3 class="tier-title">
+        <i class="fas fa-crown"></i>
+        PLATINUM SPONSORS
+      </h3>
+      <div class="tier-sponsors">
+        <div class="sponsor-card large" *ngFor="let sponsor of sponsors | filter:'tier':'platinum'">
+          <div class="sponsor-logo">
+            <span>{{ sponsor.name }}</span>
+          </div>
+          <span class="sponsor-tier">PREMIER PARTNER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gold Sponsors -->
+    <div class="sponsor-tier-group gold">
+      <h3 class="tier-title">
+        <i class="fas fa-star"></i>
+        GOLD SPONSORS
+      </h3>
+      <div class="tier-sponsors">
+        <div class="sponsor-card" *ngFor="let sponsor of sponsors | filter:'tier':'gold'">
+          <div class="sponsor-logo">
+            <span>{{ sponsor.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Silver & Partners -->
+    <div class="sponsor-tier-group others">
+      <h3 class="tier-title">
+        <i class="fas fa-handshake"></i>
+        SUPPORTING PARTNERS
+      </h3>
+      <div class="tier-sponsors">
+        <div class="sponsor-card small" *ngFor="let sponsor of sponsors | filter:'tier':'silver'">
+          <span>{{ sponsor.name }}</span>
+        </div>
+        <div class="sponsor-card small" *ngFor="let sponsor of sponsors | filter:'tier':'partner'">
+          <span>{{ sponsor.name }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

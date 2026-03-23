@@ -1,0 +1,58 @@
+<nav class="navbar" [class.navbar--scrolled]="isScrolled">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a class="nav-logo" (click)="scrollTo.emit('hero')">
+      <span class="nav-logo__text">{{ logo.text }}</span>
+      <span class="nav-logo__year">{{ logo.year }}</span>
+    </a>
+
+    <!-- Centre links (desktop) -->
+    <div class="nav-links">
+      <a
+        class="nav-link"
+        *ngFor="let link of links"
+        (click)="scrollTo.emit(link.section)"
+      >
+        {{ link.label }}
+      </a>
+    </div>
+
+    <!-- Right: CTA + hamburger -->
+    <div class="nav-right">
+      <button class="nav-cta" (click)="buyTickets.emit()">
+        View Tickets
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.5 7h9M8 3.5L11.5 7 8 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Mobile hamburger -->
+      <button
+        class="nav-burger"
+        [class.nav-burger--open]="mobileOpen"
+        (click)="mobileOpen = !mobileOpen"
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile drawer -->
+  <div class="nav-mobile" [class.nav-mobile--open]="mobileOpen">
+    <a
+      class="nav-mobile__link"
+      *ngFor="let link of links"
+      (click)="scrollTo.emit(link.section); mobileOpen = false"
+    >
+      {{ link.label }}
+    </a>
+    <button class="nav-mobile__cta" (click)="buyTickets.emit(); mobileOpen = false">
+      View Tickets
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,9 @@
+<section class="production-section">
+  <div class="production-grid">
+    <div class="production-item" *ngFor="let item of productions">
+      <i class="fas" [class]="item.icon"></i>
+      <span>{{ item.title }}</span>
+      <small>{{ item.description }}</small>
+    </div>
+  </div>
+</section>

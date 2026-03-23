@@ -1,12 +1,12 @@
 [
   {
-    "id": "manchestergems",
-    "name": "Manchester Gems",
-    "domain": "manchestergems.co.uk",
+    "id": "v4entertainments",
+    "name": "V4 Entertainments",
+    "domain": "v4entertainments.co.uk",
     "company": {
-      "name": "Manchester Gems",
+      "name": "V4 Entertainments",
       "logo": {
-        "text": "MG",
+        "text": "V4",
         "sublabel": "ENTERTAINMENT",
         "color": "#FFFFFF",
         "backgroundColor": "#1a1a2e"
@@ -16,7 +16,7 @@
       "accentColor": "#f9a826",
       "contact": {
         "phone": "+44 7878896384",
-        "email": "events@manchestergems.co.uk",
+        "email": "events@v4entertainments.co.uk",
         "address": "E6 1LW, London"
       }
     },
@@ -24,7 +24,7 @@
     "menuItems": [
       {
         "label": "Home",
-        "routerLink": "https://manchestergems.co.uk",
+        "routerLink": "https://v4entertainments.co.uk",
         "type": "home" ,      
         "external": true
       },
@@ -36,13 +36,13 @@
       },
       {
         "label": "About Us",
-        "routerLink": "https://manchestergems.co.uk/about-us",
+        "routerLink": "https://v4entertainments.co.uk/about-us",
         "type": "about" ,      
         "external": true
       },
       {
         "label": "Contact Us",
-        "routerLink": "https://manchestergems.co.uk/contact-us",
+        "routerLink": "https://v4entertainments.co.uk/contact-us",
         "external": true,
         "type": "contact"
       }
