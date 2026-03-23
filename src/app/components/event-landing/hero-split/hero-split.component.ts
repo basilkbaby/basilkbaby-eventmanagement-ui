@@ -19,7 +19,7 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
   @Input() stats: Array<{ number: string; label: string }> = [];
   @Input() venues: any[] = [];
   @Output() scrollTo  = new EventEmitter<string>();
-  @Output() buyTickets = new EventEmitter<void>();
+  @Output() buyTickets = new EventEmitter<string>();
 
   selectedVenueId = 'blackpool';
 

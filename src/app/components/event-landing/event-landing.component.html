@@ -4,7 +4,7 @@
     [logo]="eventConfig.logo"
     [isScrolled]="isScrolled"
     (scrollTo)="scrollToSection($event)"
-    (buyTickets)="buyTickets()">
+    (buyTickets)="buyTickets($event)">
   </app-navbar>
 
   <app-hero-split
@@ -13,7 +13,7 @@
     [sponsors]="sponsors"
     [stats]="eventConfig.stats"
     (scrollTo)="scrollToSection($event)"
-    (buyTickets)="buyTickets()">
+    (buyTickets)="buyTickets($event)">
   </app-hero-split>
 
   <app-artists-section
@@ -27,13 +27,13 @@
     [venues]="venues"
     [selectedVenueId]="selectedVenueId"
     (venueSelected)="selectVenue($event)"
-    (buyTickets)="buyTickets()">
+    (buyTickets)="buyTickets($event)">
   </app-venues-section>
 
 
   <app-contact-section
     [contacts]="contactNumbers"
-    (buyTickets)="buyTickets()"
+    (buyTickets)="buyTickets($event)"
     (scrollTo)="scrollToSection($event)">
   </app-contact-section>
 

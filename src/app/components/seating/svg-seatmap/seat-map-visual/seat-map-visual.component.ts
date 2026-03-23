@@ -43,7 +43,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy {
   readonly CANVAS_WIDTH = 1400;
   readonly CANVAS_HEIGHT = 1200;
   readonly BASE_SEAT_RADIUS = 8;
-  readonly BASE_SEAT_GAP = 22;
+  readonly BASE_SEAT_GAP = 26;
   readonly STAGE_WIDTH = 500;
   readonly STAGE_HEIGHT = 60;
 

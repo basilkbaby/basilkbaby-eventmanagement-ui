@@ -118,64 +118,120 @@
                 <!-- Regular seats -->
                 <ng-container *ngIf="!seat.isStandingArea">
                     <!-- Regular seat circle -->
-                    <circle *ngIf="seat.status !== SeatStatus.PARTIAL_VIEW" 
-                        [attr.cx]="seat.cx" 
-                        [attr.cy]="seat.cy"
-                        [attr.r]="BASE_SEAT_RADIUS" 
-                        [attr.fill]="getSeatColor(seat)" 
-                        [attr.stroke]="getSeatStroke(seat)"
-                        [attr.stroke-width]="getSeatStrokeWidth(seat)" 
-                        [attr.opacity]="getSeatOpacity(seat)"
-                        [attr.cursor]="getSeatCursor(seat)" (click)="onSeatClick(seat, $event)">
-                    </circle>
+<!-- Regular seat shape -->
+<g *ngIf="seat.status !== SeatStatus.PARTIAL_VIEW"
+    [attr.opacity]="getSeatOpacity(seat)"
+    [attr.cursor]="getSeatCursor(seat)"
+    (click)="onSeatClick(seat, $event)">
+    <!-- Backrest -->
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS"
+        [attr.width]="BASE_SEAT_RADIUS * 2"
+        [attr.height]="BASE_SEAT_RADIUS * 1.6"
+        rx="3"
+        [attr.fill]="getSeatColor(seat)"
+        [attr.stroke]="getSeatStroke(seat)"
+        [attr.stroke-width]="getSeatStrokeWidth(seat)">
+    </rect>
+    <!-- Seat base -->
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS"
+        [attr.y]="seat.cy + BASE_SEAT_RADIUS * 0.65"
+        [attr.width]="BASE_SEAT_RADIUS * 2"
+        [attr.height]="BASE_SEAT_RADIUS * 0.65"
+        rx="2"
+        [attr.fill]="getSeatColor(seat)"
+        [attr.stroke]="getSeatStroke(seat)"
+        [attr.stroke-width]="getSeatStrokeWidth(seat)">
+    </rect>
+    <!-- Seat number -->
+    <text
+        [attr.x]="seat.cx"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS * 0.15"
+        text-anchor="middle"
+        dominant-baseline="central"
+        font-family="Arial"
+        [attr.font-size]="BASE_SEAT_RADIUS * 0.85"
+        font-weight="bold"
+        fill="white"
+        pointer-events="none">
+        {{ seat.seatNumber }}
+    </text>
+</g>
 
                     <!-- Partial view seats -->
-                    <g *ngIf="seat.status === SeatStatus.PARTIAL_VIEW">
-                        <defs>
-                            <linearGradient 
-                                [attr.id]="'partial-' + seat.id" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" [style.stop-color]="seat.color"></stop>
-                                <stop offset="50%" [style.stop-color]="seat.color"></stop>
-                                <stop offset="50%" [style.stop-color]="'#cccccc'"></stop>
-                                <stop offset="100%" [style.stop-color]="'#cccccc'"></stop>
-                            </linearGradient>
-                        </defs>
-
-                        <circle 
-                            [attr.cx]="seat.cx" 
-                            [attr.cy]="seat.cy" 
-                            [attr.r]="BASE_SEAT_RADIUS"
-                            [attr.fill]="'url(#partial-' + seat.id + ')'" 
-                            [attr.stroke]="getSeatStroke(seat)"
-                            [attr.stroke-width]="getSeatStrokeWidth(seat)" 
-                            [attr.opacity]="getSeatOpacity(seat)"
-                            [attr.cursor]="getSeatCursor(seat)" (click)="onSeatClick(seat, $event)">
-                        </circle>
-                    </g>
+<!-- Partial view seat shape -->
+<g [attr.opacity]="getSeatOpacity(seat)"
+   [attr.cursor]="getSeatCursor(seat)"
+   (click)="onSeatClick(seat, $event)">
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS"
+        [attr.width]="BASE_SEAT_RADIUS * 2"
+        [attr.height]="BASE_SEAT_RADIUS * 1.6"
+        rx="3"
+        [attr.fill]="'url(#partial-' + seat.id + ')'"
+        [attr.stroke]="getSeatStroke(seat)"
+        [attr.stroke-width]="getSeatStrokeWidth(seat)">
+    </rect>
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS"
+        [attr.y]="seat.cy + BASE_SEAT_RADIUS * 0.65"
+        [attr.width]="BASE_SEAT_RADIUS * 2"
+        [attr.height]="BASE_SEAT_RADIUS * 0.65"
+        rx="2"
+        [attr.fill]="'url(#partial-' + seat.id + ')'"
+        [attr.stroke]="getSeatStroke(seat)"
+        [attr.stroke-width]="getSeatStrokeWidth(seat)">
+    </rect>
+    <text
+        [attr.x]="seat.cx"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS * 0.15"
+        text-anchor="middle"
+        dominant-baseline="central"
+        font-family="Arial"
+        [attr.font-size]="BASE_SEAT_RADIUS * 0.85"
+        font-weight="bold"
+        fill="white"
+        pointer-events="none">
+        {{ seat.seatNumber }}
+    </text>
+</g>
 
                     <!-- Selected indicator for regular seats -->
-                    <g *ngIf="isSeatSelected(seat)">
-                        <circle 
-                            [attr.cx]="seat.cx" 
-                            [attr.cy]="seat.cy" 
-                            [attr.r]="BASE_SEAT_RADIUS * 1.2" 
-                            fill="#4CAF50"
-                            opacity="0.8"  
-                            [attr.cursor]="getSeatCursor(seat)" 
-                            (click)="onSeatClick(seat, $event)" />
-
-                        <text [attr.x]="seat.cx" 
-                            [attr.y]="seat.cy" 
-                            text-anchor="middle" 
-                            dominant-baseline="middle"
-                            fill="white" 
-                            font-weight="bold" 
-                            font-size="12"
-                            [attr.cursor]="getSeatCursor(seat)" 
-                            (click)="onSeatClick(seat, $event)">
-                            ✓
-                        </text>
-                    </g>
+<!-- Selected indicator for seat shape -->
+<g *ngIf="isSeatSelected(seat)" [attr.cursor]="getSeatCursor(seat)" (click)="onSeatClick(seat, $event)">
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS * 1.2"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS * 1.2"
+        [attr.width]="BASE_SEAT_RADIUS * 2.4"
+        [attr.height]="BASE_SEAT_RADIUS * 1.9"
+        rx="4"
+        fill="#4CAF50"
+        opacity="0.9">
+    </rect>
+    <rect
+        [attr.x]="seat.cx - BASE_SEAT_RADIUS * 1.2"
+        [attr.y]="seat.cy + BASE_SEAT_RADIUS * 0.75"
+        [attr.width]="BASE_SEAT_RADIUS * 2.4"
+        [attr.height]="BASE_SEAT_RADIUS * 0.75"
+        rx="2"
+        fill="#4CAF50"
+        opacity="0.9">
+    </rect>
+    <text
+        [attr.x]="seat.cx"
+        [attr.y]="seat.cy - BASE_SEAT_RADIUS * 0.1"
+        text-anchor="middle"
+        dominant-baseline="central"
+        fill="white"
+        font-weight="bold"
+        [attr.font-size]="BASE_SEAT_RADIUS"
+        pointer-events="none">
+        ✓
+    </text>
+</g>
 
                     <!-- Status indicator -->
                     <!-- <text

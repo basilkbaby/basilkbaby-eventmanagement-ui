@@ -13,7 +13,7 @@ export class NavbarComponent {
   @Input() logo: { text: string; year: string } = { text: '', year: '' };
   @Input() isScrolled: boolean = false;
   @Output() scrollTo   = new EventEmitter<string>();
-  @Output() buyTickets = new EventEmitter<void>();
+  @Output() buyTickets = new EventEmitter<string>();
 
   mobileOpen = false;
 }

@@ -10,6 +10,7 @@ export interface Venue {
   capacity: string;
   features: string[];
   ticketsOpen?: boolean;
+  eventId: string;
 }
 
 export interface Artist {
@@ -66,55 +67,59 @@ export const VENUE_DATA: Venue[] = [
   {
     id: 'blackpool',
     name: 'Winter Gardens Blackpool',
-    location: 'Blackpool, UK',
+    location: 'Blackpool',
     address: '97 Church St., Blackpool FY1 1HL',
     date: '22nd AUGUST 2026',
     time: '6:00 PM',
     mapUrl: 'https://maps.google.com/?q=Winter+Gardens+Blackpool',
     imageUrl: 'https://www.creativetourist.com/app/uploads/2020/12/367e8f571aa80544cd66907f2acf31aa.jpg',
     capacity: '3,000 seats',
-    features: ['Live Orchestra', 'VIP Lounge', 'Disabled Access', 'Parking Available'],
-    ticketsOpen : false
+    features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
+    ticketsOpen : false,
+    eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
   },
-  {
-    id: 'manchester',
-    name: 'AO Arena Manchester',
-    location: 'Manchester, UK',
-    address: 'Victoria Station, Hunts Bank, Manchester M3 1AR',
-    date: '29th AUGUST 2026',
-    time: '7:00 PM',
-    mapUrl: 'https://maps.google.com/?q=AO+Arena+Manchester',
-    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    capacity: '21,000 seats',
-    features: ['Premium Seating', 'Restaurants', 'VIP Parking', 'Hotel Nearby'],
-    ticketsOpen : false
-  },
-  {
-    id: 'london',
-    name: 'The O2 Arena',
-    location: 'London, UK',
-    address: 'Peninsula Square, London SE10 0DX',
-    date: '5th SEPTEMBER 2026',
-    time: '7:30 PM',
-    mapUrl: 'https://maps.google.com/?q=The+O2+Arena+London',
-    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    capacity: '20,000 seats',
-    features: ['Premium Lounges', 'Bars & Restaurants', 'Easy Transport', 'Shopping'],
-    ticketsOpen : false
-  },
-  {
-    id: 'birmingham',
-    name: 'Resorts World Arena',
-    location: 'Birmingham, UK',
-    address: 'Pendigo Way, Birmingham B40 1PU',
-    date: '12th SEPTEMBER 2026',
-    time: '6:30 PM',
-    mapUrl: 'https://maps.google.com/?q=Resorts+World+Arena+Birmingham',
-    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    capacity: '15,600 seats',
-    features: ['Hotel On-site', 'Restaurants', 'Parking', 'VIP Access'],
-    ticketsOpen : false
-  }
+  // {
+  //   id: 'manchester',
+  //   name: 'AO Arena Manchester',
+  //   location: 'Manchester, UK',
+  //   address: 'Victoria Station, Hunts Bank, Manchester M3 1AR',
+  //   date: '29th AUGUST 2026',
+  //   time: '7:00 PM',
+  //   mapUrl: 'https://maps.google.com/?q=AO+Arena+Manchester',
+  //   imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  //   capacity: '21,000 seats',
+  //   features: ['Premium Seating', 'Restaurants', 'VIP Parking', 'Hotel Nearby'],
+  //   ticketsOpen : false,
+  //   eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
+  // },
+  // {
+  //   id: 'london',
+  //   name: 'The O2 Arena',
+  //   location: 'London, UK',
+  //   address: 'Peninsula Square, London SE10 0DX',
+  //   date: '5th SEPTEMBER 2026',
+  //   time: '7:30 PM',
+  //   mapUrl: 'https://maps.google.com/?q=The+O2+Arena+London',
+  //   imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  //   capacity: '20,000 seats',
+  //   features: ['Premium Lounges', 'Bars & Restaurants', 'Easy Transport', 'Shopping'],
+  //   ticketsOpen : false,
+  //   eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
+  // },
+  // {
+  //   id: 'birmingham',
+  //   name: 'Resorts World Arena',
+  //   location: 'Birmingham, UK',
+  //   address: 'Pendigo Way, Birmingham B40 1PU',
+  //   date: '12th SEPTEMBER 2026',
+  //   time: '6:30 PM',
+  //   mapUrl: 'https://maps.google.com/?q=Resorts+World+Arena+Birmingham',
+  //   imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+  //   capacity: '15,600 seats',
+  //   features: ['Hotel On-site', 'Restaurants', 'Parking', 'VIP Access'],
+  //   ticketsOpen : false,
+  //   eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
+  // }
 ];
 
 export const ARTIST_DATA: Artist[] = [
@@ -132,7 +137,7 @@ export const ARTIST_DATA: Artist[] = [
   {
     id: 2,
     name: 'Samad Sulaiman',
-    role: 'Actor',
+    role: 'Actor & Singer',
     imageUrl: 'https://m3db.com/sites/default/files/styles/artist_profile_pic_zoom/public/artists-profile-photos/Samad%20Sulaiman.jpg?itok=94DSOywU',
     bio: 'Powerhouse vocalist with a range that captivates audiences. Has performed in over 500 shows worldwide and collaborated with top artists.',
     social: {
@@ -188,7 +193,62 @@ export const ARTIST_DATA: Artist[] = [
     id: 7,
     name: 'Dream Team UK',
     role: 'Dance troupe',
-    imageUrl: 'assets/images/events/nadirshow/artist/dreamteam.jpg',
+    imageUrl: 'assets/images/events/nadirshow/artist/dreamteam.jpeg',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 8,
+    name: 'Jinso Davis',
+    role: 'Director & Singer',
+    imageUrl: 'assets/images/events/nadirshow/artist/Jinso.PNG',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 9,
+    name: 'Roxon D\u0027Cruz',
+    role: 'Director & DJ',
+    imageUrl: 'assets/images/events/nadirshow/artist/Roxon.PNG',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 10,
+    name: 'Jojo Mathew',
+    role: 'Drums',
+    imageUrl: 'assets/images/events/nadirshow/artist/JojoMathew.jpeg',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 11,
+    name: 'Mathew',
+    role: 'Tabla',
+    imageUrl: 'assets/images/events/nadirshow/artist/mathew.jpeg',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
+  },
+  {
+    id: 11,
+    name: 'Sambath Selam',
+    role: 'Trapeze Artist',
+    imageUrl: 'assets/images/events/nadirshow/artist/Sambath.jpeg',
     bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
     social: {
       instagram: '@dayanahameed',
@@ -204,9 +264,9 @@ export const SPONSOR_DATA: Sponsor[] = [
 ];
 
 export const CONTACT_DATA: Contact[] = [
+  { number: '+44 7534 446526', name: 'JINSO', icon: 'fa-ticket' },
   { number: '+44 7880 111939', name: 'General Inquiries', icon: 'fa-phone' },
-  { number: '+44 7480 198786', name: 'ROXON (Music Director)', icon: 'fa-music' },
-  { number: '+44 7534 446526', name: 'JINSO (Bookings)', icon: 'fa-ticket' }
+  { number: '+44 7480 198786', name: 'ROXON', icon: 'fa-music' }
 ];
 
 export const EVENT_CONFIG: EventConfig = {

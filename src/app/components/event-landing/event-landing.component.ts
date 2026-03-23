@@ -9,6 +9,7 @@ import { SponsorsSectionComponent } from './sponsors-section/sponsors-section.co
 import { ContactSectionComponent } from './contact-section/contact-section.component';
 import { FooterComponent } from './footer/footer.component';
 import { EventConfig, VENUE_DATA, ARTIST_DATA, SPONSOR_DATA, CONTACT_DATA, EVENT_CONFIG } from './common/event-data';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-landing',
@@ -49,6 +50,12 @@ export class EventLandingComponent implements OnInit {
     this.isScrolled = window.scrollY > 100;
   }
 
+  constructor(
+      private route: ActivatedRoute,
+      private router: Router
+    ) {}
+  
+
   get selectedVenue() {
     return this.venues.find(v => v.id === this.selectedVenueId) || this.venues[0];
   }
@@ -73,7 +80,14 @@ export class EventLandingComponent implements OnInit {
     this.selectedArtist = null;
   }
 
-  buyTickets() {
-    window.open('https://tickets.dreamteamuk.com', '_blank');
+  buyTickets(eventId: string) {
+
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+      .test(navigator.userAgent);
+    if(isMobile)
+        this.router.navigate(['/events', eventId, 'mobileseatmap']);
+        else
+      this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
   }
+
 }

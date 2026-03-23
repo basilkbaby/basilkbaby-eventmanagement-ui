@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./venues-section.component.scss']
 })
 export class VenuesSectionComponent {
+  @Input() eventId: string = '';
   @Input() venues: any[] = [];
   @Input() selectedVenueId: string = '';
   @Output() venueSelected = new EventEmitter<string>();
-  @Output() buyTickets    = new EventEmitter<void>();
+  @Output() buyTickets    = new EventEmitter<string>();
 
   get selectedVenue() {
     return this.venues.find(v => v.id === this.selectedVenueId) || this.venues[0];
@@ -28,7 +29,7 @@ export class VenuesSectionComponent {
 
   handleTicketClick(venue: any) {
     if (this.isTicketAvailable(venue)) {
-      this.buyTickets.emit();
+      this.buyTickets.emit(venue.eventId);
     }
     // "Soon" venues: button is disabled so click is blocked at template level
   }
