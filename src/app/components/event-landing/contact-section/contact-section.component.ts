@@ -11,4 +11,6 @@ import { CommonModule } from '@angular/common';
 export class ContactSectionComponent {
   @Input() contacts: Array<{ number: string; name: string; icon: string }> = [];
   @Output() buyTickets = new EventEmitter<void>();
+  @Output() scrollTo  = new EventEmitter<string>();
+
 }

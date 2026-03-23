@@ -33,7 +33,8 @@
 
   <app-contact-section
     [contacts]="contactNumbers"
-    (buyTickets)="buyTickets()">
+    (buyTickets)="buyTickets()"
+    (scrollTo)="scrollToSection($event)">
   </app-contact-section>
 
   <app-footer

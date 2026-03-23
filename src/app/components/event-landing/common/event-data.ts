@@ -97,7 +97,7 @@ export const VENUE_DATA: Venue[] = [
     date: '5th SEPTEMBER 2026',
     time: '7:30 PM',
     mapUrl: 'https://maps.google.com/?q=The+O2+Arena+London',
-    imageUrl: 'https://images.unsplash.com/photo-1583426573939-97d09302d76a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     capacity: '20,000 seats',
     features: ['Premium Lounges', 'Bars & Restaurants', 'Easy Transport', 'Shopping'],
     ticketsOpen : false
@@ -110,7 +110,7 @@ export const VENUE_DATA: Venue[] = [
     date: '12th SEPTEMBER 2026',
     time: '6:30 PM',
     mapUrl: 'https://maps.google.com/?q=Resorts+World+Arena+Birmingham',
-    imageUrl: 'https://images.unsplash.com/photo-1583426573939-97d09302d76a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     capacity: '15,600 seats',
     features: ['Hotel On-site', 'Restaurants', 'Parking', 'VIP Access'],
     ticketsOpen : false
