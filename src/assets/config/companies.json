@@ -6,8 +6,8 @@
     "company": {
       "name": "Manchester Gems",
       "logo": {
-        "text": "MG",
-        "sublabel": "ENTERTAINMENT",
+        "text": "R&J Events",
+        "sublabel": "Manchester Gems",
         "color": "#FFFFFF",
         "backgroundColor": "#1a1a2e"
       },
@@ -24,26 +24,32 @@
     "menuItems": [
       {
         "label": "Home",
-        "routerLink": "https://manchestergems.co.uk",
+        "routerLink": "/home",
         "type": "home" ,      
-        "external": true
+        "external": false
       },
       {
-        "label": "Events",
-        "routerLink": "/events",
+        "label": "Artists",
+        "routerLink": "#artists",
         "type": "events",     
         "external": false
       },
       {
-        "label": "About Us",
-        "routerLink": "https://manchestergems.co.uk/about-us",
+        "label": "Venues",
+        "routerLink": "#venues",
+        "type": "events",     
+        "external": false
+      },
+      {
+        "label": "Terms and conditions",
+        "routerLink": "https://manchestergems.co.uk/terms-and-conditions",
         "type": "about" ,      
         "external": true
       },
       {
         "label": "Contact Us",
-        "routerLink": "https://manchestergems.co.uk/contact-us",
-        "external": true,
+        "routerLink": "#contactus",
+        "external": false,
         "type": "contact"
       }
     ],
@@ -56,7 +62,8 @@
       "buttonColor": "#e94560",
       "buttonTextColor": "#FFFFFF",
       "glassBackground": "rgba(255, 255, 255, 0.1)",
-      "glassBorder": "rgba(255, 255, 255, 0.15)"
+      "glassBorder": "rgba(255, 255, 255, 0.15)",
+      "headerStyle": "minimal"
     },
     "features": {
       "enableAuth": true,

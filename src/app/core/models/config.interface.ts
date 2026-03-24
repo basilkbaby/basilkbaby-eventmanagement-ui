@@ -33,6 +33,7 @@ export interface HeaderConfig {
     buttonTextColor: string;
     glassBackground?: string;
     glassBorder?: string;
+    headerStyle?: 'full' | 'minimal';
   };
   features: {
     enableAuth: boolean;

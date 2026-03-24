@@ -1,218 +1,198 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { ConfigService } from '../../../core/services/config.service';
-import { CartService } from '../../../core/services/cart.service'; // Import CartService
-import { HeaderConfig } from '../../../core/models/config.interface';
+import { CartService }   from '../../../core/services/cart.service';
+import { HeaderConfig }  from '../../../core/models/config.interface';
 import { CartSummaryDto } from '../../../core/models/DTOs/cart.DTO.model';
+
+export type HeaderTheme = 'full' | 'minimal';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  isMenuOpen = false;
-  cartItemCount = 0;
-  cartSummary: CartSummaryDto | null = null; // Add cart summary
-  config: HeaderConfig | null = null;
-  
-  // Copy feedback states
-  phoneCopied = false;
-  emailCopied = false;
-  
-  // Contact dropdown state
-  contactDropdownOpen = false;
-  
-  // Track current route for manual active state checking
-  currentRoute = '';
 
-  private configSubscription: Subscription | null = null;
-  private routerSubscription: Subscription | null = null;
-  private cartStateSubscription: Subscription | undefined;
+  // ── All state driven by config, no @Input ──────────────────────────────────
+  config:       HeaderConfig | null = null;
+  activeTheme:  HeaderTheme  = 'full';
+  cartItemCount = 0;
+  cartSummary:  CartSummaryDto | null = null;
+
+  isMenuOpen          = false;
+  mobileOpen          = false;
+  phoneCopied         = false;
+  emailCopied         = false;
+  contactDropdownOpen = false;
+  currentRoute        = '';
+
+  private configSub: Subscription | null = null;
+  private routerSub: Subscription | null = null;
+  private cartSub:   Subscription | undefined;
 
   constructor(
-    private configService: ConfigService, 
-    private router: Router,
-    private cartService: CartService // Inject CartService
+    private configService: ConfigService,
+    private router:        Router,
+    private cartService:   CartService
   ) {}
 
+  // ── Convenience getters ────────────────────────────────────────────────────
+
+  get isFull():    boolean { return this.activeTheme === 'full'; }
+  get isMinimal(): boolean { return this.activeTheme === 'minimal'; }
+
+  /** Logo text — from config.company.logo.text or company name initials */
+  get logoText(): string {
+    return this.config?.company?.logo?.text
+        || this.config?.company?.name?.substring(0, 2).toUpperCase()
+        || 'V4';
+  }
+
+  /** Logo sub-label — from config.company.logo.sublabel */
+  get logoSublabel(): string {
+    return this.config?.company?.logo?.sublabel || '';
+  }
+
+  /** Nav items from config */
+  get menuItems() {
+    return this.config?.navigation?.menuItems || [];
+  }
+
+  get contactInfo() {
+    return this.config?.company?.contact || {
+      phone: '', email: '', address: ''
+    };
+  }
+
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
   ngOnInit() {
-    this.configSubscription = this.configService.config$.subscribe(config => {
+    // Config — drives theme + all display data
+    this.configSub = this.configService.config$.subscribe(config => {
       this.config = config;
       if (config) {
+        this.activeTheme = (config.theme?.headerStyle as HeaderTheme) ?? 'full';
         this.applyTheme(config);
       }
     });
 
-    // Subscribe to router events to track current route
-    this.routerSubscription = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.currentRoute = event.urlAfterRedirects || event.url;
-      this.isMenuOpen = false; // Close mobile menu on navigation
+    // Router — close menus on navigation, track current route
+    this.currentRoute = this.router.url;
+    this.routerSub = this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe((e: any) => {
+      this.currentRoute = e.urlAfterRedirects || e.url;
+      this.isMenuOpen   = false;
+      this.mobileOpen   = false;
     });
 
-    // Subscribe to cart changes
-    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
-        next: (state) => {
-          // Calculate count from cart items
-          this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
-        }
-      });
-
-    // Initialize current route
-    this.currentRoute = this.router.url;
-
+    // Cart
+    this.cartSub = this.cartService.currentCartState$.subscribe({
+      next: (state) => {
+        this.cartItemCount = state.items.reduce((n, i) => n + i.quantity, 0);
+      }
+    });
   }
 
   ngOnDestroy() {
-    this.configSubscription?.unsubscribe();
-    this.routerSubscription?.unsubscribe();
-    this.cartStateSubscription?.unsubscribe(); // Unsubscribe from cart
+    this.configSub?.unsubscribe();
+    this.routerSub?.unsubscribe();
+    this.cartSub?.unsubscribe();
   }
 
+  // ── Navigation ─────────────────────────────────────────────────────────────
 
-  // Get cart item count for display
-  getCartCount(): number {
-    return this.cartItemCount;
+  navigateToCart():         void { this.router.navigate(['/cart']); }
+  navigateToTicketLookup(): void { this.router.navigate(['/tickets/lookup']); }
+
+  onMinimalCtaClick(): void {
+    this.mobileOpen = false;
+    this.navigateToTicketLookup();
   }
 
+  /**
+   * Handle nav item clicks in the minimal theme.
+   * External links are handled by the <a href> in the template.
+   * Internal routes: navigate directly.
+   * Anchor links (#section):
+   *   - If already on '/': smooth-scroll immediately.
+   *   - If on another page: navigate to '/' first, then scroll once
+   *     the NavigationEnd event fires.
+   */
+  onMinimalNavClick(item: any): void {
+    this.mobileOpen = false;
+    this.isMenuOpen = false;
 
-  // Navigate to cart page
-  navigateToCart(): void {
-    this.router.navigate(['/cart']);
-  }
+    const link: string = item.routerLink || '';
 
-  // Clear cart (optional - you might want this in a separate cart component)
-  clearCart(): void {
-    this.cartService.clearCart();
-  }
+    if (!link.startsWith('#')) return;
 
-  // Get formatted total price
-  getFormattedTotal(): string {
-    if (!this.cartSummary) return '£0.00';
-    return `£${this.cartSummary.total.toFixed(2)}`;
-  }
+    const scrollToAnchor = () => {
+      const el = document.querySelector(link);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
-
-  // Helper method to check if a route is active for config-based menu items
-  isMenuItemActive(routerLink: string): boolean {
-    if (!routerLink) return false;
-    
-    if (routerLink === '/') {
-      return this.currentRoute === '/';
+    if (this.currentRoute === '/' || this.currentRoute === '') {
+      // Already on home — scroll immediately
+      scrollToAnchor();
+    } else {
+      // Navigate to home first, then scroll after navigation completes
+      this.router.navigate(['/']).then(() => {
+        // Give the page a tick to render before scrolling
+        setTimeout(scrollToAnchor, 100);
+      });
     }
-    
-    // Special handling for events routes
-    if (routerLink === '/events') {
-      return this.currentRoute.startsWith('/events');
-    }
-    
-    return this.currentRoute.startsWith(routerLink);
   }
 
-  // Method for specific route checks
-  isRouteActive(route: string): boolean {
-    return this.currentRoute.startsWith(route);
-  }
+  // ── Full-theme helpers ─────────────────────────────────────────────────────
+
+  toggleMenu():            void { this.isMenuOpen = !this.isMenuOpen; }
+  toggleContactDropdown(): void { this.contactDropdownOpen = !this.contactDropdownOpen; }
 
   getHeaderClass(): string {
-    if (!this.config?.company?.name) return 'default-header';
-    return this.config.company.name.toLowerCase().replace(/\s+/g, '-');
-  }
-
-  toggleContactDropdown(): void {
-    this.contactDropdownOpen = !this.contactDropdownOpen;
-  }
-
-  closeContactDropdown(): void {
-    this.contactDropdownOpen = false;
-  }
-
-  getShortPhone(): string {
-    const phone = this.getContactInfo().phone;
-    return phone.replace(/\s/g, '').length > 12 ? 'Call Us' : phone;
-  }
-
-  getShortEmail(): string {
-    const email = this.getContactInfo().email;
-    return email.length > 20 ? 'Email Us' : email;
-  }
-
-  getLogoText(): string {
-    return this.config?.company?.logo?.text || 'V4';
-  }
-
-  getLogoSublabel(): string {
-    return this.config?.company?.logo?.sublabel || 'ENTERTAINMENT';
-  }
-
-  getContactInfo() {
-    return this.config?.company?.contact || {
-      phone: '+44 7878896384',
-      email: 'events@v4entertainments.co.uk',
-      address: 'E6 1LW, London'
-    };
-  }
-
-  private applyTheme(config: HeaderConfig): void {
-    document.documentElement.style.setProperty('--primary-color', config.company.primaryColor);
-    document.documentElement.style.setProperty('--primary-dark', this.darkenColor(config.company.primaryColor, 20));
-    document.documentElement.style.setProperty('--secondary-color', config.company.secondaryColor);
-    document.documentElement.style.setProperty('--accent-color', config.company.accentColor);
-    document.documentElement.style.setProperty('--text-color', config.theme.textColor);
-    document.documentElement.style.setProperty('--glass-bg', config.theme.glassBackground || 'rgba(255, 255, 255, 0.1)');
-    document.documentElement.style.setProperty('--glass-border', config.theme.glassBorder || 'rgba(255, 255, 255, 0.15)');
-  }
-
-  private darkenColor(color: string, percent: number): string {
-    const num = parseInt(color.replace("#", ""), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) - amt;
-    const G = (num >> 8 & 0x00FF) - amt;
-    const B = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-  }
-
-  copyToClipboard(text: string, type: 'phone' | 'email'): void {
-    navigator.clipboard.writeText(text).then(() => {
-      if (type === 'phone') {
-        this.phoneCopied = true;
-        setTimeout(() => this.phoneCopied = false, 2000);
-      } else {
-        this.emailCopied = true;
-        setTimeout(() => this.emailCopied = false, 2000);
-      }
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
-  }
-
-  navigateToTicketLookup(): void {
-    this.router.navigate(['/tickets/lookup']);
+    return this.config?.company?.name?.toLowerCase().replace(/\s+/g, '-') ?? 'default-header';
   }
 
   getRouterLinkActiveOptions(item: any): any {
-    // For home page, we want exact match
-    if (item.routerLink === '/') {
-      return { exact: true };
-    }
-    
-    // For events, we want partial match to include all event routes
-    if (item.routerLink === '/events') {
-      return { exact: false };
-    }
-    
-    // For other items, use default behavior
-    return { exact: false };
+    return { exact: item?.routerLink === '/' };
+  }
+
+  copyToClipboard(text: string, type: 'phone' | 'email'): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if (type === 'phone') { this.phoneCopied = true; setTimeout(() => this.phoneCopied = false, 2000); }
+      else                  { this.emailCopied = true; setTimeout(() => this.emailCopied = false, 2000); }
+    }).catch(err => console.error('Copy failed:', err));
+  }
+
+  // ── Theme application ─────────────────────────────────────────────────────
+
+  private applyTheme(config: HeaderConfig): void {
+    const s = document.documentElement.style;
+    s.setProperty('--primary-color',   config.company.primaryColor);
+    s.setProperty('--primary-dark',    this.darkenColor(config.company.primaryColor, 20));
+    s.setProperty('--secondary-color', config.company.secondaryColor);
+    s.setProperty('--accent-color',    config.company.accentColor);
+    s.setProperty('--text-color',      config.theme.textColor);
+    s.setProperty('--glass-bg',        config.theme.glassBackground  || 'rgba(255,255,255,0.1)');
+    s.setProperty('--glass-border',    config.theme.glassBorder       || 'rgba(255,255,255,0.15)');
+  }
+
+  private darkenColor(color: string, percent: number): string {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R   = (num >> 16)          - amt;
+    const G   = (num >> 8  & 0x00FF) - amt;
+    const B   = (num        & 0x0000FF) - amt;
+    return '#' + (0x1000000 +
+      (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100  +
+      (B < 255 ? B < 1 ? 0 : B : 255)
+    ).toString(16).slice(1);
   }
 }

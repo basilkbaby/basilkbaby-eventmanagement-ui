@@ -81,13 +81,14 @@ export class EventLandingComponent implements OnInit {
   }
 
   buyTickets(eventId: string) {
-
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-      .test(navigator.userAgent);
-    if(isMobile)
-        this.router.navigate(['/events', eventId, 'mobileseatmap']);
-        else
-      this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
+    this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
+    
+    // const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+    //   .test(navigator.userAgent);
+    // if(isMobile)
+    //     this.router.navigate(['/events', eventId, 'mobileseatmap']);
+    //     else
+    //   this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
   }
 
 }

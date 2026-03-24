@@ -75,7 +75,7 @@ export const VENUE_DATA: Venue[] = [
     imageUrl: 'https://www.creativetourist.com/app/uploads/2020/12/367e8f571aa80544cd66907f2acf31aa.jpg',
     capacity: '3,000 seats',
     features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
-    ticketsOpen : false,
+    ticketsOpen : true,
     eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
   },
   // {

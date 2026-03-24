@@ -1,243 +1,271 @@
-<header class="header" [class]="getHeaderClass()">
-  <div class="header-container">
-    <!-- Logo Section -->
-    <div class="logo-section">
-      <div class="logo">
+<!-- ═══════════════════════════════════════════════════════
+     FULL THEME  — dark, feature-rich (e.g. default company)
+════════════════════════════════════════════════════════ -->
+<ng-container *ngIf="isFull">
+  <header class="header" [class]="getHeaderClass()">
+    <div class="header-container">
+
+      <!-- Logo (uses config.company.logo.text / sublabel) -->
+      <div class="logo-section">
         <a routerLink="/" class="logo-link">
-          <img 
-            src="assets/images/logo/logo.webp" 
-            alt="V4 Entertainment Logo"
-            class="logo-image"
-            width="303"
-            height="104">
+          <img src="assets/images/logo/logo.webp" alt="Logo" class="logo-image" width="303" height="104">
         </a>
       </div>
+
+      <div class="user-actions" *ngIf="config">
+        <div class="action-group" *ngIf="config.features.enableSearch || config.features.enableCart">
+
+          <!-- Desktop nav from config.navigation.menuItems -->
+          <nav class="nav-desktop">
+            <ul class="nav-list">
+              <li class="nav-item" *ngFor="let item of menuItems">
+                <a *ngIf="item.external"
+                   [href]="item.routerLink"
+                   class="nav-link"
+                   target="_blank"
+                   rel="noopener noreferrer">{{ item.label }}</a>
+                <a *ngIf="!item.external"
+                   [routerLink]="item.routerLink"
+                   class="nav-link"
+                   routerLinkActive="active"
+                   [routerLinkActiveOptions]="getRouterLinkActiveOptions(item)">{{ item.label }}</a>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- Search -->
+          <button class="icon-btn search-btn" aria-label="Search" *ngIf="config.features.enableSearch">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+          </button>
+
+          <!-- Contact dropdown -->
+          <div class="contact-info-icon dropdown" *ngIf="config.features.showContactInfo">
+            <button class="icon-btn contact-btn" aria-label="Contact" (click)="toggleContactDropdown()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </button>
+            <div class="contact-dropdown" [class.open]="contactDropdownOpen">
+              <div class="dropdown-item" [class.copied]="phoneCopied"
+                   (click)="copyToClipboard(contactInfo.phone, 'phone')">
+                <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                <div class="item-text">
+                  <div class="item-label">Phone</div>
+                  <div class="item-value">{{ contactInfo.phone }}</div>
+                </div>
+                <div class="copy-hint">{{ phoneCopied ? 'Copied!' : 'Copy' }}</div>
+              </div>
+              <div class="dropdown-item" [class.copied]="emailCopied"
+                   (click)="copyToClipboard(contactInfo.email, 'email')">
+                <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                <div class="item-text">
+                  <div class="item-label">Email</div>
+                  <div class="item-value">{{ contactInfo.email }}</div>
+                </div>
+                <div class="copy-hint">{{ emailCopied ? 'Copied!' : 'Copy' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <a class="icon-btn cart-btn" routerLink="/cart" aria-label="Cart"
+             *ngIf="config.features.enableCart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+          </a>
+        </div>
+
+        <div class="auth-section" *ngIf="config.features.enableAuth">
+          <button class="auth-btn tickets-btn" (click)="navigateToTicketLookup()">View Tickets</button>
+        </div>
+      </div>
+
+      <button class="menu-toggle" [class.active]="isMenuOpen" (click)="toggleMenu()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
 
-    <!-- Desktop Navigation -->
-
-
-    <!-- User Actions -->
-    <div class="user-actions" *ngIf="config">
-      <!-- Contact Info as Icon -->
-
-
-      <!-- Search and Cart -->
-      <div class="action-group" *ngIf="config.features.enableSearch || config.features.enableCart">
-        
-        <nav class="nav-desktop" *ngIf="config">
-          <ul class="nav-list">
-            <li class="nav-item" *ngFor="let item of config.navigation.menuItems">
-              <ng-container *ngIf="item.external">
-                <a 
-                  [href]="item.routerLink" 
-                  class="nav-link"
-                  target="_blank" 
-                  rel="noopener noreferrer">
-                  {{ item.label }}
-                </a>
-
-              </ng-container>
-              <ng-container *ngIf="!item.external">
-              <a 
-                [routerLink]="item.routerLink" 
-                class="nav-link" 
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{exact: true}">
-                {{ item.label }}
-              </a>
-            </ng-container>
-              
-              
-            </li>
-          </ul>
-        </nav>
-
-        <button 
-          class="icon-btn search-btn" 
-          aria-label="Search"
-          *ngIf="config.features.enableSearch">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-          </svg>
-        </button>
-
-
-        <div class="contact-info-icon dropdown" *ngIf="config.features.showContactInfo">
-        <button class="icon-btn contact-btn" 
-                aria-label="Contact Information"
-                (click)="toggleContactDropdown()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-          </svg>
-        </button>
-        <div class="contact-dropdown" [class.open]="contactDropdownOpen">
-          <div class="dropdown-item" 
-               [class.copied]="phoneCopied"
-               (click)="copyToClipboard(getContactInfo().phone, 'phone')">
-            <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+    <!-- Mobile drawer -->
+    <nav class="nav-mobile" [class.active]="isMenuOpen" *ngIf="config">
+      <div class="nav-content">
+        <div class="contact-mobile" *ngIf="config.features.showContactInfo">
+          <div class="contact-item" [class.copied]="phoneCopied"
+               (click)="copyToClipboard(contactInfo.phone, 'phone')">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
             </svg>
-            <div class="item-text">
-              <div class="item-label">Phone</div>
-              <div class="item-value">{{ getContactInfo().phone }}</div>
-            </div>
-            <div class="copy-hint">Copy</div>
+            {{ contactInfo.phone }}
           </div>
-          <div class="dropdown-item" 
-               [class.copied]="emailCopied"
-               (click)="copyToClipboard(getContactInfo().email, 'email')">
-            <svg class="item-icon" viewBox="0 0 24 24" fill="currentColor">
+          <div class="contact-item" [class.copied]="emailCopied"
+               (click)="copyToClipboard(contactInfo.email, 'email')">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
             </svg>
-            <div class="item-text">
-              <div class="item-label">Email</div>
-              <div class="item-value">{{ getContactInfo().email }}</div>
-            </div>
-            <div class="copy-hint">Copy</div>
+            {{ contactInfo.email }}
           </div>
         </div>
-        </div>
-                
-        <a 
-          class="icon-btn cart-btn" 
-          routerLink="/cart" 
-          aria-label="Shopping Cart"
-          *ngIf="config.features.enableCart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-          </svg>
-          <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
-        </a>
-      </div>
 
-      <!-- Auth and Tickets Buttons -->
-      <div class="auth-section" *ngIf="config.features.enableAuth">
-        <!-- <button class="auth-btn primary">Sign In</button> -->
-        <!-- <button class="auth-btn tickets-btn">View Ticket</button> -->
-        <button class="auth-btn tickets-btn" (click)="navigateToTicketLookup()">
-  View Tickets
-</button>
-      </div>
-    </div>
+        <ul class="nav-list-mobile">
+          <li *ngFor="let item of menuItems">
+            <a *ngIf="item.external"  [href]="item.routerLink" rel="noopener noreferrer">{{ item.label }}</a>
+            <a *ngIf="!item.external" [routerLink]="item.routerLink" (click)="toggleMenu()" routerLinkActive="active">{{ item.label }}</a>
+          </li>
+        </ul>
 
-    <!-- Mobile Menu Button -->
-    <button class="menu-toggle" 
-            [class.active]="isMenuOpen" 
-            (click)="toggleMenu()" 
-            aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-
-  <!-- Mobile Navigation -->
-  <nav class="nav-mobile" [class.active]="isMenuOpen" *ngIf="config">
-    <div class="nav-content">
-      <!-- Mobile Contact Info -->
-      <div class="contact-mobile" *ngIf="config.features.showContactInfo">
-        <div class="contact-item" 
-             [class.copied]="phoneCopied"
-             (click)="copyToClipboard(getContactInfo().phone, 'phone')">
-          <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-          </svg>
-          {{ getContactInfo().phone }}
-        </div>
-        <div class="contact-item" 
-             [class.copied]="emailCopied"
-             (click)="copyToClipboard(getContactInfo().email, 'email')">
-          <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-          </svg>
-          {{ getContactInfo().email }}
+        <div class="mobile-actions" *ngIf="config.features.enableAuth">
+          <button class="auth-btn tickets-btn" (click)="navigateToTicketLookup()">View Tickets</button>
         </div>
       </div>
+    </nav>
 
-      <ul class="nav-list-mobile">
-        <li *ngFor="let item of config.navigation.menuItems">
-          <ng-container *ngIf="item.external">
-            <a 
-              [href]="item.routerLink" 
-              rel="noopener noreferrer">
-              {{ item.label }}
-            </a>
+    <!-- Mobile bottom tab bar -->
+    <nav class="mobile-footer-menu" *ngIf="config">
+      <ul class="footer-nav">
+        <li class="nav-item" *ngFor="let item of menuItems">
+          <a *ngIf="item.external"
+             [href]="item.routerLink"
+             class="nav-link"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+          <a *ngIf="!item.external"
+             [routerLink]="item.routerLink"
+             class="nav-link"
+             routerLinkActive="active">
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="config.features.enableCart">
+          <a routerLink="/cart" class="nav-link cart-link">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </span>
+            <span class="nav-label">Cart</span>
+            <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-          </ng-container>
-          <ng-container *ngIf="!item.external">
-          <a 
-            [routerLink]="item.routerLink" 
-            (click)="toggleMenu()" 
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: false}">
+  </header>
+</ng-container>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     MINIMAL THEME  — light, clean (e.g. manchestergems)
+     Nav items come from config.navigation.menuItems.
+     External links open new tab.
+     Internal links (/route) use Angular router.
+     Anchor links (#section) smooth-scroll on the page.
+════════════════════════════════════════════════════════ -->
+<ng-container *ngIf="isMinimal">
+  <nav class="navbar" [class.navbar--scrolled]="currentRoute !== '/'">
+    <div class="nav-inner">
+
+      <!-- Logo from config.company.logo -->
+      <a class="nav-logo" routerLink="/">
+        <span class="nav-logo__text">{{ logoText }}</span>
+        <span class="nav-logo__sub" *ngIf="logoSublabel">{{ logoSublabel }}</span>
+      </a>
+
+      <!-- Desktop nav links from config -->
+      <div class="nav-links" *ngIf="config">
+        <ng-container *ngFor="let item of menuItems">
+          <!-- External link — opens new tab, no router involvement -->
+          <a *ngIf="item.external"
+             class="min-nav-link"
+             [href]="item.routerLink"
+             target="_blank"
+             rel="noopener noreferrer">
+            {{ item.label }}
+          </a>
+
+          <!-- Anchor link (#section) — smooth scroll -->
+          <a *ngIf="!item.external && item.routerLink && item.routerLink.startsWith('#')"
+             class="min-nav-link"
+             [href]="item.routerLink"
+             (click)="onMinimalNavClick(item); $event.preventDefault()">
+            {{ item.label }}
+          </a>
+
+          <!-- Internal Angular route -->
+          <a *ngIf="!item.external && item.routerLink && !item.routerLink.startsWith('#')"
+             class="min-nav-link"
+             [routerLink]="item.routerLink">
             {{ item.label }}
           </a>
         </ng-container>
-        </li>
-      </ul>
+      </div>
 
-      <div class="mobile-actions" *ngIf="config.features.enableAuth">
-        <!-- <button class="auth-btn primary" (click)="toggleMenu()">Sign In</button> -->
-        <button class="auth-btn tickets-btn" (click)="navigateToTicketLookup()">View Tickets</button>
+      <div class="nav-right">
+        <!-- Cart -->
+        <a class="nav-cart" routerLink="/cart" aria-label="Cart"
+           *ngIf="config && config.features.enableCart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+          <span class="nav-cart__count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+
+        <!-- View Tickets CTA -->
+        <button class="nav-cta" (click)="navigateToTicketLookup()">
+          View Tickets
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7h9M8 3.5L11.5 7 8 10.5" stroke="currentColor" stroke-width="1.6"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Hamburger -->
+        <button class="nav-burger" [class.nav-burger--open]="mobileOpen"
+                (click)="mobileOpen = !mobileOpen" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
-  </nav>
 
-  <!-- Mobile Footer Menu (App-like) -->
-  <nav class="mobile-footer-menu" *ngIf="config">
-    <ul class="footer-nav">
-      <li class="nav-item">
-        <a href="https://v4entertainments.co.uk" class="nav-link" >
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-          </span>
-          <span class="nav-label">Home</span>
+    <!-- Mobile drawer -->
+    <div class="nav-mobile-drawer" [class.nav-mobile-drawer--open]="mobileOpen" *ngIf="config">
+
+      <ng-container *ngFor="let item of menuItems">
+        <a *ngIf="item.external"
+           class="nav-mobile-drawer__link"
+           [href]="item.routerLink"
+           target="_blank"
+           rel="noopener noreferrer"
+           (click)="mobileOpen = false">
+          {{ item.label }}
         </a>
-      </li>
-      <li class="nav-item">
-        <a href="https://v4entertainments.co.uk/whats-on" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
-            </svg>
-          </span>
-          <span class="nav-label">Events</span>
+
+        <a *ngIf="!item.external && item.routerLink && item.routerLink.startsWith('#')"
+           class="nav-mobile-drawer__link"
+           [href]="item.routerLink"
+           (click)="onMinimalNavClick(item); $event.preventDefault()">
+          {{ item.label }}
         </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/cart" class="nav-link cart-link" routerLinkActive="active">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-            </svg>
-          </span>
-          <span class="nav-label">Cart</span>
-          <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+
+        <a *ngIf="!item.external && item.routerLink && !item.routerLink.startsWith('#')"
+           class="nav-mobile-drawer__link"
+           [routerLink]="item.routerLink"
+           (click)="mobileOpen = false">
+          {{ item.label }}
         </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/search" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-            </svg>
-          </span>
-          <span class="nav-label">Search</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a (click)="toggleMenu()" class="nav-link">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-            </svg>
-          </span>
-          <span class="nav-label">Menu</span>
-        </a>
-      </li>
-    </ul>
+      </ng-container>
+
+      <button class="nav-mobile-drawer__cta" (click)="onMinimalCtaClick()">
+        View Tickets
+      </button>
+    </div>
   </nav>
-</header>
+</ng-container>

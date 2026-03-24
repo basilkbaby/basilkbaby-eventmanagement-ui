@@ -1,172 +1,169 @@
-<div class="seat-selection-layout" *ngIf="!loading">
+<div class="page" *ngIf="!loading">
 
-  <!-- Main Canvas Area -->
-  <main class="canvas-area">
-    <div class="canvas-wrapper">
-      <!-- SVG Component -->
-      <app-seat-map-visual [venueData]="venueData" [seats]="seats" [selectedSeatIds]="selectedSeatIds"
-        [hoveredSeatId]="hoveredSeatId" [scale]="scale" [offsetX]="offsetX" [offsetY]="offsetY" [rowLabels]="rowLabels"
-        (seatClicked)="onSeatClicked($event)" (seatHovered)="onSeatHovered($event)"
-        (dragStarted)="onDragStarted($event)" (dragMoved)="onDragMoved($event)" (dragEnded)="onDragEnded()"
-        (zoomed)="onZoomed($event)" class="seat-map-visual">
+  <!-- ══════════ MAP COLUMN ══════════════════════════════════════════════════ -->
+  <main class="map-col">
+
+    <!-- Mobile section filter -->
+    <div class="sec-filter" *ngIf="getSections().length > 1">
+      <button class="sec-pill" [class.on]="activeSectionId === null" (click)="setSection(null)">All</button>
+      <button class="sec-pill" *ngFor="let s of getSections()" [class.on]="activeSectionId === s.id" (click)="setSection(s.id)">
+        {{ s.sectionLabel || s.name }}
+      </button>
+    </div>
+
+    <!-- Map -->
+    <div class="map-card">
+      <app-seat-map-visual
+        #seatMapVisual
+        [venueData]="venueData"
+        [seats]="seats"
+        [selectedSeatIds]="selectedSeatIds"
+        [hoveredSeatId]="hoveredSeatId"
+        [activeSectionId]="activeSectionId"
+        [rowLabels]="rowLabels"
+        (seatClicked)="onSeatClicked($event)"
+        (seatHovered)="onSeatHovered($event)"
+        (zoomed)="onZoomed($event)">
       </app-seat-map-visual>
-    </div>
-  </main>
 
-  <!-- Sidebar / Mobile Bottom Sheet -->
-  <aside class="controls-sidebar expanded">
-
-    <!-- Desktop Header -->
-    <div class="compact-header">
-
-      <div class="event-info-ultra-compact">
-        <h1>{{ venueData.eventName }}</h1>
-        <div class="event-details-minimal">
-          <span class="detail-item">
-            {{ venueData.eventDate | formatDate }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Selected Seats Summary -->
-    <div class="selected-summary" *ngIf="(selectedSeats.length > 0)">
-
-      <div class="summary-header">
-        <h3>Selected Seats ({{ selectedSeats.length }})</h3>
-        <button class="clear-btn" (click)="clearSelection()">Clear All</button>
-      </div>
-
-      <div class="seats-grid">
-        <div class="seat-tag" *ngFor="let seat of selectedSeats; let i = index">
-          <span class="seat-label" *ngIf="!seat.isStandingArea">
-            {{ seat.seatId }}
-          </span>
-          <span class="seat-label" *ngIf="seat.isStandingArea">
-           {{ seat.seatId }}
-          </span>
-          <button class="remove-tag" (click)="onRemoveSeat(seat.seatId, $event)" title="Remove">×</button>
-        </div>
-      </div>
-
-    <!-- Standing ticket message and add button -->
-      <div class="standing-info-section" *ngIf="hasStandingTickets()">
-        <div class="standing-message">
-          <span class="info-icon">ℹ️</span>
-          <span>Standing tickets are for general admission areas and don't have specific seats.</span>
-        </div>
-        
-        <button class="add-more-standing-btn" (click)="addAnotherStandingTicket()">
-          + Add Another Standing Ticket
+      <!-- Always-visible zoom bar — bottom-left of map -->
+      <div class="zoom-bar">
+        <button class="zb" (click)="seatMapVisual.zoomIn()"    aria-label="Zoom in">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Zoom in</span>
         </button>
-      </div>
-
-      <div class="quick-summary">
-        <div class="price-breakdown">
-          <div class="price-item" *ngFor="let seat of selectedSeats">
-            <span>
-              <span *ngIf="!seat.isStandingArea">
-                {{ seat.seatId }}
-              </span>
-              <span *ngIf="seat.isStandingArea">
-                {{ seat.seatId }}
-              </span>
-            </span>
-            <span>{{ formatPrice(seat.price) }}</span>
-          </div>
-        </div>
-        <div class="total-price">
-          <span>Total:</span>
-          <span class="amount">{{ formatPrice(getTotalPrice()) }}</span>
-        </div>
-      </div>
-
-      <div class="action-buttons-compact">
-        <button class="btn-add-compact" (click)="addToCart()" [disabled]="isLoading || selectedSeats.length === 0"
-          [class.loading]="isLoading">
-
-          <!-- Default content -->
-          <span class="default-content" *ngIf="!isLoading">
-            Add {{ selectedSeats.length }} to Cart
-          </span>
-
-          <!-- Loading content -->
-          <span class="loading-content" *ngIf="isLoading">
-            <span class="spinner"></span>
-            Adding...
-          </span>
+        <div class="zb-divider"></div>
+        <button class="zb" (click)="seatMapVisual.zoomOut()"   aria-label="Zoom out">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 7h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Zoom out</span>
         </button>
-
-        <button class="btn-view-cart-compact" [routerLink]="['/cart']" [disabled]="isLoading">
-          View Cart
+        <div class="zb-divider"></div>
+        <button class="zb" (click)="seatMapVisual.fitView()"   aria-label="Fit to screen">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Fit</span>
         </button>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div class="empty-state-compact" *ngIf="selectedSeats.length === 0">
-      <div class="empty-icon">👆</div>
-      <p>Click on seats to select them</p>
-      <p class="hint" *ngIf="getUniqueTicketTiers().length > 0">
-        Available seats are shown in
-        <span *ngFor="let tier of getUniqueTicketTiers(); let last = last">
-          <span [style.color]="tier.color">{{ tier.name.toLowerCase() }}</span>
-          <span *ngIf="!last">, </span>
-        </span>
-      </p>
-    </div>
-
-    <!-- Legend -->
-    <div class="compact-legend">
-      <h4>Seat Types</h4>
-
-      <!-- Ticket Tiers -->
-      <div class="legend-container">
-        <div class="legend-item-compact" *ngFor="let tier of getUniqueTicketTiers()">
-          <div class="legend-color-compact" [style.background-color]="tier.color" [style.border-radius]="'8px'"></div>
-          <span class="legend-label-compact">{{ tier.name }}</span>
-          <span class="legend-price-compact">{{ formatPrice(tier.price) }}</span>
-        </div>
-      </div>
-
-      <!-- Seat Status -->
-      <div class="legend-container">
-        <div class="legend-item-compact" *ngFor="let status of getDisplayStatuses()">
-          <div class="legend-color-compact" [style.background-color]="seatStatusConfig[status.status].color"
-            [style.border]="status.status === SeatStatus.PARTIAL_VIEW ? '1px solid #999' : '1px solid ' + seatStatusConfig[status.status].stroke"
-            [style.border-radius]="'8px'"
-            
-            >
-            <div *ngIf="status.status === SeatStatus.PARTIAL_VIEW" class="partial-view-compact">
-              <div class="half-left" [style.background-color]="seatStatusConfig[SeatStatus.AVAILABLE].color"></div>
-              <div class="half-right" [style.background-color]="seatStatusConfig[SeatStatus.UNAVAILABLE].color"></div>
-            </div>
-          </div>
-          <span class="legend-label-compact">{{ status.displayText }}</span>
-          <span class="legend-price-compact">{{ status.price }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Desktop Zoom Controls -->
-    <div class="zoom-controls-compact">
-      <h4>Controls</h4>
-      <div class="zoom-buttons-compact">
-        <button (click)="zoomIn()" title="Zoom In">
-          <span class="zoom-icon">+</span>
-          <span>Zoom In</span>
-        </button>
-        <button (click)="zoomOut()" title="Zoom Out">
-          <span class="zoom-icon">−</span>
-          <span>Zoom Out</span>
-        </button>
-        <button (click)="resetView()" title="Reset View">
-          <span class="zoom-icon">↺</span>
+        <div class="zb-divider"></div>
+        <button class="zb" (click)="seatMapVisual.resetView()" aria-label="Reset view">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 2.5A7 7 0 1 0 14.5 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M10.5 2.5H13V5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>Reset</span>
         </button>
       </div>
     </div>
 
+  </main>
+
+  <!-- ══════════ SIDEBAR (desktop) / BOTTOM SHEET (mobile) ══════════════════ -->
+  <aside class="sidebar" [class.has-selection]="selectedSeats.length > 0">
+
+    <div class="drag-handle"></div>
+
+    <!-- Event header -->
+    <div class="sidebar-hd">
+      <div class="ev-meta">
+        <h1 class="ev-name">{{ venueData.eventName }}</h1>
+        <p class="ev-date">{{ venueData.eventDate | formatDate }}</p>
+      </div>
+      <div class="sel-badge" *ngIf="selectedSeats.length > 0">
+        <span>{{ selectedSeats.length }}</span>
+        <span class="sel-badge-lbl">seat{{ selectedSeats.length !== 1 ? 's' : '' }}</span>
+      </div>
+    </div>
+
+    <!-- ── EMPTY STATE ──────────────────────────────────────────────────────── -->
+    <div class="empty-state" *ngIf="selectedSeats.length === 0">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="8" width="18" height="10" rx="2.5" stroke="#22C55E" stroke-width="1.6"/>
+          <path d="M7 8V6a1 1 0 011-1h8a1 1 0 011 1v2" stroke="#22C55E" stroke-width="1.6"/>
+          <circle cx="12" cy="13" r="1.3" fill="#22C55E"/>
+        </svg>
+      </div>
+      <p class="empty-title">Pick your seats</p>
+      <p class="empty-hint">Click any available seat on the map to add it to your order</p>
+
+      <!-- Ticket type legend -->
+      <div class="legend" *ngIf="getUniqueTicketTiers().length > 0">
+        <p class="legend-label">Ticket types</p>
+        <div class="legend-rows">
+          <div class="legend-row" *ngFor="let t of getUniqueTicketTiers()">
+            <span class="l-dot" [style.background]="t.color"></span>
+            <span class="l-name">{{ t.name }}</span>
+            <span class="l-price">{{ formatPrice(t.price) }}</span>
+          </div>
+        </div>
+
+        <div class="legend-sep"></div>
+
+        <div class="legend-rows">
+          <div class="legend-row" *ngFor="let st of getDisplayStatuses()">
+            <span class="l-dot"
+              [style.background]="seatStatusConfig[st.status].color"
+              [style.outline]="'1.5px solid ' + (seatStatusConfig[st.status].stroke )"
+              style="outline-offset:1px">
+            </span>
+            <span class="l-name">{{ st.displayText }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SELECTION PANEL ─────────────────────────────────────────────────── -->
+    <div class="sel-panel" *ngIf="selectedSeats.length > 0">
+
+      <div class="sel-header">
+        <span class="sel-title">Selected seats</span>
+        <button class="btn-clear" (click)="clearSelection()">Clear all</button>
+      </div>
+
+      <!-- Seat chips -->
+      <div class="chips-wrap">
+        <div class="chip" *ngFor="let s of selectedSeats">
+          <span class="chip-txt">{{ s.seatId }}</span>
+          <button class="chip-del" (click)="onRemoveSeat(s.seatId, $event)" aria-label="Remove">×</button>
+        </div>
+      </div>
+
+      <!-- Standing notice -->
+      <div class="standing-alert" *ngIf="hasStandingTickets()">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+          <circle cx="8" cy="8" r="6.5" stroke="#22C55E" stroke-width="1.4"/>
+          <path d="M8 7v3M8 5.2v.3" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Standing tickets are general admission — no fixed seat.</span>
+        <button class="add-standing" (click)="addAnotherStandingTicket()">+ Add another</button>
+      </div>
+
+      <!-- Price breakdown -->
+      <div class="price-block">
+        <div class="price-line" *ngFor="let s of selectedSeats">
+          <span class="price-lbl">{{ s.seatId }}</span>
+          <span class="price-val">{{ formatPrice(s.price) }}</span>
+        </div>
+        <div class="price-total">
+          <span>Total</span>
+          <span class="total-num">{{ formatPrice(getTotalPrice()) }}</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn-add"
+          (click)="addToCart()"
+          [disabled]="isLoading || selectedSeats.length === 0"
+          [class.busy]="isLoading">
+          <span *ngIf="!isLoading">Add {{ selectedSeats.length }} to Cart</span>
+          <span class="spin-row" *ngIf="isLoading"><span class="spinner"></span>Adding…</span>
+        </button>
+        <button class="btn-cart" [routerLink]="['/cart']" [disabled]="isLoading">View Cart</button>
+      </div>
+
+    </div>
+
   </aside>
+</div>
+
+<!-- Full-page loading -->
+<div class="page-loader" *ngIf="loading">
+  <div class="loader-ring"></div>
+  <p>Loading venue…</p>
 </div>
