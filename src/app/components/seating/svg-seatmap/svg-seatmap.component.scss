@@ -355,16 +355,22 @@ $sw:       320px;
     }
   }
 
-  // Zoom bar — horizontal, sits above the bottom sheet (90px)
+  // Zoom bar — sits above the collapsed sheet
   .zoom-bar {
-    bottom: 102px;    // 90px sheet + 12px gap
+    bottom: 102px;
     top: auto;
     left: 50%;
     right: auto;
     transform: translateX(-50%);
     flex-direction: row;
     width: auto;
-    z-index: 60;      // above the sheet (z-index: 50)
+    z-index: 45;
+    transition: opacity 0.2s ease;
+  }
+  // Hide when seats are selected — sheet expands and covers this area
+  .zoom-bar--raised {
+    opacity: 0;
+    pointer-events: none;
   }
   .zb { padding: 8px 12px; flex-direction: row; gap: 5px; font-size: 11px; }
   .zb-divider { width: 1px; height: 24px; }

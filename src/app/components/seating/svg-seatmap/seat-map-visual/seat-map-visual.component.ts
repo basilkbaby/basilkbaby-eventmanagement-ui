@@ -273,6 +273,8 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     ctx.resetTransform();
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, c.width, c.height);
+    // Crisp rendering — smoothing causes blur on circles at non-integer zoom levels
+    ctx.imageSmoothingEnabled = false;
     ctx.setTransform(this.dpr * this.zoom, 0, 0, this.dpr * this.zoom, this.panX * this.dpr, this.panY * this.dpr);
     this.drawStage(ctx);
     this.drawSectionLabels(ctx);
@@ -421,35 +423,12 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
       ctx.fill();
     }
 
-    // Soft drop shadow — only when zoomed in enough to see it
-    if (cfg.opacity > 0.4 && this.zoom > 0.4) {
-      ctx.shadowColor   = isSel ? this.SEL_GLOW : 'rgba(0,0,0,0.14)';
-      ctx.shadowBlur    = isSel ? 9 : 5;
-      ctx.shadowOffsetY = 1.5;
-    }
-
-    // Main circle
+    // Main circle — no shadow (causes blur at non-integer zoom levels)
     const fill = isSel ? this.SEL_COLOR : (this.colorCache.get(seat.id) ?? '#d1d5db');
     ctx.beginPath();
     ctx.arc(seat.cx, seat.cy, SR, 0, Math.PI * 2);
     ctx.fillStyle = fill;
     ctx.fill();
-    ctx.shadowColor = 'transparent';
-
-    // Subtle inner highlight arc — gives depth without a stroke
-    // Only draw when zoomed in enough to be visible
-    if (!isSel && this.zoom >= 0.6 && cfg.opacity > 0.4) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(seat.cx, seat.cy, SR, 0, Math.PI * 2);
-      ctx.clip();
-      const hi = ctx.createLinearGradient(seat.cx - SR, seat.cy - SR, seat.cx, seat.cy + SR * 0.3);
-      hi.addColorStop(0, 'rgba(255,255,255,0.22)');
-      hi.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = hi;
-      ctx.fillRect(seat.cx - SR, seat.cy - SR, SR * 2, SR * 2);
-      ctx.restore();
-    }
 
     // Label — seat number only at high zoom, checkmark when selected
     ctx.globalAlpha = 1;

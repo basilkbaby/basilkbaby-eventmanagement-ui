@@ -36,7 +36,7 @@
       </div>
 
       <!-- Always-visible zoom bar — bottom-left of map -->
-      <div class="zoom-bar">
+      <div class="zoom-bar" [class.zoom-bar--raised]="selectedSeats.length > 0">
         <button class="zb" (click)="seatMapVisual.zoomIn()"    aria-label="Zoom in">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           <span>Zoom in</span>
@@ -107,7 +107,7 @@
           <div class="legend-row" *ngFor="let st of getDisplayStatuses()">
             <span class="l-dot"
               [style.background]="seatStatusConfig[st.status].color"
-              [style.outline]="'1.5px solid ' + (seatStatusConfig[st.status].stroke )"
+              [style.outline]="'1.5px solid ' + (seatStatusConfig[st.status].stroke)"
               style="outline-offset:1px">
             </span>
             <span class="l-name">{{ st.displayText }}</span>
