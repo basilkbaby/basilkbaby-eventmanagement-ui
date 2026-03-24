@@ -355,15 +355,16 @@ $sw:       320px;
     }
   }
 
-  // Zoom bar — horizontal strip at the bottom-centre of the map
+  // Zoom bar — horizontal, sits above the bottom sheet (90px)
   .zoom-bar {
-    bottom: 12px;
+    bottom: 102px;    // 90px sheet + 12px gap
     top: auto;
     left: 50%;
     right: auto;
     transform: translateX(-50%);
     flex-direction: row;
     width: auto;
+    z-index: 60;      // above the sheet (z-index: 50)
   }
   .zb { padding: 8px 12px; flex-direction: row; gap: 5px; font-size: 11px; }
   .zb-divider { width: 1px; height: 24px; }
