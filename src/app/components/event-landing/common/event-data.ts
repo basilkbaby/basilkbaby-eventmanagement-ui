@@ -254,6 +254,17 @@ export const ARTIST_DATA: Artist[] = [
       instagram: '@dayanahameed',
       twitter: '@dayanasings'
     }
+  },
+  {
+    id: 12,
+    name: 'Sunil Prayag',
+    role: 'Keyboard',
+    imageUrl: 'assets/images/events/nadirshow/artist/Sunil.jpeg',
+    bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+    social: {
+      instagram: '@dayanahameed',
+      twitter: '@dayanasings'
+    }
   }
 ];
 

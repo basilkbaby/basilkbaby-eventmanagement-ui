@@ -16,18 +16,21 @@ $sw:       320px;
 
 // ── Host ──────────────────────────────────────────────────────────────────────
 :host {
-  display: block; height: 100vh;
+  display: block;
+  // Fill remaining height after the sticky header (typically ~70-80px)
+  // Using dvh + calc to account for header and avoid overflow
+  height: calc(100dvh - 70px);
   font-family: $font; -webkit-font-smoothing: antialiased;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
-.page { display: flex; height: 100vh; background: $bg; overflow: hidden; }
+.page { display: flex; height: 100%; background: $surface; overflow: hidden; }
 
 // ── Loading ───────────────────────────────────────────────────────────────────
 .page-loader {
-  height: 100vh; display: flex; flex-direction: column;
+  height: 100%; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px;
-  background: $bg;
+  background: $surface;
   p { font-family: $font; font-size: 14px; color: $t3; margin: 0; }
 }
 .loader-ring {
@@ -43,6 +46,7 @@ $sw:       320px;
   flex: 1; min-width: 0;
   display: flex; flex-direction: column;
   padding: 16px; gap: 10px; overflow: hidden;
+  background: #f4f6f9;   // very light blue-grey — only visible outside the card
 }
 
 // Mobile section filter (hidden on desktop)
@@ -265,12 +269,18 @@ $sw:       320px;
 // MOBILE ≤ 768px
 // ═══════════════════════════════════════════════════════════
 @media (max-width: 768px) {
+  :host {
+    height: calc(100dvh - 70px);  // subtract header height
+  }
+
   .page { flex-direction: column; }
 
-  // Map fills all available height (leaves room only for sheet header when nothing selected)
   .map-col {
-    flex: 1; min-height: 0;
+    flex: none;
+    // Map fills space above collapsed bottom sheet (90px)
+    height: calc(100dvh - 70px - 90px);
     padding: 0; gap: 0; overflow: hidden;
+    background: #f4f6f9;
   }
 
   .sec-filter {
@@ -284,13 +294,18 @@ $sw:       320px;
     border-bottom: 1px solid $border-s;
   }
 
-  // Zoom bar shifts to bottom-right on mobile so it's not hidden by the sheet
+  // Zoom bar — horizontal strip at the bottom-centre of the map
   .zoom-bar {
-    bottom: auto; top: 12px; left: auto; right: 12px;
-    flex-direction: column; width: auto;
+    bottom: 12px;
+    top: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-direction: row;
+    width: auto;
   }
-  .zb { padding: 8px 12px; flex-direction: row; gap: 6px; font-size: 11px; }
-  .zb-divider { width: 28px; height: 1px; }
+  .zb { padding: 8px 12px; flex-direction: row; gap: 5px; font-size: 11px; }
+  .zb-divider { width: 1px; height: 24px; }
 
   // ── Bottom sheet ───────────────────────────────────────────────────────────
   .sidebar {

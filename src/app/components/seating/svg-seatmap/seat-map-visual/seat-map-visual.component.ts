@@ -120,7 +120,17 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
   ngOnChanges(ch: SimpleChanges) {
     if (ch['selectedSeatIds']) this.selectedSet = new Set(this.selectedSeatIds);
-    if (ch['seats'])           this.rebuildCaches();
+    if (ch['seats']) {
+      this.rebuildCaches();
+      // Auto-fit when seats first arrive — use double RAF to ensure
+      // the canvas has been sized by the browser layout engine
+      if (!ch['seats'].previousValue || ch['seats'].previousValue.length === 0) {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          this.sizeCanvas();
+          this.centreView();
+        }));
+      }
+    }
     this.scheduleRender();
   }
 
@@ -190,8 +200,31 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     const host = this.hostRef.nativeElement;
     const w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
-    this.panX = (w  - this.CANVAS_W * this.zoom) / 2;
-    this.panY = Math.max(16, (h - this.CANVAS_H * this.zoom) / 2);
+
+    // Centre on the actual seats bounding box, not the whole CANVAS_W/H
+    const pool = this.seats.length ? this.seats : null;
+    if (pool && pool.length > 0) {
+      const minX = Math.min(...pool.map(s => s.cx));
+      const maxX = Math.max(...pool.map(s => s.cx));
+      // Include stage: start from y=10 (stage top)
+      const minY = 10;
+      const maxY = Math.max(...pool.map(s => s.cy)) + this.SR * 2;
+      const contentW = maxX - minX + this.SR * 4;
+      const contentH = maxY - minY + this.SR * 4;
+
+      const pad = 40;
+      const zx = (w - pad * 2) / contentW;
+      const zy = (h - pad * 2) / contentH;
+      this.zoom = Math.max(0.2, Math.min(1.4, Math.min(zx, zy)));
+
+      this.panX = pad + (w - pad * 2 - contentW * this.zoom) / 2 - (minX - this.SR * 2) * this.zoom;
+      this.panY = pad + (h - pad * 2 - contentH * this.zoom) / 2 - minY * this.zoom;
+    } else {
+      // No seats yet — centre the canvas world
+      this.zoom = 0.72;
+      this.panX = (w - this.CANVAS_W * this.zoom) / 2;
+      this.panY = Math.max(16, (h - this.CANVAS_H * this.zoom) / 2);
+    }
     this.dirty = true;
   }
 
@@ -232,7 +265,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     if (!this.ctx) return;
     const ctx = this.ctx, c = this.canvasRef.nativeElement;
     ctx.resetTransform();
-    ctx.fillStyle = '#f2f4f8';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, c.width, c.height);
     ctx.setTransform(this.dpr * this.zoom, 0, 0, this.dpr * this.zoom, this.panX * this.dpr, this.panY * this.dpr);
     this.drawStage(ctx);
@@ -248,21 +281,22 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     const x = (this.CANVAS_W - this.STAGE_W) / 2, y = 10;
     const w = this.STAGE_W, h = this.STAGE_H;
 
-    ctx.shadowColor = 'rgba(0,0,0,0.07)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 3;
-    ctx.fillStyle   = '#ffffff';
+    // Plain light card
+    ctx.shadowColor = 'rgba(0,0,0,0.06)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+    ctx.fillStyle   = '#f8f9fb';
     this.rrect(ctx, x, y, w, h, 10); ctx.fill();
     ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = '#e2e6ef'; ctx.lineWidth = 1;
+
+    // Simple border
+    ctx.strokeStyle = '#dde2ec'; ctx.lineWidth = 1.5;
     this.rrect(ctx, x, y, w, h, 10); ctx.stroke();
 
-    // Green accent top bar
-    ctx.fillStyle = this.SEL_COLOR;
-    this.rrect(ctx, x, y, w, 3, 10); ctx.fill();
-
-    ctx.fillStyle = '#9aa3b5';
-    ctx.font = `600 11px "DM Sans","Helvetica Neue",sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('S T A G E', x + w / 2, y + h / 2 + 3);
+    // Label
+    ctx.fillStyle    = '#a0aab8';
+    ctx.font         = `600 11px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('S T A G E', x + w / 2, y + h / 2 + 1);
   }
 
   // ── Section labels — constant screen size like row labels ─────────────────
@@ -689,7 +723,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
   zoomIn()    { this.applyZoom(1.25); }
   zoomOut()   { this.applyZoom(0.8);  }
-  resetView() { this.zoom = 0.72; this.centreView(); this.scheduleRender(); }
+  resetView() { this.centreView(); this.scheduleRender(); }
 
   fitView() {
     if (!this.seats.length) { this.resetView(); return; }
