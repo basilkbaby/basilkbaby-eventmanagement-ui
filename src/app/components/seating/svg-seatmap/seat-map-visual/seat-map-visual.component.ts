@@ -296,25 +296,29 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     this.rrect(ctx, x, y, w, h, 10); ctx.stroke();
 
     // Label
-    ctx.fillStyle    = '#a0aab8';
-    ctx.font         = `600 11px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.fillStyle    = '#475569';
+    ctx.font         = `700 13px "DM Sans","Helvetica Neue",sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('S T A G E', x + w / 2, y + h / 2 + 1);
+    ctx.letterSpacing = '3px';
+    ctx.fillText('STAGE', x + w / 2, y + h / 2 + 1);
+    ctx.letterSpacing = '0px';
   }
 
-  // ── Section labels — scale with zoom, drawn in world space ──────────────────
+  // ── Section labels ─────────────────────────────────────────────────────────
+  // Draw in screen space (resetTransform) so font size is always crisp.
+  // Convert world coords → screen px manually: sx = wx * zoom + panX
 
   private drawSectionLabels(ctx: CanvasRenderingContext2D) {
     if (!this.venueData?.sections) return;
 
-    // Clamp font size so it's readable at any zoom level
-    // At zoom 1.0 → 11px world = 11px screen. At zoom 0.5 → 22px world = 11px screen.
-    // We target a constant ~11px screen size by dividing by zoom.
-    const targetPx = 11;
-    const fontSize = Math.round(targetPx / this.zoom);
+    ctx.save();
+    ctx.resetTransform();
+    ctx.scale(this.dpr, this.dpr);
 
-    ctx.font         = `600 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
+    // Scale font with zoom so labels get bigger when you zoom in
+    const fontSize = Math.max(10, Math.min(22, Math.round(13 * this.zoom)));
+    ctx.font         = `700 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
 
@@ -322,42 +326,69 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
       if (sec.seatSectionType === SeatSectionType.FOH || sec.seatSectionType === SeatSectionType.STANDING) continue;
 
       const label = (sec.sectionLabel || sec.name).toUpperCase();
-      const cx    = this.sectionCX(sec);
-      const cy    = sec.y - 28;
 
-      const tw = ctx.measureText(label).width;
-      const pad = 8 / this.zoom;
-      const pillH = 18 / this.zoom;
+      // World → screen
+      const sx = this.sectionCX(sec) * this.zoom + this.panX;
+      const sy = (sec.y - 28)        * this.zoom + this.panY;
 
-      // Pill background
-      ctx.fillStyle = 'rgba(232,236,244,0.92)';
-      this.rrect(ctx, cx - tw/2 - pad, cy - pillH/2, tw + pad*2, pillH, pillH/2);
+      const c = this.canvasRef.nativeElement;
+      if (sx < -60 || sx > c.width / this.dpr + 60) continue;
+      if (sy < -20 || sy > c.height / this.dpr + 20) continue;
+
+      const tw   = ctx.measureText(label).width;
+      const padX = 10, pillH = Math.max(20, fontSize + 8);
+
+      // Pill with stronger background
+      ctx.fillStyle = 'rgba(71,85,105,0.12)';
+      this.rrectScreen(ctx, sx - tw/2 - padX, sy - pillH/2, tw + padX*2, pillH, pillH/2);
       ctx.fill();
-      ctx.fillStyle = '#6b7892';
-      ctx.fillText(label, cx, cy);
+      // Subtle border
+      ctx.strokeStyle = 'rgba(71,85,105,0.25)';
+      ctx.lineWidth   = 1;
+      this.rrectScreen(ctx, sx - tw/2 - padX, sy - pillH/2, tw + padX*2, pillH, pillH/2);
+      ctx.stroke();
+      // Text
+      ctx.fillStyle = '#334155';
+      ctx.fillText(label, sx, sy);
     }
+
+    ctx.restore();
   }
 
-  // ── Row labels — scale with zoom, drawn in world space ────────────────────
+  // ── Row labels ─────────────────────────────────────────────────────────────
+  // Draw in screen space. Font scales with zoom so A-Z letters grow on zoom-in.
 
   private drawRowLabels(ctx: CanvasRenderingContext2D) {
     if (this.zoom < 0.45) return;
 
-    // Target ~10px screen size — divide by zoom to get world size
-    const fontSize   = Math.round(10 / this.zoom);
-    const opacity    = Math.min(1, (this.zoom - 0.45) / 0.20);
+    ctx.save();
+    ctx.resetTransform();
+    ctx.scale(this.dpr, this.dpr);
 
-    ctx.font         = `500 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
-    ctx.globalAlpha  = opacity * 0.85;
-    ctx.fillStyle    = '#64748b';
+    // Scale with zoom, clamped to a readable range
+    const fontSize = Math.max(9, Math.min(16, Math.round(11 * this.zoom)));
+    const opacity  = Math.min(1, (this.zoom - 0.45) / 0.20);
+
+    ctx.font        = `600 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle   = '#475569';
     ctx.textBaseline = 'middle';
 
+    const c = this.canvasRef.nativeElement;
+
     for (const rl of this.rowLabels) {
+      // World → screen
+      const sx = rl.x * this.zoom + this.panX;
+      const sy = rl.y * this.zoom + this.panY;
+
+      if (sy < -20 || sy > c.height / this.dpr + 20) continue;
+
       ctx.textAlign = rl.side === 'left' ? 'right' : 'left';
-      ctx.fillText(rl.label, rl.x, rl.y);
+      ctx.fillText(rl.label, sx, sy);
     }
 
     ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
   // ── FOH ────────────────────────────────────────────────────────────────────
