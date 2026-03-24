@@ -38,35 +38,17 @@
     (scrollTo)="scrollToSection($event)">
   </app-contact-section>
 
+  
+  <app-privacy-policy
+    id="privacy"
+    [policySections]="eventConfig.privacyPolicy"
+    (scrollTo)="scrollToSection($event)">
+  </app-privacy-policy>
+
   <app-footer
     [logo]="eventConfig.logo"
     [year]="eventConfig.year">
   </app-footer>
 
-  <!-- Artist Modal -->
-  <div class="modal" *ngIf="selectedArtist" (click)="closeArtistModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="closeArtistModal()">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="modal-body" *ngIf="selectedArtist">
-        <div class="modal-image">
-          <img [src]="selectedArtist.imageUrl" [alt]="selectedArtist.name">
-        </div>
-        <div class="modal-info">
-          <h2>{{ selectedArtist.name }}</h2>
-          <h3>{{ selectedArtist.role }}</h3>
-          <p>{{ selectedArtist.bio }}</p>
-          <div class="modal-social">
-            <a *ngIf="selectedArtist.social.instagram" [href]="'https://instagram.com/' + selectedArtist.social.instagram" target="_blank">
-              <i class="fab fa-instagram"></i> {{ selectedArtist.social.instagram }}
-            </a>
-            <a *ngIf="selectedArtist.social.twitter" [href]="'https://twitter.com/' + selectedArtist.social.twitter" target="_blank">
-              <i class="fab fa-twitter"></i> {{ selectedArtist.social.twitter }}
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>

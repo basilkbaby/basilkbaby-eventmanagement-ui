@@ -1,0 +1,43 @@
+<section class="privacy">
+
+  <!-- Header -->
+  <div class="privacy__head">
+    <div class="privacy__meta">
+      <span class="privacy__tag">Legal</span>
+      <h2 class="privacy__title">Privacy Policy</h2>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <p class="privacy__intro">
+    we values your privacy and is committed to protecting your personal information.
+    This policy explains how we collect, use, and safeguard your data when you visit
+    our website and use our services.
+    By using our website, you consent to the practices described here.
+  </p>
+
+  <!-- Accordion sections -->
+  <div class="privacy__accordion">
+    <div class="privacy__item"
+         *ngFor="let section of sections"
+         [class.privacy__item--open]="section.open">
+
+      <button class="privacy__item-head" (click)="toggle(section)" [attr.aria-expanded]="section.open">
+        <span class="privacy__item-num">{{ section.id < 10 ? '0' + section.id : section.id }}</span>
+        <span class="privacy__item-title">{{ section.title }}</span>
+        <svg class="privacy__item-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="privacy__item-body" *ngIf="section.open">
+        <p class="privacy__item-text" *ngFor="let line of section.content.split('\n')">
+          <ng-container *ngIf="line.trim()">{{ line }}</ng-container>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+</section>

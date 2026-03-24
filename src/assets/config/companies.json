@@ -42,9 +42,9 @@
       },
       {
         "label": "Terms and conditions",
-        "routerLink": "https://manchestergems.co.uk/terms-and-conditions",
+        "routerLink": "#privacy",
         "type": "about" ,      
-        "external": true
+        "external": false
       },
       {
         "label": "Contact Us",

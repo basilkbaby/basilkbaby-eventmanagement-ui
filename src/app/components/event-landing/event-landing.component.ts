@@ -4,12 +4,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { HeroSplitComponent } from './hero-split/hero-split.component';
 import { ArtistsSectionComponent } from './artists-section/artists-section.component';
 import { VenuesSectionComponent } from './venues-section/venues-section.component';
-import { ProductionSectionComponent } from './production-section/production-section.component';
-import { SponsorsSectionComponent } from './sponsors-section/sponsors-section.component';
 import { ContactSectionComponent } from './contact-section/contact-section.component';
 import { FooterComponent } from './footer/footer.component';
 import { EventConfig, VENUE_DATA, ARTIST_DATA, SPONSOR_DATA, CONTACT_DATA, EVENT_CONFIG } from './common/event-data';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @Component({
   selector: 'app-event-landing',
@@ -20,9 +19,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     HeroSplitComponent,
     ArtistsSectionComponent,
     VenuesSectionComponent,
-    ProductionSectionComponent,
-    SponsorsSectionComponent,
     ContactSectionComponent,
+    PrivacyPolicyComponent,
     FooterComponent
   ],
   templateUrl: './event-landing.component.html',

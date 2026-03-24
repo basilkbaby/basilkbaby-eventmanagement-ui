@@ -26,6 +26,15 @@
         (zoomed)="onZoomed($event)">
       </app-seat-map-visual>
 
+      <!-- Compact price legend — mobile only, top-left of map -->
+      <div class="price-legend" *ngIf="getUniqueTicketTiers().length > 0">
+        <div class="price-legend__item" *ngFor="let t of getUniqueTicketTiers()">
+          <span class="price-legend__dot" [style.background]="t.color"></span>
+          <span class="price-legend__label">{{ t.name }}</span>
+          <span class="price-legend__price">{{ formatPrice(t.price) }}</span>
+        </div>
+      </div>
+
       <!-- Always-visible zoom bar — bottom-left of map -->
       <div class="zoom-bar">
         <button class="zb" (click)="seatMapVisual.zoomIn()"    aria-label="Zoom in">
