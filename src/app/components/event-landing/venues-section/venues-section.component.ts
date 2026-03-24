@@ -24,7 +24,7 @@ export class VenuesSectionComponent {
   }
 
   getTicketStatusMessage(venue: any): string {
-    return venue?.ticketsOpen ? 'Book Now' : 'Tickets Open Soon';
+    return venue?.ticketsOpen ? 'Get Tickets' : 'Tickets Open Soon';
   }
 
   handleTicketClick(venue: any) {

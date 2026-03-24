@@ -87,7 +87,11 @@
               <span class="detail-value">{{ selectedVenue.date }}</span>
             </div>
             <div class="detail-block">
-              <span class="detail-label">Doors Open</span>
+              <span class="detail-label">Gate Open</span>
+              <span class="detail-value">{{ selectedVenue.gateopentime }}</span>
+            </div>
+            <div class="detail-block">
+              <span class="detail-label">Show Starts</span>
               <span class="detail-value">{{ selectedVenue.time }}</span>
             </div>
             <div class="detail-block" *ngIf="selectedVenue.capacity">

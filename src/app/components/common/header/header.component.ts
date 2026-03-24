@@ -181,6 +181,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     s.setProperty('--text-color',      config.theme.textColor);
     s.setProperty('--glass-bg',        config.theme.glassBackground  || 'rgba(255,255,255,0.1)');
     s.setProperty('--glass-border',    config.theme.glassBorder       || 'rgba(255,255,255,0.15)');
+    // Expose header height so child pages (seatmap, cart) can size correctly
+    s.setProperty('--header-h', this.activeTheme === 'minimal' ? '64px' : '80px');
+    // For fixed-position navbar (minimal theme), push body content down
+    document.body.style.paddingTop = this.activeTheme === 'minimal' ? '64px' : '0px';
   }
 
   private darkenColor(color: string, percent: number): string {

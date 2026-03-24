@@ -1,118 +1,152 @@
-<div class="cart-container">
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading">
-    <div class="spinner"></div>
-    <p>Loading your cart...</p>
+<div class="cart-wrap">
+
+  <!-- ── Loading ─────────────────────────────────────────────────────────── -->
+  <div class="cart-loading" *ngIf="loading">
+    <div class="cart-loading__ring"></div>
+    <p>Loading your cart…</p>
   </div>
 
-  <!-- Cart Content -->
-  <div class="cart-content" *ngIf="!loading">
-    <!-- Header -->
-    <div class="cart-header">
-      <h1>Your Cart</h1>
-      <p *ngIf="cartItems.length === 0">Your cart is empty</p>
+  <!-- ── Main content ────────────────────────────────────────────────────── -->
+  <div class="cart-page" *ngIf="!loading">
+
+    <!-- Page title -->
+    <div class="cart-page__head">
+      <div class="cart-page__title-row">
+        <h1 class="cart-page__title">Your Cart</h1>
+        <span class="cart-page__count" *ngIf="cartItems.length > 0">
+          {{ cartItems.length }} {{ cartItems.length === 1 ? 'item' : 'items' }}
+        </span>
+      </div>
     </div>
 
-    <!-- Error Message -->
-    <div class="error-message" *ngIf="errorMessage">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+    <!-- Error banner -->
+    <div class="cart-error" *ngIf="errorMessage">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
       <span>{{ errorMessage }}</span>
-      <button class="retry-btn" (click)="refreshCart()">Retry</button>
+      <button class="cart-error__retry" (click)="refreshCart()">Retry</button>
     </div>
 
-    <!-- Cart Items -->
-    <div class="cart-items" *ngIf="cartItems.length > 0">
-      <!-- Clear Cart Button -->
-      <div class="cart-actions">
-        <button class="clear-cart-btn" (click)="clearCart()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" 
-                  stroke="currentColor" stroke-width="2"/>
-          </svg>
-          Clear Cart
-        </button>
+    <!-- ── Two-column layout when cart has items ─────────────────────────── -->
+    <div class="cart-layout" *ngIf="cartItems.length > 0">
+
+      <!-- Left — items list -->
+      <div class="cart-items-col">
+
+        <div class="cart-items-header">
+          <span class="cart-items-header__label">Seats</span>
+          <button class="cart-clear-btn" (click)="clearCart()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                    stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Clear all
+          </button>
+        </div>
+
+        <div class="cart-items-list">
+          <div class="cart-item" *ngFor="let item of cartItems">
+
+            <!-- Seat colour dot (uses sectionName initial as fallback) -->
+            <div class="cart-item__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="9" width="18" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M7 9V7a1 1 0 011-1h8a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+            </div>
+
+            <div class="cart-item__body">
+              <span class="cart-item__seat">{{ item.seatId }}</span>
+              <span class="cart-item__section">{{ item.sectionName }}</span>
+            </div>
+
+            <div class="cart-item__qty" *ngIf="item.quantity > 1">
+              × {{ item.quantity }}
+            </div>
+
+            <div class="cart-item__price">
+              {{ (item.price * item.quantity) | currencyFormat }}
+            </div>
+
+            <button class="cart-item__remove"
+                    (click)="removeCartItem(item.cartItemId)"
+                    aria-label="Remove seat">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+          </div>
+        </div>
+
       </div>
 
-      <!-- Simple list of seats -->
-      <div class="items-list">
-        <div *ngFor="let item of cartItems" class="cart-item">
-          <div class="item-info">
-            <div class="seat-details">
-              <span class="seat-number">Seat Number : {{ item.seatId }}</span>
-              <div class="seat-meta">
-                <span class="section">Section : {{ item.sectionName }} </span>
-                <!-- <span class="price-per-seat">{{ (item.price) | currencyFormat }} each</span> -->
-              </div>
+      <!-- Right — order summary -->
+      <div class="cart-summary-col">
+        <div class="cart-summary">
+
+          <h2 class="cart-summary__title">Order Summary</h2>
+
+          <div class="cart-summary__lines">
+            <div class="cart-summary__line">
+              <span>Subtotal
+                <span class="cart-summary__sub">
+                  ({{ cartSummary.seatCount }} {{ cartSummary.seatCount === 1 ? 'seat' : 'seats' }})
+                </span>
+              </span>
+              <span>{{ (cartSummary.subtotal) | currencyFormat }}</span>
+            </div>
+
+            <div class="cart-summary__line">
+              <span>Service fee</span>
+              <span>{{ (cartSummary.serviceFee) | currencyFormat }}</span>
+            </div>
+
+            <div class="cart-summary__line cart-summary__line--discount"
+                 *ngIf="cartSummary.totalDiscount > 0">
+              <span>Discount</span>
+              <span>− {{ (cartSummary.totalDiscount) | currencyFormat }}</span>
             </div>
           </div>
 
-          <div class="quantity-controls">
-            <span class="quantity">{{ item.quantity }}</span>
+          <div class="cart-summary__total">
+            <span>Total</span>
+            <span class="cart-summary__total-amt">{{ (cartSummary.total) | currencyFormat }}</span>
           </div>
 
-          <div class="item-price">
-            {{ (item.price * item.quantity) | currencyFormat }}
-          </div>
-
-          <button class="remove-btn" 
-                  (click)="removeCartItem(item.cartItemId)" 
-                  title="Remove seat">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <button class="cart-checkout-btn"
+                  (click)="proceedToCheckout()"
+                  [disabled]="!cartSummary.cartId">
+            Proceed to Checkout
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
+
+          <button class="cart-continue-btn" (click)="continueShopping()">
+            Continue Shopping
+          </button>
+
         </div>
       </div>
+
     </div>
 
-    <!-- Order Summary -->
-    <div class="order-summary" *ngIf="cartItems.length > 0">
-      <h3>Order Summary</h3>
-      
-      <div class="summary-line">
-        <span>Subtotal ({{ cartSummary.seatCount }} {{ cartSummary.seatCount === 1 ? 'seat' : 'seats' }})</span>
-        <span>{{ (cartSummary.subtotal) | currencyFormat }}</span>
+    <!-- ── Empty state ────────────────────────────────────────────────────── -->
+    <div class="cart-empty" *ngIf="cartItems.length === 0 && !errorMessage">
+      <div class="cart-empty__icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 2.3c-.4.4-.1 1.2.5 1.2H17M7 13l-1.6-6M17 17a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
       </div>
-      
-      <div class="summary-line">
-        <span>Service Fee</span>
-        <span>{{ (cartSummary.serviceFee) | currencyFormat }}</span>
-      </div>
-      <div class="summary-line" *ngIf="cartSummary.totalDiscount>0">
-        <span>Discount</span>
-        <span>{{ (cartSummary.totalDiscount) | currencyFormat }}</span>
-      </div>
-      <div class="summary-line total">
-        <span>Total</span>
-        <span>{{ (cartSummary.total) | currencyFormat }}</span>
-      </div>
-
-      <div class="checkout-actions">
-        <button class="checkout-btn" 
-                (click)="proceedToCheckout()"
-                [disabled]="!cartSummary.cartId">
-          Proceed to Checkout
-        </button>
-        <!-- <button class="continue-shopping-btn" (click)="continueShopping()">
-          Continue Shopping
-        </button> -->
-      </div>
+      <h3 class="cart-empty__title">Your cart is empty</h3>
+      <p class="cart-empty__sub">Find amazing events and add seats to your cart</p>
+      <button class="cart-empty__btn" (click)="continueShopping()">Browse Events</button>
     </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="cartItems.length === 0 && !loading && !errorMessage">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z" 
-              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <h3>Your cart is empty</h3>
-      <p>Find amazing events and add seats to your cart</p>
-      <button class="browse-events-btn" (click)="continueShopping()">
-        Browse Events
-      </button>
-    </div>
   </div>
 </div>

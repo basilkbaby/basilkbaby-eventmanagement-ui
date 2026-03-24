@@ -11,6 +11,7 @@
     id="home"
     [bannerImages]="eventConfig.bannerImages"
     [sponsors]="sponsors"
+    [venues]="venues"
     [stats]="eventConfig.stats"
     (scrollTo)="scrollToSection($event)"
     (buyTickets)="buyTickets($event)">
@@ -40,9 +41,7 @@
 
   
   <app-privacy-policy
-    id="privacy"
-    [policySections]="eventConfig.privacyPolicy"
-    (scrollTo)="scrollToSection($event)">
+    id="privacy">
   </app-privacy-policy>
 
   <app-footer

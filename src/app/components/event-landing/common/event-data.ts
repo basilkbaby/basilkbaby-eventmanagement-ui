@@ -5,6 +5,7 @@ export interface Venue {
   address: string;
   date: string;
   time: string;
+  gateopentime: string;
   mapUrl: string;
   imageUrl: string;
   capacity: string;
@@ -71,9 +72,10 @@ export const VENUE_DATA: Venue[] = [
     address: '97 Church St., Blackpool FY1 1HL',
     date: '22nd AUGUST 2026',
     time: '6:00 PM',
+    gateopentime: '5:00 PM',
     mapUrl: 'https://maps.google.com/?q=Winter+Gardens+Blackpool',
     imageUrl: 'https://www.creativetourist.com/app/uploads/2020/12/367e8f571aa80544cd66907f2acf31aa.jpg',
-    capacity: '3,000 seats',
+    capacity: '1,000 seats',
     features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
     ticketsOpen : true,
     eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
@@ -292,9 +294,9 @@ export const EVENT_CONFIG: EventConfig = {
     { label: 'SPONSORS', section: 'sponsors' }
   ],
   bannerImages: [
-    'assets/images/events/nadirshow/banner1.jpeg',
-    'assets/images/events/nadirshow/banner2.jpeg',
-    'assets/images/events/nadirshow/banner3.jpeg'
+    'assets/images/events/nadirshow/banner1.jpeg'
+    // 'assets/images/events/nadirshow/banner2.jpeg',
+    // 'assets/images/events/nadirshow/banner3.jpeg'
   ],
   presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
   stats: [

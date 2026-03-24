@@ -74,6 +74,10 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   private pinchZoom0 = 1;
   private pinchOX    = 0;
   private pinchOY    = 0;
+  // Tap vs pan: track whether finger moved since touchstart
+  private tTapStartX = 0;
+  private tTapStartY = 0;
+  private tDidMove   = false;
 
   // Hover
   private hoverRaf:  number | null = null;
@@ -299,18 +303,18 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     ctx.fillText('S T A G E', x + w / 2, y + h / 2 + 1);
   }
 
-  // ── Section labels — constant screen size like row labels ─────────────────
+  // ── Section labels — scale with zoom, drawn in world space ──────────────────
 
   private drawSectionLabels(ctx: CanvasRenderingContext2D) {
     if (!this.venueData?.sections) return;
 
-    ctx.save();
-    ctx.resetTransform();
-    ctx.scale(this.dpr, this.dpr);
+    // Clamp font size so it's readable at any zoom level
+    // At zoom 1.0 → 11px world = 11px screen. At zoom 0.5 → 22px world = 11px screen.
+    // We target a constant ~11px screen size by dividing by zoom.
+    const targetPx = 11;
+    const fontSize = Math.round(targetPx / this.zoom);
 
-    const opacity = Math.min(1, Math.max(0, (this.zoom - 0.25) / 0.20));
-    ctx.globalAlpha = opacity;
-    ctx.font = `600 11px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.font         = `600 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
 
@@ -318,66 +322,42 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
       if (sec.seatSectionType === SeatSectionType.FOH || sec.seatSectionType === SeatSectionType.STANDING) continue;
 
       const label = (sec.sectionLabel || sec.name).toUpperCase();
-      const worldCX = this.sectionCX(sec);
-      const worldCY = sec.y - 28;
-
-      // World → screen
-      const sx = worldCX * this.zoom + this.panX;
-      const sy = worldCY * this.zoom + this.panY;
-
-      const canvas = this.canvasRef.nativeElement;
-      if (sy < -30 || sy > canvas.height / this.dpr + 30) continue;
+      const cx    = this.sectionCX(sec);
+      const cy    = sec.y - 28;
 
       const tw = ctx.measureText(label).width;
+      const pad = 8 / this.zoom;
+      const pillH = 18 / this.zoom;
+
       // Pill background
       ctx.fillStyle = 'rgba(232,236,244,0.92)';
-      this.rrectScreen(ctx, sx - tw/2 - 8, sy - 9, tw + 16, 18, 9);
+      this.rrect(ctx, cx - tw/2 - pad, cy - pillH/2, tw + pad*2, pillH, pillH/2);
       ctx.fill();
       ctx.fillStyle = '#6b7892';
-      ctx.fillText(label, sx, sy);
+      ctx.fillText(label, cx, cy);
     }
-
-    ctx.globalAlpha = 1;
-    ctx.restore();
   }
 
-  // ── Row labels — rendered at CONSTANT screen size, not world size ────────────
-  // Key fix: reset transform, convert world coords to screen, draw in screen space.
-  // This means labels are always crisp and legible regardless of zoom level.
+  // ── Row labels — scale with zoom, drawn in world space ────────────────────
 
   private drawRowLabels(ctx: CanvasRenderingContext2D) {
-    // Only draw row labels when zoomed in enough to read them
     if (this.zoom < 0.45) return;
 
-    // Opacity fades in between zoom 0.45 and 0.65 so labels don't pop in abruptly
-    const opacity = Math.min(1, (this.zoom - 0.45) / 0.20);
+    // Target ~10px screen size — divide by zoom to get world size
+    const fontSize   = Math.round(10 / this.zoom);
+    const opacity    = Math.min(1, (this.zoom - 0.45) / 0.20);
 
-    // Save world transform, switch to screen-space drawing
-    ctx.save();
-    ctx.resetTransform();
-    ctx.scale(this.dpr, this.dpr);   // only DPR, no zoom/pan
-
-    ctx.font         = `500 10px "DM Sans","Helvetica Neue",sans-serif`;
-    ctx.globalAlpha  = opacity * 0.75;
+    ctx.font         = `500 ${fontSize}px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.globalAlpha  = opacity * 0.85;
     ctx.fillStyle    = '#64748b';
     ctx.textBaseline = 'middle';
 
     for (const rl of this.rowLabels) {
-      // Convert world coords → screen CSS px
-      const sx = rl.x * this.zoom + this.panX;
-      const sy = rl.y * this.zoom + this.panY;
-
-      // Skip labels that are outside the visible canvas area
-      const canvas = this.canvasRef.nativeElement;
-      if (sx < -40 || sx > canvas.width / this.dpr + 40) continue;
-      if (sy < -20 || sy > canvas.height / this.dpr + 20) continue;
-
       ctx.textAlign = rl.side === 'left' ? 'right' : 'left';
-      ctx.fillText(rl.label, sx, sy);
+      ctx.fillText(rl.label, rl.x, rl.y);
     }
 
     ctx.globalAlpha = 1;
-    ctx.restore();
   }
 
   // ── FOH ────────────────────────────────────────────────────────────────────
@@ -648,7 +628,12 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     if (this.touches.length === 1) {
       this.tPanSX = this.touches[0].clientX; this.tPanSY = this.touches[0].clientY;
       this.tPanOX = this.panX; this.tPanOY = this.panY;
+      // Record start position for tap-vs-pan detection
+      this.tTapStartX = this.touches[0].clientX;
+      this.tTapStartY = this.touches[0].clientY;
+      this.tDidMove   = false;
     } else if (this.touches.length === 2) {
+      this.tDidMove   = true;   // two-finger = definitely not a tap
       this.pinchDist0 = this.tDist(this.touches[0], this.touches[1]);
       this.pinchZoom0 = this.zoom;
       const mc = this.tMid(this.touches[0], this.touches[1]);
@@ -661,10 +646,15 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     e.preventDefault();
     const ts = Array.from(e.touches);
     if (ts.length === 1 && this.touches.length === 1) {
+      const dx = ts[0].clientX - this.tTapStartX;
+      const dy = ts[0].clientY - this.tTapStartY;
+      // Mark as moved if finger drifted more than 6px from tap start
+      if (!this.tDidMove && Math.sqrt(dx*dx + dy*dy) > 6) this.tDidMove = true;
       this.panX = this.tPanOX + (ts[0].clientX - this.tPanSX);
       this.panY = this.tPanOY + (ts[0].clientY - this.tPanSY);
       this.scheduleRender();
     } else if (ts.length === 2) {
+      this.tDidMove = true;
       const dist = this.tDist(ts[0], ts[1]);
       const nz   = Math.max(0.2, Math.min(5, this.pinchZoom0 * (dist / this.pinchDist0)));
       const mc   = this.tMid(ts[0], ts[1]);
@@ -680,13 +670,17 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
   private onTE = (e: TouchEvent) => {
     const prev = this.touches; this.touches = Array.from(e.touches);
-    if (prev.length === 1 && this.touches.length === 0) {
+    // Only fire seat click if it was a clean tap (finger didn't move)
+    if (prev.length === 1 && this.touches.length === 0 && !this.tDidMove) {
       const seat = this.hitTest(prev[0].clientX, prev[0].clientY);
       if (seat) this.zone.run(() => this.seatClicked.emit(seat));
     }
     if (this.touches.length === 1) {
-      this.tPanSX = this.touches[0].clientX; this.tPanSY = this.touches[0].clientY;
-      this.tPanOX = this.panX; this.tPanOY = this.panY;
+      this.tPanSX     = this.touches[0].clientX; this.tPanSY = this.touches[0].clientY;
+      this.tPanOX     = this.panX; this.tPanOY = this.panY;
+      this.tTapStartX = this.touches[0].clientX;
+      this.tTapStartY = this.touches[0].clientY;
+      this.tDidMove   = false;
     }
   };
 

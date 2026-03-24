@@ -78,4 +78,10 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
     { name: 'Music List',            logo: 'assets/images/events/nadirshow/sponsors/music-list.png' },
     { name: 'Ethal',                 logo: 'assets/images/events/nadirshow/sponsors/ethal.png' },
   ];
+
+  handleTicketClick(venue: any) {
+   this.buyTickets.emit(venue.eventId);
+    // "Soon" venues: button is disabled so click is blocked at template level
+  }
+
 }

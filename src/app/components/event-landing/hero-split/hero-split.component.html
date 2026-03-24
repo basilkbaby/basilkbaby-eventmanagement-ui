@@ -47,7 +47,7 @@
         </div>
 
         <!-- Venue Selector -->
-        <div class="venue-selector">
+        <div class="venue-selector" *ngIf="venues.length > 1">
           <p class="micro-label">Select your city</p>
           <div class="venue-chips">
             <button
@@ -70,7 +70,11 @@
               <span class="vc-value">{{ selectedVenue.date }}</span>
             </div>
             <div class="vc-block">
-              <span class="vc-label">Doors Open</span>
+              <span class="vc-label">Gate Open</span>
+              <span class="vc-value">{{ selectedVenue.gateopentime }}</span>
+            </div>
+            <div class="vc-block">
+              <span class="vc-label">Show Starts</span>
               <span class="vc-value">{{ selectedVenue.time }}</span>
             </div>
           </div>
@@ -84,11 +88,14 @@
 
         <!-- CTAs -->
         <div class="hero-ctas">
-          <button class="btn-primary" (click)="scrollTo.emit('venues')">
+          <button class="btn-primary" (click)="handleTicketClick(selectedVenue)">
             Get Tickets
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
+          </button>
+          <button class="btn-ghost" (click)="scrollTo.emit('venues')">
+            Venues
           </button>
           <button class="btn-ghost" (click)="scrollTo.emit('artists')">
             Meet the Artists

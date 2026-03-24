@@ -17,14 +17,20 @@ $sw:       320px;
 // ── Host ──────────────────────────────────────────────────────────────────────
 :host {
   display: block;
-  // Fill remaining height after the sticky header (typically ~70-80px)
-  // Using dvh + calc to account for header and avoid overflow
-  height: calc(100dvh - 70px);
-  font-family: $font; -webkit-font-smoothing: antialiased;
+  font-family: $font;
+  -webkit-font-smoothing: antialiased;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
-.page { display: flex; height: 100%; background: $surface; overflow: hidden; }
+// padding-top clears the fixed/sticky header (set as --header-h by header component)
+// height fills the remaining viewport below the header
+.page {
+  display: flex;
+  height: calc(100dvh - var(--header-h, 80px));
+  padding-top: 0;          // height already accounts for header
+  background: $surface;
+  overflow: hidden;
+}
 
 // ── Loading ───────────────────────────────────────────────────────────────────
 .page-loader {
@@ -274,17 +280,17 @@ $sw:       320px;
 // MOBILE ≤ 768px
 // ═══════════════════════════════════════════════════════════
 @media (max-width: 768px) {
-  :host {
-    height: calc(100dvh - 70px);  // subtract header height
+  .page {
+    flex-direction: column;
+    height: calc(100dvh - var(--header-h, 80px));
   }
 
-  .page { flex-direction: column; }
-
   .map-col {
-    flex: none;
-    // Map fills space above collapsed bottom sheet (90px)
-    height: calc(100dvh - 70px - 90px);
-    padding: 0; gap: 0; overflow: hidden;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
     background: #f4f6f9;
   }
 

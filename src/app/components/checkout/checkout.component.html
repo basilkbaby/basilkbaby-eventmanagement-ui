@@ -9,15 +9,17 @@
   <div class="order-complete" *ngIf="orderComplete">
     <div class="success-animation">
       <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
-        <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+        <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
       </svg>
     </div>
-    
+
     <h1>Order Confirmed!</h1>
     <p class="order-id">Order #{{ orderId }}</p>
-    <p class="success-message">Thank you for your purchase. Your tickets have been confirmed and will be sent to your email.</p>
-    
+    <p class="success-message">Thank you for your purchase. Your tickets have been confirmed and will be sent to your
+      email.</p>
+
     <div class="completion-actions">
       <button class="continue-shopping-btn" (click)="continueShopping()">
         Continue Shopping
@@ -34,7 +36,8 @@
     <div class="checkout-header">
       <button class="back-btn" (click)="goBackToCart()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
         Back to Cart
       </button>
@@ -56,14 +59,11 @@
             <div class="form-grid" formGroupName="customer">
               <div class="form-group">
                 <label for="firstName">First Name *</label>
-                <input
-                  id="firstName"
-                  type="text"
-                  formControlName="firstName"
+                <input id="firstName" type="text" formControlName="firstName"
                   [class.invalid]="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched"
-                  placeholder="John"
-                >
-                <div class="error-message" *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
+                  placeholder="John">
+                <div class="error-message"
+                  *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
                   <span *ngIf="customerForm.get('firstName')?.errors?.['required']">
                     First name is required
                   </span>
@@ -75,14 +75,11 @@
 
               <div class="form-group">
                 <label for="lastName">Last Name *</label>
-                <input
-                  id="lastName"
-                  type="text"
-                  formControlName="lastName"
+                <input id="lastName" type="text" formControlName="lastName"
                   [class.invalid]="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched"
-                  placeholder="Doe"
-                >
-                <div class="error-message" *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
+                  placeholder="Doe">
+                <div class="error-message"
+                  *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
                   <span *ngIf="customerForm.get('lastName')?.errors?.['required']">
                     Last name is required
                   </span>
@@ -94,14 +91,11 @@
 
               <div class="form-group full-width">
                 <label for="email">Email Address *</label>
-                <input
-                  id="email"
-                  type="email"
-                  formControlName="email"
+                <input id="email" type="email" formControlName="email"
                   [class.invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched"
-                  placeholder="john.doe@example.com"
-                >
-                <div class="error-message" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                  placeholder="john.doe@example.com">
+                <div class="error-message"
+                  *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
                   <span *ngIf="customerForm.get('email')?.errors?.['required']">
                     Email is required
                   </span>
@@ -113,14 +107,11 @@
 
               <div class="form-group full-width">
                 <label for="confirmEmail">Confirm Email Address *</label>
-                <input
-                  id="confirmEmail"
-                  type="email"
-                  formControlName="confirmEmail"
+                <input id="confirmEmail" type="email" formControlName="confirmEmail"
                   [class.invalid]="customerForm.get('confirmEmail')?.invalid && customerForm.get('confirmEmail')?.touched"
-                  placeholder="john.doe@example.com"
-                >
-                <div class="error-message" *ngIf="customerForm.get('confirmEmail')?.invalid && customerForm.get('confirmEmail')?.touched">
+                  placeholder="john.doe@example.com">
+                <div class="error-message"
+                  *ngIf="customerForm.get('confirmEmail')?.invalid && customerForm.get('confirmEmail')?.touched">
                   <span *ngIf="customerForm.get('confirmEmail')?.errors?.['required']">
                     Please confirm your email address
                   </span>
@@ -132,14 +123,11 @@
 
               <div class="form-group full-width">
                 <label for="phone">Phone Number *</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  formControlName="phone"
+                <input id="phone" type="tel" formControlName="phone"
                   [class.invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched"
-                  placeholder="07700 900123"
-                >
-                <div class="error-message" *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+                  placeholder="07700 900123">
+                <div class="error-message"
+                  *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
                   <span *ngIf="customerForm.get('phone')?.errors?.['required']">
                     Phone number is required
                   </span>
@@ -149,15 +137,11 @@
               <!-- Postcode field -->
               <div class="form-group">
                 <label for="postcode">Postcode *</label>
-                <input
-                  id="postcode"
-                  type="text"
-                  formControlName="postcode"
+                <input id="postcode" type="text" formControlName="postcode"
                   [class.invalid]="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched"
-                  placeholder="SW1A 1AA"
-                  (blur)="formatPostcode()"
-                >
-                <div class="error-message" *ngIf="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched">
+                  placeholder="SW1A 1AA" (blur)="formatPostcode()">
+                <div class="error-message"
+                  *ngIf="customerForm.get('postcode')?.invalid && customerForm.get('postcode')?.touched">
                   <span *ngIf="customerForm.get('postcode')?.errors?.['required']">
                     Postcode is required
                   </span>
@@ -169,12 +153,12 @@
           <!-- Payment Information Section -->
           <section class="form-section" *ngIf="showPaymentSection">
             <h2>Payment Information</h2>
-            
+
             <div class="payment-methods">
               <div class="payment-method active">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-                  <path d="M2 8h20" stroke="currentColor" stroke-width="2"/>
+                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                  <path d="M2 8h20" stroke="currentColor" stroke-width="2" />
                 </svg>
                 Secure Payment
               </div>
@@ -191,7 +175,7 @@
               </div>
               <div class="payment-element-hint">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" />
                 </svg>
                 <span>Your payment is secured with SSL encryption</span>
               </div>
@@ -204,20 +188,19 @@
               <label class="checkbox-label">
                 <input type="checkbox" formControlName="acceptTerms">
                 <span class="checkmark"></span>
-                I agree to the <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Terms of Service</a> and <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Privacy Policy</a>
+                I agree to the <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Terms of
+                  Service</a> and <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Privacy
+                  Policy</a>
               </label>
-              <div class="error-message" *ngIf="checkoutForm.get('acceptTerms')?.invalid && checkoutForm.get('acceptTerms')?.touched">
+              <div class="error-message"
+                *ngIf="checkoutForm.get('acceptTerms')?.invalid && checkoutForm.get('acceptTerms')?.touched">
                 You must accept the terms and conditions to proceed
               </div>
             </div>
           </section>
 
           <!-- Submit Button -->
-          <button
-            type="submit"
-            class="submit-order-btn"
-            [disabled]="processing || checkoutForm.invalid"
-          >
+          <button type="submit" class="submit-order-btn" [disabled]="processing || checkoutForm.invalid">
             <span *ngIf="!processing">Complete Purchase - {{ formatPrice(cartSummary.total) }}</span>
             <span *ngIf="processing" class="processing-text">
               <div class="processing-spinner"></div>
@@ -242,7 +225,7 @@
           <!-- Security Note -->
           <div class="security-note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" />
             </svg>
             <span>Your payment is secured with SSL encryption. We never store your card details.</span>
           </div>
@@ -253,7 +236,7 @@
       <div class="order-summary-column">
         <div class="order-summary-card">
           <h3>Order Summary</h3>
-          
+
           <div class="order-items">
             <!-- Show seats from cart summary -->
             <div *ngFor="let seat of cartSummary.cartItems" class="order-item">
@@ -281,58 +264,51 @@
             </div>
 
             <!-- Add Coupon Section -->
-<div class="coupon-section">
-  <div class="coupon-header">
-    <h4>Apply Coupon Code</h4>
-  </div>
-  <div class="coupon-input-group" *ngIf="!couponApplied">
-    <input
-      type="text"
-      [(ngModel)]="couponCode"
-      [ngModelOptions]="{standalone: true}"
-      placeholder="Enter coupon code"
-      [class.invalid]="couponError"
-      (keyup.enter)="applyCoupon()"
-    >
-    <button
-      class="apply-coupon-btn"
-      (click)="applyCoupon()"
-      [disabled]="!couponCode || couponLoading"
-    >
-      <span *ngIf="!couponLoading">Apply</span>
-      <span *ngIf="couponLoading" class="coupon-loading">
-        <div class="processing-spinner"></div>
-      </span>
-    </button>
-  </div>
-  
-  <div class="coupon-error" *ngIf="couponError">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-      <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    {{ couponError }}
-  </div>
-  
-  <div class="coupon-success" *ngIf="couponApplied">
-    <div class="coupon-applied">
-      <div class="coupon-info">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="coupon-code">{{ cartSummary.couponCode }}</span>
-        <span class="coupon-description">- {{ formatPrice(cartSummary.couponDiscount || 0) }} coupon applied</span>
-      </div>
-      <button class="remove-coupon-btn" (click)="removeCoupon()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-              <div class="total-line" *ngIf="cartSummary.totalDiscount>0">
+            <div class="coupon-section">
+              <div class="coupon-header">
+                <h4>Apply Coupon Code</h4>
+              </div>
+              <div class="coupon-input-group" *ngIf="!couponApplied">
+                <input type="text" [(ngModel)]="couponCode" [ngModelOptions]="{standalone: true}"
+                  placeholder="Enter coupon code" [class.invalid]="couponError" (keyup.enter)="applyCoupon()">
+                <button class="apply-coupon-btn" (click)="applyCoupon()" [disabled]="!couponCode || couponLoading">
+                  <span *ngIf="!couponLoading">Apply</span>
+                  <span *ngIf="couponLoading" class="coupon-loading">
+                    <div class="processing-spinner"></div>
+                  </span>
+                </button>
+              </div>
+
+              <div class="coupon-error" *ngIf="couponError">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                  <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                {{ couponError }}
+              </div>
+
+              <div class="coupon-success" *ngIf="couponApplied">
+                <div class="coupon-applied">
+                  <div class="coupon-info">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" />
+                      <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                    <span class="coupon-code">{{ cartSummary.couponCode }}</span>
+                    <span class="coupon-description">- {{ formatPrice(cartSummary.couponDiscount || 0) }} coupon
+                      applied</span>
+                  </div>
+                  <button class="remove-coupon-btn" (click)="removeCoupon()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="total-line" *ngIf="cartSummary.totalDiscount>0">
               <span>Discount</span>
               <span>{{ formatPrice(cartSummary.totalDiscount) }}</span>
             </div>
@@ -344,7 +320,8 @@
 
           <div class="refund-policy">
             <h4>Refund Policy</h4>
-            <p>Tickets are non-refundable except in case of event cancellation. Name changes may be permitted up to 24 hours before the event.</p>
+            <p>Tickets are non-refundable except in case of event cancellation. Name changes may be permitted up to 24
+              hours before the event.</p>
           </div>
 
           <div class="support-info">
@@ -358,8 +335,9 @@
   <!-- Empty Cart State -->
   <div class="empty-state" *ngIf="!loading && cartSummary.seatCount === 0 && !orderComplete">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z" 
-            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path
+        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
     </svg>
     <h3>Your cart is empty</h3>
     <p>Add some seats to proceed to checkout</p>

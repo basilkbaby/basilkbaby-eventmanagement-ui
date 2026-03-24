@@ -1,3 +1,19 @@
+/* App root shell */
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+ 
+/* Router outlet itself is an empty element — its next sibling
+   (the routed component) needs to flex-grow */
+router-outlet + * {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .app-container {
   min-height: 100vh;
   background: var(--bg-primary);

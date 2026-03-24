@@ -33,7 +33,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   background: $white;
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
-  padding-top: var(--navbar-height, 72px);
+  // padding-top: var(--navbar-height, 72px);
 }
 
 // ─── Background ──────────────────────────────────────────────────
@@ -219,7 +219,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 }
 
 .vc-row {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
   gap: 12px; margin-bottom: 12px;
 }
 
