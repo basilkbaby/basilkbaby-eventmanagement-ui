@@ -89,6 +89,11 @@ export const routes: Routes = [
     path: 'ticket-info',
     component: TicketInfoComponent
   },
+  {
+  path: 'privacy-policy',
+  loadComponent: () => import('./components/event-landing/privacy-policy/privacy-policy.component')
+    .then(m => m.PrivacyPolicyComponent)
+},
   { 
     path: '**', 
     redirectTo: ''

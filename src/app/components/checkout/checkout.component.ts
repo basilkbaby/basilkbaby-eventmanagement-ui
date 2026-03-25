@@ -53,7 +53,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   orderComplete: boolean = false;
   orderId: string = '';
   showFormErrors: boolean = false;
-  
+  showPrivacyPolicy = false;
+
   // Stripe properties
   stripe: Stripe | null = null;
   elements: StripeElements | null = null;
@@ -557,4 +558,5 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 }

@@ -188,9 +188,10 @@
               <label class="checkbox-label">
                 <input type="checkbox" formControlName="acceptTerms">
                 <span class="checkmark"></span>
-                I agree to the <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Terms of
-                  Service</a> and <a href="https://v4entertainments.co.uk/privacy-policy" target="_blank">Privacy
-                  Policy</a>
+                I agree to the
+                <a routerLink="/privacy-policy" target="_blank">Terms of Service</a>
+                and
+                <a routerLink="/privacy-policy" target="_blank">Privacy Policy</a>
               </label>
               <div class="error-message"
                 *ngIf="checkoutForm.get('acceptTerms')?.invalid && checkoutForm.get('acceptTerms')?.touched">

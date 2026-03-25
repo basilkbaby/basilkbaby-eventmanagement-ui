@@ -1,146 +1,124 @@
-<div class="ticket-lookup-container">
+<div class="lookup-wrap">
+
   <div class="lookup-card">
-    <div class="card-header">
-      <h1>Find Your Tickets</h1>
-      <p>Enter your order reference and last name to retrieve your tickets</p>
+
+    <!-- Header -->
+    <div class="lookup-header">
+      <div class="lookup-header__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M20 12V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M21 21l-1.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="lookup-header__title">Find your tickets</h1>
+      <p class="lookup-header__sub">Enter your order reference and last name to retrieve your booking</p>
     </div>
 
-    <!-- Only show form if no order found yet -->
-    <div *ngIf="!order">
-      <form [formGroup]="lookupForm" (ngSubmit)="onSubmit()" class="lookup-form">
-        <div class="form-group">
-          <label for="orderRef">Order Reference *</label>
-          <input
-            id="orderRef"
-            type="text"
-            formControlName="orderRef"
-            placeholder="e.g., ORD-123456-ABC"
-            [class.invalid]="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched"
-          >
-          <div class="error-message" *ngIf="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched">
-            Order reference is required
-          </div>
-        </div>
+    <!-- Form -->
+    <form [formGroup]="lookupForm" (ngSubmit)="onSubmit()" *ngIf="!order" class="lookup-form">
 
-        <div class="form-group">
-          <label for="lastName">Last Name *</label>
-          <input
-            id="lastName"
-            type="text"
-            formControlName="lastName"
-            placeholder="Enter your last name"
-            [class.invalid]="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched"
-          >
-          <div class="error-message" *ngIf="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched">
-            Last name is required
-          </div>
-        </div>
+      <div class="lookup-field">
+        <label for="orderRef">Order reference</label>
+        <input id="orderRef" type="text" formControlName="orderRef"
+               placeholder="e.g. ORD-123456-ABC"
+               [class.is-invalid]="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched">
+        <span class="lookup-field__error"
+              *ngIf="lookupForm.get('orderRef')?.invalid && lookupForm.get('orderRef')?.touched">
+          Order reference is required
+        </span>
+      </div>
 
-        <div class="form-group">
-          <label for="email">Email Address (Optional)</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="Enter your email for verification"
-          >
-          <small class="help-text">Provide email for additional verification</small>
-        </div>
+      <div class="lookup-field">
+        <label for="lastName">Last name</label>
+        <input id="lastName" type="text" formControlName="lastName"
+               placeholder="Enter your last name"
+               [class.is-invalid]="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched">
+        <span class="lookup-field__error"
+              *ngIf="lookupForm.get('lastName')?.invalid && lookupForm.get('lastName')?.touched">
+          Last name is required
+        </span>
+      </div>
 
-        <button 
-          type="submit" 
-          class="find-tickets-btn"
-        >
-          <span *ngIf="!loading">
-            {{ autoNavigate ? 'Find & View Tickets' : 'Find Tickets' }}
-          </span>
-          <span *ngIf="loading" class="loading-text">
-            <div class="spinner"></div>
-            {{ autoNavigate ? 'Redirecting to tickets...' : 'Searching...' }}
-          </span>
-        </button>
+      <div class="lookup-field">
+        <label for="email">
+          Email address
+          <span class="lookup-field__optional">optional</span>
+        </label>
+        <input id="email" type="email" formControlName="email"
+               placeholder="For additional verification">
+      </div>
 
-        <div class="help-links">
-          <a href="#" (click)="contactSupport()">Contact Support</a>
-          <a href="#" (click)="goHome()">Back to Home</a>
-        </div>
-      </form>
+      <button type="submit" class="lookup-submit" [disabled]="loading">
+        <span *ngIf="!loading">
+          {{ autoNavigate ? 'Find & view tickets' : 'Find tickets' }}
+        </span>
+        <span *ngIf="loading" class="lookup-submit__loading">
+          <span class="lookup-submit__spinner"></span>
+          {{ autoNavigate ? 'Redirecting…' : 'Searching…' }}
+        </span>
+      </button>
 
-      <!-- Error Message -->
-      <div class="error-alert" *ngIf="errorMessage">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="2"/>
-          <path d="M12 8v4M12 16h.01" stroke="#ef4444" stroke-width="2"/>
+      <!-- Error -->
+      <div class="lookup-error" *ngIf="errorMessage">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
         <div>
-          <strong>Order Not Found</strong>
+          <strong>Order not found</strong>
           <p>{{ errorMessage }}</p>
-          <button class="retry-btn" (click)="newSearch()">Try Again</button>
-          <button class="alt-btn" (click)="contactSupport()">Contact Support</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Only show tickets if auto-navigate is disabled -->
-    <div class="tickets-display" *ngIf="order && tickets.length > 0 && !autoNavigate">
-      <div class="display-header">
-        <h2>Tickets Found</h2>
-        <div class="header-actions">
-          <button class="view-confirmation-btn" (click)="viewOrderConfirmation()">
-            View Full Confirmation
-          </button>
-          <button class="new-search-btn" (click)="newSearch()">
-            New Search
-          </button>
         </div>
       </div>
 
-      <div class="order-info">
-        <div class="info-item">
-          <span class="label">Order Reference:</span>
-          <span class="value">{{ order.orderNumber }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Customer:</span>
-          <span class="value">{{ order.customerName }}</span>
+      <div class="lookup-links">
+        <a href="#" (click)="contactSupport()">Contact support</a>
+        <a href="#" (click)="goHome()">Back to home</a>
+      </div>
+
+    </form>
+
+    <!-- Results (when autoNavigate is off) -->
+    <div class="lookup-results" *ngIf="order && tickets.length > 0 && !autoNavigate">
+
+      <div class="lookup-results__head">
+        <h2>Tickets found</h2>
+        <div class="lookup-results__actions">
+          <button class="lookup-results__view-btn" (click)="viewOrderConfirmation()">View confirmation</button>
+          <button class="lookup-results__new-btn" (click)="newSearch()">New search</button>
         </div>
       </div>
 
-      <div class="tickets-list">
-        <div *ngFor="let ticket of tickets" class="ticket-item">
-          <div class="ticket-header">
+      <div class="lookup-order-info">
+        <div class="lookup-order-info__row">
+          <span>Order reference</span>
+          <strong>{{ order.orderNumber }}</strong>
+        </div>
+        <div class="lookup-order-info__row">
+          <span>Customer</span>
+          <strong>{{ order.customerName }}</strong>
+        </div>
+      </div>
+
+      <div class="lookup-tickets">
+        <div class="lookup-ticket" *ngFor="let ticket of tickets">
+          <div class="lookup-ticket__top">
             <h3>{{ ticket.eventTitle }}</h3>
-            <div class="ticket-meta">
-              <span class="date">{{ formatDateTime(ticket.eventDate) }}</span>
-              <span class="venue">{{ ticket.venue }}</span>
-            </div>
+            <span class="lookup-ticket__date">{{ formatDateTime(ticket.eventDate) }}</span>
           </div>
-          
-          <div class="ticket-details">
-            <div class="detail">
-              <span class="label">Ticket Type:</span>
-              <span class="value">{{ ticket.type }}</span>
-            </div>
-            <div class="detail" *ngIf="ticket.seatInfo">
-              <span class="label">Seat:</span>
-              <span class="value">
-                {{ ticket.seatInfo.section }} - Row {{ ticket.seatInfo.row }}, Seat {{ ticket.seatInfo.number }}
-              </span>
-            </div>
+          <div class="lookup-ticket__detail" *ngIf="ticket.seatInfo">
+            <span>{{ ticket.seatInfo.section }} · Row {{ ticket.seatInfo.row }} · Seat {{ ticket.seatInfo.number }}</span>
           </div>
         </div>
       </div>
 
-      <div class="display-actions">
-        <button class="view-confirmation-btn primary" (click)="viewOrderConfirmation()">
-          View Complete Order Confirmation
-        </button>
-        <button class="home-btn" (click)="goHome()">
-          Back to Home
-        </button>
+      <div class="lookup-results__footer">
+        <button class="lookup-submit" (click)="viewOrderConfirmation()">View full confirmation</button>
+        <button class="lookup-secondary" (click)="goHome()">Back to home</button>
       </div>
-    </div>
-  </div>
 
+    </div>
+
+  </div>
 
 </div>

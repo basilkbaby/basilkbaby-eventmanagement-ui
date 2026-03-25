@@ -106,7 +106,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   continueShopping(): void {
-    this.router.navigate(['/events']);
+    this.router.navigate(['/']);
   }
 
   // Group seats by section for better display
