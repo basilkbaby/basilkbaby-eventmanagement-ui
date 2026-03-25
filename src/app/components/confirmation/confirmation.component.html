@@ -1,232 +1,197 @@
-<div class="confirmation-container" *ngIf="!loading">
-  <!-- Header -->
-  <div class="confirmation-header">
-    <div class="header-content">
-      <div class="success-icon">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-          <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
+<div class="conf-wrap" *ngIf="!loading">
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+  <div class="conf-hero">
+    <div class="conf-hero__glow"></div>
+    <div class="conf-hero__inner">
+      <div class="conf-hero__check">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h1>Order Confirmed!</h1>
-      <p class="order-id">Order Reference: <strong>{{ order?.orderNumber }}</strong></p>
-      <p class="confirmation-message">Your tickets have been confirmed and emailed to you.</p>
+      <h1 class="conf-hero__title">Order Confirmed</h1>
+      <p class="conf-hero__ref">{{ order?.orderNumber }}</p>
+      <p class="conf-hero__msg">Your tickets are on their way to <strong>{{ order?.customerEmail }}</strong></p>
     </div>
   </div>
 
-  <div class="confirmation-main">
-    <!-- Left: Order Summary -->
-    <div class="order-summary-section">
-      <div class="summary-card">
-        <h2>Order Summary</h2>
+  <!-- ── Body ─────────────────────────────────────────────────────────────── -->
+  <div class="conf-body">
 
-        <div class="customer-info">
-          <h3>Customer Details</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">Name:</span>
-              <span class="value">{{ order?.customerName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Email:</span>
-              <span class="value">{{ order?.customerEmail }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Phone:</span>
-              <span class="value">{{ order?.customerPhone }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Post Code:</span>
-              <span class="value">{{ order?.customerPostCode }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Order Date:</span>
-              <span class="value">{{ formatDate(order?.createdAt) }}</span>
+    <!-- ── Left column ──────────────────────────────────────────────────────── -->
+    <div class="conf-left">
+
+      <!-- Ticket card -->
+      <div class="conf-ticket">
+        <div class="conf-ticket__top">
+          <div class="conf-ticket__event">{{ order?.eventName }}</div>
+          <div class="conf-ticket__badge">Confirmed</div>
+        </div>
+
+        <div class="conf-ticket__meta">
+          <div class="conf-ticket__meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span>{{ order?.eventDate | formatDate }}</span>
+          </div>
+        </div>
+
+        <!-- Perforation divider -->
+        <div class="conf-ticket__perf">
+          <div class="conf-ticket__perf-line"></div>
+          <div class="conf-ticket__perf-circle conf-ticket__perf-circle--l"></div>
+          <div class="conf-ticket__perf-circle conf-ticket__perf-circle--r"></div>
+        </div>
+
+        <!-- Seats -->
+        <div class="conf-ticket__seats">
+          <div class="conf-ticket__seat" *ngFor="let ticket of order?.seats">
+            <div class="conf-ticket__seat-info">
+              <span class="conf-ticket__seat-id">{{ ticket.seatId }}</span>
+              <span class="conf-ticket__seat-num">{{ ticket.ticketNumber }}</span>
             </div>
           </div>
         </div>
 
-        <div class="order-totals">
-          <div class="total-line">
+        <!-- QR -->
+        <div class="conf-ticket__qr-wrap">
+          <div class="conf-ticket__qr">
+            <img [src]="order!.qrCodeData" alt="Ticket QR Code" width="140" height="140">
+          </div>
+          <p class="conf-ticket__qr-note">Scan at entrance</p>
+        </div>
+
+        <div class="conf-ticket__footer">
+          <small>Non-transferable · Non-refundable</small>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="conf-actions">
+        <button class="conf-actions__resend"
+                (click)="resendConfirmationEmail()"
+                [disabled]="resending">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" *ngIf="!resending">
+            <path d="M23 4v6h-6M1 20v-6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {{ resending ? 'Resending…' : 'Resend confirmation email' }}
+        </button>
+
+        <button class="conf-actions__print" (click)="printTickets()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"
+                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Print tickets
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── Right column ─────────────────────────────────────────────────────── -->
+    <div class="conf-right">
+
+      <!-- Order summary -->
+      <div class="conf-card">
+        <h2 class="conf-card__title">Order Summary</h2>
+
+        <div class="conf-summary__customer">
+          <div class="conf-summary__row" *ngIf="order?.customerName">
+            <span class="conf-summary__label">Name</span>
+            <span class="conf-summary__val">{{ order?.customerName }}</span>
+          </div>
+          <div class="conf-summary__row" *ngIf="order?.customerEmail">
+            <span class="conf-summary__label">Email</span>
+            <span class="conf-summary__val">{{ order?.customerEmail }}</span>
+          </div>
+          <div class="conf-summary__row" *ngIf="order?.customerPhone">
+            <span class="conf-summary__label">Phone</span>
+            <span class="conf-summary__val">{{ order?.customerPhone }}</span>
+          </div>
+          <div class="conf-summary__row" *ngIf="order?.customerPostCode">
+            <span class="conf-summary__label">Post code</span>
+            <span class="conf-summary__val">{{ order?.customerPostCode }}</span>
+          </div>
+          <div class="conf-summary__row" *ngIf="order?.createdAt">
+            <span class="conf-summary__label">Order date</span>
+            <span class="conf-summary__val">{{ formatDate(order?.createdAt) }}</span>
+          </div>
+        </div>
+
+        <div class="conf-summary__totals">
+          <div class="conf-summary__total-row">
             <span>Subtotal</span>
             <span>{{ formatPrice(order?.subtotal) }}</span>
           </div>
-          <div class="total-line" *ngIf="order && (order?.discount ?? 0) > 0">
+          <div class="conf-summary__total-row" *ngIf="(order?.discount ?? 0) > 0">
             <span>Discount</span>
-            <span>{{ formatPrice(order.discount) }}</span>
+            <span class="conf-summary__discount">− {{ formatPrice(order?.discount) }}</span>
           </div>
-          <div class="total-line" *ngIf="order && (order?.couponDiscount ?? 0) > 0">
-            <span>Coupon Discount</span>
-            <span>{{ formatPrice(order.couponDiscount) }} - {{order.couponCode}}</span>
+          <div class="conf-summary__total-row" *ngIf="(order?.couponDiscount ?? 0) > 0">
+            <span>Coupon <span class="conf-summary__coupon">{{ order?.couponCode }}</span></span>
+            <span class="conf-summary__discount">− {{ formatPrice(order?.couponDiscount) }}</span>
           </div>
-          <div class="total-line" *ngIf="order && (order?.serviceFee ?? 0) > 0">
-            <span>Service Fee</span>
-            <span>{{ formatPrice(order.serviceFee) }}</span>
+          <div class="conf-summary__total-row" *ngIf="(order?.serviceFee ?? 0) > 0">
+            <span>Service fee</span>
+            <span>{{ formatPrice(order?.serviceFee) }}</span>
           </div>
-          <div class="total-line grand-total">
-            <span>Total Paid</span>
-            <span>{{ formatPrice(order?.totalAmount ?? 0) }}</span>
+          <div class="conf-summary__grand">
+            <span>Total paid</span>
+            <span class="conf-summary__grand-amt">{{ formatPrice(order?.totalAmount ?? 0) }}</span>
           </div>
         </div>
       </div>
 
-      <div class="actions-card">
-        <h3>Next Steps</h3>
-        <div class="action-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor"
-              stroke-width="2" />
-            <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" />
+      <!-- Next steps -->
+      <div class="conf-card">
+        <h2 class="conf-card__title">What's next</h2>
+        <div class="conf-steps">
+          <div class="conf-step">
+            <div class="conf-step__num">1</div>
+            <div>
+              <strong>Check your email</strong>
+              <p>Tickets sent to {{ order?.customerEmail }}</p>
+            </div>
+          </div>
+          <div class="conf-step">
+            <div class="conf-step__num">2</div>
+            <div>
+              <strong>Save your tickets</strong>
+              <p>Download or screenshot for quick access</p>
+            </div>
+          </div>
+          <div class="conf-step">
+            <div class="conf-step__num">3</div>
+            <div>
+              <strong>Arrive &amp; enjoy</strong>
+              <p>Show the QR code at the entrance</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="conf-support">
+        <a href="mailto:support@example.com" class="conf-support__link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <div>
-            <strong>Check Your Email</strong>
-            <p>Your tickets have been sent to {{ order?.customerEmail }}</p>
-          </div>
-        </div>
-
-        <div class="action-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="8" width="18" height="12" rx="1" stroke="currentColor" stroke-width="2" />
-            <path d="M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" />
+          Contact support
+        </a>
+        <a href="/faq" class="conf-support__link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9 9a3 3 0 116 0c0 2-3 3-3 3M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <div>
-            <strong>Save Your Tickets</strong>
-            <p>Download the PDF or save to your device</p>
-          </div>
-        </div>
-
-        <!-- Resend Email Button -->
-        <div class="action-buttons">
-          <button class="resend-btn" 
-                  (click)="resendConfirmationEmail()"
-                  [disabled]="resending"
-                  [class.loading]="resending">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" *ngIf="!resending">
-              <path d="M23 4v6h-6M1 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span *ngIf="resending">Resending...</span>
-            <span *ngIf="!resending">Resend Confirmation Email</span>
-          </button>
-          
-        </div>
-        <!-- <div class="action-buttons">
-          <button class="download-btn" (click)="downloadTickets()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"
-                stroke-width="2" />
-            </svg>
-            Download Tickets
-          </button>
-          <button class="home-btn" (click)="goHome()">
-            Back to Home
-          </button>
-        </div> -->
+          View FAQ
+        </a>
       </div>
+
     </div>
 
-    <!-- Right: Ticket Details -->
-    <div class="tickets-section">
-      <h2>Your Tickets</h2>
-
-      <div class="ticket-cards">
-        <div class="ticket-card">
-          <div class="ticket-header">
-            <div class="ticket-type">{{ order?.eventName }}</div>
-            <div class="ticket-status">Confirmed</div>
-          </div>
-
-          <div class="ticket-content">
-            <div class="event-info">
-              <div class="event-details">
-                <div class="detail-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
-                    <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="2" />
-                  </svg>
-                  <span>{{ (order?.eventDate) | formatDate }}</span>
-                </div>
-                <div class="detail-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" stroke="currentColor" stroke-width="2" />
-                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" />
-                  </svg>
-                  <span>Venue goes here</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="ticket-content">
-
-            <div *ngFor="let ticket of order?.seats">
-              <div class="ticket-details">
-                <div class="detail-row">
-                  <span class="label">Ticket ID:</span>
-                  <span class="value">{{ ticket.ticketNumber }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">Seat:</span>
-                  <span class="value">
-                    {{ ticket.seatId }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-          <div class="ticket-content">
-
-
-            <div class="ticket-qr" >
-              <div class="qr-container">
-                    <img [src]="order!.qrCodeData" 
-                        alt="Ticket QR Code"
-                        width="200"
-                        height="200">
-                  </div>
-              <p class="qr-note">Scan at entrance</p>
-            </div>
-          </div>
-
-          <div class="ticket-footer">
-            <div class="ticket-terms">
-              <small>This ticket is non-transferable and non-refundable.</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Support Section -->
-  <div class="support-section">
-    <h3>Need Help?</h3>
-    <div class="support-options">
-      <a href="mailto:support@example.com" class="support-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-          <path d="M8 12h8M12 16V8" stroke="currentColor" stroke-width="2" />
-        </svg>
-        Contact Support
-      </a>
-      <a href="/faq" class="support-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-          <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" />
-        </svg>
-        View FAQ
-      </a>
-      <button class="support-link" (click)="printTickets()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"
-            stroke="currentColor" stroke-width="2" />
-          <path d="M6 14h12v8H6z" stroke="currentColor" stroke-width="2" />
-        </svg>
-        Print Tickets
-      </button>
-    </div>
   </div>
 </div>
