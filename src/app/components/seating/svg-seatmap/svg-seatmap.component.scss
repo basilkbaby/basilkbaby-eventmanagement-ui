@@ -67,8 +67,8 @@ $sw:       320px;
   border: 1.5px solid $border; background: $surface;
   font-family: $font; font-size: 13px; font-weight: 500; color: $t2;
   cursor: pointer; white-space: nowrap; transition: all .12s $ease;
-  &:hover { border-color: $green; color: $green-d; background: $green-bg; }
-  &.on    { background: $green; border-color: $green; color: #fff; font-weight: 600; }
+  &:hover { border-color: $t2;   color: $t1;    background: $bg; }
+  &.on    { background: $t1;    border-color: $t1; color: #fff; font-weight: 600; }
 }
 
 // Map card

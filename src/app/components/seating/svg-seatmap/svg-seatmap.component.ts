@@ -80,7 +80,19 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   // ── Section filter ────────────────────────────────────────────────────────
 
   getSections(): VenueSection[] {
-    return (this.venueData?.sections ?? []).filter(s => s.seatSectionType !== SeatSectionType.FOH);
+    const sections = (this.venueData?.sections ?? [])
+      .filter(s => s.seatSectionType !== SeatSectionType.FOH);
+
+    // Sort by min ticket price ascending
+    return sections.sort((a, b) => {
+      const minPrice = (sec: VenueSection) =>
+        Math.min(...(sec.rowConfigs ?? []).map(r => r.customPrice || 0).filter(p => p > 0), Infinity);
+      const pa = minPrice(a), pb = minPrice(b);
+      if (pa === Infinity && pb === Infinity) return 0;
+      if (pa === Infinity) return 1;
+      if (pb === Infinity) return -1;
+      return pa - pb;
+    });
   }
 
   setSection(id: string | null) {
@@ -331,7 +343,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   }
 
   getDisplayStatuses() {
-    return [SeatStatus.SELECTED, SeatStatus.BOOKED, SeatStatus.BLOCKED]
+    return [SeatStatus.SELECTED, SeatStatus.BOOKED]
       .map(status => ({ status, displayText: getSeatDisplayText(status, 'GENERAL' as TicketType) }));
   }
 

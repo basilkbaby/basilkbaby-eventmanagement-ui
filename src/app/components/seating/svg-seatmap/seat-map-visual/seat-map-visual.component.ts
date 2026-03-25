@@ -401,7 +401,9 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   private drawOneSeat(ctx: CanvasRenderingContext2D, seat: Seat) {
     const SR    = this.SR;
     const isSel = this.selectedSet.has(seat.id);
-    const cfg   = getSeatStatusConfig(seat.status);
+    // Frontend: treat BLOCKED same as BOOKED — one less status for customers to decode
+    const displayStatus = seat.status === SeatStatus.BLOCKED ? SeatStatus.BOOKED : seat.status;
+    const cfg   = getSeatStatusConfig(displayStatus);
     const prog  = this.hoverProg.get(seat.id) ?? 0;
     const eased = prog < 0.5 ? 2*prog*prog : 1 - Math.pow(-2*prog+2, 2)/2;
     const scale = 1 + eased * 0.13;
@@ -756,13 +758,23 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   isAvail(s: Seat)  { return s.status === SeatStatus.AVAILABLE && !this.selectedSet.has(s.id); }
   isSel(s: Seat)    { return this.selectedSet.has(s.id); }
   isTaken(s: Seat)  { return s.status === SeatStatus.BOOKED || s.status === SeatStatus.RESERVED || s.status === SeatStatus.BLOCKED; }
-  getStatusText(s: Seat) { return getSeatDisplayText(s.status, s.ticketType); }
+  getStatusText(s: Seat) {
+    // Show blocked as booked to frontend users
+    const displayStatus = s.status === SeatStatus.BLOCKED ? SeatStatus.BOOKED : s.status;
+    return getSeatDisplayText(displayStatus, s.ticketType);
+  }
   onTooltipClick(seat: Seat, e: MouseEvent) { e.stopPropagation(); this.seatClicked.emit(seat); }
   fmt(p: number) { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(p); }
 
   private rebuildCaches() {
     this.colorCache.clear();
-    for (const s of this.seats) this.colorCache.set(s.id, getSeatColor(s));
+    for (const s of this.seats) {
+      // Frontend shows BLOCKED seats as BOOKED — customer doesn't need to know why
+      const displaySeat = s.status === SeatStatus.BLOCKED
+        ? { ...s, status: SeatStatus.BOOKED }
+        : s;
+      this.colorCache.set(s.id, getSeatColor(displaySeat));
+    }
 
     // Cache per-section bounding box — used by section label drawing
     this.sectionBounds.clear();
