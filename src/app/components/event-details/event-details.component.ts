@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { CartService } from '../../core/services/cart.service';
 import { Subscription } from 'rxjs';
-import { Event, TicketTier } from '../../core/models/event.model';
-import { MOCK_EVENTS } from '../../core/mock/mock-events.data';
+import { CartService } from '../../core/services/cart.service';
 import { EventService } from '../../core/services/event.service';
 import { EventDetailDto } from '../../core/models/DTOs/event.DTO.model';
-import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 import { OrganizationType } from '../../core/models/Enums/event.enums';
+import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 import { OrganizationFilterPipe } from '../../core/pipes/custom/organization-filter.pipe';
 import { FormatTimePipe } from '../../core/pipes/common/time-format.pipe';
 import { DurationPipe } from '../../core/pipes/common/duration.pipe';
@@ -20,147 +18,72 @@ import { DurationPipe } from '../../core/pipes/common/duration.pipe';
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.scss']
 })
-export class EventDetailsComponent implements OnInit {
+export class EventDetailsComponent implements OnInit, OnDestroy {
+
   event: EventDetailDto | null = null;
-  loading: boolean = true;
-  cartItemCount: number = 0;
-  OrganizationType = OrganizationType;
-  // Add these properties
-  selectedSection: string = '';
-  private cartStateSubscription: Subscription | undefined;
+  loading = true;
+
+  readonly OrganizationType = OrganizationType;
+
+
+  // ── Future: when EventDetailDto gains eventType ─────────────────────────────
+  //
+  //   get eventType(): 'seated' | 'general' {
+  //     return (this.event as any)?.eventType ?? 'seated';
+  //   }
+  //
+  //   Seated  → navigates to /events/:id/seatmap (current)
+  //   General → renders inline ticket-type + qty picker from API (coming soon)
+  //             requires: event.ticketTiers: TicketTierDto[]
+  // ────────────────────────────────────────────────────────────────────────────
+
+  private routeSub?: Subscription;
+  private cartSub?:  Subscription;
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cartService: CartService,
-    private eventService : EventService
+    private route:        ActivatedRoute,
+    private router:       Router,
+    private cartService:  CartService,
+    private eventService: EventService
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const eventId = params['id'];
-      this.loadEventDetails(eventId);
-    });
-
-    this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
-      next: (state) => {
-        // Calculate count from cart items
-        this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
-      }
-    });
+    this.routeSub = this.route.params.subscribe(params => this.loadEventDetails(params['id']));
+    this.cartSub  = this.cartService.currentCartState$.subscribe();
   }
 
   ngOnDestroy(): void {
-    if (this.cartStateSubscription) {
-      this.cartStateSubscription.unsubscribe();
-    }
+    this.routeSub?.unsubscribe();
+    this.cartSub?.unsubscribe();
   }
 
-  loadEventDetails(eventId: string): void {
+  loadEventDetails(id: string): void {
     this.loading = true;
-      // Use getEventDetails to get full event with all related data
-      this.eventService.getEventDetails(eventId).subscribe({
-        next: (event) => {
-          this.event = event;
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error loading event:', error);
-          this.loading = false;
-        }
-      });
-  }
-
-  navigateToSeatSelection(): void {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-      .test(navigator.userAgent);
-    if (this.event && !this.event.isPast) {
-      if(isMobile)
-        this.router.navigate(['/events', this.event.id, 'mobileseatmap']);
-        else
-      this.router.navigate(['/events', this.event.id, 'seatmap']); //seatstheatre
-    }
-  }
-
-
-  formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('en-UK', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    }).format(date);
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-UK', {
-      style: 'currency',
-      currency: 'GBP',
-      minimumFractionDigits: 2
-    }).format(price);
+    this.eventService.getEventDetails(id).subscribe({
+      next:  ev  => { this.event = ev; this.loading = false; },
+      error: err => { console.error('Error loading event:', err); this.loading = false; }
+    });
   }
 
   getEventImage(): string {
     if (!this.event) return '';
-    return this.event.bannerImage || this.event.thumbnailImage || 'assets/images/events/default-banner.jpg';
+    return this.event.bannerImage
+        || this.event.thumbnailImage
+        || 'assets/images/events/default-banner.jpg';
   }
 
+  navigateToSeatSelection(): void {
+    if (!this.event || this.event.isPast) return;
+    // Single route — seatmap component handles its own responsive layout.
+    // Mobile/desktop user-agent split removed; use CSS media queries instead.
+    this.router.navigate(['/events', this.event.id, 'seatmap']);
+  }
 
-  getDuration(): string {
-    if (!this.event) return '';
-    const start = new Date(`${this.event.startDate.toDateString()} ${this.event.startTime}`);
-    const end = new Date(`${this.event.endDate.toDateString()} ${this.event.endTime}`);
-    const diffMs = end.getTime() - start.getTime();
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
-    if (hours > 0) {
-      return `${hours} hour${hours > 1 ? 's' : ''} ${minutes > 0 ? `${minutes} minute${minutes > 1 ? 's' : ''}` : ''}`;
+  shareEvent(): void {
+    if (navigator.share && this.event) {
+      navigator.share({ title: this.event.title, text: this.event.shortDescription, url: window.location.href });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
     }
-    return `${minutes} minutes`;
   }
-
-
-
-selectSection(section: string): void {
-  this.selectedSection = this.selectedSection === section ? '' : section;
-}
-
-getSectionAvailability(section: string): number {
-  // This is a mock method - in real app, you'd get this from your data
-  const availabilityMap: { [key: string]: number } = {
-    'VIP': 85,
-    'Premium': 420,
-    'Standard': 1850,
-    'Balcony': 2500
-  };
-  return availabilityMap[section] || 0;
-}
-
-
-scrollToSection(sectionId: string): void {
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-shareEvent(): void {
-  if (navigator.share && this.event) {
-    navigator.share({
-      title: this.event.title,
-      text: this.event.shortDescription,
-      url: window.location.href,
-    });
-  } else {
-    // Fallback copy to clipboard
-    navigator.clipboard.writeText(window.location.href);
-    //alert('Link copied to clipboard!');
-  }
-}
-
-saveEvent(): void {
-  // Implement save to favorites
-  //alert('Event saved to your favorites!');
-}
 }

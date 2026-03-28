@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { HeaderComponent } from '../common/header/header.component';
 import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component';
 import { FooterComponent } from '../common/footer/footer.component';
 import { EventListComponent } from '../event-list/event-list.component';
@@ -11,17 +11,17 @@ import { TicketLookupComponent } from '../ticket-lookup/ticket-lookup.component'
 import { SocialMediaFeedComponent } from '../pages/social-media-feed/social-media-feed.component';
 import { EventService } from '../../core/services/event.service';
 import { EventDto } from '../../core/models/DTOs/event.DTO.model';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    HeaderComponent, 
-    HeroSliderComponent, 
-    SocialMediaFeedComponent, 
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    HeroSliderComponent,
+    SocialMediaFeedComponent,
     FooterComponent,
     EventListComponent,
     StatsDashboardComponent,
@@ -31,61 +31,63 @@ import { filter } from 'rxjs';
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
-export class MainComponent {
+export class MainComponent implements OnInit, OnDestroy {
 
-events: EventDto[] = [];
-  isLoading = true;
-  eventlistonly = false;
-  error: string | null = null;
+  events: EventDto[]         = [];
+  featuredEvents: EventDto[] = [];
+  isLoading                  = true;
+  eventlistonly              = false;
+  error: string | null       = null;
 
-  constructor(private eventService : EventService,
+  searchQuery = '';
+  howTab: 'buyer' | 'general' | 'bespoke' = 'buyer';
+
+  private routerSub: Subscription | undefined;
+
+  constructor(
+    private eventService: EventService,
     private router: Router,
-  private activatedRoute: ActivatedRoute)
-  {
+    private activatedRoute: ActivatedRoute
+  ) {}
 
+  ngOnInit(): void {
+    // Use router URL directly — more reliable than routeConfig.path
+    this.eventlistonly = this.isEventsListUrl(this.router.url);
+
+    this.routerSub = this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe((e: any) => {
+      this.eventlistonly = this.isEventsListUrl(e.urlAfterRedirects || e.url);
+    });
+
+    // Redirect ticket QR params if present
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params['orderId'] && params['ticketId'] && params['code']) {
+        this.router.navigate(['/ticket-info'], { queryParams: params, replaceUrl: true });
+      }
+    });
+
+    this.loadEvents();
   }
 
-ngOnInit(): void {
-  // Check the current route path
-  const currentPath = this.activatedRoute.snapshot.routeConfig?.path || '';
-  this.eventlistonly = currentPath === 'events';
-  console.log('Initial eventlistonly:', this.eventlistonly);
-  
-  this.router.events.pipe(
-    filter(event => event instanceof NavigationEnd)
-  ).subscribe(() => {
-    const newPath = this.activatedRoute.snapshot.routeConfig?.path || '';
-    this.eventlistonly = newPath === 'events';
-    console.log('Updated eventlistonly:', this.eventlistonly);
-  });
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
+  }
 
-  this.activatedRoute.queryParams.subscribe(params => {
-      const hasTicketParams = params['orderId'] && params['ticketId'] && params['code'];
-      
-      if (hasTicketParams) {
-        // Redirect to ticket-info with the parameters
-        this.router.navigate(['/ticket-info'], {
-          queryParams: params,
-          replaceUrl: true // This replaces the current URL in history
-        });
-      }
-  });
-  
-  this.loadEvents();
-}
-
-private checkCurrentRoute(url: string): void {
-  console.log('Current URL:', url);
-  // Check for exact match or starts with
-  this.eventlistonly = url === '/events' || url.startsWith('/events/');
-  console.log('eventlistonly:', this.eventlistonly);
-}
+  /** True only when the URL is exactly /events (not /events/123 etc) */
+  private isEventsListUrl(url: string): boolean {
+    const path = url.split('?')[0].replace(/\/$/, '');
+    return path === '/events';
+  }
 
   loadEvents(): void {
     this.isLoading = true;
     this.eventService.getEvents().subscribe({
       next: (events) => {
         this.events = [...events];
+        this.featuredEvents = events
+          .filter(e => !e.isPast)
+          .slice(0, 6);
         this.isLoading = false;
       },
       error: (error) => {
@@ -96,7 +98,15 @@ private checkCurrentRoute(url: string): void {
     });
   }
 
-  onRetryLoad() {
-    this.loadEvents(); // Parent handles the retry
+  onRetryLoad(): void {
+    this.loadEvents();
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/events'], { queryParams: { q: this.searchQuery.trim() } });
+    } else {
+      this.router.navigate(['/events']);
+    }
   }
 }

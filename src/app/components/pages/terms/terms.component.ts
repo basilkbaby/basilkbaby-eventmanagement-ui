@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-about-us',
+  selector: 'app-terms',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './about-us.component.html',
-  styleUrls: ['./about-us.component.scss']
+  templateUrl: './terms.component.html',
+  styleUrls: ['./terms.component.scss']
 })
-export class AboutUsComponent {}
+export class TermsComponent {}

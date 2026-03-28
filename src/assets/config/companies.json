@@ -2,7 +2,8 @@
   {
     "id": "manchestergems",
     "name": "Manchester Gems",
-    "domain": "manchestergems.co.uk",
+    "domain": "manchestergems.crowdpass.co.uk",
+    "mode": "bespoke",
     "company": {
       "name": "Manchester Gems",
       "logo": {
@@ -20,118 +21,138 @@
         "address": "E6 1LW, London"
       }
     },
-"navigation": {
-    "menuItems": [
-      {
-        "label": "Home",
-        "routerLink": "/home",
-        "type": "home" ,      
-        "external": false
-      },
-      {
-        "label": "Artists",
-        "routerLink": "#artists",
-        "type": "events",     
-        "external": false
-      },
-      {
-        "label": "Venues",
-        "routerLink": "#venues",
-        "type": "events",     
-        "external": false
-      },
-      {
-        "label": "Terms and conditions",
-        "routerLink": "#privacy",
-        "type": "about" ,      
-        "external": false
-      },
-      {
-        "label": "Contact Us",
-        "routerLink": "#contactus",
-        "external": false,
-        "type": "contact"
-      }
-    ],
-    "showSearch": true,
-    "showCart": true
-  },
+    "navigation": {
+      "menuItems": [
+        { "label": "Home",               "routerLink": "/",          "type": "home",    "external": false },
+        { "label": "Artists",            "routerLink": "#artists",   "type": "events",  "external": false },
+        { "label": "Venues",             "routerLink": "#venues",    "type": "events",  "external": false },
+        { "label": "Terms & Conditions", "routerLink": "#privacy",   "type": "about",   "external": false },
+        { "label": "Contact Us",         "routerLink": "#contactus", "type": "contact", "external": false }
+      ],
+      "showSearch": false,
+      "showCart": true
+    },
     "theme": {
-      "backgroundColor": "#1a1a2e",
-      "textColor": "#FFFFFF",
-      "buttonColor": "#e94560",
-      "buttonTextColor": "#FFFFFF",
-      "glassBackground": "rgba(255, 255, 255, 0.1)",
-      "glassBorder": "rgba(255, 255, 255, 0.15)",
-      "headerStyle": "minimal"
+      "backgroundColor":  "#1a1a2e",
+      "textColor":        "#FFFFFF",
+      "buttonColor":      "#e94560",
+      "buttonTextColor":  "#FFFFFF",
+      "glassBackground":  "rgba(255, 255, 255, 0.1)",
+      "glassBorder":      "rgba(255, 255, 255, 0.15)",
+      "headerStyle":      "minimal"
     },
     "features": {
-      "enableAuth": true,
-      "enableCart": true,
-      "enableSearch": false,
+      "enableAuth":      true,
+      "enableCart":      true,
+      "enableSearch":    false,
       "showContactInfo": true
+    },
+    "seo": {
+      "title":       "Manchester Gems — Book Tickets",
+      "description": "Book tickets for Manchester Gems events.",
+      "themeColor":  "#1a1a2e"
     }
   },
+
   {
-    "id": "default",
-    "name": "TicketFlow",
-    "domain": "ticketflow.com",
+    "id": "main",
+    "name": "CrowdPass",
+    "domain": "crowdpass.co.uk",
+    "mode": "main",
     "company": {
-      "name": "TicketFlow",
+      "name": "CrowdPass",
       "logo": {
-        "text": "TicketFlow",
-        "sublabel": "EVENTS",
-        "color": "#FFFFFF",
-        "backgroundColor": "#6366f1"
+        "text": "CrowdPass",
+        "sublabel": "",
+        "color": "#0f172a",
+        "backgroundColor": "#ffffff"
       },
-      "primaryColor": "#6366f1",
-      "secondaryColor": "#ec4899",
-      "accentColor": "#f59e0b",
+      "primaryColor":   "#22C55E",
+      "secondaryColor": "#16A34A",
+      "accentColor":    "#f9a826",
       "contact": {
-        "phone": "+1 555-0123",
-        "email": "info@ticketflow.com",
-        "address": "New York, USA"
+        "phone": "",
+        "email": "hello@crowdpass.co.uk",
+        "address": "United Kingdom"
       }
     },
     "navigation": {
       "menuItems": [
-        {
-          "label": "Events",
-          "routerLink": "/events",
-          "type": "events"
-        },
-        {
-          "label": "Concerts",
-          "routerLink": "/concerts",
-          "type": "concerts"
-        },
-        {
-          "label": "Sports",
-          "routerLink": "/sports",
-          "type": "sports"
-        },
-        {
-          "label": "Theater",
-          "routerLink": "/theater",
-          "type": "theater"
-        }
+        { "label": "Events",  "routerLink": "/events",  "type": "events"  },
+        { "label": "About",   "routerLink": "/about",   "type": "about"   },
+        { "label": "Contact", "routerLink": "/contact", "type": "contact" }
       ],
       "showSearch": true,
-      "showCart": true
+      "showCart":   true
     },
     "theme": {
-      "backgroundColor": "#6366f1",
-      "textColor": "#FFFFFF",
-      "buttonColor": "#ec4899",
-      "buttonTextColor": "#FFFFFF",
-      "glassBackground": "rgba(255, 255, 255, 0.1)",
-      "glassBorder": "rgba(255, 255, 255, 0.15)"
+      "backgroundColor":  "#ffffff",
+      "textColor":        "#0f172a",
+      "buttonColor":      "#22C55E",
+      "buttonTextColor":  "#ffffff",
+      "headerStyle":      "minimal"
     },
     "features": {
-      "enableAuth": true,
-      "enableCart": true,
-      "enableSearch": true,
-      "showContactInfo": true
+      "enableAuth":      true,
+      "enableCart":      true,
+      "enableSearch":    true,
+      "showContactInfo": false
+    },
+    "seo": {
+      "title":       "CrowdPass — Event Ticketing",
+      "description": "Discover and book tickets for events across the UK.",
+      "themeColor":  "#0f172a",
+      "ogUrl":       "https://crowdpass.co.uk"
+    }
+  },
+
+  {
+    "id": "default",
+    "name": "CrowdPass",
+    "domain": "localhost",
+    "mode": "bespoke",
+    "company": {
+      "name": "CrowdPass",
+      "logo": {
+        "text": "CrowdPass",
+        "sublabel": "EVENTS",
+        "color": "#FFFFFF",
+        "backgroundColor": "#0f172a"
+      },
+      "primaryColor":   "#22C55E",
+      "secondaryColor": "#16A34A",
+      "accentColor":    "#f9a826",
+      "contact": {
+        "phone": "",
+        "email": "hello@crowdpass.co.uk",
+        "address": ""
+      }
+    },
+    "navigation": {
+      "menuItems": [
+        { "label": "Home",    "routerLink": "/",          "type": "home"    },
+        { "label": "Contact", "routerLink": "#contactus", "type": "contact" }
+      ],
+      "showSearch": false,
+      "showCart":   true
+    },
+    "theme": {
+      "backgroundColor":  "#0f172a",
+      "textColor":        "#FFFFFF",
+      "buttonColor":      "#22C55E",
+      "buttonTextColor":  "#FFFFFF",
+      "headerStyle":      "full"
+    },
+    "features": {
+      "enableAuth":      false,
+      "enableCart":      true,
+      "enableSearch":    false,
+      "showContactInfo": false
+    },
+    "seo": {
+      "title":       "CrowdPass",
+      "description": "Event ticketing powered by CrowdPass.",
+      "themeColor":  "#0f172a"
     }
   }
 ]

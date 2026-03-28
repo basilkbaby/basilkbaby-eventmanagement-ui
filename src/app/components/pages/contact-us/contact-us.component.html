@@ -1,254 +1,167 @@
-<!-- contact-us.component.html -->
-<div class="contact-container" [class.mobile-view]="isMobile">
-  
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-content">
-      <div class="hero-badge">Get In Touch</div>
-      <h1 class="hero-title">Contact V4 Entertainments</h1>
-      <p class="hero-description">
-        Have questions about our Malayali concerts in the UK? Looking to book an artist or plan an event? 
-        Our team is here to help you create unforgettable musical experiences.
-      </p>
+<div class="contact">
+
+  <!-- Header -->
+  <section class="contact__hero">
+    <div class="contact__hero-inner">
+      <span class="contact__eyebrow">Contact us</span>
+      <h1 class="contact__title">Let's talk about<br><span class="contact__accent">your event</span></h1>
+      <p class="contact__sub">Whether you want to list a general event, enquire about a bespoke setup, or just have a question — we're happy to help.</p>
     </div>
   </section>
 
-  <!-- Contact Info & Form -->
-  <section class="contact-main-section">
-    <div class="container">
-      <div class="contact-grid">
-        
-        <!-- Contact Information -->
-        <div class="contact-info-card">
-          <div class="info-header">
-            <div class="info-icon">📞</div>
-            <h2 class="info-title">Contact Information</h2>
-            <p class="info-subtitle">Reach out to us through any channel</p>
+  <!-- Content -->
+  <section class="contact__body">
+    <div class="contact__inner">
+
+      <!-- Cards -->
+      <div class="contact__cards">
+
+        <div class="contact__card">
+          <div class="contact__card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-
-          <div class="contact-details">
-            <div class="contact-item">
-              <div class="item-icon">📧</div>
-              <div class="item-content">
-                <div class="item-label">Email</div>
-                <a [href]="'mailto:' + contactInfo.email" class="item-value">
-                  {{ contactInfo.email }}
-                </a>
-              </div>
-            </div>
-
-            <div class="contact-item">
-              <div class="item-icon">📱</div>
-              <div class="item-content">
-                <div class="item-label">Phone</div>
-                <a [href]="'tel:' + contactInfo.phone" class="item-value">
-                  {{ contactInfo.phone }}
-                </a>
-              </div>
-            </div>
-
-            <div class="contact-item">
-              <div class="item-icon">📍</div>
-              <div class="item-content">
-                <div class="item-label">Location</div>
-                <div class="item-value">{{ contactInfo.address }}</div>
-              </div>
-            </div>
-
-            <div class="contact-item">
-              <div class="item-icon">🕒</div>
-              <div class="item-content">
-                <div class="item-label">Business Hours</div>
-                <div class="item-value">{{ contactInfo.hours }}</div>
-              </div>
-            </div>
-
-            <div class="contact-item emergency">
-              <div class="item-icon">🚨</div>
-              <div class="item-content">
-                <div class="item-label">Event Emergency</div>
-                <a [href]="'tel:' + contactInfo.emergency.split(' ')[0]" class="item-value">
-                  {{ contactInfo.emergency }}
-                </a>
-              </div>
-            </div>
-          </div>
+          <h3>Self-serve events</h3>
+          <p>Want to list a general event with ticket types and pricing? Get in touch and we'll get you set up.</p>
+          <a href="mailto:info@crowdpass.co.uk?subject=Self-serve event enquiry" class="contact__card-link">
+            info&#64;crowdpass.co.uk
+          </a>
         </div>
 
-        <!-- Contact Form -->
-        <div class="contact-form-card">
-          <div class="form-header">
-            <h2 class="form-title">Send Us a Message</h2>
-            <p class="form-subtitle">We typically respond within 24 hours</p>
+        <div class="contact__card contact__card--featured">
+          <div class="contact__card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
           </div>
+          <h3>Bespoke setup</h3>
+          <p>Need a branded subdomain, seat map and full managed service? Tell us about your event and we'll get back to you within 24 hours.</p>
+          <a href="mailto:info@crowdpass.co.uk?subject=Bespoke event enquiry" class="contact__card-link">
+            info&#64;crowdpass.co.uk
+          </a>
+        </div>
 
-          <!-- Success Message -->
-          <div class="success-message" *ngIf="isSubmitted">
-            <div class="success-icon">✅</div>
-            <h3 class="success-title">Message Sent Successfully!</h3>
-            <p class="success-text">
-              Thank you for contacting V4 Entertainments. Our team will get back to you shortly.
-            </p>
-            <button class="primary-btn" (click)="isSubmitted = false">
-              Send Another Message
-            </button>
+        <div class="contact__card">
+          <div class="contact__card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
           </div>
+          <h3>Support</h3>
+          <p>Already using CrowdPass and need help? Reach out and our team will respond as quickly as possible.</p>
+          <a href="mailto:info@crowdpass.co.uk" class="contact__card-link">
+            info&#64;crowdpass.co.uk
+          </a>
+        </div>
 
-          <!-- Contact Form -->
-          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" *ngIf="!isSubmitted">
-            <div class="form-group">
-              <label for="name" class="form-label">Full Name *</label>
-              <input 
-                type="text" 
-                id="name" 
-                formControlName="name"
-                class="form-input"
-                placeholder="Enter your full name"
-                [class.invalid]="contactForm.get('name')?.invalid && contactForm.get('name')?.touched"
-              >
-              <div class="error-message" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
-                Please enter your full name (minimum 2 characters)
-              </div>
-            </div>
+      </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="email" class="form-label">Email Address *</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  formControlName="email"
-                  class="form-input"
-                  placeholder="your@email.com"
-                  [class.invalid]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched"
+      <!-- Form + info -->
+      <div class="contact__form-wrap">
+
+        <!-- Form -->
+        <div class="contact__form-card">
+          <h2>Send us a message</h2>
+          <p class="contact__form-sub">Fill in the form and we'll get back to you within one business day.</p>
+
+          <form class="contact__form" (ngSubmit)="onSubmit()" #contactForm="ngForm" novalidate>
+
+            <div class="contact__row">
+              <div class="contact__field">
+                <label for="name">Your name</label>
+                <input
+                  id="name" name="name" type="text"
+                  placeholder="Jane Smith"
+                  [(ngModel)]="form.name"
+                  required
+                  #nameField="ngModel"
+                  [class.invalid]="nameField.invalid && nameField.touched"
                 >
-                <div class="error-message" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
-                  Please enter a valid email address
-                </div>
+                <span class="contact__err" *ngIf="nameField.invalid && nameField.touched">Please enter your name</span>
               </div>
-
-              <div class="form-group">
-                <label for="phone" class="form-label">Phone Number</label>
-                <input 
-                  type="tel" 
-                  id="phone" 
-                  formControlName="phone"
-                  class="form-input"
-                  placeholder="+44 20 1234 5678"
-                  [class.invalid]="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched"
+              <div class="contact__field">
+                <label for="email">Email address</label>
+                <input
+                  id="email" name="email" type="email"
+                  placeholder="jane@example.com"
+                  [(ngModel)]="form.email"
+                  required email
+                  #emailField="ngModel"
+                  [class.invalid]="emailField.invalid && emailField.touched"
                 >
-                <div class="error-message" *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">
-                  Please enter a valid phone number
-                </div>
+                <span class="contact__err" *ngIf="emailField.invalid && emailField.touched">Please enter a valid email</span>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="subject" class="form-label">Subject *</label>
-              <select 
-                id="subject" 
-                formControlName="subject"
-                class="form-select"
-                [class.invalid]="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched"
-              >
-                <option value="">Select a subject</option>
-                <option value="ticket-inquiry">Ticket Inquiry</option>
-                <option value="artist-booking">Artist Booking</option>
-                <option value="event-planning">Event Planning</option>
-                <option value="partnership">Partnership Opportunity</option>
-                <option value="general">General Inquiry</option>
-                <option value="feedback">Feedback & Suggestions</option>
+            <div class="contact__field">
+              <label for="subject">What is this about?</label>
+              <select id="subject" name="subject" [(ngModel)]="form.subject" required #subjectField="ngModel"
+                [class.invalid]="subjectField.invalid && subjectField.touched">
+                <option value="" disabled selected>Select a topic…</option>
+                <option value="self-serve">Setting up a self-serve event</option>
+                <option value="bespoke">Bespoke event enquiry</option>
+                <option value="support">Support / technical issue</option>
+                <option value="billing">Billing question</option>
+                <option value="other">Something else</option>
               </select>
-              <div class="error-message" *ngIf="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched">
-                Please select a subject
-              </div>
+              <span class="contact__err" *ngIf="subjectField.invalid && subjectField.touched">Please select a topic</span>
             </div>
 
-            <div class="form-group">
-              <label for="department" class="form-label">Department</label>
-              <select 
-                id="department" 
-                formControlName="department"
-                class="form-select"
-              >
-                <option value="general">General Inquiry</option>
-                <option value="booking">Artist Booking</option>
-                <option value="ticketing">Ticketing</option>
-                <option value="partnerships">Partnerships</option>
-                <option value="press">Press & Media</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="message" class="form-label">Message *</label>
-              <textarea 
-                id="message" 
-                formControlName="message"
-                class="form-textarea"
-                placeholder="Tell us about your inquiry..."
+            <div class="contact__field">
+              <label for="message">Message</label>
+              <textarea
+                id="message" name="message"
+                placeholder="Tell us about your event or question…"
                 rows="5"
-                [class.invalid]="contactForm.get('message')?.invalid && contactForm.get('message')?.touched"
+                [(ngModel)]="form.message"
+                required
+                #messageField="ngModel"
+                [class.invalid]="messageField.invalid && messageField.touched"
               ></textarea>
-              <div class="error-message" *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched">
-                Please enter your message (minimum 10 characters)
-              </div>
+              <span class="contact__err" *ngIf="messageField.invalid && messageField.touched">Please enter a message</span>
             </div>
 
-            <div class="form-checkbox">
-              <input 
-                type="checkbox" 
-                id="subscribe" 
-                formControlName="subscribe"
-                class="checkbox-input"
-              >
-              <label for="subscribe" class="checkbox-label">
-                Subscribe to our newsletter for upcoming Malayali concert updates
-              </label>
+            <!-- Success -->
+            <div class="contact__success" *ngIf="submitted">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Message sent! We'll get back to you within one business day.
             </div>
 
-            <div class="form-actions">
-              <button 
-                type="submit" 
-                class="primary-btn submit-btn"
-                [disabled]="isLoading || contactForm.invalid"
-              >
-                <span *ngIf="!isLoading">Send Message</span>
-                <span *ngIf="isLoading" class="loading-spinner">⏳</span>
-              </button>
-            </div>
+            <button class="contact__submit" type="submit" [disabled]="sending || submitted">
+              <span *ngIf="!sending && !submitted">Send message</span>
+              <span *ngIf="sending">Sending…</span>
+              <span *ngIf="submitted">Sent ✓</span>
+            </button>
+
           </form>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- FAQ Section -->
-  <section class="faq-section">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-badge">FAQs</div>
-        <h2 class="section-title">Frequently Asked Questions</h2>
-        <p class="section-subtitle">Quick answers to common questions about our services</p>
-      </div>
-
-      <div class="faq-grid">
-        <div class="faq-card" *ngFor="let faq of faqs">
-          <div class="faq-question">
-            <div class="faq-icon">❓</div>
-            <h3 class="faq-title">{{ faq.question }}</h3>
+        <!-- Info panel -->
+        <div class="contact__info">
+          <div class="contact__info-block">
+            <h4>Email</h4>
+            <!-- <a href="mailto:hello@crowdpass.co.uk">hello@crowdpass.co.uk</a> -->
+            <a href="mailto:info@crowdpass.co.uk">info&#64;crowdpass.co.uk</a>
           </div>
-          <div class="faq-answer">
-            <p>{{ faq.answer }}</p>
+          <div class="contact__info-block">
+            <h4>Response time</h4>
+            <p>We aim to respond to all enquiries within one business day. For urgent event support, mark your subject as URGENT.</p>
+          </div>
+          <div class="contact__info-block">
+            <h4>Based in</h4>
+            <p>United Kingdom</p>
+          </div>
+          <div class="contact__info-block">
+            <h4>Legal</h4>
+            <a routerLink="/terms">Terms &amp; Conditions</a>
+            <a routerLink="/privacy-policy">Privacy Policy</a>
           </div>
         </div>
-      </div>
 
-      <div class="faq-cta">
-        <p class="cta-text">Still have questions? We're here to help!</p>
-        <a [href]="'mailto:' + contactInfo.email" class="primary-btn">
-          <span class="btn-icon">📧</span>
-          Email Us Directly
-        </a>
       </div>
     </div>
   </section>

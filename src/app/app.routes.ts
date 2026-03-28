@@ -1,117 +1,148 @@
 import { Routes } from '@angular/router';
-import { CartComponent } from './components/cart/cart.component';
-import { ConfirmationComponent } from './components/confirmation/confirmation.component';
-import { TicketLookupComponent } from './components/ticket-lookup/ticket-lookup.component';
-import { AboutUsComponent } from './components/pages/about-us/about-us.component';
-import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
-import { SVGSeatmapComponent } from './components/seating/svg-seatmap/svg-seatmap.component';
-import { TicketInfoComponent } from './components/ticket-info/ticket-info.component';
+import { environment } from '../environments/environment';
 
+const isMain = environment.companyId === 'main';
 
-export const routes: Routes = [
-  { 
-    path: '', 
-    loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent),  
-    title: 'Home' 
+// ── Bespoke routes ─────────────────────────────────────────────────────────────
+const bespokeRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./components/event-landing/event-landing.component')
+      .then(m => m.EventLandingComponent),
+    title: 'Home'
   },
-  // { 
-  //   path: '', 
-  //   loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
-  //   title: 'Home' 
-  // },
-  { 
-    path: 'events', 
-    loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
-    title: 'Event List' 
+  {
+    path: 'events',
+    loadComponent: () => import('./components/main/main.component')
+      .then(m => m.MainComponent),
+    title: 'Event List'
   },
-  { 
-    path: 'events/:id', 
-    loadComponent: () => import('./components/event-details/event-details.component').then(m => m.EventDetailsComponent),  
-    title: 'Event Detail'  
-  }, 
+  {
+    path: 'events/:id',
+    loadComponent: () => import('./components/event-details/event-details.component')
+      .then(m => m.EventDetailsComponent),
+    title: 'Event Detail'
+  },
   {
     path: 'events/:id/seatmap',
-    loadComponent: () => import('./components/seating/svg-seatmap/svg-seatmap.component').then(m => m.SVGSeatmapComponent),  
-    title : 'Seat Selection'
-  },    
+    loadComponent: () => import('./components/seating/svg-seatmap/svg-seatmap.component')
+      .then(m => m.SVGSeatmapComponent),
+    title: 'Seat Selection'
+  },
   {
     path: 'events/:id/mobileseatmap',
-    loadComponent: () => import('./components/seating/mobile-section-selector/mobile-section-selector.component').then(
-        m => m.MobileSectionSelectorComponent),
+    loadComponent: () => import('./components/seating/mobile-section-selector/mobile-section-selector.component')
+      .then(m => m.MobileSectionSelectorComponent),
     title: 'Select Sections'
   },
   {
     path: 'events/:id/section/:sectionId',
-    loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-svg-seat-selector/mobile-svg-seat-selector.component').then(
-        m => m.MobileSvgSeatSelectorComponent),
-    title: 'Select Selection'
+    loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-svg-seat-selector/mobile-svg-seat-selector.component')
+      .then(m => m.MobileSvgSeatSelectorComponent),
+    title: 'Select Seat'
   },
   {
     path: 'events/generaladmission/:id/:sectionId',
-    loadComponent: () => import('./components/seating/general-admission/general-admission.component').then(
-        m => m.GeneralAdmissionComponent),
-    title: 'Choose General Admission Seats'
+    loadComponent: () => import('./components/seating/general-admission/general-admission.component')
+      .then(m => m.GeneralAdmissionComponent),
+    title: 'General Admission'
   },
   {
-    path: 'events/:id/section1/:sectionId',
-    loadComponent: () => import('./components/seating/mobile-seat-selector/mobile-seat-selector.component').then(
-        m => m.MobileSeatSelectorComponent),
-    title: 'Select Selection'
+    path: 'cart',
+    loadComponent: () => import('./components/cart/cart.component')
+      .then(m => m.CartComponent),
+    title: 'Cart'
   },
-  { 
-    path: 'cart', 
-    loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent),
-    title : 'Cart'
-  }, 
-  { path: 'checkout', 
-    loadComponent: () => import('./components/checkout/checkout.component').then(m => m.CheckoutComponent),
-    title : 'Checkout'
+  {
+    path: 'checkout',
+    loadComponent: () => import('./components/checkout/checkout.component')
+      .then(m => m.CheckoutComponent),
+    title: 'Checkout'
   },
   {
     path: 'confirmation/:id',
-    loadComponent: () => import('./components/confirmation/confirmation.component').then(m => m.ConfirmationComponent),
-    title : 'Confirmation'
+    loadComponent: () => import('./components/confirmation/confirmation.component')
+      .then(m => m.ConfirmationComponent),
+    title: 'Confirmation'
   },
   {
     path: 'tickets/lookup',
-    loadComponent: () => import('./components/ticket-lookup/ticket-lookup.component').then(m => m.TicketLookupComponent),
-    title : 'Ticket Lookup'
-  },
-  { 
-    path: 'about', 
-    loadComponent: () => import('./components/pages/about-us/about-us.component').then(m => m.AboutUsComponent),
-  },
-  { 
-    path: 'contact', 
-    loadComponent: () => import('./components/pages/contact-us/contact-us.component').then(m => m.ContactUsComponent),
+    loadComponent: () => import('./components/ticket-lookup/ticket-lookup.component')
+      .then(m => m.TicketLookupComponent),
+    title: 'Ticket Lookup'
   },
   {
-    path: 'ticket-info',
-    component: TicketInfoComponent
+    path: 'about',
+    loadComponent: () => import('./components/pages/about-us/about-us.component')
+      .then(m => m.AboutUsComponent)
   },
   {
-  path: 'privacy-policy',
-  loadComponent: () => import('./components/event-landing/privacy-policy/privacy-policy.component')
-    .then(m => m.PrivacyPolicyComponent)
-},
-  { 
-    path: '**', 
-    redirectTo: ''
-  }
+    path: 'contact',
+    loadComponent: () => import('./components/pages/contact-us/contact-us.component')
+      .then(m => m.ContactUsComponent)
+  },
+  {
+    path: 'privacy-policy',
+    loadComponent: () => import('./components/event-landing/privacy-policy/privacy-policy.component')
+      .then(m => m.PrivacyPolicyComponent)
+  },
+  { path: '**', redirectTo: '' }
+];
 
-  //this is the component where seat sections are like block by block with html
-  // {
-  //   path: 'events/:id/seats',
-  //   component: SeatmapBlockComponent
-  // },
-  //This is with sections layout with steps. it will section first then move to seats. sections made with html
-  // {
-  //   path: 'events/:id/seatstheatre',
-  //   component: SeatSelectionTheatreComponent
-  // },
-  //Seat map section component, where it can go from all sections to one section. this component handles that one section with seats
-  // { 
-  //   path: 'seat-map/:eventId/:sectionId', 
-  //   loadComponent: () => import('./components/seating/seatmap-section/seatmap-section.component').then(m => m.SeatMapSectionComponent) 
-  // },
-];    
+// ── Main site routes (crowdpass.co.uk) ────────────────────────────────────────
+// Both '' and 'events' use MainComponent — it detects which via routeConfig.path
+const mainRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./components/main/main.component')
+      .then(m => m.MainComponent),
+    title: 'CrowdPass — Event Ticketing'
+  },
+  {
+    path: 'events',
+    loadComponent: () => import('./components/main/main.component')
+      .then(m => m.MainComponent),
+    title: 'Events'
+  },
+  {
+    path: 'events/:id',
+    loadComponent: () => import('./components/event-details/event-details.component')
+      .then(m => m.EventDetailsComponent),
+    title: 'Event'
+  },
+  {
+    path: 'confirmation/:id',
+    loadComponent: () => import('./components/confirmation/confirmation.component')
+      .then(m => m.ConfirmationComponent),
+    title: 'Confirmation'
+  },
+  {
+    path: 'tickets/lookup',
+    loadComponent: () => import('./components/ticket-lookup/ticket-lookup.component')
+      .then(m => m.TicketLookupComponent),
+    title: 'Ticket Lookup'
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./components/pages/about-us/about-us.component')
+      .then(m => m.AboutUsComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./components/pages/contact-us/contact-us.component')
+      .then(m => m.ContactUsComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./components/pages/terms/terms.component')
+      .then(m => m.TermsComponent)
+  },
+  {
+    path: 'privacy-policy',
+    loadComponent: () => import('./components/event-landing/privacy-policy/privacy-policy.component')
+      .then(m => m.PrivacyPolicyComponent)
+  },
+  { path: '**', redirectTo: '' }
+];
+
+export const routes: Routes = isMain ? mainRoutes : bespokeRoutes;

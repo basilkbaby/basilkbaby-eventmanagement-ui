@@ -1,116 +1,133 @@
-<!-- about-us.component.html -->
-<div class="about-container" [class.mobile-view]="isMobile">
-  
-  <!-- Main Hero Section -->
-  <section class="hero-section">
-    <div class="hero-background"></div>
-    <div class="hero-content">
-      <div class="hero-badge">UK's Premier Malayali Concert Specialists</div>
-      <h1 class="hero-title">{{ companyData.tagline }}</h1>
-      <p class="hero-description">{{ companyData.description }}</p>
+<div class="about">
 
-      <div class="stats-container">
-        <div class="stat-card" *ngFor="let stat of companyData.stats">
-          <div class="stat-number">{{ stat.number }}</div>
-          <div class="stat-label">{{ stat.label }}</div>
-        </div>
-      </div>
-
-      <div class="hero-actions">
-        <a routerLink="/concerts" class="primary-btn">
-          <span class="btn-icon">🎫</span>
-          View Upcoming Concerts
-        </a>
-      </div>
+  <!-- Hero -->
+  <section class="about__hero">
+    <div class="about__hero-inner">
+      <span class="about__eyebrow">About CrowdPass</span>
+      <h1 class="about__title">Ticketing built for<br><span class="about__accent">every kind of event</span></h1>
+      <p class="about__sub">We're a UK-based ticketing platform giving organisers the tools to sell tickets simply — from a small local fundraiser to a full-scale concert with seat maps and branded subdomains.</p>
     </div>
   </section>
 
-  <!-- Iconic Venues Section -->
-  <section class="venues-section">
-    <div class="section-header">
-      <div class="section-badge">Iconic UK Venues</div>
-      <h2 class="section-title">Where Kerala's Music Meets British Grandeur</h2>
-      <p class="section-subtitle">We produce Malayali concerts at the UK's most prestigious venues</p>
-    </div>
-
-    <div class="venues-grid">
-      <div class="venue-card" *ngFor="let venue of companyData.venues">
-        <div class="venue-header">
-          <div class="venue-icon">🏛️</div>
-          <div class="venue-info">
-            <h3 class="venue-name">{{ venue.name }}</h3>
-            <div class="venue-location">
-              <span class="location-icon">📍</span>
-              {{ venue.city }}
-            </div>
+  <!-- Mission -->
+  <section class="about__section">
+    <div class="about__inner">
+      <div class="about__two-col">
+        <div class="about__text-block">
+          <h2>Our mission</h2>
+          <p>Ticketing shouldn't be complicated or expensive. We built CrowdPass because organisers were paying too much to platforms that weren't built for their needs — and buyers were getting a poor experience as a result.</p>
+          <p>We offer two paths: a self-serve option for anyone who wants to list an event quickly, and a fully managed bespoke service for organisers who need seat maps, custom branding and dedicated support. Both are built on the same platform, the same infrastructure, the same commitment to reliability.</p>
+        </div>
+        <div class="about__stats">
+          <div class="about__stat">
+            <span class="about__stat-num">2</span>
+            <span class="about__stat-label">Tiers of service</span>
           </div>
-        </div>
-        
-        <div class="venue-features">
-          <div class="feature-tag" *ngFor="let feature of venue.features">{{ feature }}</div>
-        </div>
-
-        <div class="venue-events">
-          <div class="events-label">Featured Malayali Concerts:</div>
-          <div class="event-tag" *ngFor="let event of venue.pastEvents">{{ event }}</div>
-        </div>
-
-        <div class="venue-cta">
-          <a [routerLink]="['/venues', venue.name.toLowerCase()]" class="venue-link">
-            View Available Dates →
-          </a>
+          <div class="about__stat">
+            <span class="about__stat-num">UK</span>
+            <span class="about__stat-label">Based &amp; supported</span>
+          </div>
+          <div class="about__stat">
+            <span class="about__stat-num">0%</span>
+            <span class="about__stat-label">Upfront cost to list</span>
+          </div>
+          <div class="about__stat">
+            <span class="about__stat-num">24h</span>
+            <span class="about__stat-label">Support response</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Featured Artists Section -->
-  <section class="artists-section">
-    <div class="section-header">
-      <div class="section-badge">Star Lineup</div>
-      <h2 class="section-title">Kerala's Finest Artists on UK Stages</h2>
-      <p class="section-subtitle">Exclusive UK concerts by Malayalam music's biggest names</p>
+  <!-- What we offer -->
+  <section class="about__section about__section--alt">
+    <div class="about__inner">
+      <h2 class="about__section-title">What we offer</h2>
+      <div class="about__cards">
+
+        <div class="about__card">
+          <div class="about__card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Self-serve events</h3>
+          <p>Create and publish an event in minutes. Set your own ticket types, pricing and capacity. We charge a small fee per ticket sold — you pay nothing upfront.</p>
+        </div>
+
+        <div class="about__card about__card--dark">
+          <div class="about__card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Bespoke events</h3>
+          <p>For concerts, venues and large-scale shows. We build a fully branded page on your own subdomain, complete with an interactive seat map, admin dashboard and dedicated account support.</p>
+        </div>
+
+        <div class="about__card">
+          <div class="about__card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Secure by default</h3>
+          <p>All payments are processed through certified payment providers. QR-code tickets prevent fraud. Attendee data is handled in line with UK GDPR.</p>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <div class="artists-grid">
-      <div class="artist-card" *ngFor="let artist of companyData.featuredArtists">
-        <div class="artist-header">
-          <div class="artist-avatar">
-            <span class="avatar-icon">🎤</span>
-          </div>
-          <div class="artist-main">
-            <h3 class="artist-name">{{ artist.name }}</h3>
-            <div class="artist-category">{{ artist.category }}</div>
-          </div>
-          <div class="artist-status" [ngClass]="getStatusClass(artist.status)">
-            {{ artist.status }}
+  <!-- Values -->
+  <section class="about__section">
+    <div class="about__inner">
+      <h2 class="about__section-title">How we work</h2>
+      <div class="about__values">
+        <div class="about__value">
+          <span class="about__value-num">01</span>
+          <div>
+            <h4>Transparent pricing</h4>
+            <p>No hidden fees, no surprise charges. You see exactly what you pay before committing.</p>
           </div>
         </div>
-
-        <div class="artist-details">
-          <div class="upcoming-show">
-            <span class="show-icon">📅</span>
-            <span class="show-text">{{ artist.upcomingShow }}</span>
+        <div class="about__value">
+          <span class="about__value-num">02</span>
+          <div>
+            <h4>Organiser first</h4>
+            <p>We build tools that make your job easier. From real-time sales dashboards to exportable attendee data, everything is designed around your workflow.</p>
           </div>
         </div>
-
-        <div class="artist-actions">
-          <button class="notify-btn" *ngIf="artist.status === 'Announcing Soon'">
-            <span class="btn-icon">🔔</span>
-            Notify Me
-          </button>
-          <button class="book-btn" *ngIf="artist.status === 'Booking Open' || artist.status === 'Early Bird'">
-            <span class="btn-icon">🎫</span>
-            Book Tickets
-          </button>
-          <button class="waitlist-btn" *ngIf="artist.status === 'Sold Out'">
-            <span class="btn-icon">⏳</span>
-            Join Waitlist
-          </button>
+        <div class="about__value">
+          <span class="about__value-num">03</span>
+          <div>
+            <h4>Buyer experience matters</h4>
+            <p>Fast checkout, instant e-tickets and a clear refund policy. When your audience has a good experience buying tickets, it reflects well on your event.</p>
+          </div>
+        </div>
+        <div class="about__value">
+          <span class="about__value-num">04</span>
+          <div>
+            <h4>UK-based support</h4>
+            <p>Real people, based in the UK. When something goes wrong before your event, you need someone who picks up and knows what they're doing.</p>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
+  <!-- CTA -->
+  <section class="about__cta-band">
+    <div class="about__inner">
+      <h2>Ready to get started?</h2>
+      <p>Whether you want to list an event yourself or need a fully managed setup, we're here to help.</p>
+      <div class="about__cta-btns">
+        <a routerLink="/contact" class="about__btn about__btn--primary">Get in touch</a>
+        <a routerLink="/events" class="about__btn about__btn--ghost">Browse events</a>
+      </div>
+    </div>
   </section>
 
 </div>
