@@ -271,7 +271,8 @@ export class CartService {
       seatCount: data.seatCount || items.length,
       cartItems: data.cartItems || [],
       couponCode: data.couponCode,
-      couponDiscount: data.couponDiscount
+      couponDiscount: data.couponDiscount,
+      discount: data.discount
 
     };
 
@@ -296,7 +297,8 @@ export class CartService {
       seatCount: 0,
       cartItems: [],
       couponCode: '',
-      couponDiscount: 0
+      couponDiscount: 0,
+      discount: 0
     };
   }
 

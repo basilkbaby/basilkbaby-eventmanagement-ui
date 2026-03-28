@@ -259,9 +259,18 @@
               <span>Subtotal ({{ cartSummary.seatCount }} {{ cartSummary.seatCount === 1 ? 'seat' : 'seats' }})</span>
               <span>{{ formatPrice(cartSummary.subtotal) }}</span>
             </div>
-            <div class="total-line">
+            <div class="total-line" *ngIf="cartSummary.serviceFee>0">
               <span>Service Fee</span>
               <span>{{ formatPrice(cartSummary.serviceFee) }}</span>
+            </div>
+
+            <div class="total-line" *ngIf="cartSummary.discount>0">
+              <span>Promotion Discount</span>
+              <span>{{ formatPrice(cartSummary.discount) }}</span>
+            </div>
+            <div class="total-line" *ngIf="cartSummary.couponDiscount>0">
+              <span>Coupon Discount</span>
+              <span>{{ formatPrice(cartSummary.couponDiscount) }}</span>
             </div>
 
             <!-- Add Coupon Section -->
@@ -310,7 +319,7 @@
               </div>
             </div>
             <div class="total-line" *ngIf="cartSummary.totalDiscount>0">
-              <span>Discount</span>
+              <span>Total Discount</span>
               <span>{{ formatPrice(cartSummary.totalDiscount) }}</span>
             </div>
             <div class="total-line grand-total">

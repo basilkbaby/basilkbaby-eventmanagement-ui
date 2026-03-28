@@ -46,7 +46,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     seatCount: 0, 
     cartItems: [] ,
     couponCode: '',
-    couponDiscount: 0
+    couponDiscount: 0,
+    discount: 0
   };
   loading: boolean = true;
   processing: boolean = false;
