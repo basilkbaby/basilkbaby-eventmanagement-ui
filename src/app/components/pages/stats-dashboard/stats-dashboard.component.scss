@@ -1,10 +1,10 @@
 // stats-dashboard.component.scss
 .stats-dashboard {
   padding: 3rem 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
   margin: 0 auto;
   max-width: 1200px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-light);
 
   // Header Section
   .dashboard-header {
@@ -17,11 +17,11 @@
     .dashboard-title {
       font-size: 2.5rem;
       font-weight: 800;
-      color: #1e293b;
+      color: var(--gray-800);
       line-height: 1.2;
       margin-bottom: 1rem;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-400) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -29,7 +29,7 @@
 
     .dashboard-description {
       font-size: 1.2rem;
-      color: #64748b;
+      color: var(--gray-500);
       font-weight: 500;
       line-height: 1.6;
       margin: 0;
@@ -50,13 +50,13 @@
 
   .stat-card {
     flex: 1;
-    background: #ffffff;
-    border-radius: 16px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
     padding: 2.5rem 2rem;
-    box-shadow: 
+    box-shadow:
       0 4px 20px rgba(0, 0, 0, 0.08),
       0 1px 3px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--bg-tertiary);
     text-align: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -81,10 +81,10 @@
 
     &:hover {
       transform: translateY(-6px);
-      box-shadow: 
+      box-shadow:
         0 12px 40px rgba(0, 0, 0, 0.15),
         0 4px 8px rgba(0, 0, 0, 0.06);
-      border-color: #e2e8f0;
+      border-color: var(--border-light);
 
       &::before {
         transform: scaleX(1);
@@ -93,9 +93,9 @@
       .stat-icon {
         transform: scale(1.1);
         background: var(--accent-color);
-        
+
         .material-icons {
-          color: white;
+          color: var(--white);
         }
       }
 
@@ -127,7 +127,7 @@
       .stat-value {
         font-size: 3rem;
         font-weight: 800;
-        color: #1e293b;
+        color: var(--gray-800);
         line-height: 1;
         margin-bottom: 0.75rem;
         font-family: 'Inter', sans-serif;
@@ -136,7 +136,7 @@
 
       .stat-label {
         font-size: 1rem;
-        color: #64748b;
+        color: var(--gray-500);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -154,11 +154,11 @@
         transition: all 0.3s ease;
 
         &.trend-positive {
-          background: rgba(34, 197, 94, 0.1);
-          color: #16a34a;
-          
+          background: rgba(79, 70, 229, 0.1);
+          color: var(--primary-700);
+
           .material-icons {
-            color: #16a34a;
+            color: var(--primary-700);
             font-size: 1.1rem;
           }
         }
@@ -169,21 +169,21 @@
       }
     }
 
-    // Color variations
+    // Color variations using CSS custom properties
     &:nth-child(1) {
-      --accent-color: #3b82f6;
-      --icon-bg: rgba(59, 130, 246, 0.1);
-      --icon-border: rgba(59, 130, 246, 0.2);
+      --accent-color: var(--primary-600);
+      --icon-bg: rgba(79, 70, 229, 0.1);
+      --icon-border: rgba(79, 70, 229, 0.2);
     }
 
     &:nth-child(2) {
-      --accent-color: #8b5cf6;
-      --icon-bg: rgba(139, 92, 246, 0.1);
-      --icon-border: rgba(139, 92, 246, 0.2);
+      --accent-color: var(--primary-400);
+      --icon-bg: rgba(99, 102, 241, 0.1);
+      --icon-border: rgba(99, 102, 241, 0.2);
     }
 
     &:nth-child(3) {
-      --accent-color: #f59e0b;
+      --accent-color: var(--warning);
       --icon-bg: rgba(245, 158, 11, 0.1);
       --icon-border: rgba(245, 158, 11, 0.2);
     }
@@ -206,7 +206,7 @@
 // Staggered entrance animation
 .stat-card {
   animation: slideInUp 0.6s ease-out;
-  
+
   &:nth-child(1) { animation-delay: 0.1s; }
   &:nth-child(2) { animation-delay: 0.2s; }
   &:nth-child(3) { animation-delay: 0.3s; }
@@ -254,7 +254,7 @@
         width: 60px;
         height: 60px;
         margin-bottom: 1.25rem;
-        
+
         .material-icons {
           font-size: 1.8rem;
         }
@@ -264,7 +264,7 @@
         .stat-value {
           font-size: 2.5rem;
         }
-        
+
         .stat-label {
           font-size: 0.9rem;
         }
@@ -288,11 +288,11 @@
 
     .stat-card {
       padding: 1.5rem 1.25rem;
-      
+
       .stat-icon {
         width: 55px;
         height: 55px;
-        
+
         .material-icons {
           font-size: 1.6rem;
         }

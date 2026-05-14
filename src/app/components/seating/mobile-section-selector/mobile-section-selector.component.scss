@@ -2,33 +2,33 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f0f2f5;
+  background: var(--bg-tertiary);
   overflow: hidden;
   touch-action: none; // Disable browser touch actions
-  
+
   .simple-header {
     flex-shrink: 0;
-    background: white;
+    background: var(--bg-primary);
     padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-light);
     z-index: 10;
-    
+
     h1 {
       margin: 0 0 4px 0;
       font-size: 22px;
       font-weight: 700;
-      color: #333;
+      color: var(--text-primary);
       text-align: center;
     }
-    
+
     .instructions {
       margin: 0;
       font-size: 12px;
-      color: #666;
+      color: var(--text-secondary);
       text-align: center;
     }
   }
-  
+
   .zoom-controls {
     position: absolute;
     bottom: 0px;
@@ -37,14 +37,14 @@
     display: flex;
     flex-direction: row;
     gap: 8px;
-    
+
     .zoom-btn {
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: white;
-      border: 2px solid #4a8bc9;
-      color: #4a8bc9;
+      background: var(--bg-primary);
+      border: 2px solid var(--primary-500);
+      color: var(--primary-500);
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
@@ -52,70 +52,70 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-      touch-action: manipulation; // Better touch on buttons
-      
+      touch-action: manipulation;
+
       &:active {
-        background: #f0f7ff;
+        background: var(--primary-50);
         transform: scale(0.95);
         transition: transform 0.1s;
       }
     }
   }
-  
+
   .svg-container {
-position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
-  
-  /* Prevent momentum scrolling on iOS */
-  -webkit-overflow-scrolling: auto;
-  
-  /* Hardware acceleration */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-    
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+
+    /* Prevent momentum scrolling on iOS */
+    -webkit-overflow-scrolling: auto;
+
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+
     .svg-wrapper {
       position: absolute;
       transform-origin: 0 0;
-      will-change: transform; // Optimize for animation
-  transition: transform 0.1s ease-out;
+      will-change: transform;
+      transition: transform 0.1s ease-out;
 
       .venue-svg {
         display: block;
-        user-select: none; // Prevent text selection
-        
+        user-select: none;
+
         .section-block {
           cursor: pointer;
           transition: all 0.2s ease;
-          
+
           &:active {
             opacity: 0.8;
             transform: scale(0.98);
           }
-          
+
           &.selected {
-            stroke: #4CAF50;
+            stroke: var(--success);
             stroke-width: 3;
-            filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+            filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
             animation: pulse 2s infinite;
           }
         }
       }
     }
   }
-  
+
   .selected-info {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: var(--bg-primary);
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
@@ -123,62 +123,62 @@ position: relative;
     padding: 20px;
     transform: translateY(0);
     animation: slideUp 0.3s ease;
-    
+
     .info-content {
       display: flex;
       align-items: center;
       gap: 16px;
       margin-bottom: 20px;
-      
+
       .section-color-indicator {
         width: 50px;
         height: 50px;
         border-radius: 12px;
         flex-shrink: 0;
-        border: 3px solid white;
+        border: 3px solid var(--bg-primary);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
-      
+
       .section-details {
         flex: 1;
-        
+
         h3 {
           margin: 0 0 8px 0;
           font-size: 20px;
           font-weight: 700;
-          color: #333;
+          color: var(--text-primary);
         }
-        
+
         .section-meta {
           display: flex;
           gap: 16px;
-          
+
           .meta-item {
             font-size: 13px;
-            color: #666;
+            color: var(--text-secondary);
             font-weight: 500;
             padding: 4px 8px;
-            background: #f5f5f5;
+            background: var(--bg-tertiary);
             border-radius: 6px;
           }
         }
       }
-      
+
       .section-price {
         font-size: 22px;
         font-weight: 700;
-        color: #4a8bc9;
+        color: var(--primary-500);
         flex-shrink: 0;
-        background: #f0f7ff;
+        background: var(--primary-50);
         padding: 8px 12px;
         border-radius: 10px;
       }
     }
-    
+
     .action-buttons {
       display: flex;
       gap: 12px;
-      
+
       .btn-back,
       .btn-select {
         flex: 1;
@@ -190,34 +190,34 @@ position: relative;
         cursor: pointer;
         touch-action: manipulation;
         transition: all 0.2s ease;
-        
+
         &:active {
           transform: translateY(2px);
         }
       }
-      
+
       .btn-back {
-        background: #f5f5f5;
-        color: #666;
-        
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+
         &:active {
-          background: #e0e0e0;
+          background: var(--border-light);
         }
       }
-      
+
       .btn-select {
-        background: #4a8bc9;
-        color: white;
-        box-shadow: 0 3px 10px rgba(74, 139, 201, 0.3);
-        
+        background: var(--primary-500);
+        color: var(--white);
+        box-shadow: 0 3px 10px rgba(99, 102, 241, 0.3);
+
         &:active {
-          background: #3a7bb9;
-          box-shadow: 0 1px 5px rgba(74, 139, 201, 0.3);
+          background: var(--primary-600);
+          box-shadow: 0 1px 5px rgba(99, 102, 241, 0.3);
         }
       }
     }
   }
-  
+
   .quick-legend {
     position: absolute;
     bottom: 50px;
@@ -228,29 +228,29 @@ position: relative;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     z-index: 10;
     backdrop-filter: blur(5px);
-    
+
     .legend-item {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
-      
+
       .legend-color {
         width: 20px;
         height: 20px;
         border-radius: 6px;
-        border: 2px solid white;
+        border: 2px solid var(--bg-primary);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
-      
+
       .legend-text {
         font-size: 13px;
         font-weight: 600;
-        color: #333;
+        color: var(--text-primary);
       }
     }
   }
@@ -268,13 +268,13 @@ position: relative;
 
 @keyframes pulse {
   0% {
-    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
   }
   50% {
-    filter: drop-shadow(0 0 12px rgba(76, 175, 80, 0.7));
+    filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.7));
   }
   100% {
-    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
   }
 }
 
@@ -287,7 +287,7 @@ position: relative;
 }
 
 .selected-info {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 16px;
   margin: 12px;
@@ -300,7 +300,7 @@ position: relative;
 
 .section-header h3 {
   margin: 0 0 8px 0;
-  color: #333;
+  color: var(--text-primary);
   font-size: 18px;
 }
 
@@ -312,11 +312,11 @@ position: relative;
 }
 
 .meta-item {
-  background: #f0f0f0;
+  background: var(--bg-tertiary);
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .ticket-types {
@@ -327,7 +327,7 @@ position: relative;
   display: flex;
   align-items: center;
   padding: 8px;
-  background: #fafafa;
+  background: var(--bg-secondary);
   border-radius: 6px;
   margin-bottom: 8px;
 }
@@ -346,25 +346,25 @@ position: relative;
 .type-name {
   display: block;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
 .type-rows {
   display: block;
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .type-price {
   font-weight: bold;
-  color: #764ba2;
+  color: var(--primary-700);
   font-size: 14px;
 }
 
 .price-summary {
   padding-top: 12px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-light);
 }
 
 .price-range {
@@ -374,13 +374,13 @@ position: relative;
 }
 
 .price-label {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .price-value {
   font-weight: bold;
-  color: #764ba2;
+  color: var(--primary-700);
   font-size: 16px;
 }
 
@@ -402,13 +402,13 @@ position: relative;
 }
 
 .btn-back {
-  background: #f0f0f0;
-  color: #666;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .btn-select {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 100%);
+  color: var(--white);
 }
 
 .quick-legend {
@@ -422,7 +422,7 @@ position: relative;
 .legend-title {
   font-weight: bold;
   margin-bottom: 8px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .legend-items {
@@ -445,7 +445,7 @@ position: relative;
 
 .legend-text {
   font-size: 12px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* Make sure sections are above other elements */
@@ -455,13 +455,13 @@ position: relative;
 
 /* Ensure SVG elements don't block clicks */
 .venue-svg {
-  pointer-events: none; /* Disable on SVG */
+  pointer-events: none;
 }
 
 .venue-svg > * {
-  pointer-events: none; /* Disable on all children */
+  pointer-events: none;
 }
 
 .venue-svg .section-block {
-  pointer-events: all; /* Re-enable only on sections */
+  pointer-events: all;
 }

@@ -1,18 +1,7 @@
-// ── Tokens ────────────────────────────────────────────────────────────────────
-$green:    #22C55E;
-$green-d:  #16A34A;
-$green-bg: rgba(34,197,94,0.07);
-$surface:  #ffffff;
-$bg:       #f2f4f8;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$red:      #ef4444;
-$font:     'DM Sans','Helvetica Neue',sans-serif;
-$ease:     cubic-bezier(0.4,0,0.2,1);
-$sw:       320px;
+// ── Keep font and easing SCSS variables ──────────────────────────────────────
+$font: 'DM Sans','Helvetica Neue',sans-serif;
+$ease: cubic-bezier(0.4,0,0.2,1);
+$sw:   320px;
 
 // ── Host ──────────────────────────────────────────────────────────────────────
 :host {
@@ -22,13 +11,11 @@ $sw:       320px;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
-// padding-top clears the fixed/sticky header (set as --header-h by header component)
-// height fills the remaining viewport below the header
 .page {
   display: flex;
   height: calc(100dvh - var(--header-h, 80px));
-  padding-top: 0;          // height already accounts for header
-  background: $surface;
+  padding-top: 0;
+  background: var(--bg-primary);
   overflow: hidden;
 }
 
@@ -36,12 +23,13 @@ $sw:       320px;
 .page-loader {
   height: 100%; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px;
-  background: $surface;
-  p { font-family: $font; font-size: 14px; color: $t3; margin: 0; }
+  background: var(--bg-primary);
+  p { font-family: $font; font-size: 14px; color: var(--text-tertiary); margin: 0; }
 }
+
 .loader-ring {
   width: 36px; height: 36px;
-  border: 3px solid rgba(34,197,94,0.18); border-top-color: $green;
+  border: 3px solid rgba(99, 102, 241, 0.18); border-top-color: var(--primary-600);
   border-radius: 50%; animation: spin 0.7s linear infinite;
 }
 
@@ -52,7 +40,7 @@ $sw:       320px;
   flex: 1; min-width: 0;
   display: flex; flex-direction: column;
   padding: 16px; gap: 10px; overflow: hidden;
-  background: #f4f6f9;   // very light blue-grey — only visible outside the card
+  background: var(--bg-tertiary);
 }
 
 // Mobile section filter (hidden on desktop)
@@ -64,17 +52,17 @@ $sw:       320px;
 
 .sec-pill {
   flex-shrink: 0; padding: 6px 16px; border-radius: 20px;
-  border: 1.5px solid $border; background: $surface;
-  font-family: $font; font-size: 13px; font-weight: 500; color: $t2;
+  border: 1.5px solid var(--border-light); background: var(--bg-primary);
+  font-family: $font; font-size: 13px; font-weight: 500; color: var(--text-secondary);
   cursor: pointer; white-space: nowrap; transition: all .12s $ease;
-  &:hover { border-color: $t2;   color: $t1;    background: $bg; }
-  &.on    { background: $t1;    border-color: $t1; color: #fff; font-weight: 600; }
+  &:hover { border-color: var(--text-secondary); color: var(--text-primary); background: var(--bg-secondary); }
+  &.on    { background: var(--primary-600); border-color: var(--primary-600); color: var(--white); font-weight: 600; }
 }
 
 // Map card
 .map-card {
-  flex: 1; min-height: 0; background: $surface;
-  border-radius: 14px; border: 1px solid $border;
+  flex: 1; min-height: 0; background: var(--bg-primary);
+  border-radius: 14px; border: 1px solid var(--border-light);
   box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
   overflow: hidden; position: relative;
   app-seat-map-visual { display: block; width: 100%; height: 100%; }
@@ -87,7 +75,7 @@ $sw:       320px;
   z-index: 20;
   display: flex; align-items: center;
   background: rgba(255,255,255,0.96);
-  border: 1px solid $border;
+  border: 1px solid var(--border-light);
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   backdrop-filter: blur(6px);
@@ -97,13 +85,13 @@ $sw:       320px;
 .zb {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 3px; padding: 9px 13px;
-  background: none; border: none; cursor: pointer; color: $t2;
+  background: none; border: none; cursor: pointer; color: var(--text-secondary);
   font-family: $font; font-size: 10px; font-weight: 500;
   transition: background .1s, color .1s;
   white-space: nowrap;
   span:first-child { flex-shrink: 0; }
-  &:hover { background: $green-bg; color: $green-d; }
-  &:active { background: darken($green-bg, 3%); }
+  &:hover { background: rgba(99, 102, 241, 0.07); color: var(--primary-700); }
+  &:active { background: rgba(99, 102, 241, 0.1); }
 }
 
 // Price legend — hidden on desktop, shown on mobile inside map card
@@ -111,18 +99,18 @@ $sw:       320px;
   display: none;
 }
 
-.zb-divider { width: 1px; height: 28px; background: $border; flex-shrink: 0; }
+.zb-divider { width: 1px; height: 28px; background: var(--border-light); flex-shrink: 0; }
 
 // ═══════════════════════════════════════════════════════════
 // SIDEBAR
 // ═══════════════════════════════════════════════════════════
 .sidebar {
   width: $sw; flex-shrink: 0;
-  background: $surface; border-left: 1px solid $border;
+  background: var(--bg-primary); border-left: 1px solid var(--border-light);
   display: flex; flex-direction: column;
-  overflow-y: auto; scrollbar-width: thin; scrollbar-color: #d0d6e0 transparent;
+  overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-medium) transparent;
   &::-webkit-scrollbar       { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: #d0d6e0; border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 4px; }
 }
 
 .drag-handle { display: none; }
@@ -130,17 +118,17 @@ $sw:       320px;
 // Sidebar header
 .sidebar-hd {
   display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 20px 20px 16px; border-bottom: 1px solid $border-s;
-  flex-shrink: 0; position: sticky; top: 0; background: $surface; z-index: 5;
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--bg-secondary);
+  flex-shrink: 0; position: sticky; top: 0; background: var(--bg-primary); z-index: 5;
 }
 
-.ev-name { margin: 0 0 3px; font-size: 16px; font-weight: 700; color: $t1; line-height: 1.35; }
-.ev-date { margin: 0; font-size: 13px; color: $t3; }
+.ev-name { margin: 0 0 3px; font-size: 16px; font-weight: 700; color: var(--text-primary); line-height: 1.35; }
+.ev-date { margin: 0; font-size: 13px; color: var(--text-tertiary); }
 
 .sel-badge {
   display: flex; flex-direction: column; align-items: center;
   min-width: 40px; padding: 5px 8px; border-radius: 10px;
-  background: $green; color: #fff; flex-shrink: 0; margin-left: 10px; margin-top: 2px;
+  background: var(--primary-600); color: var(--white); flex-shrink: 0; margin-left: 10px; margin-top: 2px;
   span:first-child { font-size: 18px; font-weight: 700; line-height: 1; }
 }
 .sel-badge-lbl { font-size: 10px; font-weight: 500; opacity: 0.85; }
@@ -151,30 +139,30 @@ $sw:       320px;
 }
 
 .empty-icon {
-  width: 56px; height: 56px; border-radius: 16px; background: $green-bg;
+  width: 56px; height: 56px; border-radius: 16px; background: rgba(99, 102, 241, 0.07);
   display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
 }
 
-.empty-title { margin: 0 0 5px; font-size: 16px; font-weight: 700; color: $t1; }
-.empty-hint  { margin: 0 0 24px; font-size: 13px; color: $t3; line-height: 1.55; max-width: 220px; }
+.empty-title { margin: 0 0 5px; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.empty-hint  { margin: 0 0 24px; font-size: 13px; color: var(--text-tertiary); line-height: 1.55; max-width: 220px; }
 
 // Legend
 .legend {
-  width: 100%; background: $bg; border-radius: 10px; padding: 14px 15px; text-align: left;
+  width: 100%; background: var(--bg-secondary); border-radius: 10px; padding: 14px 15px; text-align: left;
 }
 
 .legend-label {
   margin: 0 0 10px; font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .6px; color: $t3;
+  text-transform: uppercase; letter-spacing: .6px; color: var(--text-tertiary);
 }
 
 .legend-rows { display: flex; flex-direction: column; gap: 9px; }
-.legend-sep  { height: 1px; background: $border-s; margin: 11px 0; }
+.legend-sep  { height: 1px; background: var(--bg-secondary); margin: 11px 0; }
 .legend-row  { display: flex; align-items: center; gap: 10px; }
 
 .l-dot   { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-.l-name  { flex: 1; font-size: 12.5px; color: $t2; font-weight: 500; }
-.l-price { font-size: 12px; font-weight: 600; color: $t1; }
+.l-name  { flex: 1; font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
+.l-price { font-size: 12px; font-weight: 600; color: var(--text-primary); }
 
 // Selection panel
 .sel-panel {
@@ -183,11 +171,11 @@ $sw:       320px;
 }
 
 .sel-header { display: flex; align-items: center; justify-content: space-between; }
-.sel-title  { font-size: 14px; font-weight: 600; color: $t1; }
+.sel-title  { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 
 .btn-clear {
   background: none; border: none; font-family: $font;
-  font-size: 12.5px; font-weight: 500; color: $red;
+  font-size: 12.5px; font-weight: 500; color: var(--error);
   cursor: pointer; padding: 0; opacity: .75; transition: opacity .1s;
   &:hover { opacity: 1; }
 }
@@ -197,51 +185,51 @@ $sw:       320px;
 
 .chip {
   display: inline-flex; align-items: center; gap: 4px;
-  background: $bg; border: 1px solid $border; border-radius: 20px;
-  padding: 4px 8px 4px 11px; font-size: 12.5px; font-weight: 500; color: $t1;
+  background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 20px;
+  padding: 4px 8px 4px 11px; font-size: 12.5px; font-weight: 500; color: var(--text-primary);
 }
 
 .chip-del {
   background: none; border: none; font-size: 15px; line-height: 1;
-  color: $t3; cursor: pointer; padding: 0 2px;
+  color: var(--text-tertiary); cursor: pointer; padding: 0 2px;
   transition: color .1s;
-  &:hover { color: $red; }
+  &:hover { color: var(--error); }
 }
 
 // Standing alert
 .standing-alert {
   display: flex; flex-wrap: wrap; align-items: flex-start; gap: 7px;
-  padding: 11px 13px; background: rgba(34,197,94,0.05);
-  border: 1px solid rgba(34,197,94,0.18); border-radius: 10px;
-  font-size: 12.5px; color: $t2; line-height: 1.5;
+  padding: 11px 13px; background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.18); border-radius: 10px;
+  font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;
   > span { flex: 1; min-width: 0; }
 }
 
 .add-standing {
   width: 100%; padding: 7px; background: none;
-  border: 1.5px solid $green; border-radius: 7px;
-  font-family: $font; font-size: 12.5px; font-weight: 600; color: $green-d;
+  border: 1.5px solid var(--primary-600); border-radius: 7px;
+  font-family: $font; font-size: 12.5px; font-weight: 600; color: var(--primary-700);
   cursor: pointer; transition: background .1s;
-  &:hover { background: $green-bg; }
+  &:hover { background: rgba(99, 102, 241, 0.07); }
 }
 
 // Price breakdown
-.price-block { background: $bg; border-radius: 10px; overflow: hidden; }
+.price-block { background: var(--bg-secondary); border-radius: 10px; overflow: hidden; }
 
 .price-line {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 13px; font-size: 13px; font-weight: 500; color: $t2;
-  border-bottom: 1px solid $border-s;
+  padding: 8px 13px; font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  border-bottom: 1px solid var(--bg-secondary);
   &:last-of-type { border-bottom: none; }
 }
-.price-val { font-weight: 600; color: $t1; }
+.price-val { font-weight: 600; color: var(--text-primary); }
 
 .price-total {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 11px 13px; border-top: 1.5px solid $border;
-  font-size: 13px; font-weight: 600; color: $t2;
+  padding: 11px 13px; border-top: 1.5px solid var(--border-light);
+  font-size: 13px; font-weight: 600; color: var(--text-secondary);
 }
-.total-num { font-size: 21px; font-weight: 700; color: $t1; letter-spacing: -.3px; }
+.total-num { font-size: 21px; font-weight: 700; color: var(--text-primary); letter-spacing: -.3px; }
 
 // Actions
 .actions { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-bottom: 4px; }
@@ -249,10 +237,10 @@ $sw:       320px;
 .btn-add {
   width: 100%; padding: 13px; border: none; border-radius: 10px;
   font-family: $font; font-size: 14px; font-weight: 600;
-  background: $green; color: #fff; cursor: pointer;
-  box-shadow: 0 2px 10px rgba(34,197,94,0.25);
+  background: var(--primary-600); color: var(--white); cursor: pointer;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.25);
   transition: background .1s, transform .1s;
-  &:hover:not(:disabled) { background: $green-d; }
+  &:hover:not(:disabled) { background: var(--primary-700); }
   &:active               { transform: scale(.99); }
   &:disabled             { opacity: .5; cursor: not-allowed; box-shadow: none; }
   &.busy                 { opacity: .8; }
@@ -262,17 +250,17 @@ $sw:       320px;
 
 .spinner {
   width: 15px; height: 15px;
-  border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: var(--white);
   border-radius: 50%; animation: spin .65s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .btn-cart {
-  width: 100%; padding: 11px; border: 1.5px solid $border;
+  width: 100%; padding: 11px; border: 1.5px solid var(--border-light);
   border-radius: 10px; font-family: $font; font-size: 13.5px; font-weight: 500;
-  background: $surface; color: $t2; cursor: pointer; transition: all .1s;
-  &:hover:not(:disabled) { border-color: $green; color: $green-d; background: $green-bg; }
+  background: var(--bg-primary); color: var(--text-secondary); cursor: pointer; transition: all .1s;
+  &:hover:not(:disabled) { border-color: var(--primary-600); color: var(--primary-700); background: rgba(99, 102, 241, 0.07); }
   &:disabled             { opacity: .5; cursor: not-allowed; }
 }
 
@@ -291,18 +279,18 @@ $sw:       320px;
     padding: 0;
     gap: 0;
     overflow: hidden;
-    background: #f4f6f9;
+    background: var(--bg-tertiary);
   }
 
   .sec-filter {
     display: flex;
-    padding: 10px 12px 8px; background: $surface;
-    border-bottom: 1px solid $border-s; flex-shrink: 0;
+    padding: 10px 12px 8px; background: var(--bg-primary);
+    border-bottom: 1px solid var(--bg-secondary); flex-shrink: 0;
   }
 
   .map-card {
     flex: 1; border-radius: 0; border: none; box-shadow: none;
-    border-bottom: 1px solid $border-s;
+    border-bottom: 1px solid var(--bg-secondary);
   }
 
   // Compact price legend — top-left of map, same pill style as zoom bar
@@ -315,7 +303,7 @@ $sw:       320px;
     align-items: center;
     gap: 1px;
     background: rgba(255,255,255,0.96);
-    border: 1px solid $border;
+    border: 1px solid var(--border-light);
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     backdrop-filter: blur(6px);
@@ -327,7 +315,7 @@ $sw:       320px;
       align-items: center;
       gap: 5px;
       padding: 7px 8px;
-      border-right: 1px solid $border-s;
+      border-right: 1px solid var(--bg-secondary);
       &:last-child { border-right: none; }
     }
 
@@ -342,7 +330,7 @@ $sw:       320px;
       font-family: $font;
       font-size: 10px;
       font-weight: 500;
-      color: $t2;
+      color: var(--text-secondary);
       white-space: nowrap;
     }
 
@@ -350,7 +338,7 @@ $sw:       320px;
       font-family: $font;
       font-size: 10px;
       font-weight: 700;
-      color: $t1;
+      color: var(--text-primary);
       white-space: nowrap;
     }
   }
@@ -378,18 +366,16 @@ $sw:       320px;
   // ── Bottom sheet ───────────────────────────────────────────────────────────
   .sidebar {
     position: fixed; bottom: 0; left: 0; right: 0;
-    width: 100%; border-left: none; border-top: 1px solid $border;
+    width: 100%; border-left: none; border-top: 1px solid var(--border-light);
     border-radius: 18px 18px 0 0;
     box-shadow: 0 -4px 32px rgba(0,0,0,0.10);
     z-index: 50;
     overflow-y: auto; overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 
-    // Default: just a thin strip (header only) — collapses when nothing selected
     max-height: 90px;
     transition: max-height 0.35s $ease;
 
-    // Expand when seats are selected
     &.has-selection {
       max-height: 72dvh;
     }
@@ -397,13 +383,13 @@ $sw:       320px;
 
   .drag-handle {
     display: block; width: 36px; height: 4px;
-    background: #d0d6e2; border-radius: 2px;
+    background: var(--border-medium); border-radius: 2px;
     margin: 10px auto 0; flex-shrink: 0;
   }
 
   .sidebar-hd {
     padding: 8px 18px 12px;
-    position: sticky; top: 0; background: $surface; z-index: 1;
+    position: sticky; top: 0; background: var(--bg-primary); z-index: 1;
   }
 
   .ev-name { font-size: 14.5px; }

@@ -1,19 +1,3 @@
-// ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
-
-$ink:        #0F172A;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
-
-$white:      #FFFFFF;
-$border:     #E2E8F0;
-
-$r-pill: 999px;
-$r-sm:   8px;
-
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
 // ─── Navbar shell ────────────────────────────────────────────────
@@ -21,7 +5,7 @@ $r-sm:   8px;
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba($white, .92);
+  background: rgba(255,255,255,.92);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-bottom: 1px solid transparent;
@@ -29,8 +13,8 @@ $r-sm:   8px;
   font-family: 'DM Sans', sans-serif;
 
   &--scrolled {
-    background: rgba($white, .98);
-    border-bottom-color: $border;
+    background: rgba(255,255,255,.98);
+    border-bottom-color: var(--border-light);
     box-shadow: 0 1px 12px rgba(0,0,0,.07);
   }
 }
@@ -60,7 +44,7 @@ $r-sm:   8px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 20px;
     font-weight: 800;
-    color: $ink;
+    color: var(--text-primary);
     letter-spacing: -.01em;
     text-transform: uppercase;
     line-height: 1;
@@ -70,7 +54,7 @@ $r-sm:   8px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 13px;
     font-weight: 700;
-    color: $slate;
+    color: var(--primary-600);
     letter-spacing: .04em;
     opacity: .7;
   }
@@ -90,11 +74,11 @@ $r-sm:   8px;
   padding: 6px 14px;
   font-size: 13.5px;
   font-weight: 500;
-  color: $ink-3;
+  color: var(--text-secondary);
   cursor: pointer;
-  border-radius: $r-sm;
+  border-radius: var(--radius-base);
   text-decoration: none;
-  transition: color .15s ease, background .15s ease;
+  transition: color var(--transition-fast), background var(--transition-fast);
   white-space: nowrap;
   user-select: none;
 
@@ -103,7 +87,7 @@ $r-sm:   8px;
     position: absolute;
     bottom: 2px; left: 14px; right: 14px;
     height: 2px;
-    background: $slate;
+    background: var(--primary-600);
     border-radius: 2px;
     transform: scaleX(0);
     transform-origin: center;
@@ -111,8 +95,8 @@ $r-sm:   8px;
   }
 
   &:hover {
-    color: $ink;
-    background: $slate-pale;
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
 
     &::after { transform: scaleX(1); }
   }
@@ -133,23 +117,23 @@ $r-sm:   8px;
   align-items: center;
   gap: 7px;
   padding: 9px 20px;
-  background: $slate;
-  color: $white;
+  background: var(--primary-600);
+  color: var(--white);
   border: none;
-  border-radius: $r-pill;
+  border-radius: 999px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba($slate, .22);
-  transition: all .18s ease;
+  box-shadow: 0 2px 10px rgba(79,70,229,.22);
+  transition: all var(--transition-fast);
   white-space: nowrap;
 
   svg { transition: transform .18s; }
 
   &:hover {
-    background: $slate-mid;
-    box-shadow: 0 4px 16px rgba($slate, .3);
+    background: var(--primary-700);
+    box-shadow: 0 4px 16px rgba(79,70,229,.3);
     svg { transform: translateX(3px); }
   }
 }
@@ -163,29 +147,29 @@ $r-sm:   8px;
   width: 36px; height: 36px;
   padding: 6px;
   background: transparent;
-  border: 1.5px solid $border;
-  border-radius: $r-sm;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-base);
   cursor: pointer;
-  transition: border-color .15s;
+  transition: border-color var(--transition-fast);
 
   span {
     display: block;
     height: 1.5px;
-    background: $ink;
+    background: var(--text-primary);
     border-radius: 2px;
     transition: transform .2s ease, opacity .2s ease, width .2s ease;
     transform-origin: center;
   }
 
   &--open {
-    border-color: $slate-tint;
+    border-color: var(--border-medium);
 
     span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
   }
 
-  &:hover { border-color: $slate-tint; }
+  &:hover { border-color: var(--border-medium); }
 }
 
 // ─── Mobile drawer ───────────────────────────────────────────────
@@ -201,38 +185,38 @@ $r-sm:   8px;
   &--open {
     max-height: 400px;
     padding: 12px 20px 16px;
-    border-top-color: $border;
+    border-top-color: var(--border-light);
   }
 
   &__link {
     padding: 11px 4px;
     font-size: 14px;
     font-weight: 500;
-    color: $ink-3;
+    color: var(--text-secondary);
     cursor: pointer;
-    border-bottom: 1px solid $border;
-    transition: color .15s;
+    border-bottom: 1px solid var(--border-light);
+    transition: color var(--transition-fast);
     text-decoration: none;
     user-select: none;
 
     &:last-of-type { border-bottom: none; }
-    &:hover { color: $ink; }
+    &:hover { color: var(--text-primary); }
   }
 
   &__cta {
     margin-top: 12px;
     padding: 11px;
-    background: $slate;
-    color: $white;
+    background: var(--primary-600);
+    color: var(--white);
     border: none;
-    border-radius: $r-pill;
+    border-radius: 999px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background .18s;
+    transition: background var(--transition-fast);
 
-    &:hover { background: $slate-mid; }
+    &:hover { background: var(--primary-700); }
   }
 }
 

@@ -1,4 +1,4 @@
-/* social-media-feed.component.css */
+/* social-media-feed.component.scss */
 .social-feed {
   max-width: 900px;
   margin: 0 auto;
@@ -14,13 +14,14 @@
 .feed-header h3 {
   font-size: 2.2rem;
   font-weight: 700;
+  /* Keep brand gradient for social header — intentional design */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
 
 .feed-header p {
-  color: #6b7280;
+  color: var(--gray-500);
   font-size: 1.1rem;
 }
 
@@ -33,19 +34,19 @@
 
 .social-card {
   position: relative;
-  background: white;
+  background: var(--white);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-base);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   overflow: hidden;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-light);
 }
 
 .social-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-xl);
 }
 
 .card-background {
@@ -58,6 +59,7 @@
   opacity: 0.3;
 }
 
+/* Keep brand-specific social colors as-is */
 .facebook .card-background {
   background: linear-gradient(90deg, #1877f2, #00b2ff);
 }
@@ -88,6 +90,7 @@
   transition: all 0.3s ease;
 }
 
+/* Keep brand-specific social icon gradients */
 .facebook .icon-wrapper {
   background: linear-gradient(135deg, #1877f2, #00b2ff);
   color: white;
@@ -116,11 +119,11 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #1f2937;
+  color: var(--gray-900);
 }
 
 .platform-info p {
-  color: #6b7280;
+  color: var(--gray-500);
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
 }
@@ -131,8 +134,8 @@
   gap: 2rem;
   margin: 1.5rem 0;
   padding: 1rem;
-  background: #f8fafc;
-  border-radius: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
 }
 
 .stat {
@@ -140,13 +143,14 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--gray-700);
 }
 
 .stat .material-icons {
   font-size: 1.2rem;
 }
 
+/* Keep brand-specific icon colors */
 .facebook .stat .material-icons:first-child {
   color: #1877f2;
 }
@@ -160,6 +164,7 @@
 }
 
 .btn-follow {
+  /* Keep brand social gradient for follow button */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -203,9 +208,9 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-light) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
 }
 
 .proof-item {
@@ -218,10 +223,11 @@
 .proof-item .material-icons {
   width: 50px;
   height: 50px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Keep brand social gradient for proof icons */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-size: 1.5rem;
@@ -235,12 +241,12 @@
 .proof-text strong {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--gray-900);
 }
 
 .proof-text span {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--gray-500);
 }
 
 /* Loading States */
@@ -251,9 +257,9 @@
 
 .social-card.loading .platform-info p,
 .social-card.loading .engagement-badge {
-  background: #f3f4f6;
+  background: var(--bg-tertiary);
   color: transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -268,24 +274,24 @@
   .social-feed {
     padding: 1rem;
   }
-  
+
   .social-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .feed-header h3 {
     font-size: 1.8rem;
   }
-  
+
   .engagement-badge {
     gap: 1rem;
   }
-  
+
   .social-proof {
     grid-template-columns: 1fr;
   }
-  
+
   .icon-wrapper {
     width: 70px;
     height: 70px;

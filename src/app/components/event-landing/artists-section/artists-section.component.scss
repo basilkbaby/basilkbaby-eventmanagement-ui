@@ -1,33 +1,9 @@
-// ─── Shared tokens (keep in sync with hero) ──────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
-
-$ink:        #0F172A;
-$ink-2:      #334155;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
-
-$white:      #FFFFFF;
-$border:     #E2E8F0;
-$surface:    #F8FAFC;
-
-$r-sm:   10px;
-$r-md:   16px;
-$r-lg:   24px;
-$r-pill: 999px;
-
-$sh-sm:  0 1px 3px rgba(0,0,0,.06);
-$sh-md:  0 4px 16px rgba(0,0,0,.07);
-$sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
-
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap');
 
 // ─── Section ─────────────────────────────────────────────────────
 .artists {
-  background: $surface;
-  border-top: 1px solid $border;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
   padding: 56px 0 64px;
   font-family: 'DM Sans', sans-serif;
 }
@@ -58,13 +34,13 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   font-weight: 600;
   letter-spacing: .11em;
   text-transform: uppercase;
-  color: $slate;
+  color: var(--primary-600);
 }
 
 .eyebrow-pip {
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: $slate;
+  background: var(--primary-600);
   display: inline-block;
 }
 
@@ -72,7 +48,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
   font-size: clamp(28px, 3.5vw, 42px);
-  color: $ink;
+  color: var(--text-primary);
   line-height: 1;
   letter-spacing: -.01em;
   text-transform: uppercase;
@@ -81,7 +57,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 
 .section-subtitle {
   font-size: 14px;
-  color: $ink-3;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -90,10 +66,10 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   align-items: center;
   gap: 7px;
   padding: 10px 20px;
-  background: $white;
-  color: $ink;
-  border: 1.5px solid $border;
-  border-radius: $r-pill;
+  background: var(--white);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-light);
+  border-radius: 999px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -105,9 +81,9 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   svg { transition: transform .2s; }
 
   &:hover {
-    border-color: $slate;
-    color: $slate;
-    background: $slate-pale;
+    border-color: var(--primary-600);
+    color: var(--primary-600);
+    background: var(--bg-tertiary);
     svg { transform: translateX(3px); }
   }
 }
@@ -122,19 +98,19 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 
 // ─── Artist card ─────────────────────────────────────────────────
 .artist-card {
-  background: $white;
-  border: 1px solid $border;
-  border-radius: $r-md;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
   transition: all .2s ease;
-  box-shadow: $sh-card;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   outline: none;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba($slate, .12), 0 2px 8px rgba(0,0,0,.04);
-    border-color: $slate-tint;
+    box-shadow: 0 8px 28px rgba(79,70,229,.12), 0 2px 8px rgba(0,0,0,.04);
+    border-color: var(--border-medium);
 
     .artist-overlay { opacity: 1; }
     .artist-photo img { transform: scale(1.05); }
@@ -142,7 +118,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   }
 
   &:focus-visible {
-    outline: 2px solid $slate;
+    outline: 2px solid var(--primary-600);
     outline-offset: 2px;
   }
 }
@@ -152,7 +128,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   position: relative;
   aspect-ratio: 3 / 4;  // portrait crop
   overflow: hidden;
-  background: $slate-pale;
+  background: var(--bg-tertiary);
 
   img {
     width: 100%; height: 100%;
@@ -166,7 +142,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 // Hover overlay
 .artist-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(160deg, transparent 40%, rgba($slate, .55) 100%);
+  background: linear-gradient(160deg, transparent 40%, rgba(79,70,229,.55) 100%);
   display: flex; align-items: flex-end; justify-content: flex-end;
   padding: 10px;
   opacity: 0;
@@ -176,41 +152,41 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 .overlay-icon {
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: $white;
-  color: $slate;
+  background: var(--white);
+  color: var(--primary-600);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: $sh-sm;
+  box-shadow: var(--shadow-sm);
 }
 
-// Instagram button
+// Instagram button — keep hardcoded pink per spec
 .ig-btn {
   position: absolute;
   top: 8px; right: 8px;
   width: 28px; height: 28px;
   border-radius: 50%;
-  background: $white;
+  background: var(--white);
   color: #E1306C;
   display: flex; align-items: center; justify-content: center;
   text-decoration: none;
-  box-shadow: $sh-sm;
+  box-shadow: var(--shadow-sm);
   opacity: 0;
   transform: translateY(-4px);
   transition: opacity .2s ease, transform .2s ease;
   z-index: 2;
 
-  &:hover { background: #E1306C; color: $white; }
+  &:hover { background: #E1306C; color: var(--white); }
 }
 
 // Info strip
 .artist-info {
   padding: 10px 12px 12px;
-  background: $white;
+  background: var(--white);
 }
 
 .artist-name {
   font-size: 13px;
   font-weight: 600;
-  color: $ink;
+  color: var(--text-primary);
   margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -219,7 +195,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 
 .artist-role {
   font-size: 11px;
-  color: $ink-4;
+  color: var(--text-tertiary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;

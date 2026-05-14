@@ -123,6 +123,9 @@
               <span class="contact__err" *ngIf="messageField.invalid && messageField.touched">Please enter a message</span>
             </div>
 
+            <!-- Error -->
+            <div class="contact__error" *ngIf="error">{{ error }}</div>
+
             <!-- Success -->
             <div class="contact__success" *ngIf="submitted">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">

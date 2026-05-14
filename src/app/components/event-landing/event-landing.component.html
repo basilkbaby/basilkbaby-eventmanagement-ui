@@ -9,8 +9,11 @@
 
   <app-hero-split
     id="home"
+    [eventConfig]="eventConfig"
     [bannerImages]="eventConfig.bannerImages"
     [sponsors]="sponsors"
+    [artists]="artists"
+    [contacts]="contactNumbers"
     [venues]="venues"
     [stats]="eventConfig.stats"
     (scrollTo)="scrollToSection($event)"

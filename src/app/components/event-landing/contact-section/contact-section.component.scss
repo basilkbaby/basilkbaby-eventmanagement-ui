@@ -1,30 +1,9 @@
-// ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
-
-$ink:        #0F172A;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
-
-$white:      #FFFFFF;
-$border:     #E2E8F0;
-$surface:    #F8FAFC;
-
-$r-sm:   10px;
-$r-md:   16px;
-$r-lg:   24px;
-$r-pill: 999px;
-
-$sh-sm: 0 1px 3px rgba(0,0,0,.06);
-$sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
-
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap');
 
 // ─── Section ─────────────────────────────────────────────────────
 .contact-section {
-  background: $slate;
+  background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-700) 100%);
+  color: var(--white);
   padding: 72px 0 80px;
   font-family: 'DM Sans', sans-serif;
   position: relative;
@@ -70,14 +49,14 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba($white, .5);
+  color: rgba(255,255,255,.5);
   margin-bottom: 14px;
 }
 
 .eyebrow-pip {
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: rgba($white, .4);
+  background: rgba(255,255,255,.4);
   display: inline-block;
 }
 
@@ -85,7 +64,7 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   font-family: 'Barlow Condensed', sans-serif;
   font-size: clamp(40px, 5vw, 64px);
   font-weight: 900;
-  color: $white;
+  color: var(--white);
   line-height: .95;
   letter-spacing: -.02em;
   text-transform: uppercase;
@@ -94,7 +73,7 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
 
 .contact-sub {
   font-size: 15px;
-  color: rgba($white, .55);
+  color: rgba(255,255,255,.55);
   margin: 0 0 32px;
   line-height: 1.6;
 }
@@ -104,10 +83,10 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   align-items: center;
   gap: 9px;
   padding: 14px 28px;
-  background: $white;
-  color: $slate;
+  background: var(--white);
+  color: var(--primary-600);
   border: none;
-  border-radius: $r-pill;
+  border-radius: 999px;
   font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
@@ -118,7 +97,7 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   svg { transition: transform .2s; }
 
   &:hover {
-    background: $slate-pale;
+    background: var(--bg-tertiary);
     box-shadow: 0 8px 28px rgba(0,0,0,.25);
     transform: translateY(-2px);
     svg { transform: translateX(3px); }
@@ -137,7 +116,7 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   font-weight: 600;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: rgba($white, .4);
+  color: rgba(255,255,255,.4);
   margin: 0 0 4px;
 }
 
@@ -152,16 +131,16 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  background: rgba($white, .06);
-  border: 1px solid rgba($white, .1);
-  border-radius: $r-md;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-md);
   text-decoration: none;
   transition: all .18s ease;
   cursor: pointer;
 
   &:hover {
-    background: rgba($white, .1);
-    border-color: rgba($white, .18);
+    background: rgba(255,255,255,.1);
+    border-color: rgba(255,255,255,.18);
     transform: translateX(4px);
 
     .contact-card__arrow { opacity: 1; transform: translateX(0); }
@@ -169,12 +148,12 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
 
   &__icon {
     width: 38px; height: 38px;
-    border-radius: $r-sm;
-    background: rgba($white, .1);
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba($white, .7);
+    color: rgba(255,255,255,.7);
     flex-shrink: 0;
   }
 
@@ -191,18 +170,18 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
     font-weight: 600;
     letter-spacing: .07em;
     text-transform: uppercase;
-    color: rgba($white, .45);
+    color: rgba(255,255,255,.45);
   }
 
   &__number {
     font-size: 16px;
     font-weight: 600;
-    color: $white;
+    color: var(--white);
     letter-spacing: .02em;
   }
 
   &__arrow {
-    color: rgba($white, .4);
+    color: rgba(255,255,255,.4);
     flex-shrink: 0;
     opacity: 0;
     transform: translateX(-4px);

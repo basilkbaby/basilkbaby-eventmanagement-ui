@@ -1,20 +1,9 @@
-// ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-
-$white:      #FFFFFF;
-$border:     #E2E8F0;
-
-$r-sm:   8px;
-$r-pill: 999px;
-
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
 // ─── Footer shell ────────────────────────────────────────────────
 .footer {
-  background: $slate-pale;
-  border-top: 1px solid $border;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-light);
   font-family: 'DM Sans', sans-serif;
 }
 
@@ -48,7 +37,7 @@ $r-pill: 999px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 800;
-    color: $slate;
+    color: var(--primary-600);
     letter-spacing: -.01em;
     text-transform: uppercase;
     line-height: 1;
@@ -58,7 +47,7 @@ $r-pill: 999px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 14px;
     font-weight: 700;
-    color: $slate;
+    color: var(--primary-600);
     opacity: .5;
     letter-spacing: .04em;
   }
@@ -66,7 +55,7 @@ $r-pill: 999px;
 
 .footer-tagline {
   font-size: 13px;
-  color: #64748B;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -83,17 +72,17 @@ $r-pill: 999px;
   align-items: center;
   justify-content: center;
   width: 34px; height: 34px;
-  border-radius: $r-sm;
-  background: $white;
-  border: 1px solid $border;
-  color: #64748B;
+  border-radius: var(--radius-base);
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all .16s ease;
 
   &:hover {
-    background: $slate;
-    border-color: $slate;
-    color: $white;
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+    color: var(--white);
   }
 }
 
@@ -109,7 +98,7 @@ $r-pill: 999px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: $slate;
+  color: var(--primary-600);
   margin: 0;
 }
 
@@ -121,19 +110,19 @@ $r-pill: 999px;
 
 .footer-nav__link {
   font-size: 13.5px;
-  color: #64748B;
+  color: var(--text-secondary);
   text-decoration: none;
   cursor: pointer;
   transition: color .14s;
   width: fit-content;
 
-  &:hover { color: $slate; }
+  &:hover { color: var(--primary-600); }
 }
 
 // ─── Divider ─────────────────────────────────────────────────────
 .footer-divider {
   height: 1px;
-  background: $border;
+  background: var(--border-light);
 }
 
 // ─── Bottom row ──────────────────────────────────────────────────
@@ -149,7 +138,7 @@ $r-pill: 999px;
 .footer-copy,
 .footer-made {
   font-size: 12.5px;
-  color: #94A3B8;
+  color: var(--text-tertiary);
   margin: 0;
 }
 

@@ -1,28 +1,3 @@
-// ─── Design Tokens ───────────────────────────────────────────────
-$slate:        #1E293B;   // primary accent (was indigo)
-$slate-mid:    #334155;   // slightly lighter slate
-$slate-pale:   #F1F5F9;   // very light slate tint
-$slate-tint:   #CBD5E1;   // border/tint
-
-$ink:          #0F172A;
-$ink-2:        #334155;
-$ink-3:        #64748B;
-$ink-4:        #94A3B8;
-
-$white:        #FFFFFF;
-$border:       #E2E8F0;
-$surface:      #F8FAFC;
-
-$r-sm:   10px;
-$r-md:   16px;
-$r-lg:   24px;
-$r-xl:   32px;
-$r-pill: 999px;
-
-$sh-sm: 0 1px 3px rgba(0,0,0,.06);
-$sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
-$sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
-
 :host { --navbar-height: 72px; }
 
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
@@ -30,7 +5,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 // ─── Base ────────────────────────────────────────────────────────
 .hero {
   position: relative;
-  background: $white;
+  background: var(--white);
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
   // padding-top: var(--navbar-height, 72px);
@@ -43,12 +18,12 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   position: absolute; border-radius: 50%;
   &--1 {
     width: 680px; height: 680px; top: -220px; right: -160px;
-    background: radial-gradient(circle, $slate-pale 0%, transparent 68%);
+    background: radial-gradient(circle, var(--bg-tertiary) 0%, transparent 68%);
     opacity: .8;
   }
   &--2 {
     width: 420px; height: 420px; bottom: -120px; left: -90px;
-    background: radial-gradient(circle, $slate-pale 0%, transparent 70%);
+    background: radial-gradient(circle, var(--bg-tertiary) 0%, transparent 70%);
     opacity: .6;
   }
 }
@@ -56,8 +31,8 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .bg-grid {
   position: absolute; inset: 0;
   background-image:
-    linear-gradient($border 1px, transparent 1px),
-    linear-gradient(90deg, $border 1px, transparent 1px);
+    linear-gradient(var(--border-light) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
   background-size: 40px 40px;
   opacity: .28;
   mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 100%);
@@ -90,18 +65,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   font-weight: 600;
   letter-spacing: .11em;
   text-transform: uppercase;
-  color: $slate;
+  color: var(--primary-600);
   padding: 5px 14px 5px 10px;
-  background: $slate-pale;
-  border: 1px solid $slate-tint;
-  border-radius: $r-pill;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
+  border-radius: 999px;
   margin-bottom: 16px;
 }
 
 .eyebrow-pip {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: $slate;
+  background: var(--primary-600);
   display: inline-block;
 }
 
@@ -118,13 +93,13 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .title-main {
   display: block;
   font-size: clamp(48px, 5.2vw, 80px);
-  color: $ink;
+  color: var(--text-primary);
 }
 
 .title-sub {
   display: block;
   font-size: clamp(40px, 4.4vw, 68px);
-  background: linear-gradient(130deg, $slate 10%, $slate-mid 90%);
+  background: linear-gradient(130deg, var(--primary-600) 10%, var(--primary-700) 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -132,7 +107,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .title-at {
   -webkit-text-fill-color: transparent;
-  background: linear-gradient(130deg, $slate-mid, #475569);
+  background: linear-gradient(130deg, var(--primary-700), var(--gray-500));
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -146,10 +121,10 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .tag {
   font-size: 11px; font-weight: 600; letter-spacing: .04em;
   padding: 4px 10px;
-  border-radius: $r-pill;
-  background: $slate-pale;
-  color: $slate;
-  border: 1px solid $slate-tint;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--primary-600);
+  border: 1px solid var(--border-medium);
 }
 
 // Artists
@@ -158,18 +133,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .micro-label {
   font-size: 10px; font-weight: 600;
   letter-spacing: .1em; text-transform: uppercase;
-  color: $ink-4; margin-bottom: 7px; display: block;
+  color: var(--text-tertiary); margin-bottom: 7px; display: block;
 }
 
 .artists-lead {
   font-size: 14.5px; font-weight: 600;
-  color: $ink; line-height: 1.6; margin-bottom: 4px;
+  color: var(--text-primary); line-height: 1.6; margin-bottom: 4px;
 }
 
-.artist-sep { color: $slate-tint; }
+.artist-sep { color: var(--border-medium); }
 
 .artists-support {
-  font-size: 12px; color: $ink-3; line-height: 1.7; margin: 0;
+  font-size: 12px; color: var(--text-secondary); line-height: 1.7; margin: 0;
 }
 
 // Venue selector
@@ -180,36 +155,36 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .venue-chip {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 9px 15px;
-  background: $white;
-  border: 1.5px solid $border;
-  border-radius: $r-md;
+  background: var(--white);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all .18s ease;
-  box-shadow: $sh-sm;
+  box-shadow: var(--shadow-sm);
 
-  .chip-city { font-size: 13px; font-weight: 600; color: $ink; }
-  .chip-date { font-size: 11px; color: $ink-4; }
+  .chip-city { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .chip-date { font-size: 11px; color: var(--text-tertiary); }
 
   &:hover {
-    border-color: $slate-tint;
+    border-color: var(--border-medium);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba($slate, .1);
+    box-shadow: 0 6px 16px rgba(79,70,229,.1);
   }
 
   &.active {
-    background: $slate; border-color: $slate;
-    box-shadow: 0 6px 20px rgba($slate, .28);
+    background: var(--primary-600); border-color: var(--primary-600);
+    box-shadow: 0 6px 20px rgba(79,70,229,.28);
     transform: translateY(-2px);
-    .chip-city { color: $white; }
-    .chip-date { color: rgba($white, .6); }
+    .chip-city { color: var(--white); }
+    .chip-date { color: rgba(255,255,255,.6); }
   }
 }
 
 // Venue card
 .venue-card {
-  background: $white; border: 1.5px solid $border;
-  border-radius: $r-lg; padding: 16px 18px;
-  margin-bottom: 22px; box-shadow: $sh-md;
+  background: var(--white); border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 16px 18px;
+  margin-bottom: 22px; box-shadow: var(--shadow-base);
   animation: popIn .2s ease both;
 }
 
@@ -223,18 +198,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   gap: 12px; margin-bottom: 12px;
 }
 
-.vc-divider { height: 1px; background: $border; margin-bottom: 12px; }
+.vc-divider { height: 1px; background: var(--border-light); margin-bottom: 12px; }
 
 .vc-block { display: flex; flex-direction: column; gap: 3px; }
 
 .vc-label {
   font-size: 10px; font-weight: 600;
-  letter-spacing: .09em; text-transform: uppercase; color: $ink-4;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary);
 }
 
-.vc-value { font-size: 14px; font-weight: 600; color: $ink; }
+.vc-value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 
-.vc-address { font-size: 12px; color: $ink-3; margin-top: 2px; line-height: 1.5; }
+.vc-address { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.5; }
 
 // CTAs
 .hero-ctas {
@@ -245,18 +220,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 13px 26px;
-  background: $slate; color: $white;
-  border: none; border-radius: $r-pill;
+  background: var(--primary-600); color: var(--white);
+  border: none; border-radius: 999px;
   font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 22px rgba($slate, .28);
+  box-shadow: 0 6px 22px rgba(79,70,229,.28);
   transition: all .2s ease;
 
   svg { transition: transform .2s; }
 
   &:hover {
-    background: $slate-mid;
-    box-shadow: 0 8px 28px rgba($slate, .38);
+    background: var(--primary-700);
+    box-shadow: 0 8px 28px rgba(79,70,229,.38);
     transform: translateY(-2px);
     svg { transform: translateX(3px); }
   }
@@ -265,12 +240,12 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .btn-ghost {
   display: inline-flex; align-items: center;
   padding: 13px 22px; background: transparent;
-  color: $ink; border: 1.5px solid $border;
-  border-radius: $r-pill;
+  color: var(--text-primary); border: 1.5px solid var(--border-light);
+  border-radius: 999px;
   font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
   cursor: pointer; transition: all .2s;
 
-  &:hover { border-color: $slate; color: $slate; background: $slate-pale; }
+  &:hover { border-color: var(--primary-600); color: var(--primary-600); background: var(--bg-tertiary); }
 }
 
 // Contact
@@ -280,13 +255,13 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 }
 
 .contact-num {
-  color: $slate; font-weight: 600;
+  color: var(--primary-600); font-weight: 600;
   text-decoration: none; transition: opacity .15s;
-  em { font-style: normal; color: $ink-3; font-weight: 400; }
+  em { font-style: normal; color: var(--text-secondary); font-weight: 400; }
   &:hover { opacity: .7; }
 }
 
-.contact-sep { color: $border; }
+.contact-sep { color: var(--border-light); }
 
 // ─── RIGHT COLUMN ────────────────────────────────────────────────
 .hero-right {
@@ -302,11 +277,11 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .slider-track {
   position: relative;
   width: 100%; aspect-ratio: 16 / 9;
-  border-radius: $r-xl; overflow: hidden;
-  box-shadow: $sh-lg;
-  border: 3px solid $white;
-  outline: 1px solid $border;
-  background: $surface;
+  border-radius: var(--radius-xl); overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 3px solid var(--white);
+  outline: 1px solid var(--border-light);
+  background: var(--bg-secondary);
 }
 
 .slide {
@@ -324,14 +299,14 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .slider-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   z-index: 3; width: 38px; height: 38px;
-  border-radius: 50%; border: 1.5px solid $border;
-  background: $white; box-shadow: $sh-md;
+  border-radius: 50%; border: 1.5px solid var(--border-light);
+  background: var(--white); box-shadow: var(--shadow-base);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: $ink-2; transition: all .18s ease;
+  cursor: pointer; color: var(--gray-700); transition: all .18s ease;
 
   &:hover {
-    background: $slate; border-color: $slate; color: $white;
-    box-shadow: 0 4px 14px rgba($slate, .25);
+    background: var(--primary-600); border-color: var(--primary-600); color: var(--white);
+    box-shadow: 0 4px 14px rgba(79,70,229,.25);
   }
 
   &--prev { left: -16px; }
@@ -346,32 +321,32 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .dot {
   width: 7px; height: 7px; border-radius: 50%;
-  border: none; background: $slate-tint;
+  border: none; background: var(--border-medium);
   cursor: pointer; transition: all .2s ease; padding: 0;
 
-  &--active { background: $slate; width: 22px; border-radius: 4px; }
+  &--active { background: var(--primary-600); width: 22px; border-radius: 4px; }
 }
 
 // Floating badge
 .float-badge {
   position: absolute; top: -14px; left: 20px; z-index: 4;
   display: inline-flex; align-items: center; gap: 7px;
-  background: $white; border: 1.5px solid $border;
-  border-radius: $r-pill; padding: 7px 14px 7px 10px;
-  box-shadow: $sh-md; font-size: 13px; font-weight: 600; color: $ink;
+  background: var(--white); border: 1.5px solid var(--border-light);
+  border-radius: 999px; padding: 7px 14px 7px 10px;
+  box-shadow: var(--shadow-base); font-size: 13px; font-weight: 600; color: var(--text-primary);
   animation: floatY 3.2s ease-in-out infinite;
 }
 
 .float-badge__dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: $slate; box-shadow: 0 0 0 3px $slate-pale; flex-shrink: 0;
+  background: var(--primary-600); box-shadow: 0 0 0 3px rgba(79,70,229,.07); flex-shrink: 0;
 }
 
 .float-stats {
   position: absolute; bottom: -14px; right: 20px; z-index: 4;
-  display: flex; background: $white;
-  border: 1.5px solid $border; border-radius: $r-lg;
-  box-shadow: $sh-md; overflow: hidden;
+  display: flex; background: var(--white);
+  border: 1.5px solid var(--border-light); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-base); overflow: hidden;
   animation: floatY 3.2s ease-in-out infinite reverse;
 }
 
@@ -379,15 +354,15 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   display: flex; flex-direction: column; align-items: center;
   padding: 10px 18px; gap: 1px;
 
-  & + & { border-left: 1px solid $border; }
+  & + & { border-left: 1px solid var(--border-light); }
 
   .fstat-num {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px; font-weight: 800; color: $slate; line-height: 1;
+    font-size: 22px; font-weight: 800; color: var(--primary-600); line-height: 1;
   }
 
   .fstat-lbl {
-    font-size: 10px; font-weight: 500; color: $ink-4;
+    font-size: 10px; font-weight: 500; color: var(--text-tertiary);
     text-transform: uppercase; letter-spacing: .06em;
   }
 }
@@ -430,9 +405,9 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   &__logo {
     width: 70px;
     height: 70px;
-    border-radius: $r-sm;
-    background: $white;
-    border: 1px solid $border;
+    border-radius: var(--radius-base);
+    background: var(--white);
+    border: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -457,15 +432,15 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   }
 
   &:hover &__logo {
-    border-color: $slate-tint;
-    box-shadow: 0 2px 10px rgba($slate, .08);
+    border-color: var(--border-medium);
+    box-shadow: 0 2px 10px rgba(79,70,229,.08);
   }
 
   &__initials {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px;
     font-weight: 800;
-    color: $ink-3;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: .02em;
   }
@@ -473,7 +448,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   &__name {
     font-size: 10px;
     font-weight: 600;
-    color: $ink-3;
+    color: var(--text-secondary);
     text-align: center;
     max-width: 70px;
     line-height: 1.3;
@@ -574,7 +549,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   .contact-sep { display: none; }
 
   // Slider
-  .slider-track { border-radius: $r-md; }
+  .slider-track { border-radius: var(--radius-md); }
   .slider-arrow { display: none; }
 
   // Sponsors — slightly smaller on mobile

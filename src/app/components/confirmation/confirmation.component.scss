@@ -1,22 +1,10 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$green:    #22C55E;
-$green-d:  #16A34A;
-$green-bg: rgba(34,197,94,0.08);
-$surface:  #ffffff;
-$bg:       #f4f6f9;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$btn:      #1e293b;
-$btn-h:    #334155;
-$font:     'DM Sans','Helvetica Neue',sans-serif;
-$ease:     cubic-bezier(0.4,0,0.2,1);
+$font: 'DM Sans','Helvetica Neue',sans-serif;
+$ease: cubic-bezier(0.4,0,0.2,1);
 
 :host {
   display: block;
-  background: $bg;
+  background: var(--bg-secondary);
   min-height: 100dvh;
   font-family: $font;
   -webkit-font-smoothing: antialiased;
@@ -30,7 +18,8 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 // ── Hero ──────────────────────────────────────────────────────────────────────
 .conf-hero {
   position: relative;
-  background: $btn;
+  background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-700) 100%);
+  color: var(--white);
   overflow: hidden;
   padding: 52px 24px 56px;
   text-align: center;
@@ -39,7 +28,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-hero__glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(34,197,94,0.22) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(99,102,241,0.22) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -52,12 +41,13 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-hero__check {
   width: 56px; height: 56px;
   border-radius: 50%;
-  background: $green;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 18px;
-  box-shadow: 0 0 0 10px rgba(34,197,94,0.12), 0 0 0 20px rgba(34,197,94,0.06);
+  box-shadow: 0 0 0 10px rgba(255,255,255,0.06), 0 0 0 20px rgba(255,255,255,0.03);
   animation: pop 0.4s $ease both;
 }
 
@@ -70,7 +60,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   margin: 0 0 10px;
   font-size: 30px;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
   letter-spacing: -0.5px;
   animation: fadeUp 0.4s 0.1s $ease both;
 }
@@ -80,11 +70,11 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   margin: 0 0 12px;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.85);
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 20px;
   padding: 4px 14px;
   font-family: 'Courier New', monospace;
@@ -94,10 +84,10 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-hero__msg {
   margin: 0;
   font-size: 14px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.8);
   line-height: 1.6;
   animation: fadeUp 0.4s 0.2s $ease both;
-  strong { color: rgba(255,255,255,0.8); font-weight: 600; }
+  strong { color: var(--white); font-weight: 600; }
 }
 
 @keyframes fadeUp {
@@ -118,9 +108,9 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 // ── Ticket card ───────────────────────────────────────────────────────────────
 .conf-ticket {
-  background: $surface;
+  background: var(--bg-primary);
   border-radius: 18px;
-  border: 1px solid $border;
+  border: 1px solid var(--border-light);
   overflow: hidden;
   box-shadow: 0 2px 16px rgba(15,23,42,0.08);
   animation: fadeUp 0.4s 0.25s $ease both;
@@ -131,14 +121,14 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px 14px;
-  background: $btn;
+  background: var(--primary-600);
   gap: 12px;
 }
 
 .conf-ticket__event {
   font-size: 14px;
   font-weight: 700;
-  color: #fff;
+  color: var(--white);
   line-height: 1.3;
 }
 
@@ -148,9 +138,9 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: $green;
-  background: rgba(34,197,94,0.15);
-  border: 1px solid rgba(34,197,94,0.25);
+  color: var(--primary-300);
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.25);
   border-radius: 20px;
   padding: 3px 10px;
 }
@@ -167,8 +157,8 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: $t2;
-  svg { color: $t3; flex-shrink: 0; }
+  color: var(--text-secondary);
+  svg { color: var(--text-tertiary); flex-shrink: 0; }
 }
 
 // Perforation
@@ -179,7 +169,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 }
 
 .conf-ticket__perf-line {
-  border-top: 1.5px dashed $border;
+  border-top: 1.5px dashed var(--border-light);
   margin: 0 20px;
 }
 
@@ -189,8 +179,8 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   transform: translateY(-50%);
   width: 18px; height: 18px;
   border-radius: 50%;
-  background: $bg;
-  border: 1px solid $border;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
 
   &--l { left: -9px; }
   &--r { right: -9px; }
@@ -208,9 +198,9 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   display: flex;
   align-items: center;
   padding: 10px 14px;
-  background: $bg;
-  border-radius: 10px;
-  border: 1px solid $border-s;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--border-light);
 }
 
 .conf-ticket__seat-info {
@@ -224,12 +214,12 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-ticket__seat-id {
   font-size: 13.5px;
   font-weight: 700;
-  color: $t1;
+  color: var(--text-primary);
 }
 
 .conf-ticket__seat-num {
   font-size: 11.5px;
-  color: $t3;
+  color: var(--text-tertiary);
   font-family: 'Courier New', monospace;
 }
 
@@ -244,13 +234,13 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 .conf-ticket__qr {
   width: 148px; height: 148px;
-  border-radius: 12px;
-  border: 1px solid $border;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--white);
   padding: 4px;
 
   img { width: 100%; height: 100%; object-fit: contain; }
@@ -259,16 +249,16 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-ticket__qr-note {
   margin: 0;
   font-size: 12px;
-  color: $t3;
+  color: var(--text-tertiary);
   font-weight: 500;
 }
 
 .conf-ticket__footer {
   padding: 12px 20px;
-  border-top: 1px solid $border-s;
+  border-top: 1px solid var(--border-light);
   text-align: center;
-  background: $bg;
-  small { font-size: 11.5px; color: $t3; }
+  background: var(--bg-secondary);
+  small { font-size: 11.5px; color: var(--text-tertiary); }
 }
 
 // ── Actions ───────────────────────────────────────────────────────────────────
@@ -287,7 +277,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   justify-content: center;
   gap: 8px;
   padding: 12px;
-  border-radius: 11px;
+  border-radius: var(--radius-md);
   font-family: $font;
   font-size: 13.5px;
   font-weight: 600;
@@ -299,18 +289,18 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 .conf-actions__resend {
   @extend %conf-action-btn;
-  background: $btn;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(15,23,42,0.18);
-  &:hover:not(:disabled) { background: $btn-h; }
+  background: var(--primary-600);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(79,70,229,0.18);
+  &:hover:not(:disabled) { background: var(--primary-700); }
 }
 
 .conf-actions__print {
   @extend %conf-action-btn;
-  background: $surface;
-  color: $t2;
-  border: 1.5px solid $border;
-  &:hover { border-color: $t2; color: $t1; background: $bg; }
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-light);
+  &:hover { border-color: var(--text-secondary); color: var(--text-primary); background: var(--bg-secondary); }
 }
 
 // ── Right column ──────────────────────────────────────────────────────────────
@@ -323,9 +313,9 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 // ── Generic card ──────────────────────────────────────────────────────────────
 .conf-card {
-  background: $surface;
-  border: 1px solid $border;
-  border-radius: 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
   padding: 20px 22px;
   box-shadow: 0 1px 4px rgba(15,23,42,0.04);
 }
@@ -336,12 +326,12 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: $t3;
+  color: var(--text-tertiary);
 }
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 .conf-summary__customer {
-  border-bottom: 1px solid $border-s;
+  border-bottom: 1px solid var(--border-light);
   margin-bottom: 14px;
   padding-bottom: 4px;
 }
@@ -351,21 +341,21 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   justify-content: space-between;
   align-items: baseline;
   padding: 8px 0;
-  border-bottom: 1px solid $border-s;
+  border-bottom: 1px solid var(--border-light);
   gap: 12px;
   &:last-child { border-bottom: none; }
 }
 
 .conf-summary__label {
   font-size: 13px;
-  color: $t3;
+  color: var(--text-tertiary);
   font-weight: 500;
   white-space: nowrap;
 }
 
 .conf-summary__val {
   font-size: 13px;
-  color: $t1;
+  color: var(--text-primary);
   font-weight: 600;
   text-align: right;
   overflow: hidden;
@@ -382,24 +372,24 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   justify-content: space-between;
   padding: 8px 0;
   font-size: 13.5px;
-  color: $t2;
-  border-bottom: 1px solid $border-s;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
   gap: 8px;
   &:last-of-type { border-bottom: none; }
 }
 
-.conf-summary__discount { color: $green-d; font-weight: 600; }
+.conf-summary__discount { color: var(--primary-700); font-weight: 600; }
 
 .conf-summary__coupon {
   display: inline-block;
   font-size: 11px;
   font-weight: 700;
-  background: $green-bg;
-  color: $green-d;
+  background: rgba(79,70,229,0.07);
+  color: var(--primary-700);
   border-radius: 4px;
   padding: 1px 6px;
   font-family: 'Courier New', monospace;
-  border: 1px solid rgba(34,197,94,0.18);
+  border: 1px solid rgba(79,70,229,0.18);
   margin-left: 4px;
 }
 
@@ -408,17 +398,17 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   justify-content: space-between;
   align-items: center;
   padding: 14px 0 2px;
-  border-top: 1.5px solid $border;
+  border-top: 1.5px solid var(--border-light);
   margin-top: 6px;
   font-size: 13.5px;
   font-weight: 600;
-  color: $t2;
+  color: var(--text-secondary);
 }
 
 .conf-summary__grand-amt {
   font-size: 24px;
   font-weight: 800;
-  color: $t1;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
@@ -438,14 +428,14 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
     display: block;
     font-size: 13.5px;
     font-weight: 700;
-    color: $t1;
+    color: var(--text-primary);
     margin-bottom: 2px;
   }
 
   p {
     margin: 0;
     font-size: 12.5px;
-    color: $t3;
+    color: var(--text-tertiary);
     line-height: 1.5;
   }
 }
@@ -454,14 +444,14 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   flex-shrink: 0;
   width: 26px; height: 26px;
   border-radius: 50%;
-  background: $bg;
-  border: 1.5px solid $border;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: $t2;
+  color: var(--text-secondary);
 }
 
 // ── Support ───────────────────────────────────────────────────────────────────
@@ -477,18 +467,18 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   justify-content: center;
   gap: 7px;
   padding: 11px;
-  background: $surface;
-  border: 1.5px solid $border;
-  border-radius: 11px;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
   font-family: $font;
   font-size: 13px;
   font-weight: 500;
-  color: $t2;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.12s $ease;
   cursor: pointer;
-  &:hover { border-color: $t2; color: $t1; background: $bg; }
-  svg { color: $t3; flex-shrink: 0; }
+  &:hover { border-color: var(--text-secondary); color: var(--text-primary); background: var(--bg-secondary); }
+  svg { color: var(--text-tertiary); flex-shrink: 0; }
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
@@ -508,7 +498,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 // ── Print ─────────────────────────────────────────────────────────────────────
 @media print {
-  .conf-hero { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .conf-hero { background: var(--primary-600) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .conf-actions, .conf-support { display: none !important; }
   .conf-ticket { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
 }

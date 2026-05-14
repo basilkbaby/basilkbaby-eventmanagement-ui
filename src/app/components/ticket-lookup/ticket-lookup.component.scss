@@ -1,23 +1,10 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$green:    #22C55E;
-$green-d:  #16A34A;
-$green-bg: rgba(34,197,94,0.07);
-$surface:  #ffffff;
-$bg:       #f4f6f9;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$red:      #ef4444;
-$btn:      #1e293b;
-$btn-h:    #334155;
-$font:     'DM Sans','Helvetica Neue',sans-serif;
-$ease:     cubic-bezier(0.4,0,0.2,1);
+$font: 'DM Sans','Helvetica Neue',sans-serif;
+$ease: cubic-bezier(0.4,0,0.2,1);
 
 :host {
   display: block;
-  background: $bg;
+  background: var(--bg-secondary);
   min-height: 100dvh;
   font-family: $font;
   -webkit-font-smoothing: antialiased;
@@ -36,8 +23,8 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .lookup-card {
   width: 100%;
   max-width: 480px;
-  background: $surface;
-  border: 1px solid $border;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(15,23,42,0.08);
@@ -53,7 +40,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .lookup-header {
   padding: 36px 32px 28px;
   text-align: center;
-  background: $btn;
+  background: var(--primary-600);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
@@ -73,7 +60,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   margin: 0 0 8px;
   font-size: 22px;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
   letter-spacing: -0.3px;
 }
 
@@ -100,7 +87,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   label {
     font-size: 13px;
     font-weight: 600;
-    color: $t2;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -109,25 +96,25 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   input {
     width: 100%;
     padding: 11px 14px;
-    border: 1.5px solid $border;
-    border-radius: 10px;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-base);
     font-family: $font;
     font-size: 14px;
-    color: $t1;
-    background: $surface;
+    color: var(--text-primary);
+    background: var(--bg-primary);
     transition: border-color 0.1s, box-shadow 0.1s;
     box-sizing: border-box;
 
-    &::placeholder { color: $t3; }
+    &::placeholder { color: var(--text-tertiary); }
 
     &:focus {
       outline: none;
-      border-color: $btn;
-      box-shadow: 0 0 0 3px rgba(30,41,59,0.08);
+      border-color: var(--primary-600);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
     }
 
     &.is-invalid {
-      border-color: $red;
+      border-color: var(--error);
       &:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.08); }
     }
   }
@@ -136,15 +123,15 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .lookup-field__optional {
   font-size: 11px;
   font-weight: 500;
-  color: $t3;
-  background: $bg;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 1px 6px;
 }
 
 .lookup-field__error {
   font-size: 12px;
-  color: $red;
+  color: var(--error);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -156,18 +143,18 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   width: 100%;
   padding: 13px;
   border: none;
-  border-radius: 11px;
+  border-radius: var(--radius-md);
   font-family: $font;
   font-size: 14px;
   font-weight: 700;
-  background: $btn;
-  color: #fff;
+  background: var(--primary-600);
+  color: var(--white);
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(15,23,42,0.18);
+  box-shadow: 0 2px 10px rgba(79,70,229,0.18);
   transition: background 0.1s, transform 0.1s;
   margin-top: 4px;
 
-  &:hover:not(:disabled) { background: $btn-h; }
+  &:hover:not(:disabled) { background: var(--primary-700); }
   &:active:not(:disabled) { transform: scale(0.99); }
   &:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 }
@@ -182,7 +169,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .lookup-submit__spinner {
   width: 16px; height: 16px;
   border: 2px solid rgba(255,255,255,0.25);
-  border-top-color: #fff;
+  border-top-color: var(--white);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -197,14 +184,14 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   padding: 13px 15px;
   background: rgba(239,68,68,0.05);
   border: 1px solid rgba(239,68,68,0.18);
-  border-radius: 10px;
-  color: #dc2626;
+  border-radius: var(--radius-base);
+  color: var(--error);
   animation: fadeUp 0.2s $ease both;
 
   svg { flex-shrink: 0; margin-top: 1px; }
 
   strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-  p { margin: 0; font-size: 12.5px; line-height: 1.5; color: #dc2626; opacity: 0.8; }
+  p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--error); opacity: 0.8; }
 }
 
 // ── Help links ────────────────────────────────────────────────────────────────
@@ -212,16 +199,16 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   display: flex;
   justify-content: space-between;
   padding-top: 16px;
-  border-top: 1px solid $border-s;
+  border-top: 1px solid var(--border-light);
 
   a {
     font-size: 13px;
     font-weight: 500;
-    color: $t3;
+    color: var(--text-tertiary);
     text-decoration: none;
     cursor: pointer;
     transition: color 0.1s;
-    &:hover { color: $t1; }
+    &:hover { color: var(--text-primary); }
   }
 }
 
@@ -238,7 +225,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   margin-bottom: 16px;
   gap: 10px;
 
-  h2 { margin: 0; font-size: 16px; font-weight: 700; color: $t1; }
+  h2 { margin: 0; font-size: 16px; font-weight: 700; color: var(--text-primary); }
 }
 
 .lookup-results__actions {
@@ -248,33 +235,33 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 .lookup-results__view-btn {
   padding: 7px 13px;
-  background: $btn;
-  color: #fff;
+  background: var(--primary-600);
+  color: var(--white);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-family: $font;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { background: $btn-h; }
+  &:hover { background: var(--primary-700); }
 }
 
 .lookup-results__new-btn {
   padding: 7px 13px;
   background: none;
-  color: $t2;
-  border: 1.5px solid $border;
-  border-radius: 8px;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-sm);
   font-family: $font;
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
-  &:hover { border-color: $t2; color: $t1; }
+  &:hover { border-color: var(--text-secondary); color: var(--text-primary); }
 }
 
 .lookup-order-info {
-  background: $bg;
-  border-radius: 10px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-base);
   padding: 14px 16px;
   margin-bottom: 16px;
   display: flex;
@@ -288,10 +275,10 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   align-items: center;
   padding: 8px 0;
   font-size: 13px;
-  border-bottom: 1px solid $border-s;
+  border-bottom: 1px solid var(--border-light);
   &:last-child { border-bottom: none; }
-  span { color: $t3; }
-  strong { color: $t1; font-weight: 600; }
+  span { color: var(--text-tertiary); }
+  strong { color: var(--text-primary); font-weight: 600; }
 }
 
 .lookup-tickets {
@@ -302,9 +289,9 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 }
 
 .lookup-ticket {
-  background: $surface;
-  border: 1px solid $border;
-  border-radius: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
   padding: 14px 16px;
 }
 
@@ -315,18 +302,18 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   gap: 12px;
   margin-bottom: 6px;
 
-  h3 { margin: 0; font-size: 14px; font-weight: 700; color: $t1; }
+  h3 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text-primary); }
 }
 
 .lookup-ticket__date {
   font-size: 12px;
-  color: $t3;
+  color: var(--text-tertiary);
   flex-shrink: 0;
 }
 
 .lookup-ticket__detail {
   font-size: 12.5px;
-  color: $t2;
+  color: var(--text-secondary);
 }
 
 .lookup-results__footer {
@@ -334,22 +321,22 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   flex-direction: column;
   gap: 10px;
   padding-top: 16px;
-  border-top: 1px solid $border-s;
+  border-top: 1px solid var(--border-light);
 }
 
 .lookup-secondary {
   width: 100%;
   padding: 11px;
-  border: 1.5px solid $border;
-  border-radius: 11px;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
   font-family: $font;
   font-size: 13.5px;
   font-weight: 500;
   background: transparent;
-  color: $t2;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.1s;
-  &:hover { border-color: $t2; color: $t1; background: $bg; }
+  &:hover { border-color: var(--text-secondary); color: var(--text-primary); background: var(--bg-secondary); }
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────

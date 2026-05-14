@@ -14,35 +14,32 @@
       <!-- LEFT -->
       <div class="hero-left">
 
-        <div class="hero-eyebrow">
+        <div class="hero-eyebrow" *ngIf="eventConfig?.eyebrow">
           <span class="eyebrow-pip"></span>
-          R&amp;J Events Presents
+          {{ eventConfig.eyebrow }}
         </div>
 
         <h1 class="hero-title">
-          <span class="title-main">NADIR 2K26</span>
-          <span class="title-sub">SHOW<span class="title-at">&#64;</span>UK</span>
+          <span class="title-main">{{ eventConfig?.mainTitle?.line1 }}</span>
+          <span class="title-sub">{{ eventConfig?.mainTitle?.line2 }}</span>
         </h1>
 
-        <div class="hero-tags">
-          <span class="tag">100% Entertainment</span>
-          <span class="tag">Nonstop Music</span>
-          <span class="tag">Dance &amp; Mimics</span>
+        <div class="hero-tags" *ngIf="eventConfig?.heroTags?.length">
+          <span class="tag" *ngFor="let tag of eventConfig.heroTags">{{ tag }}</span>
         </div>
 
         <!-- Starring -->
-        <div class="artists-block">
+        <div class="artists-block" *ngIf="artists.length">
           <p class="micro-label">Starring</p>
-          <div class="artists-lead">
+          <div class="artists-lead" *ngIf="leadArtists.length">
             <span *ngFor="let a of leadArtists; let last = last">
-              {{ a }}<span *ngIf="!last" class="artist-sep"> · </span>
+              {{ a.name }}<span *ngIf="!last" class="artist-sep"> · </span>
             </span>
           </div>
-          <p class="artists-support">
-            Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)
-          </p>
-          <p class="artists-support">
-            Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra &amp; Dancers
+          <p class="artists-support" *ngIf="supportArtists.length">
+            <span *ngFor="let a of supportArtists; let last = last">
+              {{ a.name }} <em *ngIf="a.role">({{ a.role }})</em><span *ngIf="!last"> · </span>
+            </span>
           </p>
         </div>
 
@@ -88,9 +85,13 @@
 
         <!-- CTAs -->
         <div class="hero-ctas">
-          <button class="btn-primary" (click)="handleTicketClick(selectedVenue)">
-            Get Tickets
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <button
+            class="btn-primary"
+            [disabled]="!selectedVenue?.ticketsOpen"
+            (click)="handleTicketClick(selectedVenue)"
+          >
+            {{ selectedVenue?.ticketsOpen ? 'Get Tickets' : 'Coming Soon' }}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" *ngIf="selectedVenue?.ticketsOpen">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -103,13 +104,14 @@
         </div>
 
         <!-- Contact numbers -->
-        <div class="contact-strip">
+        <div class="contact-strip" *ngIf="contacts.length">
           <span class="micro-label" style="margin:0 8px 0 0">Info &amp; Tickets:</span>
-          <a href="tel:+447534446526" class="contact-num">+44 7534 446526 <em>(Jinso)</em></a>
-          <span class="contact-sep">·</span>
-          <a href="tel:+447880111939" class="contact-num">+44 7880 111939 <em>(General Inquiries)</em></a>
-          <span class="contact-sep">·</span>
-          <a href="tel:+447480198786" class="contact-num">+44 7480 198786 <em>(Roxon)</em></a>
+          <ng-container *ngFor="let c of contacts; let last = last">
+            <a [href]="'tel:' + c.number" class="contact-num">
+              {{ c.number }} <em>({{ c.name }})</em>
+            </a>
+            <span *ngIf="!last" class="contact-sep">·</span>
+          </ng-container>
         </div>
 
       </div>
@@ -124,7 +126,7 @@
               *ngFor="let img of bannerImages; let i = index"
               [class.slide--active]="i === currentSlide"
             >
-              <img [src]="img" [alt]="'Nadir 2K26 Show UK – slide ' + (i + 1)" />
+              <img [src]="img" [alt]="(eventConfig?.mainTitle?.line1 || 'Event') + ' – slide ' + (i + 1)" />
             </div>
           </div>
 
@@ -154,12 +156,22 @@
 
         </div>
 
-        <!-- ── SPONSORS — directly below the slider ── -->
-        <div class="slider-sponsors">
+        <!-- Sponsors below slider -->
+        <div class="slider-sponsors" *ngIf="platinumSponsors.length || supportingSponsors.length">
           <p class="micro-label sponsors-micro">Proudly supported by</p>
 
-          <div class="sponsor-grid">
-            <div class="sponsor-item" *ngFor="let s of mainSponsors">
+          <div class="sponsor-grid" *ngIf="platinumSponsors.length">
+            <div class="sponsor-item" *ngFor="let s of platinumSponsors">
+              <div class="sponsor-item__logo">
+                <img *ngIf="s.logo" [src]="s.logo" [alt]="s.name" />
+                <span *ngIf="!s.logo" class="sponsor-item__initials">{{ s.name | slice:0:2 }}</span>
+              </div>
+              <span class="sponsor-item__name">{{ s.name }}</span>
+            </div>
+          </div>
+
+          <div class="sponsor-grid sponsor-grid--supporting" *ngIf="supportingSponsors.length">
+            <div class="sponsor-item sponsor-item--sm" *ngFor="let s of supportingSponsors">
               <div class="sponsor-item__logo">
                 <img *ngIf="s.logo" [src]="s.logo" [alt]="s.name" />
                 <span *ngIf="!s.logo" class="sponsor-item__initials">{{ s.name | slice:0:2 }}</span>

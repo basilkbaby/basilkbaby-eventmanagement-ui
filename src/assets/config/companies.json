@@ -55,6 +55,61 @@
   },
 
   {
+    "id": "v4entertainment",
+    "name": "V4 Entertainment",
+    "domain": "v4entertainment.crowdpass.co.uk",
+    "mode": "bespoke",
+    "company": {
+      "name": "V4 Entertainment",
+      "logo": {
+        "text": "V4 Entertainment",
+        "sublabel": "MG Sreekumar Live",
+        "color": "#FFFFFF",
+        "backgroundColor": "#0d0d1a"
+      },
+      "primaryColor": "#0d0d1a",
+      "secondaryColor": "#c0392b",
+      "accentColor": "#f39c12",
+      "contact": {
+        "phone": "",
+        "email": "events@v4entertainment.co.uk",
+        "address": "United Kingdom"
+      }
+    },
+    "navigation": {
+      "menuItems": [
+        { "label": "Home",               "routerLink": "/",          "type": "home",    "external": false },
+        { "label": "Artists",            "routerLink": "#artists",   "type": "events",  "external": false },
+        { "label": "Venues",             "routerLink": "#venues",    "type": "events",  "external": false },
+        { "label": "Terms & Conditions", "routerLink": "#privacy",   "type": "about",   "external": false },
+        { "label": "Contact Us",         "routerLink": "#contactus", "type": "contact", "external": false }
+      ],
+      "showSearch": false,
+      "showCart": true
+    },
+    "theme": {
+      "backgroundColor":  "#0d0d1a",
+      "textColor":        "#FFFFFF",
+      "buttonColor":      "#c0392b",
+      "buttonTextColor":  "#FFFFFF",
+      "glassBackground":  "rgba(255, 255, 255, 0.08)",
+      "glassBorder":      "rgba(255, 255, 255, 0.12)",
+      "headerStyle":      "minimal"
+    },
+    "features": {
+      "enableAuth":      true,
+      "enableCart":      true,
+      "enableSearch":    false,
+      "showContactInfo": true
+    },
+    "seo": {
+      "title":       "MG Sreekumar Live UK — V4 Entertainment",
+      "description": "Book tickets for MG Sreekumar Live in the UK, presented by V4 Entertainment.",
+      "themeColor":  "#0d0d1a"
+    }
+  },
+
+  {
     "id": "main",
     "name": "CrowdPass",
     "domain": "crowdpass.co.uk",

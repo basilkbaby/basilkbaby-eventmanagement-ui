@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://crowdpass.azurewebsites.net',
-  companyId: 'main'
+  apiUrl: 'https://localhost:7144',
+  companyId: 'manchestergems'
 };

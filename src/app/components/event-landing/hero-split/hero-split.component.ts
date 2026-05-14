@@ -3,7 +3,7 @@ import {
   OnInit, OnDestroy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Sponsor } from '../common/event-data';
+import { Artist, Contact, EventConfig, Sponsor } from '../common/event-data';
 
 @Component({
   selector: 'app-hero-split',
@@ -14,27 +14,56 @@ import { Sponsor } from '../common/event-data';
 })
 export class HeroSplitComponent implements OnInit, OnDestroy {
 
+  @Input() eventConfig!: EventConfig;
   @Input() bannerImages: string[] = [];
   @Input() sponsors: Sponsor[] = [];
+  @Input() artists: Artist[] = [];
+  @Input() contacts: Contact[] = [];
   @Input() stats: Array<{ number: string; label: string }> = [];
   @Input() venues: any[] = [];
-  @Output() scrollTo  = new EventEmitter<string>();
+  @Output() scrollTo   = new EventEmitter<string>();
   @Output() buyTickets = new EventEmitter<string>();
 
-  selectedVenueId = 'blackpool';
+  selectedVenueId = '';
 
   get selectedVenue() {
-    return this.venues.find(v => v.id === this.selectedVenueId) || this.venues[0];
+    return this.venues.find(v => v.id === this.selectedVenueId) ?? this.venues[0];
+  }
+
+  get leadArtists(): Artist[] {
+    return this.artists.filter(a => a.isLead);
+  }
+
+  get supportArtists(): Artist[] {
+    return this.artists.filter(a => !a.isLead);
+  }
+
+  get platinumSponsors(): Sponsor[] {
+    return this.sponsors.filter(s => s.tier === 'platinum' || s.tier === 'gold');
+  }
+
+  get supportingSponsors(): Sponsor[] {
+    return this.sponsors.filter(s => s.tier === 'silver' || s.tier === 'partner');
   }
 
   selectVenue(id: string) { this.selectedVenueId = id; }
+
+  handleTicketClick(venue: any) {
+    this.buyTickets.emit(venue.eventId);
+  }
 
   // Slider
   currentSlide = 0;
   private sliderInterval: any;
   private readonly AUTO_PLAY_MS = 4500;
 
-  ngOnInit()    { if (this.bannerImages.length > 1) this.startAutoPlay(); }
+  ngOnInit() {
+    if (this.venues.length) {
+      this.selectedVenueId = this.venues[0].id;
+    }
+    if (this.bannerImages.length > 1) this.startAutoPlay();
+  }
+
   ngOnDestroy() { this.stopAutoPlay(); }
 
   goToSlide(i: number) {
@@ -60,28 +89,4 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
   private stopAutoPlay() {
     if (this.sliderInterval) { clearInterval(this.sliderInterval); this.sliderInterval = null; }
   }
-
-  leadArtists = ['Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'];
-
-  // Replace logo: '' with actual asset paths e.g. 'assets/sponsors/kerala-curry.png'
-  mainSponsors = [
-    { name: 'Kerala Curry House',        logo: 'assets/images/events/nadirshow/sponsors/curryhouse.jpg' },
-    { name: 'Paul John & Co Solicitors', logo: 'assets/images/events/nadirshow/sponsors/pjc.svg' },
-    { name: 'Shan Properties',           logo: 'assets/images/events/nadirshow/sponsors/shan.jpg' },
-    { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' },
-  ];
-
-  supportingSponsors = [
-    { name: 'Chrystal Hyper Market', logo: 'assets/images/events/nadirshow/sponsors/chrystal-hyper-market.png' },
-    { name: 'Family Shop',           logo: 'assets/images/events/nadirshow/sponsors/family-shop.png' },
-    { name: 'Seacom Accountancy',    logo: 'assets/images/events/nadirshow/sponsors/seacom-accountancy.png' },
-    { name: 'Music List',            logo: 'assets/images/events/nadirshow/sponsors/music-list.png' },
-    { name: 'Ethal',                 logo: 'assets/images/events/nadirshow/sponsors/ethal.png' },
-  ];
-
-  handleTicketClick(venue: any) {
-   this.buyTickets.emit(venue.eventId);
-    // "Soon" venues: button is disabled so click is blocked at template level
-  }
-
 }

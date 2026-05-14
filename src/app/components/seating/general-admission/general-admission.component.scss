@@ -8,28 +8,28 @@
 .header {
   text-align: center;
   margin-bottom: 20px;
-  
+
   .back-btn {
     background: none;
     border: none;
-    color: #666;
+    color: var(--text-secondary);
     cursor: pointer;
     font-size: 14px;
     margin-bottom: 10px;
-    
+
     &:hover {
-      color: #333;
+      color: var(--text-primary);
     }
   }
-  
+
   h1 {
     margin: 0 0 5px;
     font-size: 24px;
   }
-  
+
   .subtitle {
     margin: 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 14px;
   }
 }
@@ -41,7 +41,7 @@
   padding: 15px;
   margin-bottom: 20px;
   color: #856404;
-  
+
   .warning {
     margin: 0;
   }
@@ -55,8 +55,8 @@
 }
 
 .option-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -67,29 +67,29 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  
+
   h3 {
     margin: 0;
     font-size: 18px;
   }
-  
+
   .price {
     font-size: 20px;
     font-weight: bold;
-    color: #007bff;
+    color: var(--primary-600);
   }
 }
 
 .option-details {
   margin-bottom: 20px;
-  
+
   .availability {
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 5px;
   }
-  
+
   .max-info {
-    color: #999;
+    color: var(--text-tertiary);
     font-size: 12px;
   }
 }
@@ -99,28 +99,28 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  
+
   .qty-btn {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 2px solid #007bff;
-    background: white;
-    color: #007bff;
+    border: 2px solid var(--primary-600);
+    background: var(--bg-primary);
+    color: var(--primary-600);
     font-size: 20px;
     cursor: pointer;
-    
+
     &:hover:not(:disabled) {
-      background: #007bff;
-      color: white;
+      background: var(--primary-600);
+      color: var(--white);
     }
-    
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
   }
-  
+
   .quantity {
     font-size: 24px;
     font-weight: bold;
@@ -130,63 +130,63 @@
 }
 
 .selection-summary {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  
+
   .summary-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    
+
     h3 {
       margin: 0;
     }
-    
+
     .clear-btn {
       background: none;
       border: none;
-      color: #dc3545;
+      color: var(--error);
       cursor: pointer;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
   }
-  
+
   .selected-items {
     .selected-item {
       display: flex;
       justify-content: space-between;
       padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      
+      border-bottom: 1px solid var(--border-light);
+
       &:last-child {
         border-bottom: none;
       }
-      
+
       .item-name {
         flex: 1;
       }
-      
+
       .item-qty {
-        color: #666;
+        color: var(--text-secondary);
         margin: 0 10px;
       }
-      
+
       .item-total {
         font-weight: bold;
       }
     }
   }
-  
+
   .empty-selection {
     text-align: center;
-    color: #999;
+    color: var(--text-tertiary);
     padding: 20px;
   }
 }
@@ -194,16 +194,16 @@
 .total-section {
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 2px solid #eee;
-  
+  border-top: 2px solid var(--border-light);
+
   .total-row {
     display: flex;
     justify-content: space-between;
     font-size: 18px;
     font-weight: bold;
-    
+
     .total-price {
-      color: #28a745;
+      color: var(--primary-600);
     }
   }
 }
@@ -212,20 +212,20 @@
   .add-to-cart-btn {
     width: 100%;
     padding: 15px;
-    background: #28a745;
-    color: white;
+    background: var(--primary-600);
+    color: var(--white);
     border: none;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    
+
     &:hover:not(:disabled) {
-      background: #218838;
+      background: var(--primary-700);
     }
-    
+
     &:disabled {
-      background: #ccc;
+      background: var(--border-medium);
       cursor: not-allowed;
     }
   }
