@@ -72,13 +72,9 @@ export class EventDetailsComponent implements OnInit {
   }
 
   navigateToSeatSelection(): void {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-      .test(navigator.userAgent);
     if (this.event && !this.event.isPast) {
-      if(isMobile)
-        this.router.navigate(['/events', this.event.id, 'mobileseatmap']);
-        else
       this.router.navigate(['/events', this.event.id, 'seatmap']); //seatstheatre
+
     }
   }
 
