@@ -5,10 +5,15 @@
   <header class="header" [class]="getHeaderClass()">
     <div class="header-container">
 
-      <!-- Logo (uses config.company.logo.text / sublabel) -->
+      <!-- Logo -->
       <div class="logo-section">
         <a routerLink="/" class="logo-link">
-          <!-- <img src="assets/images/logo/logo.webp" alt="Logo" class="logo-image" width="303" height="104"> -->
+          <img
+            src="assets/images/logo/logo.webp"
+            alt="V4 Entertainment Logo"
+            class="logo-image"
+            width="303"
+            height="104">
         </a>
       </div>
 
@@ -173,10 +178,14 @@
   <nav class="navbar" [class.navbar--scrolled]="currentRoute !== '/'">
     <div class="nav-inner">
 
-      <!-- Logo from config.company.logo -->
+      <!-- Logo -->
       <a class="nav-logo" routerLink="/">
-        <span class="nav-logo__text">{{ logoText }}</span>
-        <span class="nav-logo__sub" *ngIf="logoSublabel">{{ logoSublabel }}</span>
+        <img
+          src="assets/images/logo/logo.webp"
+          alt="V4 Entertainment Logo"
+          class="nav-logo__img"
+          width="303"
+          height="104">
       </a>
 
       <!-- Desktop nav links from config -->
