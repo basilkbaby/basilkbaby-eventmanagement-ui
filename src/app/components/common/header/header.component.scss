@@ -70,7 +70,7 @@
     &.active {
       background: var(--primary-600);
       color: var(--white);
-      box-shadow: 0 4px 12px rgba(147,51,234,.35);
+      box-shadow: 0 4px 12px rgba(37,99,235,.35);
     }
   }
 }
@@ -138,7 +138,7 @@
       &:hover {
         background: var(--primary-700);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(147,51,234,.4);
+        box-shadow: 0 4px 12px rgba(37,99,235,.4);
       }
       &.tickets-btn {
         background: transparent;

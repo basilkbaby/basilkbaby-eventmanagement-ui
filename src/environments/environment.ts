@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://crowdpass.azurewebsites.net',
+  apiUrl: 'https://v4entertainment.azurewebsites.net',
   appName: 'Identity Service',
   identityUrl: 'http://localhost:55884', // Your identity service
   identityAPIUrl: 'https://localhost:7114', // Your identity service

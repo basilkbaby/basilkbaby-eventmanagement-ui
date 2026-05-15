@@ -1,233 +1,180 @@
-<div class="event-details-container">
-  <!-- Loading State -->
+<div class="ed-page">
+
+  <!-- ── Loading State ─────────────────────────────────────────────────────── -->
   <div class="loading-state" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading event details...</p>
   </div>
 
-  <!-- Event Details -->
+  <!-- ── Main Event Details ─────────────────────────────────────────────────── -->
   <div class="event-details" *ngIf="event && !loading">
-    <!-- Back Navigation -->
-    <!-- <nav class="breadcrumb">
-      <a routerLink="/events" class="back-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Back to Events
-      </a>
-    </nav> -->
 
-    <!-- Event Header -->
-    <section class="event-header">
-      <div class="event-image">
+    <!-- ── Hero Section ───────────────────────────────────────────────────── -->
+    <section class="ed-hero">
+
+      <!-- Left: Event Poster -->
+      <div class="ed-hero__poster">
         <img [src]="getEventImage()" [alt]="event.title" />
-        <div class="image-overlay"></div>
-              <div class="event-info-column">
-        <!-- Description Section -->
-        <section class="description-section">
-          <h2>About This Concert</h2>
-          <p class="event-description">{{ event.description }}</p>
-          
-          <!-- Concert Features -->
-          <div class="concert-features" >
-             <div class="tags">
-              <span class="tag tag-purple" *ngFor="let tag of event.settings.tagList">{{ tag }}</span>
-            </div>
-          </div>
-        </section>
+        <div class="ed-hero__poster-overlay"></div>
       </div>
-      </div>
-      
-      <div class="event-basic-info">
-        <!-- <div class="category-badge">{{ event.type }}</div> -->
-        <h1 class="event-title">{{ event.title }}</h1>
-        <p>{{ event.shortDescription }}</p>
-        <p class="event-artist">{{ event.organizerName }}</p>
-        
-        <div class="event-meta">
-          <div class="meta-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+
+      <!-- Right: Event Info Panel -->
+      <div class="ed-hero__panel">
+
+        <!-- Organizer label -->
+        <p class="ed-hero__organizer">{{ event.organizerName }}</p>
+
+        <!-- Title -->
+        <h1 class="ed-hero__title">{{ event.title }}</h1>
+
+        <!-- Short description -->
+        <p class="ed-hero__short-desc">{{ event.shortDescription }}</p>
+
+        <!-- Horizontal stat strip -->
+        <div class="ed-hero__stats">
+          <!-- Date & Time -->
+          <div class="ed-stat">
+            <svg class="ed-stat__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <div>
-              <div class="meta-label">Date & Time</div>
-              <div class="meta-value">{{ event.startDate | formatDate }}</div>
-              <div class="meta-subvalue">Starting Time {{ event.startTime | formatTime }} • {{ event.startTime | duration:event.endTime }}</div>
-              <div class="meta-subvalue">Gate Open {{ event.gateOpenTime | formatTime}} </div>
+            <div class="ed-stat__body">
+              <span class="ed-stat__label">Date</span>
+              <span class="ed-stat__value">{{ event.startDate | formatDate }}</span>
+              <span class="ed-stat__sub">{{ event.startTime | formatTime }} &bull; {{ event.startTime | duration:event.endTime }}</span>
+              <span class="ed-stat__sub">Gate {{ event.gateOpenTime | formatTime }}</span>
             </div>
           </div>
-          
-          <div class="meta-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
+
+          <div class="ed-stat__divider"></div>
+
+          <!-- Venue -->
+          <div class="ed-stat" *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
+            <svg class="ed-stat__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <div *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
-              <div class="meta-label">Venue</div>
-              <div class="meta-value">{{ venue.name }}</div>
-              <div class="meta-subvalue">{{ venue.city }} {{ venue.postalCode }}</div>
-              <div class="meta-subvalue"></div> 
+            <div class="ed-stat__body">
+              <span class="ed-stat__label">Venue</span>
+              <span class="ed-stat__value">{{ venue.name }}</span>
+              <span class="ed-stat__sub">{{ venue.city }} {{ venue.postalCode }}</span>
             </div>
-          </div>
-          
-          <!-- <div class="meta-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" 
-                    stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <div>
-              <div class="meta-label">Age Restriction</div>
-              <div class="meta-value">{{ event.ageRestriction || 'All ages' }}</div>
-            </div>
-          </div> -->
-        </div>
-
-        <!-- Ticket Summary -->
-        <div class="ticket-summary">
-          <div class="summary-item">
-            <span class="summary-label">Starting From</span>
-            <span class="summary-value">{{ event.startingFromPrice }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Status</span>
-            <span class="summary-value status" [class.available]="!event.isPast" [class.sold-out]="event.isPast">
-              {{ event.isPast ? 'Sold Out' : 'Tickets Available' }}
-            </span>
           </div>
         </div>
 
-        <!-- Main Action -->
-        <div class="main-action" *ngIf="!event.isPast">
-          <button class="select-seats-btn" (click)="navigateToSeatSelection()">
+        <!-- Price + Status -->
+        <div class="ed-hero__price-row">
+          <div class="ed-hero__price-block">
+            <span class="ed-hero__price-label">Starting From</span>
+            <span class="ed-hero__price">{{ event.startingFromPrice }}</span>
+          </div>
+          <span class="ed-hero__status-badge"
+                [class.available]="!event.isPast"
+                [class.sold-out]="event.isPast">
+            {{ event.isPast ? 'Sold Out' : 'Tickets Available' }}
+          </span>
+        </div>
+
+        <!-- Action button -->
+        <div class="ed-hero__action" *ngIf="!event.isPast">
+          <button class="ed-btn-primary" (click)="navigateToSeatSelection()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" stroke="currentColor" stroke-width="2"/>
             </svg>
-            Select Seats & Buy Tickets
+            Select Seats &amp; Buy Tickets
           </button>
-          <p class="action-note">Interactive seat selection available on next page</p>
+          <p class="ed-hero__action-note">Interactive seat selection available on next page</p>
         </div>
 
         <!-- Sold Out Message -->
-        <div class="sold-out-message" *ngIf="event.isPast">
-          <div class="sold-out-content">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <div>
-              <h4>This event is sold out</h4>
-              <p>Join the waitlist to be notified if tickets become available</p>
-            </div>
+        <div class="ed-sold-out" *ngIf="event.isPast">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <h4>This event is sold out</h4>
+            <p>Join the waitlist to be notified if tickets become available</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Prominent Sponsors Banner -->
-    <section class="sponsors-banner" *ngIf="event.sponsors && event.sponsors.length > 0">
-      <div class="banner-content">
-        <div class="banner-text">
+      </div><!-- /.ed-hero__panel -->
+    </section><!-- /.ed-hero -->
+
+    <!-- ── Sponsors Banner ─────────────────────────────────────────────────── -->
+    <section class="ed-sponsors-banner" *ngIf="event.sponsors && event.sponsors.length > 0">
+      <div class="ed-sponsors-banner__inner">
+        <div class="ed-sponsors-banner__text">
           <h3>Presented By</h3>
           <p>This event is made possible by our partners</p>
         </div>
-        <div class="sponsors-logos">
-          <div class="sponsor-logo" *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
+        <div class="ed-sponsors-banner__logos">
+          <div class="ed-sponsor-logo"
+               *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
             <img [src]="sponsor.logoUrl" [alt]="sponsor.name" [title]="sponsor.name" />
-            <!-- <div class="sponsor-tier">{{ sponsor.sponsorLevel }}</div> -->
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Main Content -->
-    <div class="main-content-layout">
-      <!-- Left Column: Event Info (25%) -->
-      <div class="event-info-column">
-        <!-- Description Section -->
+    <!-- ── Content Section ────────────────────────────────────────────────── -->
+    <div class="ed-content">
 
-        <!-- Event Details -->
-        <section class="details-section">
-          <h2>Event Information</h2>
-          <div class="details-grid">
-            <div class="detail-item">
-              <span class="detail-label">Date</span>
-              <span class="detail-value">{{ event.startDate | formatDate }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Time</span>
-              <span class="detail-value">{{ event.startTime }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Duration</span>
-              <!-- <span class="detail-value">{{ getDuration() }}</span> -->
-            </div>
-            <!-- <div class="detail-item">
-              <span class="detail-label">Venue</span>
-              <span class="detail-value">{{ event.venue.name }}</span>
-            </div> -->
-            <!-- <div class="detail-item">
-              <span class="detail-label">Organizer</span>
-              <span class="detail-value">{{ event.organizerName }}</span>
-            </div> -->
-            <!-- <div class="detail-item" *ngIf="event.dressCode">
-              <span class="detail-label">Dress Code</span>
-              <span class="detail-value">{{ event.dressCode }}</span>
-            </div> -->
+      <!-- Left Sidebar -->
+      <aside class="ed-sidebar">
+
+        <!-- About / Description -->
+        <section class="ed-card">
+          <h2 class="ed-card__heading">About This Event</h2>
+          <p class="ed-card__desc">{{ event.description }}</p>
+          <div class="tags">
+            <span class="tag" *ngFor="let tag of event.settings.tagList">{{ tag }}</span>
           </div>
         </section>
 
-        <!-- Social Links -->
-        <!-- <section class="social-section">
-          <h3>Connect With Us</h3>
-          <div class="social-links">
-            <a *ngIf="event.socialMedia?.facebook" [href]="event.socialMedia?.facebook" target="_blank" class="social-link">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              Facebook
-            </a>
-            <a *ngIf="event.socialMedia?.instagram" [href]="event.socialMedia?.instagram" target="_blank" class="social-link">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-              </svg>
-              Instagram
-            </a>
-            <a *ngIf="event.socialMedia?.twitter" [href]="event.socialMedia?.twitter" target="_blank" class="social-link">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.213c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-              </svg>
-              Twitter
-            </a>
+        <!-- Quick Event Info -->
+        <section class="ed-card">
+          <h2 class="ed-card__heading">Event Information</h2>
+          <div class="ed-info-grid">
+            <div class="ed-info-item">
+              <span class="ed-info-item__label">Date</span>
+              <span class="ed-info-item__value">{{ event.startDate | formatDate }}</span>
+            </div>
+            <div class="ed-info-item">
+              <span class="ed-info-item__label">Time</span>
+              <span class="ed-info-item__value">{{ event.startTime }}</span>
+            </div>
+            <div class="ed-info-item">
+              <span class="ed-info-item__label">Duration</span>
+              <span class="ed-info-item__value">{{ event.startTime | duration:event.endTime }}</span>
+            </div>
           </div>
-        </section> -->
-      </div>
+        </section>
 
-      <!-- Right Column: Concert Preview & Next Steps (75%) -->
-      <div class="preview-column">
-        <!-- Featured Sponsors -->
-        <section class="featured-sponsors" *ngIf="event.sponsors && event.sponsors.length > 0">
-          <div class="section-header">
-            <h2>Official Partners</h2>
-            <p class="section-subtitle">Supporting this musical experience</p>
+      </aside><!-- /.ed-sidebar -->
+
+      <!-- Right Main -->
+      <main class="ed-main">
+
+        <!-- Official Partners / Sponsors -->
+        <section class="ed-card" *ngIf="event.sponsors && event.sponsors.length > 0">
+          <div class="ed-card__header">
+            <h2 class="ed-card__heading">Official Partners</h2>
+            <p class="ed-card__subtitle">Supporting this musical experience</p>
           </div>
-          
-          <div class="sponsors-showcase">
-            <div class="sponsor-card" *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
-              <div class="sponsor-card-header">
-                <div class="sponsor-card-logo">
-                  <img [src]="sponsor.logoUrl" [alt]="sponsor.name" />
-                </div>
-                <!-- <div class="sponsor-card-tier">{{ sponsor.sponsorLevel }}</div> -->
+          <div class="ed-org-grid">
+            <div class="ed-org-card"
+                 *ngFor="let sponsor of event.sponsors | organizationFilter:OrganizationType.Sponsor">
+              <div class="ed-org-card__logo">
+                <img [src]="sponsor.logoUrl" [alt]="sponsor.name" />
               </div>
-              <div class="sponsor-card-body">
+              <div class="ed-org-card__body">
                 <h3>{{ sponsor.name }}</h3>
                 <p>{{ sponsor.description }}</p>
-                <a [href]="sponsor.website" target="_blank" class="sponsor-website">
+                <a [href]="sponsor.website" target="_blank" class="ed-org-card__link">
                   Visit Website
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
                           stroke="currentColor" stroke-width="2"/>
                   </svg>
                 </a>
@@ -236,30 +183,27 @@
           </div>
         </section>
 
-        <!--- organizers-->
-        <section class="featured-sponsors" *ngIf="event.sponsors && event.sponsors.length > 0">
-          <div class="section-header">
-            <h2>Organizer</h2>
-            <p class="section-subtitle">This event is organized and managed by our dedicated team</p>
+        <!-- Organizer -->
+        <section class="ed-card" *ngIf="event.sponsors && event.sponsors.length > 0">
+          <div class="ed-card__header">
+            <h2 class="ed-card__heading">Organizer</h2>
+            <p class="ed-card__subtitle">This event is organized and managed by our dedicated team</p>
           </div>
-          
-          <div class="sponsors-showcase">
-            <div class="sponsor-card" *ngFor="let organizer of event.sponsors | organizationFilter:OrganizationType.Organizer">
-              <div class="sponsor-card-header">
-                <div class="sponsor-card-logo">
-                  <img [src]="organizer.logoUrl" [alt]="organizer.name" />
-                </div>
-                <!-- <div class="sponsor-card-tier">{{ sponsor.sponsorLevel }}</div> -->
+          <div class="ed-org-grid">
+            <div class="ed-org-card"
+                 *ngFor="let organizer of event.sponsors | organizationFilter:OrganizationType.Organizer">
+              <div class="ed-org-card__logo">
+                <img [src]="organizer.logoUrl" [alt]="organizer.name" />
               </div>
-              <div class="sponsor-card-body">
+              <div class="ed-org-card__body">
                 <h3>{{ organizer.name }}</h3>
                 <p>{{ organizer.address }} {{ organizer.city }}</p>
                 <p>{{ organizer.contactPhone }}</p>
-                <p> {{ organizer.contactEmail }}</p>
-                <a [href]="organizer.website" target="_blank" class="sponsor-website">
+                <p>{{ organizer.contactEmail }}</p>
+                <a [href]="organizer.website" target="_blank" class="ed-org-card__link">
                   Visit Website
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
                           stroke="currentColor" stroke-width="2"/>
                   </svg>
                 </a>
@@ -268,53 +212,85 @@
           </div>
         </section>
 
-        <!-- Next Steps -->
-        <section class="next-steps-section">
-          <div class="section-header">
-            <h2>Get Your Tickets</h2>
-            <p class="section-subtitle">Simple and secure booking process</p>
+        <!-- Venue -->
+        <section class="ed-card"
+                 *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
+          <div class="ed-card__header ed-card__header--split">
+            <div>
+              <h2 class="ed-card__heading">About the Venue</h2>
+              <p class="ed-card__subtitle">{{ venue.name }}</p>
+            </div>
+            <a class="ed-btn-outline" [href]="venue.mapUrl" target="_blank" *ngIf="!event.isPast">
+              View on Map
+            </a>
           </div>
-          
-          <div class="steps-flow">
-            <div class="step">
-              <div class="step-number">1</div>
-              <div class="step-content">
+          <div class="ed-venue">
+            <div class="ed-venue__image">
+              <img [src]="venue.logoUrl" alt="Venue Overview" />
+              <div class="ed-venue__caption">{{ venue.name }}</div>
+            </div>
+            <div class="ed-venue__details">
+              <h3>{{ venue.name }}</h3>
+              <div class="ed-venue__info-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>{{ venue.address }}, {{ venue.postalCode }}, {{ venue.city }}</span>
+              </div>
+              <div class="ed-venue__highlights">
+                <h4>Venue Highlights</h4>
+                <ul>
+                  <li *ngIf="venue.contactPhone">Contact: {{ venue.contactPhone }}</li>
+                  <li *ngIf="venue.contactEmail">Email: {{ venue.contactEmail }}</li>
+                  <li>{{ venue.description }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Booking Steps -->
+        <section class="ed-card">
+          <div class="ed-card__header">
+            <h2 class="ed-card__heading">Get Your Tickets</h2>
+            <p class="ed-card__subtitle">Simple and secure booking process</p>
+          </div>
+          <div class="ed-steps">
+            <div class="ed-step">
+              <div class="ed-step__num">1</div>
+              <div class="ed-step__body">
                 <h3>Select Seats</h3>
                 <p>Choose your preferred seats from our interactive venue map</p>
               </div>
             </div>
-            
-            <div class="step-arrow">→</div>
-            
-            <div class="step">
-              <div class="step-number">2</div>
-              <div class="step-content">
-                <h3>Review & Pay</h3>
+            <div class="ed-step__arrow">&rarr;</div>
+            <div class="ed-step">
+              <div class="ed-step__num">2</div>
+              <div class="ed-step__body">
+                <h3>Review &amp; Pay</h3>
                 <p>Review your selection and complete secure payment</p>
               </div>
             </div>
-            
-            <div class="step-arrow">→</div>
-            
-            <div class="step">
-              <div class="step-number">3</div>
-              <div class="step-content">
+            <div class="ed-step__arrow">&rarr;</div>
+            <div class="ed-step">
+              <div class="ed-step__num">3</div>
+              <div class="ed-step__body">
                 <h3>Receive Tickets</h3>
                 <p>Get instant mobile tickets with QR codes</p>
               </div>
             </div>
           </div>
-          
-          <div class="next-step-action">
-            <button class="next-step-btn" (click)="navigateToSeatSelection()" *ngIf="!event.isPast">
+          <div class="ed-steps__action">
+            <button class="ed-btn-primary" (click)="navigateToSeatSelection()" *ngIf="!event.isPast">
               Start with Seat Selection
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
-            <div class="sold-out-alert" *ngIf="event.isPast">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+            <div class="ed-sold-out-alert" *ngIf="event.isPast">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       stroke="currentColor" stroke-width="2"/>
               </svg>
               <div>
@@ -325,102 +301,63 @@
           </div>
         </section>
 
-        <!-- Venue Preview -->
-        <section class="venue-preview-section" *ngFor="let venue of event.sponsors | organizationFilter:OrganizationType.Venue">
-          <div class="section-header">
-            <h2>About the Venue</h2>
-            <a class="view-map-btn" [href]="venue.mapUrl" target="_blank" *ngIf="!event.isPast">
-              View In Map
-            </a>
-          </div>
-          
-          <div class="venue-overview">
-            <div class="venue-image">
-              <img [src]="venue.logoUrl" alt="Venue Overview" />
-              <div class="venue-caption">{{ venue.name }}</div>
-            </div>
-            
-            <div class="venue-details">
-              <h3>{{ venue.name }}</h3>
-              <div class="venue-info">
-                <div class="info-item">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
-                          stroke="currentColor" stroke-width="2"/>
-                  </svg>
-                  <span>{{ venue.address }}, {{venue.postalCode}}, {{ venue.city }}</span>
-                </div>
-              </div>
-              
-              <div class="venue-amenities">
-                <h4>Venue Highlights</h4>
-                <ul>
-                  <li *ngIf="venue.contactPhone">Contact : {{ venue.contactPhone }}</li>
-                  <li *ngIf="venue.contactEmail">Email : {{ venue.contactEmail }}</li>
-                  <li>{{venue.description}}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Safety & Security -->
-        <section class="safety-section">
-          <div class="safety-header">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" 
-                    stroke="currentColor" stroke-width="2"/>
+        <!-- Safety Strip -->
+        <section class="ed-safety">
+          <div class="ed-safety__header">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <h3>Safe & Secure Booking</h3>
+            <h3>Safe &amp; Secure Booking</h3>
           </div>
-          <div class="safety-features">
-            <div class="safety-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <div class="ed-safety__items">
+            <div class="ed-safety__item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
               </svg>
               <span>100% Guaranteed Tickets</span>
             </div>
-            <div class="safety-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <div class="ed-safety__item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
               </svg>
               <span>Secure Payment Processing</span>
             </div>
-            <div class="safety-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <div class="ed-safety__item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
               </svg>
               <span>Instant Mobile Delivery</span>
             </div>
           </div>
         </section>
-      </div>
-    </div>
 
-    <!-- Fixed Bottom CTA -->
-    <div class="bottom-cta" *ngIf="!event.isPast">
-      <div class="cta-content">
-        <div class="cta-info">
-          <h4>Ready for the Experience?</h4>
-          <p>Select your seats now for the best available spots</p>
-        </div>
-        <div class="cta-actions">
-          <button class="cta-primary-btn" (click)="navigateToSeatSelection()">
+      </main><!-- /.ed-main -->
+    </div><!-- /.ed-content -->
+
+    <!-- ── Fixed Bottom Bar ───────────────────────────────────────────────── -->
+    <div class="ed-bar" *ngIf="!event.isPast">
+      <div class="ed-bar__inner">
+        <div class="ed-bar__title">{{ event.title }}</div>
+        <div class="ed-bar__price">{{ event.startingFromPrice }}</div>
+        <div class="ed-bar__actions">
+          <button class="ed-btn-primary" (click)="navigateToSeatSelection()">
             Select Seats
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"/>
             </svg>
           </button>
-          <a routerLink="/events" class="cta-secondary-btn">Browse More Events</a>
+          <a routerLink="/events" class="ed-btn-outline">Browse Events</a>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Error State -->
+  </div><!-- /.event-details -->
+
+  <!-- ── Error State ────────────────────────────────────────────────────────── -->
   <div class="error-state" *ngIf="!event && !loading">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+            stroke="currentColor" stroke-width="2"/>
       <path d="M15 9L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       <path d="M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
@@ -428,4 +365,5 @@
     <p>The event you're looking for doesn't exist or has been removed.</p>
     <a routerLink="/events" class="back-to-events">Browse All Events</a>
   </div>
-</div>
+
+</div><!-- /.ed-page -->

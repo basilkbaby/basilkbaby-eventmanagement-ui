@@ -9,16 +9,16 @@ import { TicketInfoComponent } from './components/ticket-info/ticket-info.compon
 
 
 export const routes: Routes = [
-  { 
-    path: '', 
-    loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent),  
-    title: 'Home' 
-  },
   // { 
   //   path: '', 
-  //   loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
+  //   loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent),  
   //   title: 'Home' 
   // },
+  { 
+    path: '', 
+    loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
+    title: 'Home' 
+  },
   { 
     path: 'events', 
     loadComponent: () => import('./components/main/main.component').then(m => m.MainComponent),  
