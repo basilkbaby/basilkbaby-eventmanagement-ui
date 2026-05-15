@@ -49,9 +49,9 @@
               <span class="venue-city" *ngIf="selectedEvent.venueCity">{{ selectedEvent.venueCity }}</span>
             </div>
           </div>
-          <div class="price-block" *ngIf="selectedEvent.startingFromPrice && !selectedEvent.isPast">
-            <span class="price-from">from</span>
-            <span class="price-value">{{ selectedEvent.startingFromPrice }}</span>
+          <div class="price-pill" *ngIf="selectedEvent.startingFromPrice && !selectedEvent.isPast">
+            <span class="price-pill__from">Tickets from</span>
+            <span class="price-pill__value">{{ selectedEvent.startingFromPrice }}</span>
           </div>
         </div>
 

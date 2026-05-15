@@ -173,7 +173,7 @@
 // Checkout Form
 .checkout-form-column {
   .form-section {
-    background: var(--bg-primary);
+    background: #ffffff;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
@@ -206,8 +206,8 @@
   
   &.active {
     border-color: var(--primary-500);
-    background: var(--primary-50);
-    color: var(--primary-700);
+    background: rgba(194,90,60,0.06);
+    color: var(--primary-500);
   }
 }
 
@@ -245,17 +245,17 @@
     border-radius: var(--radius-md);
     font-size: 1rem;
     transition: all 0.2s ease;
-    background: var(--bg-primary);
+    background: #ffffff;
     
     &:focus {
       outline: none;
       border-color: var(--primary-500);
-      box-shadow: 0 0 0 3px var(--primary-100);
+      box-shadow: 0 0 0 3px rgba(194,90,60,0.12);
     }
-    
+
     &.invalid {
       border-color: var(--error);
-      
+
       &:focus {
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
       }
@@ -424,7 +424,7 @@
 // Order Summary
 .order-summary-column {
   .order-summary-card {
-    background: var(--bg-primary);
+    background: #ffffff;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
@@ -722,14 +722,14 @@
     border-radius: var(--radius-md);
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    background: var(--bg-primary);
-    
+    background: #ffffff;
+
     &:focus {
       outline: none;
       border-color: var(--primary-500);
-      box-shadow: 0 0 0 3px var(--primary-100);
+      box-shadow: 0 0 0 3px rgba(194,90,60,0.12);
     }
-    
+
     &:disabled {
       background: var(--bg-tertiary);
       cursor: not-allowed;

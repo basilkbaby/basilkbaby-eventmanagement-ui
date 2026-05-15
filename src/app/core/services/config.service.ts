@@ -14,7 +14,7 @@ export class ConfigService {
 
   constructor(private http: HttpClient) {}
 
-  async loadConfig(companyId: string = 'manchestergems'): Promise<HeaderConfig> {
+  async loadConfig(companyId: string = 'v4entertainments'): Promise<HeaderConfig> {
     try {
       const companies = await this.http.get<CompanyConfig[]>('/assets/config/companies.json').toPromise();
       

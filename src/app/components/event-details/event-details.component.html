@@ -65,9 +65,9 @@
 
         <!-- Price + Status -->
         <div class="ed-hero__price-row">
-          <div class="ed-hero__price-block">
-            <span class="ed-hero__price-label">Starting From</span>
-            <span class="ed-hero__price">{{ event.startingFromPrice }}</span>
+          <div class="price-pill" *ngIf="event.startingFromPrice && !event.isPast">
+            <span class="price-pill__from">Tickets from</span>
+            <span class="price-pill__value">{{ event.startingFromPrice }}</span>
           </div>
           <span class="ed-hero__status-badge"
                 [class.available]="!event.isPast"

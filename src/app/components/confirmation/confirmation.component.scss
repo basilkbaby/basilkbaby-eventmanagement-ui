@@ -2,15 +2,17 @@
 $green:    #22C55E;
 $green-d:  #16A34A;
 $green-bg: rgba(34,197,94,0.08);
+$terra:    #C25A3C;
+$terra-d:  #A04830;
+$amber:    #E0862B;
+$amber-d:  #C06B18;
 $surface:  #ffffff;
-$bg:       #f4f6f9;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$btn:      #1e293b;
-$btn-h:    #334155;
+$bg:       #F8F5F1;
+$border:   #E8DED6;
+$border-s: #F0E8E0;
+$t1:       #1E1C18;
+$t2:       #5A5650;
+$t3:       #9A948C;
 $font:     'DM Sans','Helvetica Neue',sans-serif;
 $ease:     cubic-bezier(0.4,0,0.2,1);
 
@@ -30,7 +32,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 // ── Hero ──────────────────────────────────────────────────────────────────────
 .conf-hero {
   position: relative;
-  background: $btn;
+  background: $terra;
   overflow: hidden;
   padding: 52px 24px 56px;
   text-align: center;
@@ -39,7 +41,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 .conf-hero__glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(34,197,94,0.22) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(224,134,43,0.30) 0%, rgba(194,90,60,0.12) 60%, transparent 80%);
   pointer-events: none;
 }
 
@@ -131,7 +133,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px 14px;
-  background: $btn;
+  background: $terra;
   gap: 12px;
 }
 
@@ -299,10 +301,10 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 .conf-actions__resend {
   @extend %conf-action-btn;
-  background: $btn;
+  background: $amber;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(15,23,42,0.18);
-  &:hover:not(:disabled) { background: $btn-h; }
+  box-shadow: 0 2px 8px rgba(224,134,43,0.28);
+  &:hover:not(:disabled) { background: $amber-d; }
 }
 
 .conf-actions__print {
@@ -454,14 +456,14 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   flex-shrink: 0;
   width: 26px; height: 26px;
   border-radius: 50%;
-  background: $bg;
-  border: 1.5px solid $border;
+  background: rgba(194,90,60,0.09);
+  border: 1.5px solid rgba(194,90,60,0.28);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: $t2;
+  color: $terra;
 }
 
 // ── Support ───────────────────────────────────────────────────────────────────
@@ -508,7 +510,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 // ── Print ─────────────────────────────────────────────────────────────────────
 @media print {
-  .conf-hero { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .conf-hero { background: #C25A3C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .conf-actions, .conf-support { display: none !important; }
   .conf-ticket { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
 }

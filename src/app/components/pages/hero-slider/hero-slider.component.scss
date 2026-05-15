@@ -190,27 +190,30 @@ $r-pill: 999px;
   color: $muted;
 }
 
-.price-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
+.price-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: rgba(224,134,43,0.10);
+  border: 1.5px solid rgba(224,134,43,0.28);
+  border-radius: $r-pill;
+  padding: 6px 16px 6px 14px;
 
-.price-from {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-  color: $muted;
-}
+  &__from {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: $body;
+    white-space: nowrap;
+  }
 
-.price-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  color: $amber;
-  line-height: 1;
+  &__value {
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: $amber;
+    line-height: 1;
+  }
 }
 
 // ── Event selector chips ──────────────────────────────────────────────────────

@@ -234,28 +234,30 @@ $muted:     #9A948C;
   flex-wrap: wrap;
 }
 
-.ed-hero__price-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.price-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: rgba(224,134,43,0.10);
+  border: 1.5px solid rgba(224,134,43,0.28);
+  border-radius: 999px;
+  padding: 7px 18px 7px 16px;
 
-.ed-hero__price-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: $muted;
-}
+  &__from {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: $body;
+    white-space: nowrap;
+  }
 
-.ed-hero__price {
-  @extend %font-title;
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: $amber;
-  line-height: 1;
-
-  @media (max-width: 480px) { font-size: 1.9rem; }
+  &__value {
+    @extend %font-title;
+    font-size: 22px;
+    font-weight: 700;
+    color: $amber;
+    line-height: 1;
+  }
 }
 
 .ed-hero__status-badge {
