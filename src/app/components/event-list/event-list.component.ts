@@ -9,16 +9,29 @@ import { LoadingSpinnerComponent } from '../common/loading-spinner/loading-spinn
 import { EventDto } from '../../core/models/DTOs/event.DTO.model';
 import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 
+interface EventGroup {
+  label: string;
+  events: EventDto[];
+}
+
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+const TYPE_LABELS: Record<number, string> = {
+  1: 'Music', 2: 'Conference', 3: 'Workshop',
+  4: 'Seminar', 5: 'Networking', 6: 'Social', 7: 'Event'
+};
+
 @Component({
   selector: 'app-event-list',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
+    CommonModule,
+    RouterModule,
     FormsModule,
     HeroSliderComponent,
     LoadingSpinnerComponent,
-    FormatDatePipe // Add the pipe here
+    FormatDatePipe
   ],
   templateUrl: './event-list.component.html',
   styleUrls: ['./event-list.component.scss'],
@@ -27,19 +40,19 @@ import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 export class EventListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() events: EventDto[] = [];
   @Input() isLoading: boolean = true;
-  @Input() error: string | null = null; // Make error an input too
-  
-  @Output() retryLoad = new EventEmitter<void>(); // Emit when retry is clicked
+  @Input() error: string | null = null;
+
+  @Output() retryLoad = new EventEmitter<void>();
   @Output() filterChanged = new EventEmitter<{
     searchTerm: string;
     dateFilter: 'upcoming' | 'past' | 'all';
-  }>(); // Emit filter changes if parent needs to know
-  
+  }>();
+
   filteredEvents: EventDto[] = [];
+  groupedEvents: EventGroup[] = [];
   searchTerm: string = '';
-  
-  isSticky: boolean = false;
   dateFilter: 'upcoming' | 'past' | 'all' = 'upcoming';
+  isSticky: boolean = false;
 
   public searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -48,19 +61,12 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     this.setupSearchDebounce();
-    this.applyFilters(); // Initial filter on init
+    this.applyFilters();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Detect when events input changes
     if (changes['events'] || changes['isLoading'] || changes['error']) {
-      console.log('Input changed - events:', this.events?.length, 'loading:', this.isLoading);
-      
-      if (!this.isLoading && this.events) {
-        this.applyFilters();
-      }
-      
-      // Trigger change detection for OnPush
+      if (!this.isLoading && this.events) this.applyFilters();
       this.cdr.markForCheck();
     }
   }
@@ -72,91 +78,104 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
 
   private setupSearchDebounce(): void {
     this.searchSubject
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(searchTerm => {
-        this.searchTerm = searchTerm;
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(term => {
+        this.searchTerm = term;
         this.applyFilters();
-        this.emitFilterChanges(); // Notify parent if needed
+        this.emitFilterChanges();
         this.cdr.markForCheck();
       });
   }
 
-  onSearchInput(inputevent: any): void {
-    const value = (inputevent.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+  onSearchInput(event: any): void {
+    this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
-  // New method to handle clear search button
-  resetSearch(): void {
-    this.searchSubject.next('');
-  }
+  resetSearch(): void { this.searchSubject.next(''); }
 
   private applyFilters(): void {
     if (this.isLoading || !this.events) {
       this.filteredEvents = [];
+      this.groupedEvents = [];
       return;
     }
 
-    console.log('Applying filters to', this.events.length, 'events');
-    
-    this.filteredEvents = this.events.filter(event => {
-      if (!event) return false;
-      
-      // Date filtering
+    const now = new Date();
+    const norm = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+    let result = this.events.filter(ev => {
+      if (!ev) return false;
+
       let matchesDate = true;
-      if (event.startDate) {
-        const eventDate = new Date(event.startDate);
-        const now = new Date();
-        matchesDate = this.matchesDateFilter(eventDate, now);
+      if (ev.startDate) {
+        const evDate = norm(new Date(ev.startDate));
+        const today  = norm(now);
+        if (this.dateFilter === 'upcoming') matchesDate = evDate >= today;
+        else if (this.dateFilter === 'past') matchesDate = evDate < today;
       }
-      
-      // Search filtering
+
       let matchesSearch = true;
       if (this.searchTerm) {
-        const searchLower = this.searchTerm.toLowerCase();
-        matchesSearch = 
-          event.title?.toLowerCase().includes(searchLower) ||
-          event.description?.toLowerCase().includes(searchLower) ||
-          event.venueName?.toLowerCase().includes(searchLower) ||
-          event.venueCity?.toLowerCase().includes(searchLower) ||
+        const q = this.searchTerm.toLowerCase();
+        matchesSearch =
+          ev.title?.toLowerCase().includes(q) ||
+          ev.description?.toLowerCase().includes(q) ||
+          ev.venueName?.toLowerCase().includes(q) ||
+          ev.venueCity?.toLowerCase().includes(q) ||
           false;
       }
-      
+
       return matchesDate && matchesSearch;
     });
-    
-    console.log('Filtered to', this.filteredEvents.length, 'events');
+
+    // Sort: upcoming → ascending, past → descending, all → ascending
+    result = result.sort((a, b) => {
+      const da = new Date(a.startDate).getTime();
+      const db = new Date(b.startDate).getTime();
+      return this.dateFilter === 'past' ? db - da : da - db;
+    });
+
+    this.filteredEvents = result;
+    this.groupedEvents  = this.buildGroups(result);
   }
 
-  private matchesDateFilter(eventDate: Date, now: Date): boolean {
-    // Normalize dates to compare only date parts (not time)
-    const normalizedEventDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-    const normalizedNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    switch (this.dateFilter) {
-      case 'upcoming':
-        return normalizedEventDate >= normalizedNow;
-      case 'past':
-        return normalizedEventDate < normalizedNow;
-      case 'all':
-        return true;
-      default:
-        return normalizedEventDate >= normalizedNow;
+  private buildGroups(events: EventDto[]): EventGroup[] {
+    const map = new Map<string, EventDto[]>();
+
+    for (const ev of events) {
+      if (!ev.startDate) continue;
+      const d = new Date(ev.startDate);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(ev);
     }
+
+    return Array.from(map.entries()).map(([key, evts]) => {
+      const [y, m] = key.split('-').map(Number);
+      return { label: `${MONTHS[m - 1]} ${y}`, events: evts };
+    });
   }
 
-  filterByDate(dateFilter: 'upcoming' | 'past' | 'all'): void {
-    this.dateFilter = dateFilter;
+  getTypeLabel(type: number): string {
+    return TYPE_LABELS[type] ?? 'Event';
+  }
+
+  isLimitedAvailability(ev: EventDto): boolean {
+    return !ev.isPast && ev.isActive && ev.hasAvailableSeats &&
+           ev.totalSeats > 0 && ev.availableSeats / ev.totalSeats < 0.20;
+  }
+
+  bookedPercent(ev: EventDto): number {
+    if (!ev.totalSeats) return 0;
+    return Math.round(((ev.totalSeats - ev.availableSeats) / ev.totalSeats) * 100);
+  }
+
+  filterByDate(f: 'upcoming' | 'past' | 'all'): void {
+    this.dateFilter = f;
     this.applyFilters();
     this.emitFilterChanges();
     this.cdr.markForCheck();
   }
-
-  // Remove formatDate method - use pipe instead
 
   resetFilters(): void {
     this.searchTerm = '';
@@ -167,22 +186,14 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
     this.cdr.markForCheck();
   }
 
-  // Emit filter changes to parent if needed
   private emitFilterChanges(): void {
-    this.filterChanged.emit({
-      searchTerm: this.searchTerm,
-      dateFilter: this.dateFilter
-    });
+    this.filterChanged.emit({ searchTerm: this.searchTerm, dateFilter: this.dateFilter });
   }
 
-  // Handle retry button click
-  retryLoadEvents(): void {
-    this.retryLoad.emit();
-  }
+  retryLoadEvents(): void { this.retryLoad.emit(); }
 
   handleImageError(event: any): void {
-    const imgElement = event.target as HTMLImageElement;
-    imgElement.src = '/assets/images/event-default.jpg';
+    (event.target as HTMLImageElement).src = '/assets/images/event-default.jpg';
   }
 
   @HostListener('window:scroll', [])

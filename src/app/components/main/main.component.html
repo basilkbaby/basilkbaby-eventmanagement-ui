@@ -1,11 +1,18 @@
 
 <ng-container *ngIf="!eventlistonly" >
-  <app-hero-slider [events]="events"
-    [isLoading]="isLoading"></app-hero-slider>
+  <app-hero-slider
+    [events]="events"
+    [isLoading]="isLoading"
+    (scrollToEvents)="onScrollToEvents()">
+  </app-hero-slider>
 </ng-container>
-<app-event-list [events]="events"
-  [isLoading]="isLoading"
-  [error]="error"
-  (retryLoad)="onRetryLoad()">></app-event-list>
+<div id="event-list">
+  <app-event-list
+    [events]="events"
+    [isLoading]="isLoading"
+    [error]="error"
+    (retryLoad)="onRetryLoad()">
+  </app-event-list>
+</div>
 <!-- <app-stats-dashboard></app-stats-dashboard>
 <app-social-media-feed></app-social-media-feed> -->

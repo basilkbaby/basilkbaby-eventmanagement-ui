@@ -75,10 +75,10 @@ $r-pill: 999px;
 
 .hero-container {
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 64px;
-  align-items: center;
-  padding: 56px 0 64px;
+  grid-template-columns: 1fr 640px;
+  gap: 48px;
+  align-items: start;
+  padding: 48px 0 28px;
 }
 
 // ── LEFT ──────────────────────────────────────────────────────────────────────
@@ -93,8 +93,8 @@ $r-pill: 999px;
 .hero-title {
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
-  font-size: clamp(36px, 4vw, 58px);
-  line-height: 1.05;
+  font-size: clamp(28px, 3vw, 46px);
+  line-height: 1.08;
   letter-spacing: .01em;
   text-transform: uppercase;
   color: $terra;
@@ -217,67 +217,122 @@ $r-pill: 999px;
 }
 
 // ── Event selector chips ──────────────────────────────────────────────────────
+// ── Event selector — full width below both columns ────────────────────────────
 .event-selector {
   width: 100%;
-  margin-bottom: 28px;
+  padding-bottom: 32px;
 }
 
 .micro-label {
-  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: .12em;
+  letter-spacing: .10em;
   text-transform: uppercase;
-  color: $muted;
-  margin-bottom: 10px;
-  display: block;
+  color: $terra;
+  margin-bottom: 12px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    background: $terra;
+    border-radius: 2px;
+  }
 }
 
 .event-chips {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 8px;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .event-chip {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 9px 20px;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0;
   background: $bg-card;
   border: 1.5px solid $border;
   border-radius: $r-md;
   cursor: pointer;
-  transition: all .16s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: border-color .16s, box-shadow .16s, transform .16s;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  overflow: hidden;
+
+  // Coloured top bar
+  &::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 4px;
+    background: $border;
+    flex-shrink: 0;
+    transition: background .16s;
+  }
+
+  .chip-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .chip-icon {
+    flex-shrink: 0;
+    color: $terra;
+    opacity: 0.65;
+    margin-top: 2px;
+    transition: opacity .16s;
+  }
+
+  .chip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+  }
 
   .chip-city {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     color: $ink;
+    line-height: 1.2;
   }
 
   .chip-date {
-    font-size: 11px;
+    font-size: 12.5px;
     color: $muted;
+    line-height: 1.4;
+    white-space: normal;
   }
 
   &:hover {
     border-color: $terra-lt;
-    background: $terra-dim;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(194,90,60,0.14);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(194,90,60,0.13);
+    &::before { background: $terra-lt; }
     .chip-city { color: $terra; }
+    .chip-icon { opacity: 1; }
   }
 
   &.active {
-    background: $terra;
     border-color: $terra;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(194,90,60,0.30);
-
-    .chip-city { color: $white; }
-    .chip-date { color: rgba(255,255,255,0.70); }
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(194,90,60,0.28);
+    &::before { background: $terra; }
+    .chip-city { color: $terra; font-weight: 800; }
+    .chip-date { color: $body; }
+    .chip-icon { opacity: 1; color: $terra; }
   }
 }
 
@@ -350,19 +405,22 @@ $r-pill: 999px;
   }
 }
 
-// ── RIGHT — portrait poster ───────────────────────────────────────────────────
+// ── RIGHT — poster only ───────────────────────────────────────────────────────
 .hero-right {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
 .poster-wrap {
   position: relative;
   width: 100%;
+  min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: $bg;
+  border-radius: 20px;
 }
 
 .poster-glow {
@@ -383,7 +441,6 @@ $r-pill: 999px;
   z-index: 1;
   width: 100%;
   height: auto;
-  max-height: 640px;
   object-fit: contain;
   border-radius: 20px;
   border: 1px solid rgba(194,90,60,0.18);
@@ -441,11 +498,11 @@ $r-pill: 999px;
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 1200px) {
-  .hero-container { grid-template-columns: 1fr 360px; gap: 48px; }
+  .hero-container { grid-template-columns: 1fr 560px; gap: 44px; }
 }
 
 @media (max-width: 1000px) {
-  .hero-container { grid-template-columns: 1fr 300px; gap: 36px; }
+  .hero-container { grid-template-columns: 1fr 460px; gap: 36px; }
 }
 
 @media (max-width: 860px) {
@@ -458,22 +515,16 @@ $r-pill: 999px;
     text-align: center;
   }
 
+  // Right column (image + chips) scrolls before left text on mobile
   .hero-right { order: -1; }
-
-  // On mobile: title sits directly above the chips, then desc/stats/CTAs follow
-  .hero-title    { order: -2; margin-bottom: 12px; }
-  .event-selector { order: -1; width: 100%; margin-bottom: 4px; }
 
   .hero-left { align-items: center; }
   .hero-desc { max-width: 100%; }
-
-  .poster-img { max-height: 210px; width: auto; }
 
   .stat-strip { justify-content: center; }
 
   .venue-price-row { flex-direction: column; align-items: center; gap: 10px; }
 
-  .event-chips { justify-content: center; flex-wrap: wrap; }
   .hero-ctas { justify-content: center; }
 }
 
@@ -483,20 +534,12 @@ $r-pill: 999px;
 
   .hero-title { font-size: 30px; }
   .hero-desc { font-size: 13.5px; }
-  .poster-img { max-height: 170px; }
 
-  // Chips: 2-per-row grid so they fill the screen without overflowing
-  .event-chips {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    width: 100%;
-  }
+  .event-chips { gap: 6px; }
   .event-chip {
-    padding: 9px 10px;
-    width: 100%;
-    .chip-city { font-size: 12px; }
-    .chip-date { font-size: 10px; }
+    .chip-inner { padding: 11px 13px 13px; gap: 9px; }
+    .chip-city { font-size: 13px; }
+    .chip-date { font-size: 11px; }
   }
 
   .stat-strip { padding: 12px 16px; gap: 0; }

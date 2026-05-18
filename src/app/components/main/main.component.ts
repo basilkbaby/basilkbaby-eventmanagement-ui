@@ -97,6 +97,10 @@ private checkCurrentRoute(url: string): void {
   }
 
   onRetryLoad() {
-    this.loadEvents(); // Parent handles the retry
+    this.loadEvents();
+  }
+
+  onScrollToEvents(): void {
+    document.getElementById('event-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }

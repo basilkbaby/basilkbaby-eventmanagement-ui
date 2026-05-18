@@ -1,179 +1,194 @@
-<!-- event-list.component.html -->
-<div class="event-list-container">
-  <!-- Filters Section -->
-  <section class="filters-section">
-    <div class="filters-container">
-      <!-- Search -->
-      <div class="search-box">
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" 
+<div class="el-wrap">
+
+  <!-- ── Decorative blobs ───────────────────────────────────────────────────── -->
+  <div class="el-bg" aria-hidden="true">
+    <div class="el-blob el-blob--1"></div>
+    <div class="el-blob el-blob--2"></div>
+  </div>
+
+  <!-- ── Filter bar ────────────────────────────────────────────────────────── -->
+  <div class="el-filters">
+    <div class="el-filters__inner">
+
+      <div class="el-search">
+        <svg class="el-search__icon" width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21L16.514 16.506M19 10.5a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0z"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <input 
-          type="text" 
-          class="search-input" 
-          placeholder="Search events, artists, or venues..."
+        <input
+          class="el-search__input"
+          type="text"
+          placeholder="Search events, artists, venues…"
           [value]="searchTerm"
           (input)="onSearchInput($event)"
           aria-label="Search events"
         >
-        <button 
-          *ngIf="searchTerm" 
-          class="clear-search" 
-          (click)="resetSearch()"
-          aria-label="Clear search"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <button class="el-search__clear" *ngIf="searchTerm" (click)="resetSearch()" aria-label="Clear">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
         </button>
       </div>
 
-      <div class="filters-row">
-        <!-- Date Filters -->
-        <div class="date-filters">
-          <div class="filter-buttons">
-            <button 
-              class="filter-btn" 
-              [class.active]="dateFilter === 'upcoming'"
-              (click)="filterByDate('upcoming')"
-            >
-              Upcoming
-            </button>
-            <button 
-              class="filter-btn" 
-              [class.active]="dateFilter === 'past'"
-              (click)="filterByDate('past')"
-            >
-              Event Highlights
-            </button>
-            <button 
-              class="filter-btn" 
-              [class.active]="dateFilter === 'all'"
-              (click)="filterByDate('all')"
-            >
-              All Events
-            </button>
-          </div>
-        </div>
+      <div class="el-tabs">
+        <button class="el-tab" [class.el-tab--active]="dateFilter === 'upcoming'" (click)="filterByDate('upcoming')">Upcoming</button>
+        <button class="el-tab" [class.el-tab--active]="dateFilter === 'past'"     (click)="filterByDate('past')">Highlights</button>
+        <button class="el-tab" [class.el-tab--active]="dateFilter === 'all'"      (click)="filterByDate('all')">All Events</button>
       </div>
-    </div>
-  </section>
 
-  <!-- Loading State -->
-  <section class="loading-section" *ngIf="isLoading">
-    <div class="loading-container">
-      <app-loading-spinner></app-loading-spinner>
-      <p>Loading events...</p>
     </div>
-  </section>
+  </div>
 
-  <!-- Error State -->
-  <section class="error-section" *ngIf="error && !isLoading">
-    <div class="error-container">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
-              stroke="currentColor" stroke-width="2"/>
-        <path d="M12 8V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- ── Loading ───────────────────────────────────────────────────────────── -->
+  <div class="el-loading" *ngIf="isLoading">
+    <div class="el-loading__ring"></div>
+    <p>Loading events…</p>
+  </div>
+
+  <!-- ── Error ─────────────────────────────────────────────────────────────── -->
+  <div class="el-error" *ngIf="error && !isLoading">
+    <div class="el-error__icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
       </svg>
-      <h3>Unable to load events</h3>
-      <p>{{ error }}</p>
-      <!-- Changed to emit event for parent to handle loading -->
-      <button class="retry-btn" (click)="retryLoadEvents()">
-        Try Again
-      </button>
     </div>
-  </section>
+    <h3>Unable to load events</h3>
+    <p>{{ error }}</p>
+    <button class="el-error__retry" (click)="retryLoadEvents()">Try Again</button>
+  </div>
 
-  <!-- Events Grid -->
-  <section class="events-section" *ngIf="!isLoading && !error">
-    <div class="events-container">
-      <div class="events-grid" *ngIf="filteredEvents.length > 0">
-        <div 
-          *ngFor="let event of filteredEvents;" 
-          class="event-card"
-          [class.featured]="event.featured"
+  <!-- ── Events ────────────────────────────────────────────────────────────── -->
+  <div class="el-section" *ngIf="!isLoading && !error">
+
+    <!-- Total results pill -->
+    <div class="el-section__meta" *ngIf="filteredEvents.length > 0">
+      <span class="el-result-count">{{ filteredEvents.length }}</span>
+      <span class="el-result-label">
+        {{ dateFilter === 'upcoming' ? 'upcoming events' : dateFilter === 'past' ? 'past highlights' : 'events found' }}
+      </span>
+    </div>
+
+    <!-- Month groups -->
+    <ng-container *ngFor="let group of groupedEvents">
+
+      <!-- Month divider -->
+      <div class="el-month-head">
+        <span class="el-month-head__label">{{ group.label }}</span>
+        <span class="el-month-head__count">{{ group.events.length }} {{ group.events.length === 1 ? 'event' : 'events' }}</span>
+        <div class="el-month-head__rule"></div>
+      </div>
+
+      <!-- Cards grid -->
+      <div class="el-grid">
+        <a
+          *ngFor="let event of group.events"
+          class="el-card"
+          [class.el-card--past]="event.isPast"
           [routerLink]="['/events', event.id]"
           tabindex="0"
-          role="button"
-          (keydown.enter)="$event.preventDefault()"
-          (keydown.space)="$event.preventDefault()"
+          role="article"
         >
-          <!-- Featured Badge -->
-          <!-- <div class="featured-badge" *ngIf="event.featured" aria-label="Featured event">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            Featured
-          </div> -->
-
-          <!-- Event Image -->
-          <div class="event-image">
-            <img 
-              [src]="event.bannerImage" 
-              [alt]="event.title" 
+          <!-- ── Image ── -->
+          <div class="el-card__img">
+            <img
+              [src]="event.bannerImage || '/assets/images/hero-default.jpg'"
+              [alt]="event.title"
               loading="lazy"
               (error)="handleImageError($event)"
-            />
-            <div class="image-overlay"></div>
+            >
+            <div class="el-card__scrim"></div>
+
+            <!-- Date bubble — top left -->
+            <div class="el-card__datebub">
+              <span class="el-card__datebub-day">{{ event.startDate | date:'d' }}</span>
+              <span class="el-card__datebub-mon">{{ event.startDate | date:'MMM' | uppercase }}</span>
+            </div>
+
+            <!-- Type badge (live) / status (past/sold out) — top right -->
+            <div class="el-card__type-badge" *ngIf="!event.isPast && event.isActive">
+              {{ getTypeLabel(event.type) }}
+            </div>
+            <div class="el-card__status-badge" *ngIf="event.isPast || !event.isActive">
+              {{ event.isPast ? 'Completed' : 'Sold Out' }}
+            </div>
+
+            <!-- Price pill — bottom right -->
+            <div class="el-card__price-pill" *ngIf="event.startingFromPrice && !event.isPast && event.isActive">
+              from <strong>{{ event.startingFromPrice }}</strong>
+            </div>
           </div>
 
-          <!-- Event Content -->
-          <div class="event-content">
-            <div class="event-header">
-              <div class="event-date">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+          <!-- ── Ticket tear ── -->
+          <div class="el-card__tear"></div>
+
+          <!-- ── Body ── -->
+          <div class="el-card__body">
+
+            <div class="el-card__eyebrow">{{ event.venueCity }}</div>
+            <h3 class="el-card__title">{{ event.title }}</h3>
+
+            <div class="el-card__details">
+              <div class="el-card__detail">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1.5A4.5 4.5 0 0 0 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6A4.5 4.5 0 0 0 8 1.5z"
+                        stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
-                <!-- Use pipe instead of method -->
-                {{ event.startDate | formatDate }}
+                {{ event.venueName }}
               </div>
-            </div>
-            
-            <h3 class="event-title">{{ event.title }}</h3>
-            <p class="event-description">{{ event.shortDescription }}</p>
-            
-            <div class="event-location">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
-              {{ event.venueName }}, {{ event.venueCity }}
+              <div class="el-card__detail" *ngIf="event.startTime">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                {{ event.startTime }}
+              </div>
             </div>
 
-            <div class="event-footer">
-              <div class="event-pricing">
-                <div class="price">
-                  From {{ event.startingFromPrice }}
-                </div>
-              </div>
-              <button 
-                class="buy-btn" 
-                (click)="$event.stopPropagation()" 
-                [routerLink]="['/events', event.id]"
-                [attr.aria-label]="'Get tickets for ' + event.title"
-              >
-                {{ (event.isPast || !event.isActive) ? 'Event Details' : 'Get Tickets' }}
-              </button>
+            <!-- Limited seats warning -->
+            <div class="el-card__avail" *ngIf="isLimitedAvailability(event)">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              Only {{ event.availableSeats }} seats left
+            </div>
+
+            <!-- Footer -->
+            <div class="el-card__footer">
+              <span class="el-card__date-label">{{ event.startDate | formatDate }}</span>
+              <span class="el-card__cta" [class.el-card__cta--muted]="event.isPast || !event.isActive">
+                {{ (event.isPast || !event.isActive) ? 'View Details' : 'Get Tickets' }}
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             </div>
           </div>
-        </div>
+
+          <!-- ── Availability bar ── -->
+          <div class="el-card__avail-bar" *ngIf="!event.isPast && event.isActive && event.totalSeats > 0">
+            <div class="el-card__avail-fill" [style.width.%]="bookedPercent(event)"></div>
+          </div>
+
+        </a>
       </div>
 
-      <!-- No Results -->
-      <div class="no-results" *ngIf="filteredEvents.length === 0 && !isLoading">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
-                stroke="currentColor" stroke-width="2"/>
-          <path d="M15 9L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </ng-container>
+
+    <!-- Empty state -->
+    <div class="el-empty" *ngIf="filteredEvents.length === 0 && !isLoading">
+      <div class="el-empty__icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
         </svg>
-        <h3>No events found</h3>
-        <p>Try adjusting your search or filter criteria</p>
-        <button class="reset-filters" (click)="resetFilters()">
-          Reset Filters
-        </button>
       </div>
+      <h3>No events found</h3>
+      <p>Try adjusting your search or filter</p>
+      <button class="el-empty__btn" (click)="resetFilters()">Reset Filters</button>
     </div>
-  </section>
+
+  </div>
 </div>
