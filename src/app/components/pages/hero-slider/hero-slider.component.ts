@@ -44,4 +44,15 @@ export class HeroSliderComponent implements OnChanges {
   onScrollToEvents(): void {
     this.scrollToEvents.emit();
   }
+
+  formatShortDate(dateStr: Date | string): string {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const day = d.getDate();
+    const ordinals = ['th','st','nd','rd'];
+    const v = day % 100;
+    const suffix = ordinals[(v - 20) % 10] ?? ordinals[v] ?? 'th';
+    const month = d.toLocaleString('en-GB', { month: 'short' }).toUpperCase();
+    return `${day}${suffix} ${month}`;
+  }
 }

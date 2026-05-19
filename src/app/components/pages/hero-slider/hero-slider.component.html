@@ -10,7 +10,7 @@
   <div class="hero-wrap">
     <div class="hero-container" *ngIf="selectedEvent">
 
-      <!-- ═══ LEFT ═══ -->
+      <!-- ═══ LEFT — text content ═══ -->
       <div class="hero-left">
 
         <h1 class="hero-title">{{ selectedEvent.title }}</h1>
@@ -84,7 +84,7 @@
 
       </div>
 
-      <!-- ═══ RIGHT — poster + venue selector ═══ -->
+      <!-- ═══ RIGHT — poster ═══ -->
       <div class="hero-right">
         <div class="poster-wrap">
           <div class="poster-glow"></div>
@@ -99,36 +99,35 @@
             </span>
           </div>
         </div>
-
       </div>
 
-    </div>
-
-    <!-- ═══ FULL-WIDTH venue selector ═══ -->
-    <div class="event-selector" *ngIf="selectedEvent && featuredEvents.length > 1">
-      <span class="micro-label">Select Venue</span>
-      <div class="event-chips">
-        <button
-          *ngFor="let event of featuredEvents; let i = index"
-          class="event-chip"
-          [class.active]="i === selectedIndex"
-          (click)="selectEvent(i)"
-        >
-          <span class="chip-inner">
-            <svg class="chip-icon" width="15" height="15" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1.5A4.5 4.5 0 0 0 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6A4.5 4.5 0 0 0 8 1.5z"
-                    stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
-            <span class="chip-text">
-              <span class="chip-city">{{ event.venueCity }}</span>
-              <span class="chip-date">{{ event.startDate | formatDate }}</span>
+      <!-- ═══ VENUE SELECTOR — spans full width below both columns ═══ -->
+      <div class="event-selector" *ngIf="featuredEvents.length > 1">
+        <span class="micro-label">Select Venue</span>
+        <div class="event-chips">
+          <button
+            *ngFor="let event of featuredEvents; let i = index"
+            class="event-chip"
+            [class.active]="i === selectedIndex"
+            (click)="selectEvent(i)"
+          >
+            <span class="chip-inner">
+              <svg class="chip-icon" width="15" height="15" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1.5A4.5 4.5 0 0 0 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6A4.5 4.5 0 0 0 8 1.5z"
+                      stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              <span class="chip-text">
+                <span class="chip-city">{{ event.venueCity }}</span>
+                <span class="chip-date chip-date--full">{{ event.startDate | formatDate }}</span>
+                <span class="chip-date chip-date--short">{{ formatShortDate(event.startDate) }}</span>
+              </span>
             </span>
-          </span>
-        </button>
+          </button>
+        </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
 </section>
