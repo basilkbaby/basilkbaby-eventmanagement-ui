@@ -1,232 +1,272 @@
-// general-admission.component.scss
-.ga-container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-}
+// ── Tokens (mirrors svg-seatmap design system) ─────────────────────────────
+$green:    #22C55E;
+$green-d:  #16A34A;
+$green-bg: rgba(34, 197, 94, 0.07);
+$surface:  #ffffff;
+$bg:       #f2f4f8;
+$border:   #e4e8ef;
+$border-s: #f0f3f8;
+$t1:       #0f172a;
+$t2:       #475569;
+$t3:       #94a3b8;
+$red:      #ef4444;
+$amber-bg: rgba(234, 179, 8, 0.07);
+$amber-br: rgba(234, 179, 8, 0.28);
+$amber-t:  #92400e;
+$amber-ic: #b45309;
+$font:     'DM Sans', 'Helvetica Neue', sans-serif;
+$ease:     cubic-bezier(0.4, 0, 0.2, 1);
 
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-  
-  .back-btn {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 10px;
-    
-    &:hover {
-      color: #333;
-    }
-  }
-  
-  h1 {
-    margin: 0 0 5px;
-    font-size: 24px;
-  }
-  
-  .subtitle {
-    margin: 0;
-    color: #666;
-    font-size: 14px;
-  }
-}
-
-.standing-info {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
-  color: #856404;
-  
-  .warning {
-    margin: 0;
-  }
-}
-
-.options {
+// ── Panel ───────────────────────────────────────────────────────────────────
+.ga-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 12px;
+  padding: 14px 20px 20px;
+  font-family: $font;
+  -webkit-font-smoothing: antialiased;
 }
 
-.option-card {
-  background: white;
-  border: 1px solid #ddd;
+// ── Nav ─────────────────────────────────────────────────────────────────────
+.ga-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ga-back {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: $font;
+  font-size: 13px;
+  font-weight: 500;
+  color: $t2;
+  cursor: pointer;
+  padding: 0;
+  transition: color .1s $ease;
+  &:hover { color: $t1; }
+}
+
+.ga-clear {
+  background: none;
+  border: none;
+  font-family: $font;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: $red;
+  cursor: pointer;
+  padding: 0;
+  opacity: .75;
+  transition: opacity .1s;
+  &:hover { opacity: 1; }
+}
+
+// ── Heading ─────────────────────────────────────────────────────────────────
+.ga-head {
+  &__title {
+    margin: 0 0 2px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $t1;
+    line-height: 1.35;
+  }
+  &__sub {
+    margin: 0;
+    font-size: 12.5px;
+    color: $t3;
+  }
+}
+
+// ── Notice ───────────────────────────────────────────────────────────────────
+.ga-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 12px;
+  background: $amber-bg;
+  border: 1px solid $amber-br;
+  border-radius: 9px;
+  font-size: 12px;
+  color: $amber-t;
+  line-height: 1.5;
+  svg { color: $amber-ic; }
+}
+
+// ── Options ──────────────────────────────────────────────────────────────────
+.ga-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ga-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 10px;
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: $t1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__price {
+    font-size: 13px;
+    font-weight: 700;
+    color: $green-d;
+  }
+
+  &__max {
+    font-size: 11px;
+    color: $t3;
+  }
+}
+
+// ── Quantity selector ────────────────────────────────────────────────────────
+.ga-qty {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: $surface;
+  border: 1px solid $border;
   border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: none;
+    font-size: 17px;
+    font-weight: 500;
+    color: $t2;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .1s, color .1s;
+
+    &:hover:not(:disabled) {
+      background: $green-bg;
+      color: $green-d;
+    }
+
+    &:disabled {
+      color: $t3;
+      cursor: not-allowed;
+    }
+  }
+
+  &__num {
+    min-width: 28px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: $t1;
+    border-left: 1px solid $border-s;
+    border-right: 1px solid $border-s;
+    flex-shrink: 0;
+  }
 }
 
-.option-header {
+// ── Price block ──────────────────────────────────────────────────────────────
+.ga-price-block {
+  background: $bg;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ga-price-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  
-  h3 {
-    margin: 0;
-    font-size: 18px;
-  }
-  
-  .price {
-    font-size: 20px;
-    font-weight: bold;
-    color: #007bff;
-  }
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: $t2;
+  border-bottom: 1px solid $border-s;
 }
 
-.option-details {
-  margin-bottom: 20px;
-  
-  .availability {
-    color: #666;
-    margin-bottom: 5px;
-  }
-  
-  .max-info {
-    color: #999;
-    font-size: 12px;
-  }
+.ga-price-lbl { flex: 1; }
+.ga-price-val { font-weight: 600; color: $t1; }
+
+.ga-price-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 13px;
+  border-top: 1.5px solid $border;
+  font-size: 13px;
+  font-weight: 600;
+  color: $t2;
 }
 
-.quantity-selector {
+.ga-total-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: $t1;
+  letter-spacing: -.3px;
+}
+
+// ── Actions ──────────────────────────────────────────────────────────────────
+.ga-actions { margin-top: 2px; }
+
+.ga-spin-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  
-  .qty-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #007bff;
-    background: white;
-    color: #007bff;
-    font-size: 20px;
-    cursor: pointer;
-    
-    &:hover:not(:disabled) {
-      background: #007bff;
-      color: white;
-    }
-    
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-  
-  .quantity {
-    font-size: 24px;
-    font-weight: bold;
-    min-width: 40px;
-    text-align: center;
-  }
+  gap: 8px;
 }
 
-.selection-summary {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  
-  .summary-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    
-    h3 {
-      margin: 0;
-    }
-    
-    .clear-btn {
-      background: none;
-      border: none;
-      color: #dc3545;
-      cursor: pointer;
-      
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-  
-  .selected-items {
-    .selected-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      
-      &:last-child {
-        border-bottom: none;
-      }
-      
-      .item-name {
-        flex: 1;
-      }
-      
-      .item-qty {
-        color: #666;
-        margin: 0 10px;
-      }
-      
-      .item-total {
-        font-weight: bold;
-      }
-    }
-  }
-  
-  .empty-selection {
-    text-align: center;
-    color: #999;
-    padding: 20px;
-  }
+.ga-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ga-spin .65s linear infinite;
 }
 
-.total-section {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 2px solid #eee;
-  
-  .total-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
-    font-weight: bold;
-    
-    .total-price {
-      color: #28a745;
-    }
-  }
+@keyframes ga-spin { to { transform: rotate(360deg); } }
+
+.ga-btn-add {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  font-family: $font;
+  font-size: 14px;
+  font-weight: 600;
+  background: $green;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.25);
+  transition: background .1s, transform .1s;
+
+  &:hover:not(:disabled) { background: $green-d; }
+  &:active { transform: scale(.99); }
+  &:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  &.busy { opacity: .8; }
 }
 
-.action-section {
-  .add-to-cart-btn {
-    width: 100%;
-    padding: 15px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    
-    &:hover:not(:disabled) {
-      background: #218838;
-    }
-    
-    &:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-  }
-}

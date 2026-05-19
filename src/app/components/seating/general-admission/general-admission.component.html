@@ -1,113 +1,89 @@
-<!-- general-admission.component.html -->
-<div class="ga-container">
-  <!-- Header -->
-  <div class="header">
-    <button class="back-btn" (click)="goBack()">
-      ← Back to Seat Map
+<div class="ga-panel">
+
+  <!-- Nav row -->
+  <div class="ga-nav">
+    <button class="ga-back" (click)="goBack()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
     </button>
-    
-    <div class="header-content">
-      <h1>General Admission Tickets</h1>
-      <p class="subtitle">Standing Room Only • No Allocated Seats</p>
-    </div>
-  </div>
-  
-  <!-- Standing Info -->
-  <div class="standing-info">
-    <div class="warning">
-      <strong>⚠️ Important Information:</strong> These tickets provide standing access only. No seats or chairs are provided.
-    </div>
-  </div>
-  
-  <!-- Ticket Options -->
-  <div class="options">
-    @for (option of gaOptions; track option.id) {
-    <div class="option-card">
-      <div class="option-header">
-        <h3>{{ option.name }}</h3>
-        <div class="price">{{ option.price | currencyFormat }}</div>
-      </div>
-      
-      <p class="description">{{ option.description }}</p>
-      
-      <!-- Quantity Selector -->
-      <div class="quantity-section">
-        <div class="quantity-selector">
-          <button 
-            class="qty-btn minus"
-            (click)="decrement(option.id)"
-            [disabled]="(selections[option.id] || 0) === 0">
-            -
-          </button>
-          
-          <span class="quantity">
-            {{ selections[option.id] || 0 }}
-          </span>
-          
-          <button 
-            class="qty-btn plus"
-            (click)="increment(option.id)"
-            [disabled]="!canIncrement(option.id)">
-            +
-          </button>
-        </div>
-        
-        <div class="max-info">
-          Max {{ option.maxPerOrder }} per order
-        </div>
-      </div>
-    </div>
+    @if (totalQuantity > 0) {
+      <button class="ga-clear" (click)="clearAll()">Clear</button>
     }
   </div>
-  
-  <!-- Selection Summary -->
-  <div class="selection-summary">
-    <div class="summary-header">
-      <h3>Your Selection</h3>
-      @if (totalQuantity > 0) {
-      <button class="clear-btn" (click)="clearAll()">
-        Clear All
-      </button>
-      }
-    </div>
-    
-    @if (totalQuantity > 0) {
-    <div class="selected-items">
-      @for (option of gaOptions; track option.id) {
-        @if (selections[option.id] > 0) {
-        <div class="selected-item">
-          <span class="item-name">{{ option.name }}</span>
-          <span class="item-qty">× {{ selections[option.id] }}</span>
-          <span class="item-total">
-            {{ (option.price * selections[option.id]) | currencyFormat }}
-          </span>
+
+  <!-- Section heading -->
+  <div class="ga-head">
+    <p class="ga-head__title">Standing Tickets</p>
+    @if (venueSection) {
+      <p class="ga-head__sub">{{ venueSection.sectionLabel || venueSection.name }}</p>
+    }
+  </div>
+
+  <!-- Info notice -->
+  <div class="ga-notice">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M8 7v3M8 5.2v.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span>Standing room only — no allocated seats</span>
+  </div>
+
+  <!-- Ticket options -->
+  <div class="ga-options">
+    @for (option of gaOptions; track option.id) {
+      <div class="ga-option">
+        <div class="ga-option__meta">
+          <span class="ga-option__name">{{ option.name }}</span>
+          <span class="ga-option__price">{{ option.price | currencyFormat }}</span>
+          <span class="ga-option__max">max {{ option.maxPerOrder }} per order</span>
         </div>
+        <div class="ga-qty">
+          <button class="ga-qty__btn"
+            (click)="decrement(option.id)"
+            [disabled]="(selections[option.id] || 0) === 0">−</button>
+          <span class="ga-qty__num">{{ selections[option.id] || 0 }}</span>
+          <button class="ga-qty__btn"
+            (click)="increment(option.id)"
+            [disabled]="!canIncrement(option.id)">+</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Price breakdown -->
+  @if (totalQuantity > 0) {
+    <div class="ga-price-block">
+      @for (option of gaOptions; track option.id) {
+        @if ((selections[option.id] || 0) > 0) {
+          <div class="ga-price-line">
+            <span class="ga-price-lbl">{{ option.name }} × {{ selections[option.id] }}</span>
+            <span class="ga-price-val">{{ (option.price * selections[option.id]) | currencyFormat }}</span>
+          </div>
         }
       }
-      
-      <div class="total-row">
-        <span>Total:</span>
-        <span class="total-price">{{ totalPrice | currencyFormat }}</span>
+      <div class="ga-price-total">
+        <span>Total</span>
+        <span class="ga-total-num">{{ totalPrice | currencyFormat }}</span>
       </div>
     </div>
-    } @else {
-    <div class="empty-selection">
-      Select tickets above to continue
-    </div>
-    }
-  </div>
-  
-  <!-- Action Button -->
-  <div class="action-section">
-    <button 
-      class="add-to-cart-btn"
+  }
+
+  <!-- Action -->
+  <div class="ga-actions">
+    <button class="ga-btn-add"
       (click)="addToCart()"
-      [disabled]="totalQuantity === 0 || isLoading">
+      [disabled]="totalQuantity === 0 || isLoading"
+      [class.busy]="isLoading">
       @if (isLoading) {
-      Adding to Cart...
+        <span class="ga-spin-row"><span class="ga-spinner"></span>Adding…</span>
+      } @else if (totalQuantity === 0) {
+        Select tickets to continue
       } @else {
-      Add {{ totalQuantity }} Ticket(s) to Cart
+        Add {{ totalQuantity }} Ticket{{ totalQuantity !== 1 ? 's' : '' }} to Cart
       }
     </button>
   </div>
+
 </div>

@@ -62,7 +62,7 @@
   </main>
 
   <!-- ══════════ SIDEBAR (desktop) / BOTTOM SHEET (mobile) ══════════════════ -->
-  <aside class="sidebar" [class.has-selection]="selectedSeats.length > 0">
+  <aside class="sidebar" [class.has-selection]="selectedSeats.length > 0 || showGAPanel">
 
     <div class="drag-handle"></div>
 
@@ -72,14 +72,22 @@
         <h1 class="ev-name">{{ venueData.eventName }}</h1>
         <p class="ev-date">{{ venueData.eventDate | formatDate }}</p>
       </div>
-      <div class="sel-badge" *ngIf="selectedSeats.length > 0">
+      <div class="sel-badge" *ngIf="selectedSeats.length > 0 && !showGAPanel">
         <span>{{ selectedSeats.length }}</span>
         <span class="sel-badge-lbl">seat{{ selectedSeats.length !== 1 ? 's' : '' }}</span>
       </div>
     </div>
 
+    <!-- ── GENERAL ADMISSION PANEL ────────────────────────────────────────── -->
+    <app-general-admission
+      *ngIf="showGAPanel"
+      [eventId]="eventId"
+      [venueSection]="gaStandingSection"
+      (backToSeatMap)="onGABack()">
+    </app-general-admission>
+
     <!-- ── EMPTY STATE ──────────────────────────────────────────────────────── -->
-    <div class="empty-state" *ngIf="selectedSeats.length === 0">
+    <div class="empty-state" *ngIf="!showGAPanel && selectedSeats.length === 0">
       <div class="empty-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
           <rect x="3" y="8" width="18" height="10" rx="2.5" stroke="#22C55E" stroke-width="1.6"/>
@@ -117,7 +125,7 @@
     </div>
 
     <!-- ── SELECTION PANEL ─────────────────────────────────────────────────── -->
-    <div class="sel-panel" *ngIf="selectedSeats.length > 0">
+    <div class="sel-panel" *ngIf="!showGAPanel && selectedSeats.length > 0">
 
       <div class="sel-header">
         <span class="sel-title">Selected seats</span>
@@ -127,25 +135,15 @@
       <!-- Seat chips -->
       <div class="chips-wrap">
         <div class="chip" *ngFor="let s of selectedSeats">
-          <span class="chip-txt">{{ s.seatId }}</span>
+          <span class="chip-txt">{{ s.isGeneralAdmission ? s.sectionName : s.seatId }}</span>
           <button class="chip-del" (click)="onRemoveSeat(s.seatId, $event)" aria-label="Remove">×</button>
         </div>
-      </div>
-
-      <!-- Standing notice -->
-      <div class="standing-alert" *ngIf="hasStandingTickets()">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
-          <circle cx="8" cy="8" r="6.5" stroke="#22C55E" stroke-width="1.4"/>
-          <path d="M8 7v3M8 5.2v.3" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <span>Standing tickets are general admission — no fixed seat.</span>
-        <button class="add-standing" (click)="addAnotherStandingTicket()">+ Add another</button>
       </div>
 
       <!-- Price breakdown -->
       <div class="price-block">
         <div class="price-line" *ngFor="let s of selectedSeats">
-          <span class="price-lbl">{{ s.seatId }}</span>
+          <span class="price-lbl">{{ s.isGeneralAdmission ? s.sectionName : s.seatId }}</span>
           <span class="price-val">{{ formatPrice(s.price) }}</span>
         </div>
         <div class="price-total">

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { SeatService } from '../../../core/services/seat.service';
 import {
-  getSeatColor, getSeatDisplayText, getSeatStatusConfig,
+  getSeatDisplayText,
   isSeatSelectable, RowNumberingType,
   Seat, SEAT_STATUS_CONFIG, SeatManagement, SeatOverride,
   SeatSectionType, SeatStatus, SectionRowConfig,
@@ -14,11 +14,12 @@ import {
 import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.component';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
+import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
 
 @Component({
   selector: 'app-svg-seatmap',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SeatMapVisualComponent, FormatDatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, SeatMapVisualComponent, FormatDatePipe, GeneralAdmissionComponent],
   templateUrl: './svg-seatmap.component.html',
   styleUrls: ['./svg-seatmap.component.scss']
 })
@@ -46,6 +47,10 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   readonly seatStatusConfig = SEAT_STATUS_CONFIG;
   readonly SeatStatus       = SeatStatus;
   readonly SeatSectionType  = SeatSectionType;
+
+  // ── GA panel ──────────────────────────────────────────────────────────────
+  showGAPanel        = false;
+  gaStandingSection: VenueSection | null = null;
 
   // ── Standing ──────────────────────────────────────────────────────────────
   private usedStandingIds: string[] = [];
@@ -263,8 +268,17 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
   onSeatClicked(seat: Seat) {
     if (!isSeatSelectable(seat.status)) return;
+    if (seat.isStandingArea) {
+      this.gaStandingSection = this.venueData.sections.find(s => s.id === seat.sectionId) ?? null;
+      this.showGAPanel = true;
+      return;
+    }
     seat.status === SeatStatus.SELECTED ? this.deselectSeat(seat) : this.selectSeat(seat);
     this.seatMapVisual?.invalidateSeat(seat.id);
+  }
+
+  onGABack() {
+    this.showGAPanel = false;
   }
 
   onSeatHovered(e: { seat: Seat | null; mouseX: number; mouseY: number }) {
@@ -297,7 +311,14 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   onRemoveSeat(seatId: string, e: MouseEvent) {
     e.stopPropagation();
     const seat = this.seats.find(s => s.id === seatId);
-    if (seat) { this.deselectSeat(seat); this.seatMapVisual?.invalidateSeat(seat.id); }
+    if (seat) {
+      this.deselectSeat(seat);
+      this.seatMapVisual?.invalidateSeat(seat.id);
+    } else {
+      // GA ticket — not in seats array, remove directly
+      this.selectedSeats   = this.selectedSeats.filter(s => s.seatId !== seatId);
+      this.selectedSeatIds = this.selectedSeatIds.filter(id => id !== seatId);
+    }
   }
 
   clearSelection() {
