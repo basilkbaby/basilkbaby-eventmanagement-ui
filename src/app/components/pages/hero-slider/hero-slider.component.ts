@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventDto } from '../../../core/models/DTOs/event.DTO.model';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
+import { FormatTimePipe } from '../../../core/pipes/common/time-format.pipe';
 
 @Component({
   selector: 'app-hero-slider',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormatDatePipe],
+  imports: [CommonModule, RouterModule, FormatDatePipe, FormatTimePipe],
   templateUrl: './hero-slider.component.html',
   styleUrls: ['./hero-slider.component.scss']
 })

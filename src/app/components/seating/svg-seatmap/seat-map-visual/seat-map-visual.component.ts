@@ -134,7 +134,10 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
         requestAnimationFrame(() => requestAnimationFrame(() => {
           this.sizeCanvas();
           this.centreView();
+          this.scheduleRender();
         }));
+        // Fallback: re-centre after layout is fully settled
+        setTimeout(() => { this.sizeCanvas(); this.centreView(); this.scheduleRender(); }, 120);
       }
     }
     this.scheduleRender();
@@ -207,26 +210,34 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
     const w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
 
-    // Centre on the actual seats bounding box, not the whole CANVAS_W/H
     const pool = this.seats.length ? this.seats : null;
     if (pool && pool.length > 0) {
-      const minX = Math.min(...pool.map(s => s.cx));
-      const maxX = Math.max(...pool.map(s => s.cx));
-      // Include stage: start from y=10 (stage top)
-      const minY = 10;
-      const maxY = Math.max(...pool.map(s => s.cy)) + this.SR * 2;
+      // Account for standing-area boxes (cx/cy is top-left, not centre)
+      let minX =  Infinity, maxX = -Infinity;
+      let minY = 10,        maxY = -Infinity;
+      for (const s of pool) {
+        if (s.isStandingArea) {
+          const bw = (s.gridColumn ?? 1) * this.GAP;
+          const bh = (s.gridRow    ?? 1) * (this.GAP - 1);
+          minX = Math.min(minX, s.cx);
+          maxX = Math.max(maxX, s.cx + bw);
+          maxY = Math.max(maxY, s.cy + bh);
+        } else {
+          minX = Math.min(minX, s.cx);
+          maxX = Math.max(maxX, s.cx);
+          maxY = Math.max(maxY, s.cy + this.SR * 2);
+        }
+      }
+
       const contentW = maxX - minX + this.SR * 4;
       const contentH = maxY - minY + this.SR * 4;
-
       const pad = 40;
       const zx = (w - pad * 2) / contentW;
       const zy = (h - pad * 2) / contentH;
       this.zoom = Math.max(0.2, Math.min(1.4, Math.min(zx, zy)));
-
       this.panX = pad + (w - pad * 2 - contentW * this.zoom) / 2 - (minX - this.SR * 2) * this.zoom;
       this.panY = pad + (h - pad * 2 - contentH * this.zoom) / 2 - minY * this.zoom;
     } else {
-      // No seats yet — centre the canvas world
       this.zoom = 0.72;
       this.panX = (w - this.CANVAS_W * this.zoom) / 2;
       this.panY = Math.max(16, (h - this.CANVAS_H * this.zoom) / 2);
@@ -456,17 +467,91 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
   private drawStanding(ctx: CanvasRenderingContext2D, seat: Seat) {
     if (!seat.gridRow || !seat.gridColumn) return;
-    const w = seat.gridColumn * this.GAP, h = seat.gridRow * (this.GAP - 1);
-    const fill  = this.colorCache.get(seat.id) ?? '#6b7280';
-    const isSel = this.selectedSet.has(seat.id);
-    ctx.globalAlpha = 0.13; ctx.fillStyle = fill;
-    this.rrect(ctx, seat.cx, seat.cy, w, h, 10); ctx.fill(); ctx.globalAlpha = 1;
-    ctx.setLineDash([6,4]);
-    ctx.strokeStyle = isSel ? this.SEL_COLOR : fill; ctx.lineWidth = isSel ? 2 : 1.5;
-    this.rrect(ctx, seat.cx, seat.cy, w, h, 10); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = '#7b8494'; ctx.font = `600 12px "DM Sans",sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('STANDING', seat.cx + w/2, seat.cy + h/2);
+    const w      = seat.gridColumn * this.GAP;
+    const h      = seat.gridRow * (this.GAP - 1);
+    const isSel  = this.selectedSet.has(seat.id);
+    const color  = this.colorCache.get(seat.id) ?? '#6b7280';
+    const accent = isSel ? this.SEL_COLOR : color;
+    const rx     = 12;
+
+    // Background fill
+    ctx.globalAlpha = isSel ? 0.13 : 0.07;
+    ctx.fillStyle   = accent;
+    this.rrect(ctx, seat.cx, seat.cy, w, h, rx);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Solid border
+    ctx.strokeStyle = accent;
+    ctx.lineWidth   = isSel ? 2.5 : 1.5;
+    this.rrect(ctx, seat.cx, seat.cy, w, h, rx);
+    ctx.stroke();
+
+    // Staggered crowd-dot grid
+    const labelH  = Math.max(52, h * 0.38);
+    const padX    = 16, padTop = 12;
+    const dotR    = 2.5, spacingX = 12, spacingY = 13;
+    const cols    = Math.max(1, Math.floor((w - padX * 2) / spacingX));
+    const gridH   = h - padTop - labelH - 4;
+    const rows    = Math.max(1, Math.floor(gridH / spacingY));
+    const startX  = seat.cx + (w - (cols - 1) * spacingX) / 2;
+    const startY  = seat.cy + padTop + spacingY / 2;
+
+    ctx.fillStyle   = accent;
+    ctx.globalAlpha = isSel ? 0.55 : 0.3;
+    for (let r = 0; r < rows; r++) {
+      const offset = r % 2 === 1 ? spacingX / 2 : 0;
+      for (let c = 0; c < cols; c++) {
+        const dx = startX + c * spacingX + offset;
+        const dy = startY + r * spacingY;
+        if (dx < seat.cx + 6 || dx > seat.cx + w - 6) continue;
+        ctx.beginPath();
+        ctx.arc(dx, dy, dotR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Separator line before label
+    const sepY = seat.cy + h - labelH;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth   = 1;
+    ctx.globalAlpha = 0.18;
+    ctx.beginPath();
+    ctx.moveTo(seat.cx + rx, sepY);
+    ctx.lineTo(seat.cx + w - rx, sepY);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    const cx = seat.cx + w / 2;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Section name
+    ctx.fillStyle    = accent;
+    ctx.font         = `700 14px "DM Sans","Helvetica Neue",sans-serif`;
+    ctx.letterSpacing = '1.5px';
+    ctx.fillText((seat.sectionName || 'STANDING').toUpperCase(), cx, sepY + labelH * 0.35);
+    ctx.letterSpacing = '0px';
+
+    // "Click to select" hint pill
+    if (!isSel) {
+      const hint    = '+ Click to select standing ticket';
+      ctx.font      = `500 9.5px "DM Sans","Helvetica Neue",sans-serif`;
+      const tw      = ctx.measureText(hint).width;
+      const pillW   = tw + 16, pillH = 16, pillX = cx - pillW / 2, pillY = sepY + labelH * 0.72 - pillH / 2;
+      ctx.globalAlpha = 0.12;
+      ctx.fillStyle   = accent;
+      this.rrect(ctx, pillX, pillY, pillW, pillH, 8);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = accent;
+      ctx.fillText(hint, cx, sepY + labelH * 0.72);
+    } else {
+      ctx.fillStyle = accent;
+      ctx.font      = `600 10px "DM Sans","Helvetica Neue",sans-serif`;
+      ctx.fillText('✓ Selected', cx, sepY + labelH * 0.72);
+    }
   }
 
   // ── Hit testing ────────────────────────────────────────────────────────────

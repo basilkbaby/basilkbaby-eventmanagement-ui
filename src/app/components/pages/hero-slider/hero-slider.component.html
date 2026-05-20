@@ -28,12 +28,12 @@
           <div class="stat-divider" *ngIf="selectedEvent.startDate && selectedEvent.gateOpenTime"></div>
           <div class="stat-block" *ngIf="selectedEvent.gateOpenTime">
             <span class="stat-label">Gate Opens</span>
-            <span class="stat-value">{{ selectedEvent.gateOpenTime }}</span>
+            <span class="stat-value">{{ selectedEvent.gateOpenTime | formatTime }}</span>
           </div>
           <div class="stat-divider" *ngIf="selectedEvent.gateOpenTime && selectedEvent.startTime"></div>
           <div class="stat-block" *ngIf="selectedEvent.startTime">
             <span class="stat-label">Show Starts</span>
-            <span class="stat-value">{{ selectedEvent.startTime }}</span>
+            <span class="stat-value">{{ selectedEvent.startTime | formatTime }}</span>
           </div>
         </div>
 

@@ -157,13 +157,13 @@
             <!-- Footer -->
             <div class="el-card__footer">
               <span class="el-card__date-label">{{ event.startDate | formatDate }}</span>
-              <span class="el-card__cta" [class.el-card__cta--muted]="event.isPast || !event.isActive">
+              <button class="el-card__cta" [class.el-card__cta--muted]="event.isPast || !event.isActive">
                 {{ (event.isPast || !event.isActive) ? 'View Details' : 'Get Tickets' }}
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-              </span>
+              </button>
             </div>
           </div>
 

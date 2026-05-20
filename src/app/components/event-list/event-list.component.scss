@@ -548,15 +548,32 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 .el-card__cta {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12.5px;
+  gap: 5px;
+  padding: 6px 14px 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid $terra;
+  background: $terra;
+  color: #fff;
+  font-family: $font;
+  font-size: 12px;
   font-weight: 700;
-  color: $terra;
   white-space: nowrap;
-  transition: color 0.15s;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
   svg { transition: transform 0.18s $ease; flex-shrink: 0; }
 
-  &--muted { color: $t3; font-weight: 600; }
+  &:hover:not(&--muted) {
+    background: $terra-d;
+    border-color: $terra-d;
+  }
+
+  &--muted {
+    background: transparent;
+    border-color: $border;
+    color: $t3;
+    font-weight: 600;
+    cursor: default;
+  }
 }
 
 // ── Availability bar ──────────────────────────────────────────────────────────
