@@ -232,24 +232,6 @@ $ease:     cubic-bezier(0.4, 0, 0.2, 1);
 // ── Actions ──────────────────────────────────────────────────────────────────
 .ga-actions { margin-top: 2px; }
 
-.ga-spin-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.ga-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, .3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: ga-spin .65s linear infinite;
-}
-
-@keyframes ga-spin { to { transform: rotate(360deg); } }
-
 .ga-btn-add {
   width: 100%;
   padding: 13px;

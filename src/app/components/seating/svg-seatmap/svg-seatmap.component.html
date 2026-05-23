@@ -81,9 +81,9 @@
     <!-- ── GENERAL ADMISSION PANEL ────────────────────────────────────────── -->
     <app-general-admission
       *ngIf="showGAPanel"
-      [eventId]="eventId"
       [venueSection]="gaStandingSection"
-      (backToSeatMap)="onGABack()">
+      (backToSeatMap)="onGABack()"
+      (seatsSelected)="onGASeatsSelected($event)">
     </app-general-admission>
 
     <!-- ── EMPTY STATE ──────────────────────────────────────────────────────── -->

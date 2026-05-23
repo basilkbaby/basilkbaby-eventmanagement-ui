@@ -467,90 +467,60 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
   private drawStanding(ctx: CanvasRenderingContext2D, seat: Seat) {
     if (!seat.gridRow || !seat.gridColumn) return;
-    const w      = seat.gridColumn * this.GAP;
-    const h      = seat.gridRow * (this.GAP - 1);
-    const isSel  = this.selectedSet.has(seat.id);
-    const color  = this.colorCache.get(seat.id) ?? '#6b7280';
-    const accent = isSel ? this.SEL_COLOR : color;
-    const rx     = 12;
+    const w     = seat.gridColumn * this.GAP;
+    const h     = seat.gridRow * (this.GAP - 1);
+    const isSel = this.selectedSet.has(seat.id);
+    const rx    = 12;
 
-    // Background fill
-    ctx.globalAlpha = isSel ? 0.13 : 0.07;
-    ctx.fillStyle   = accent;
-    this.rrect(ctx, seat.cx, seat.cy, w, h, rx);
-    ctx.fill();
-    ctx.globalAlpha = 1;
+    // Colours — neutral slate when idle, green when selected
+    const bg     = isSel ? 'rgba(34,197,94,0.13)'   : 'rgba(148,163,184,0.13)';
+    const border = isSel ? this.SEL_COLOR             : '#94a3b8';
+    const inner  = isSel ? 'rgba(255,255,255,0.10)'  : 'rgba(255,255,255,0.55)';
+    const label  = isSel ? this.SEL_COLOR             : '#475569';
+    const hint   = isSel ? this.SEL_COLOR             : '#94a3b8';
 
-    // Solid border
-    ctx.strokeStyle = accent;
-    ctx.lineWidth   = isSel ? 2.5 : 1.5;
-    this.rrect(ctx, seat.cx, seat.cy, w, h, rx);
-    ctx.stroke();
+    // Background
+    ctx.shadowColor = 'rgba(0,0,0,0.07)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+    ctx.fillStyle   = bg;
+    this.rrect(ctx, seat.cx, seat.cy, w, h, rx); ctx.fill();
+    ctx.shadowColor = 'transparent';
 
-    // Staggered crowd-dot grid
-    const labelH  = Math.max(52, h * 0.38);
-    const padX    = 16, padTop = 12;
-    const dotR    = 2.5, spacingX = 12, spacingY = 13;
-    const cols    = Math.max(1, Math.floor((w - padX * 2) / spacingX));
-    const gridH   = h - padTop - labelH - 4;
-    const rows    = Math.max(1, Math.floor(gridH / spacingY));
-    const startX  = seat.cx + (w - (cols - 1) * spacingX) / 2;
-    const startY  = seat.cy + padTop + spacingY / 2;
+    // Border
+    ctx.strokeStyle = border; ctx.lineWidth = isSel ? 2 : 1.5;
+    this.rrect(ctx, seat.cx, seat.cy, w, h, rx); ctx.stroke();
 
-    ctx.fillStyle   = accent;
-    ctx.globalAlpha = isSel ? 0.55 : 0.3;
-    for (let r = 0; r < rows; r++) {
-      const offset = r % 2 === 1 ? spacingX / 2 : 0;
-      for (let c = 0; c < cols; c++) {
-        const dx = startX + c * spacingX + offset;
-        const dy = startY + r * spacingY;
-        if (dx < seat.cx + 6 || dx > seat.cx + w - 6) continue;
-        ctx.beginPath();
-        ctx.arc(dx, dy, dotR, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
+    // Inner highlight (stage-style)
+    ctx.strokeStyle = inner; ctx.lineWidth = 1;
+    this.rrect(ctx, seat.cx + 1, seat.cy + 1, w - 2, h - 2, rx - 1); ctx.stroke();
 
-    // Separator line before label
-    const sepY = seat.cy + h - labelH;
-    ctx.strokeStyle = accent;
-    ctx.lineWidth   = 1;
-    ctx.globalAlpha = 0.18;
-    ctx.beginPath();
-    ctx.moveTo(seat.cx + rx, sepY);
-    ctx.lineTo(seat.cx + w - rx, sepY);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-
-    const cx = seat.cx + w / 2;
+    const cx = seat.cx + w / 2, cy = seat.cy + h / 2;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
 
     // Section name
-    ctx.fillStyle    = accent;
+    ctx.fillStyle    = label;
     ctx.font         = `700 14px "DM Sans","Helvetica Neue",sans-serif`;
     ctx.letterSpacing = '1.5px';
-    ctx.fillText((seat.sectionName || 'STANDING').toUpperCase(), cx, sepY + labelH * 0.35);
+    ctx.fillText((seat.sectionName || 'STANDING').toUpperCase(), cx, cy - 12);
     ctx.letterSpacing = '0px';
 
-    // "Click to select" hint pill
+    // Hint pill / selected label
     if (!isSel) {
-      const hint    = '+ Click to select standing ticket';
+      const hintTxt = '+ Click to select standing ticket';
       ctx.font      = `500 9.5px "DM Sans","Helvetica Neue",sans-serif`;
-      const tw      = ctx.measureText(hint).width;
-      const pillW   = tw + 16, pillH = 16, pillX = cx - pillW / 2, pillY = sepY + labelH * 0.72 - pillH / 2;
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle   = accent;
-      this.rrect(ctx, pillX, pillY, pillW, pillH, 8);
-      ctx.fill();
+      const tw      = ctx.measureText(hintTxt).width;
+      const pw = tw + 16, ph = 16, px = cx - pw / 2, py = cy + 4;
+      ctx.globalAlpha = 0.10; ctx.fillStyle = border;
+      this.rrect(ctx, px, py, pw, ph, 8); ctx.fill();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = accent;
-      ctx.fillText(hint, cx, sepY + labelH * 0.72);
+      ctx.fillStyle = hint;
+      ctx.fillText(hintTxt, cx, cy + 12);
     } else {
-      ctx.fillStyle = accent;
-      ctx.font      = `600 10px "DM Sans","Helvetica Neue",sans-serif`;
-      ctx.fillText('✓ Selected', cx, sepY + labelH * 0.72);
+      ctx.fillStyle    = this.SEL_COLOR;
+      ctx.font         = `600 10px "DM Sans","Helvetica Neue",sans-serif`;
+      ctx.letterSpacing = '0.5px';
+      ctx.fillText('✓ SELECTED', cx, cy + 12);
+      ctx.letterSpacing = '0px';
     }
   }
 

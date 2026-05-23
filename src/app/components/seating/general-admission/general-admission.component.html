@@ -73,15 +73,12 @@
   <!-- Action -->
   <div class="ga-actions">
     <button class="ga-btn-add"
-      (click)="addToCart()"
-      [disabled]="totalQuantity === 0 || isLoading"
-      [class.busy]="isLoading">
-      @if (isLoading) {
-        <span class="ga-spin-row"><span class="ga-spinner"></span>Adding…</span>
-      } @else if (totalQuantity === 0) {
+      (click)="addToSelection()"
+      [disabled]="totalQuantity === 0">
+      @if (totalQuantity === 0) {
         Select tickets to continue
       } @else {
-        Add {{ totalQuantity }} Ticket{{ totalQuantity !== 1 ? 's' : '' }} to Cart
+        Add {{ totalQuantity }} Standing Ticket{{ totalQuantity !== 1 ? 's' : '' }}
       }
     </button>
   </div>

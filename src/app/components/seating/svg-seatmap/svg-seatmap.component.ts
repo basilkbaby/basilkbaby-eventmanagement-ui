@@ -281,6 +281,14 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     this.showGAPanel = false;
   }
 
+  onGASeatsSelected(seats: SelectedSeat[]) {
+    seats.forEach(s => {
+      this.selectedSeats.push(s);
+      this.selectedSeatIds = [...this.selectedSeatIds, s.seatId];
+    });
+    this.showGAPanel = false;
+  }
+
   onSeatHovered(e: { seat: Seat | null; mouseX: number; mouseY: number }) {
     this.hoveredSeatId = e.seat?.id ?? null;
   }

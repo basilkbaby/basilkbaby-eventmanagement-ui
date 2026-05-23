@@ -1,8 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { CartService } from '../../../core/services/cart.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { SelectedSeat, TicketType, VenueSection } from '../../../core/models/seats.model';
 import { CurrencyFormatPipe } from '../../../core/pipes/currency-format.pipe';
@@ -24,19 +22,14 @@ interface GAOption {
   styleUrls: ['./general-admission.component.scss']
 })
 export class GeneralAdmissionComponent implements OnInit, OnChanges {
-  @Input() eventId: string = '';
   @Input() venueSection: VenueSection | null = null;
   @Output() backToSeatMap = new EventEmitter<void>();
+  @Output() seatsSelected = new EventEmitter<SelectedSeat[]>();
 
   gaOptions:  GAOption[] = [];
   selections: { [optionId: string]: number } = {};
-  isLoading = false;
 
-  constructor(
-    private cartService: CartService,
-    private router: Router,
-    private notificationService: NotificationService
-  ) {}
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit() { this.initializeOptions(); }
 
@@ -102,13 +95,12 @@ export class GeneralAdmissionComponent implements OnInit, OnChanges {
 
   clearAll() { this.gaOptions.forEach(o => { this.selections[o.id] = 0; }); }
 
-  addToCart() {
+  addToSelection() {
     if (this.totalQuantity === 0) {
       this.notificationService.showWarning('Please select at least one ticket');
       return;
     }
 
-    this.isLoading = true;
     const seats: SelectedSeat[] = [];
     const ts = Date.now().toString(36).toUpperCase();
 
@@ -131,20 +123,7 @@ export class GeneralAdmissionComponent implements OnInit, OnChanges {
       }
     });
 
-    this.cartService.addToCart(this.eventId, seats).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        if (res.success) {
-          this.router.navigate(['/cart']);
-        } else {
-          this.notificationService.showError(res.error || 'Failed to add tickets');
-        }
-      },
-      error: () => {
-        this.isLoading = false;
-        this.notificationService.showError('An error occurred. Please try again.');
-      }
-    });
+    this.seatsSelected.emit(seats);
   }
 
   goBack() { this.backToSeatMap.emit(); }
