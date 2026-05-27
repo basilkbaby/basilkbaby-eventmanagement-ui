@@ -142,9 +142,12 @@
 
       <!-- Price breakdown -->
       <div class="price-block">
-        <div class="price-line" *ngFor="let s of selectedSeats">
-          <span class="price-lbl">{{ s.isGeneralAdmission ? s.sectionName : s.seatId }}</span>
-          <span class="price-val">{{ formatPrice(s.price) }}</span>
+        <div class="price-lines-scroll">
+          <div class="price-line" *ngFor="let s of selectedSeats">
+            <span class="price-lbl">{{ s.isGeneralAdmission ? s.sectionName : s.seatId }}</span>
+            <span class="price-val">{{ formatPrice(s.price) }}</span>
+            <button class="price-rm" (click)="onRemoveSeat(s.seatId, $event)" aria-label="Remove">×</button>
+          </div>
         </div>
         <div class="price-total">
           <span>Total</span>
@@ -158,7 +161,7 @@
           (click)="addToCart()"
           [disabled]="isLoading || selectedSeats.length === 0"
           [class.busy]="isLoading">
-          <span *ngIf="!isLoading">Add {{ selectedSeats.length }} to Cart</span>
+          <span *ngIf="!isLoading">Add {{ selectedSeats.length }} &nbsp;·&nbsp; {{ formatPrice(getTotalPrice()) }}</span>
           <span class="spin-row" *ngIf="isLoading"><span class="spinner"></span>Adding…</span>
         </button>
         <button class="btn-cart" [routerLink]="['/cart']" [disabled]="isLoading">View Cart</button>
