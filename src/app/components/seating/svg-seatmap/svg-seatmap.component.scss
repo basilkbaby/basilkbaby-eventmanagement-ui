@@ -389,9 +389,9 @@ $sw:       320px;
     max-height: 90px;
     transition: max-height 0.35s $ease;
 
-    // Expand when seats are selected
+    // Expand when seats are selected — capped so map stays visible
     &.has-selection {
-      max-height: 72dvh;
+      max-height: 48dvh;
     }
   }
 
@@ -418,12 +418,33 @@ $sw:       320px;
   .empty-title { font-size: 14px; }
   .empty-hint  { font-size: 12.5px; margin-bottom: 14px; }
 
-  .sel-panel { padding: 12px 18px 20px; gap: 12px; }
+  .sel-panel { padding: 12px 18px 0; gap: 10px; }
 
-  // Buttons side-by-side on mobile
+  // Chips — cap to 2 rows, scroll if more
+  .chips-wrap {
+    max-height: 62px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  // Price lines — scroll if many seats
+  .price-block {
+    max-height: 110px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  // Actions — sticky at bottom of the sheet so they're always reachable
   .actions {
     flex-direction: row;
-    padding-bottom: env(safe-area-inset-bottom, 8px);
+    position: sticky;
+    bottom: 0;
+    background: $surface;
+    border-top: 1px solid $border-s;
+    margin-top: 0;
+    padding: 10px 0 env(safe-area-inset-bottom, 10px);
   }
   .btn-add  { flex: 2; padding: 12px; font-size: 13.5px; }
   .btn-cart { flex: 1; padding: 11px; font-size: 13px; }
@@ -432,5 +453,5 @@ $sw:       320px;
 }
 
 @media (max-width: 390px) {
-  .sidebar.has-selection { max-height: 78dvh; }
+  .sidebar.has-selection { max-height: 52dvh; }
 }
