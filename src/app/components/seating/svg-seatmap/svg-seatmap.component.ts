@@ -112,8 +112,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     this.usedStandingIds = [];
 
     const statusMap = new Map<string, SeatOverride>();
-    (['reservedSeats', 'blockedSeats', 'soldSeats'] as (keyof SeatManagement)[])
-      .forEach(cat => this.venueData.seatManagement[cat].forEach(o => statusMap.set(o.seatId, o)));
+    (['reservedSeats', 'blockedSeats', 'soldSeats', 'unavailableSeats'] as (keyof SeatManagement)[])
+      .forEach(cat => this.venueData.seatManagement[cat]?.forEach(o => statusMap.set(o.seatId, o)));
 
     const contGen = this.createLetterGenerator();
     const defNumType = RowNumberingType.PERSECTION;

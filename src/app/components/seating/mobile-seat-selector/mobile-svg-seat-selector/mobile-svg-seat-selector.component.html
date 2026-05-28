@@ -61,7 +61,7 @@
              [attr.transform]="'translate(' + seat.cx + ',' + seat.cy + ')'">
             
             <!-- Regular seats as circles -->
-            <circle *ngIf="!seat.isStandingArea"
+            <circle *ngIf="!seat.isStandingArea && seat.status !== SeatStatus.UNAVAILABLE"
                     class="seat-circle"
                     [attr.r]="seat.r"
                     [class]="getSeatStatusClass(seat)"

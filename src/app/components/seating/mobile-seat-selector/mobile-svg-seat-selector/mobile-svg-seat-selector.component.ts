@@ -177,7 +177,7 @@ private generateSeats() {
   const statusMap = new Map<string, SeatOverride>();
   
   if (this.venueData.seatManagement) {
-    const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats'];
+    const categories: (keyof SeatManagement)[] = ['reservedSeats', 'blockedSeats', 'soldSeats', 'unavailableSeats'];
     
     categories.forEach(category => {
       if (this.venueData?.seatManagement[category]) {

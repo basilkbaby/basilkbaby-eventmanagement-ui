@@ -235,7 +235,8 @@ export class SeatService {
           { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
           { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
           { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
-        ]
+        ],
+        unavailableSeats: []
       }
     };
   }
@@ -481,7 +482,8 @@ export class SeatService {
           { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
           { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
           { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
-        ]
+        ],
+        unavailableSeats: []
       }
     };
   }
@@ -688,7 +690,8 @@ export class SeatService {
           { seatId: 'DIAMOND-D-9', status: SeatStatus.BOOKED, bookingId: 'BK004' },
           { seatId: 'GOLD-B-4', status: SeatStatus.BOOKED, bookingId: 'BK005' },
           { seatId: 'SILVER-C-2', status: SeatStatus.BOOKED, bookingId: 'BK006' }
-        ]
+        ],
+        unavailableSeats: []
       }
     };
   }
@@ -925,7 +928,8 @@ export class SeatService {
           { seatId: 'RIGHT_SECTION-D-7', status: SeatStatus.BOOKED, bookingId: 'BK008' },
           { seatId: 'RIGHT_SECTION-K-2', status: SeatStatus.BOOKED, bookingId: 'BK009' },
           { seatId: 'RIGHT_SECTION-K-3', status: SeatStatus.BOOKED, bookingId: 'BK010' }
-        ]
+        ],
+        unavailableSeats: []
       }
     };
   }

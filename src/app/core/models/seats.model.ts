@@ -6,10 +6,10 @@ export interface VenueData {
 }
 
 export interface SeatManagement {
-  // Only these three statuses needed
   reservedSeats: SeatOverride[];
   blockedSeats: SeatOverride[];
   soldSeats: SeatOverride[];
+  unavailableSeats: SeatOverride[];
 }
 
 export interface SeatOverride {

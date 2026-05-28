@@ -410,6 +410,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   }
 
   private drawOneSeat(ctx: CanvasRenderingContext2D, seat: Seat) {
+    if (seat.status === SeatStatus.UNAVAILABLE) return;
     const SR    = this.SR;
     const isSel = this.selectedSet.has(seat.id);
     // Frontend: treat BLOCKED same as BOOKED — one less status for customers to decode
@@ -536,6 +537,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
       ? this.seats.filter(s => s.sectionId === this.activeSectionId) : this.seats;
     for (const seat of pool) {
       if (seat.isStandingArea) continue;
+      if (seat.status === SeatStatus.UNAVAILABLE) continue;
       const dx = seat.cx - wx, dy = seat.cy - wy;
       if (dx*dx + dy*dy <= R*R) return seat;
     }
