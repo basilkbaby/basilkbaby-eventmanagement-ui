@@ -8,6 +8,7 @@ import { filter, Subscription } from 'rxjs';
 import { ConfigService } from './core/services/config.service';
 import { FooterComponent } from './components/common/footer/footer.component';
 import { NotificationComponent } from './components/common/notification/notification.component';
+import { AnalyticsService } from './core/services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -23,13 +24,11 @@ export class AppComponent {
   constructor(
     private cartService: CartService,
     private router: Router,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private analytics: AnalyticsService
   ) {
- // Subscribe to cart state
- // Subscribe to cart state changes
     this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
       next: (state) => {
-        // Calculate count from cart items
         this.cartItemCount = state.items.reduce((count, item) => count + item.quantity, 0);
       }
     });
@@ -37,6 +36,7 @@ export class AppComponent {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentRoute = event.url;
+        this.analytics.trackPageView(event.urlAfterRedirects, document.title);
       });
 
       this.configService.loadConfig().then(() => {

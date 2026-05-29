@@ -21,6 +21,7 @@ import { CartSummaryDto, CartDetailsResponse } from '../../core/models/DTOs/cart
 import { emailMatchValidator } from '../../core/validators/email-match-validator';
 import { CouponData, CouponResponse } from '../../core/models/DTOs/checkout.DTo.model';
 import { NotificationService } from '../../core/services/notification.service';
+import { AnalyticsService } from '../../core/services/analytics.service';
 
 @Component({
   selector: 'app-checkout',
@@ -86,7 +87,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private analytics: AnalyticsService
   ) {
     this.checkoutForm = this.createCheckoutForm();
     
@@ -296,40 +298,41 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     
     try {
-      // Submit the Elements form
+      this.analytics.trackAddPaymentInfo(this.cartSummary, this.cartSummary.eventId ?? '');
+
       const { error: submitError } = await this.elements.submit();
       if (submitError) {
         this.stripeError = submitError.message || 'Payment submission failed';
+        this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
         this.cdr.detectChanges();
         return;
       }
-      
-      // Confirm the payment
+
       const { error, paymentIntent } = await this.stripe.confirmPayment({
         elements: this.elements,
         clientSecret: this.clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout`,
-        },
+        confirmParams: { return_url: `${window.location.origin}/checkout` },
         redirect: 'if_required'
       });
-      
-      // Handle the result
+
       if (error) {
         this.stripeError = error.message || 'Payment failed';
+        this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
         this.cdr.detectChanges();
       } else if (paymentIntent?.status === 'succeeded') {
         await this.processOrder(paymentIntent.id);
       } else {
         this.stripeError = 'Payment not completed';
+        this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
         this.cdr.detectChanges();
       }
-      
+
     } catch (error: any) {
       this.stripeError = error.message || 'Payment processing failed';
+      this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
       this.processing = false;
       this.cdr.detectChanges();
     }
@@ -496,7 +499,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         if (response.success) {
 
           if (response.data && response.data.applied) {
-          this.notificationService.showSuccess('Coupon applied successfully!');
+            this.notificationService.showSuccess('Coupon applied successfully!');
+            this.analytics.trackCouponApplied(this.couponCode.trim(), response.data.discountAmount ?? 0, this.cartSummary.eventId ?? '');
           }
           else{
             this.notificationService.showError(response.data?.message || 'Failed to apply coupon');
@@ -537,10 +541,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.couponLoading = false;
         
         if (response.success) {
-          // Show success notification
           this.notificationService.showSuccess('Coupon removed successfully');
-          
-          // Clear coupon data
+          this.analytics.trackCouponRemoved(this.couponCode, this.cartSummary.eventId ?? '');
           this.couponData = null;
           this.couponApplied = false;
           this.couponCode = '';

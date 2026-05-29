@@ -15,6 +15,7 @@ import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.compon
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
 @Component({
   selector: 'app-svg-seatmap',
@@ -60,7 +61,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     private seatService:         SeatService,
     private route:               ActivatedRoute,
     private router:              Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private analytics:           AnalyticsService
   ) {}
 
   ngOnInit() {
@@ -299,19 +301,23 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
   selectSeat(seat: Seat) {
     seat.status = SeatStatus.SELECTED;
-    this.selectedSeats.push({
+    const selected: SelectedSeat = {
       seatId: seat.id, row: seat.rowLabel, number: seat.seatNumber,
       sectionName: seat.sectionName, sectionId: seat.sectionId,
       sectionConfigId: seat.sectionConfigId,
       tier: { id: seat.id, name: seat.ticketType, price: seat.price, color: seat.color },
       price: seat.price, features: seat.features || [],
       isStandingArea: seat.isStandingArea || false, isGeneralAdmission: false
-    });
+    };
+    this.selectedSeats.push(selected);
     this.selectedSeatIds = [...this.selectedSeatIds, seat.id];
+    this.analytics.trackSeatSelected(selected, this.eventId, this.venueData?.eventName ?? '');
   }
 
   deselectSeat(seat: Seat) {
     seat.status = SeatStatus.AVAILABLE;
+    const removed = this.selectedSeats.find(s => s.seatId === seat.id);
+    if (removed) this.analytics.trackSeatDeselected(removed, this.eventId, this.venueData?.eventName ?? '');
     this.selectedSeats   = this.selectedSeats.filter(s => s.seatId !== seat.id);
     this.selectedSeatIds = this.selectedSeatIds.filter(id => id !== seat.id);
   }
@@ -342,11 +348,17 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   addToCart() {
     if (!this.selectedSeatIds.length || this.isLoading) return;
     this.isLoading = true;
+    const seatsSnapshot = [...this.selectedSeats];
     this.cartService.addToCart(this.eventId, this.selectedSeats).subscribe({
       next: (res) => {
         this.isLoading = false;
-        if (res.success && res.data) { this.clearSelection(); this.router.navigate(['/cart']); }
-        else this.notificationService.showError(res.error || 'Failed to add seats to cart');
+        if (res.success && res.data) {
+          this.analytics.trackAddToCart(seatsSnapshot, this.eventId, this.venueData?.eventName ?? '');
+          this.clearSelection();
+          this.router.navigate(['/cart']);
+        } else {
+          this.notificationService.showError(res.error || 'Failed to add seats to cart');
+        }
       },
       error: (err) => { this.isLoading = false; this.notificationService.showError(err.message || 'An error occurred'); }
     });

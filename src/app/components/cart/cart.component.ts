@@ -5,6 +5,7 @@ import { CartService } from '../../core/services/cart.service';
 import { CartItemDto, CartSummaryDto, CartDetailsResponse } from '../../core/models/DTOs/cart.DTO.model';
 import { Subscription } from 'rxjs';
 import { CurrencyFormatPipe } from '../../core/pipes/currency-format.pipe';
+import { AnalyticsService } from '../../core/services/analytics.service';
 
 @Component({  
   selector: 'app-cart',
@@ -24,11 +25,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   constructor(
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private analytics: AnalyticsService
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to current cart state
     this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
       next: (state) => {
         this.cartItems = state.items;
@@ -36,7 +37,6 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Subscribe to cart details API responses
     this.cartDetailsSubscription = this.cartService.cartDetails$.subscribe({
       next: (response: CartDetailsResponse) => {
         this.loading = false;
@@ -44,6 +44,9 @@ export class CartComponent implements OnInit, OnDestroy {
           this.errorMessage = response.error || 'Failed to load cart details';
         } else {
           this.errorMessage = '';
+          if (this.cartSummary.cartItems?.length) {
+            this.analytics.trackViewCart(this.cartSummary, this.cartSummary.eventId ?? '');
+          }
         }
       },
       error: (error) => {
@@ -53,7 +56,6 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Load initial cart data
     this.loadCartData();
   }
 
@@ -74,6 +76,14 @@ export class CartComponent implements OnInit, OnDestroy {
 
   removeCartItem(cartItemId: string): void {
     if (confirm('Are you sure you want to remove this seat?')) {
+      const item = this.cartSummary.cartItems?.find(i => i.cartItemId === cartItemId);
+      if (item) {
+        this.analytics.trackRemoveFromCart(
+          { seatId: item.seatId, seatNumber: item.seatNumber, section: item.section, price: item.price },
+          this.cartSummary.eventId ?? '',
+          this.cartSummary.eventId ?? ''
+        );
+      }
       this.cartService.removeCartItem(cartItemId);
       this.loading = true;
     }
@@ -97,9 +107,8 @@ export class CartComponent implements OnInit, OnDestroy {
   proceedToCheckout(): void {
     const cartId = this.cartService.getCurrentCartId();
     if (cartId && this.cartItems.length > 0) {
-      this.router.navigate(['/checkout'], { 
-        state: { cartId } 
-      });
+      this.analytics.trackBeginCheckout(this.cartSummary, this.cartSummary.eventId ?? '');
+      this.router.navigate(['/checkout'], { state: { cartId } });
     } else {
       this.errorMessage = 'Cannot proceed to checkout. Please add items to your cart first.';
     }
