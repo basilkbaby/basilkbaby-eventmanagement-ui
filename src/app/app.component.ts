@@ -36,7 +36,11 @@ export class AppComponent {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentRoute = event.url;
-        this.analytics.trackPageView(event.urlAfterRedirects, document.title);
+        // Event detail / seatmap pages fire their own page_view with the event name after data loads
+        const isEventPage = /^\/events\/.+/.test(event.urlAfterRedirects);
+        if (!isEventPage) {
+          this.analytics.trackPageView(event.urlAfterRedirects, document.title);
+        }
       });
 
       this.configService.loadConfig().then(() => {

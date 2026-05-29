@@ -79,7 +79,12 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
   getSeatMap(id: string) {
     this.loading = true;
     this.seatService.getSeatMap(id).subscribe({
-      next: (seatmap) => { this.venueData = seatmap; this.generateSeats(); this.loading = false; },
+      next: (seatmap) => {
+        this.venueData = seatmap;
+        this.generateSeats();
+        this.loading = false;
+        this.analytics.trackPageView(this.router.url, `Seat Selection – ${seatmap.eventName}`);
+      },
       error: (err)    => { this.loading = false; console.error(err); }
     });
   }
