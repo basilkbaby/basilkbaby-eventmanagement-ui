@@ -31,7 +31,7 @@
   </div>
 
   <!-- Checkout Form -->
-  <div class="checkout-content" *ngIf="!loading && !orderComplete && cartSummary.seatCount > 0">
+  <div class="checkout-content" *ngIf="!loading && !orderComplete && !loadError && cartSummary.seatCount > 0">
     <!-- Header -->
     <div class="checkout-header">
       <button class="back-btn" (click)="goBackToCart()">
@@ -151,7 +151,7 @@
           </section>
 
           <!-- Payment Information Section -->
-          <section class="form-section" *ngIf="showPaymentSection">
+          <section class="form-section" *ngIf="showPaymentSection && !recoveryPaymentIntentId">
             <h2>Payment Information</h2>
 
             <div class="payment-methods">
@@ -202,7 +202,7 @@
 
           <!-- Submit Button -->
           <button type="submit" class="submit-order-btn" [disabled]="processing || checkoutForm.invalid">
-            <span *ngIf="!processing">Complete Purchase - {{ formatPrice(cartSummary.total) }}</span>
+            <span *ngIf="!processing">{{ recoveryPaymentIntentId ? 'Confirm Order' : 'Complete Purchase - ' + formatPrice(cartSummary.total) }}</span>
             <span *ngIf="processing" class="processing-text">
               <div class="processing-spinner"></div>
               Processing...
@@ -342,8 +342,21 @@
     </div>
   </div>
 
+  <!-- Cart Load Error State -->
+  <div class="empty-state" *ngIf="!loading && loadError && !orderComplete">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="2"/>
+      <path d="M12 8v4M12 16h.01" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <h3>Unable to Load Cart</h3>
+    <p>{{ loadError }}</p>
+    <button class="browse-events-btn" (click)="goBackToCart()">
+      Go Back to Cart
+    </button>
+  </div>
+
   <!-- Empty Cart State -->
-  <div class="empty-state" *ngIf="!loading && cartSummary.seatCount === 0 && !orderComplete">
+  <div class="empty-state" *ngIf="!loading && cartSummary.seatCount === 0 && !orderComplete && !loadError">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
       <path
         d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.3 2.3c-.4.4-.1 1.2.5 1.2H17m0 0v4a2 2 0 11-4 0v-4m-6 4a2 2 0 11-4 0 2 2 0 014 0z"

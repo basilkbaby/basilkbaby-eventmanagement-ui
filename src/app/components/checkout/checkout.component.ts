@@ -56,6 +56,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   orderId: string = '';
   showFormErrors: boolean = false;
   showPrivacyPolicy = false;
+  loadError: string = '';
 
   // Stripe properties
   stripe: Stripe | null = null;
@@ -78,8 +79,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   couponError: string = '';
   couponData: CouponData | null = null;
   
-  // Add this ONE property
   showPaymentSection: boolean = false;
+  // Set when payment was already taken via redirect but session data was lost —
+  // skips creating a new payment intent so the user isn't double-charged
+  recoveryPaymentIntentId: string = '';
   
   constructor(
     private fb: FormBuilder,
@@ -97,11 +100,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       if (status === 'VALID' && !this.showPaymentSection && this.cartSummary.seatCount > 0) {
         this.showPaymentSection = true;
         this.cdr.detectChanges();
-        //this.extendCartSession();
-        // Initialize payment only when customer info is valid
-        setTimeout(() => {
-          this.initializePayment();
-        }, 100);
+        // In recovery mode the payment was already taken — don't create a new payment intent
+        if (!this.recoveryPaymentIntentId) {
+          setTimeout(() => this.initializePayment(), 100);
+        }
       }
     });
   }
@@ -122,14 +124,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       next: (response: CartDetailsResponse) => {
         this.loading = false;
         if (!response.success) {
-          this.stripeError = response.error || 'Failed to load cart';
+          this.loadError = response.error || 'Failed to load cart details. Please go back and try again.';
           this.cdr.detectChanges();
-          
         }
       },
       error: () => {
         this.loading = false;
-        this.stripeError = 'Error loading cart';
+        this.loadError = 'Unable to load your cart. Please go back and try again.';
         this.cdr.detectChanges();
       }
     });
@@ -142,24 +143,112 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           this.orderComplete = true;
           this.orderId = response.data.orderId;
           this.cdr.detectChanges();
-          
-          // Navigate to confirmation page
           setTimeout(() => {
             this.router.navigate(['/confirmation', response.data!.orderId]);
           }, 2000);
         } else {
-          this.stripeError = response.error || 'Checkout failed';
+          const message = response.error || 'Checkout failed. Please contact support.';
+          this.stripeError = message;
+          this.notificationService.showError(message, 'Payment Error', 8000);
           this.cdr.detectChanges();
         }
       },
       error: () => {
         this.processing = false;
-        this.stripeError = 'Checkout processing failed';
+        const message = 'Checkout processing failed. Please contact support.';
+        this.stripeError = message;
+        this.notificationService.showError(message, 'Payment Error', 8000);
         this.cdr.detectChanges();
       }
     });
 
-    // Load cart summary only
+    // Handle return from async payment redirect (e.g. Klarna)
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectPaymentIntent = urlParams.get('payment_intent');
+    const redirectStatus = urlParams.get('redirect_status');
+
+    if (redirectPaymentIntent) {
+      window.history.replaceState({}, '', window.location.pathname);
+
+      // Payment explicitly failed on the redirect page
+      if (redirectStatus === 'requires_payment_method' || redirectStatus === 'failed') {
+        try { sessionStorage.removeItem('checkout_pending'); } catch {}
+        this.notificationService.showError(
+          'Your payment was not completed. Please try a different payment method.',
+          'Payment Failed', 8000
+        );
+        this.loadCartSummary();
+        return;
+      }
+
+      if (redirectStatus === 'succeeded' || redirectStatus === 'processing') {
+        let pending: any = null;
+        try {
+          const raw = sessionStorage.getItem('checkout_pending');
+          if (raw) { pending = JSON.parse(raw); }
+          sessionStorage.removeItem('checkout_pending');
+        } catch {}
+
+        if (pending) {
+          this.processing = true;
+          this.loading = false;
+
+          if (redirectStatus === 'succeeded') {
+            // Status confirmed by Stripe redirect — complete order immediately
+            this.cartService.checkout({
+              cartId: pending.cartId,
+              fullName: pending.fullName,
+              email: pending.email,
+              phone: pending.phone,
+              postcode: pending.postcode,
+              paymentIntentId: redirectPaymentIntent,
+              eventId: pending.eventId
+            });
+          } else {
+            // Still processing — poll before completing
+            this.pollPaymentStatus(redirectPaymentIntent, pending.eventId).then(finalStatus => {
+              if (finalStatus === 'succeeded') {
+                this.cartService.checkout({
+                  cartId: pending.cartId,
+                  fullName: pending.fullName,
+                  email: pending.email,
+                  phone: pending.phone,
+                  postcode: pending.postcode,
+                  paymentIntentId: redirectPaymentIntent,
+                  eventId: pending.eventId
+                });
+              } else if (finalStatus === 'timeout') {
+                this.processing = false;
+                this.notificationService.showInfo(
+                  'Your payment is being processed. You will receive a confirmation email shortly.',
+                  'Payment Pending', 0
+                );
+                this.loadCartSummary();
+              } else {
+                this.processing = false;
+                this.notificationService.showError(
+                  'Your payment was not completed. Please try again.',
+                  'Payment Failed', 8000
+                );
+                this.loadCartSummary();
+              }
+              this.cdr.detectChanges();
+            });
+          }
+          return;
+        } else {
+          // Session data was lost (tab switch, private browser) but payment was taken.
+          // Enter recovery mode: load the cart, skip new payment intent, use existing one.
+          this.recoveryPaymentIntentId = redirectPaymentIntent;
+          this.notificationService.showInfo(
+            'Your payment was received. Please fill in your details below to confirm your order.',
+            'Payment Received', 0
+          );
+          // Fall through to loadCartSummary
+        }
+      }
+    }
+
     this.loadCartSummary();
   }
 
@@ -289,6 +378,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       return;
     }
     
+    // Recovery mode: payment already taken via redirect, just complete the order
+    if (this.recoveryPaymentIntentId) {
+      this.processing = true;
+      this.cdr.detectChanges();
+      await this.processOrder(this.recoveryPaymentIntentId);
+      return;
+    }
+
     if (!this.stripe || !this.elements) {
       this.stripeError = 'Payment form not ready';
       return;
@@ -309,6 +406,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         return;
       }
 
+      // Save customer data before redirect in case Klarna (or similar) redirects the page
+      try {
+        sessionStorage.setItem('checkout_pending', JSON.stringify({
+          cartId: this.cartSummary.cartId,
+          eventId: this.cartSummary.eventId,
+          fullName: `${this.customerForm.get('firstName')?.value} ${this.customerForm.get('lastName')?.value}`,
+          email: this.customerForm.get('email')?.value,
+          phone: this.customerForm.get('phone')?.value,
+          postcode: this.customerForm.get('postcode')?.value
+        }));
+      } catch { /* sessionStorage unavailable — redirect recovery will fall back to re-entry mode */ }
+
       const { error, paymentIntent } = await this.stripe.confirmPayment({
         elements: this.elements,
         clientSecret: this.clientSecret,
@@ -317,13 +426,33 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       });
 
       if (error) {
+        sessionStorage.removeItem('checkout_pending');
         this.stripeError = error.message || 'Payment failed';
         this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
         this.cdr.detectChanges();
       } else if (paymentIntent?.status === 'succeeded') {
+        sessionStorage.removeItem('checkout_pending');
         await this.processOrder(paymentIntent.id);
+      } else if (paymentIntent?.status === 'processing') {
+        // Async method (e.g. Klarna) — poll until succeeded rather than assuming it will
+        const finalStatus = await this.pollPaymentStatus(paymentIntent.id);
+        sessionStorage.removeItem('checkout_pending');
+        if (finalStatus === 'succeeded') {
+          await this.processOrder(paymentIntent.id);
+        } else if (finalStatus === 'timeout') {
+          this.stripeError = 'Payment is still processing. You will receive a confirmation email once it completes.';
+          this.notificationService.showInfo('Payment is being processed. Check your email for confirmation.', 'Payment Pending', 0);
+          this.processing = false;
+          this.cdr.detectChanges();
+        } else {
+          this.stripeError = 'Payment was not completed. Please try again.';
+          this.notificationService.showError('Payment failed. Please try a different payment method.', 'Payment Failed', 8000);
+          this.processing = false;
+          this.cdr.detectChanges();
+        }
       } else {
+        sessionStorage.removeItem('checkout_pending');
         this.stripeError = 'Payment not completed';
         this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
@@ -331,11 +460,34 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       }
 
     } catch (error: any) {
+      try { sessionStorage.removeItem('checkout_pending'); } catch {}
       this.stripeError = error.message || 'Payment processing failed';
       this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
       this.processing = false;
       this.cdr.detectChanges();
     }
+  }
+
+  // Poll Stripe payment status until settled or timeout
+  private async pollPaymentStatus(paymentIntentId: string, eventId?: string, intervalMs = 2000, maxAttempts = 15): Promise<string> {
+    const resolvedEventId = eventId ?? this.cartSummary.eventId ?? '';
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, intervalMs));
+      try {
+        const response = await lastValueFrom(
+          this.http.get<{ status: string }>(
+            `${environment.apiUrl}/api/checkout/payment-status/${paymentIntentId}/${resolvedEventId}`
+          )
+        );
+        const status = response.status;
+        if (status === 'succeeded') return 'succeeded';
+        if (status === 'requires_payment_method' || status === 'canceled') return 'failed';
+        // 'processing' — keep polling
+      } catch {
+        // network hiccup — keep trying
+      }
+    }
+    return 'timeout';
   }
 
   // Create payment intent - KEPT EXACTLY AS IS
@@ -366,9 +518,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       
       const response = await lastValueFrom(
         this.http.post<any>(`${environment.apiUrl}/api/checkout/create-payment-intent`, {
-          amount: amount, // Convert to pence/cents
+          amount: amount,
           currency: 'gbp',
           eventId: eventId,
+          cartId: this.cartSummary.cartId,
           metadata: metadata,
           customer: {
             firstName: this.customerForm.get('firstName')?.value,
@@ -382,7 +535,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       
       return response;
     } catch (error: any) {
-      throw new Error('Payment initialization failed');
+      const message = error.error?.error || error.error?.message || error.message || 'Payment initialization failed';
+      throw new Error(message);
     }
   }
 
@@ -390,13 +544,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private async processOrder(paymentIntentId: string): Promise<void> {
     const cartId = this.cartService.getCurrentCartId();
     if (!cartId) {
-      this.stripeError = 'Cart ID not found';
+      // Payment was taken but cart reference lost
+      const message = `Your payment was received but we could not complete the order automatically. Please contact support with reference: ${paymentIntentId}`;
+      this.stripeError = message;
+      this.notificationService.showError(message, 'Order Error', 0);
       this.processing = false;
       this.cdr.detectChanges();
       return;
     }
 
-    // Call CartService checkout with form data
     this.cartService.checkout({
       cartId: cartId,
       fullName: `${this.customerForm.get('firstName')?.value} ${this.customerForm.get('lastName')?.value}`,

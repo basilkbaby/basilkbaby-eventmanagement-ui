@@ -70,7 +70,7 @@ export class CartService {
           console.error('API Error:', error);
           const errorResponse: CartDetailsResponse = {
             success: false,
-            error: error.message,
+            error: error.error?.error || error.error?.message || error.message,
             data: undefined
           };
           this.cartDetailsSubject.next(errorResponse);
@@ -109,7 +109,7 @@ export class CartService {
           console.error('Error getting cart details:', error);
           this.cartDetailsSubject.next({
             success: false,
-            error: error.message,
+            error: error.error?.error || error.error?.message || error.message,
             data: undefined
           });
           this.updateCartStateWithError();
@@ -137,7 +137,7 @@ export class CartService {
           console.error('Error removing seat:', error);
           this.cartDetailsSubject.next({
             success: false,
-            error: error.message,
+            error: error.error?.error || error.error?.message || error.message,
             data: undefined
           });
         }
@@ -164,7 +164,7 @@ export class CartService {
           console.error('Error clearing cart:', error);
           this.cartDetailsSubject.next({
             success: false,
-            error: error.message,
+            error: error.error?.error || error.error?.message || error.message,
             data: undefined
           });
         }
@@ -185,7 +185,7 @@ export class CartService {
           console.error('Checkout error:', error);
           this.checkoutSubject.next({
             success: false,
-            error: error.message,
+            error: error.error?.error || error.error?.message || error.message,
             data: undefined
           });
         }
