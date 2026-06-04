@@ -3,7 +3,7 @@ import {
   OnInit, OnDestroy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Sponsor } from '../common/event-data';
+import { Sponsor, HeroSponsor, Contact } from '../common/event-data';
 
 @Component({
   selector: 'app-hero-split',
@@ -61,23 +61,14 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
     if (this.sliderInterval) { clearInterval(this.sliderInterval); this.sliderInterval = null; }
   }
 
-  leadArtists = ['Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'];
-
-  // Replace logo: '' with actual asset paths e.g. 'assets/sponsors/kerala-curry.png'
-  mainSponsors = [
-    { name: 'Kerala Curry House',        logo: 'assets/images/events/nadirshow/sponsors/curryhouse.jpg' },
-    { name: 'Paul John & Co Solicitors', logo: 'assets/images/events/nadirshow/sponsors/pjc.svg' },
-    { name: 'Shan Properties',           logo: 'assets/images/events/nadirshow/sponsors/shan.jpg' },
-    { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' },
-  ];
-
-  supportingSponsors = [
-    { name: 'Chrystal Hyper Market', logo: 'assets/images/events/nadirshow/sponsors/chrystal-hyper-market.png' },
-    { name: 'Family Shop',           logo: 'assets/images/events/nadirshow/sponsors/family-shop.png' },
-    { name: 'Seacom Accountancy',    logo: 'assets/images/events/nadirshow/sponsors/seacom-accountancy.png' },
-    { name: 'Music List',            logo: 'assets/images/events/nadirshow/sponsors/music-list.png' },
-    { name: 'Ethal',                 logo: 'assets/images/events/nadirshow/sponsors/ethal.png' },
-  ];
+  @Input() eyebrow: string = '';
+  @Input() mainTitle: { line1: string; line2: string; year: string } = { line1: '', line2: '', year: '' };
+  @Input() tags: string[] = [];
+  @Input() supportArtistsLines: string[] = [];
+  @Input() contacts: Contact[] = [];
+  @Input() leadArtists: string[] = [];
+  @Input() mainSponsors: HeroSponsor[] = [];
+  @Input() supportingSponsors: HeroSponsor[] = [];
 
   handleTicketClick(venue: any) {
    this.buyTickets.emit(venue.eventId);

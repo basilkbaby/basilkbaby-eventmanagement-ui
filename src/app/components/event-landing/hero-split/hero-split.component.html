@@ -16,18 +16,16 @@
 
         <div class="hero-eyebrow">
           <span class="eyebrow-pip"></span>
-          R&amp;J Events Presents
+          {{ eyebrow }}
         </div>
 
         <h1 class="hero-title">
-          <span class="title-main">NADIR 2K26</span>
-          <span class="title-sub">SHOW<span class="title-at">&#64;</span>UK</span>
+          <span class="title-main">{{ mainTitle.line1 }}</span>
+          <span class="title-sub">{{ mainTitle.line2 }}</span>
         </h1>
 
         <div class="hero-tags">
-          <span class="tag">100% Entertainment</span>
-          <span class="tag">Nonstop Music</span>
-          <span class="tag">Dance &amp; Mimics</span>
+          <span class="tag" *ngFor="let tag of tags">{{ tag }}</span>
         </div>
 
         <!-- Starring -->
@@ -38,12 +36,7 @@
               {{ a }}<span *ngIf="!last" class="artist-sep"> · </span>
             </span>
           </div>
-          <p class="artists-support">
-            Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)
-          </p>
-          <p class="artists-support">
-            Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra &amp; Dancers
-          </p>
+          <p class="artists-support" *ngFor="let line of supportArtistsLines">{{ line }}</p>
         </div>
 
         <!-- Venue Selector -->
@@ -103,13 +96,14 @@
         </div>
 
         <!-- Contact numbers -->
-        <div class="contact-strip">
+        <div class="contact-strip" *ngIf="contacts.length">
           <span class="micro-label" style="margin:0 8px 0 0">Info &amp; Tickets:</span>
-          <a href="tel:+447534446526" class="contact-num">+44 7534 446526 <em>(Jinso)</em></a>
-          <span class="contact-sep">·</span>
-          <a href="tel:+447880111939" class="contact-num">+44 7880 111939 <em>(General Inquiries)</em></a>
-          <span class="contact-sep">·</span>
-          <a href="tel:+447480198786" class="contact-num">+44 7480 198786 <em>(Roxon)</em></a>
+          <ng-container *ngFor="let c of contacts; let last = last">
+            <a [href]="'tel:' + c.number.replace(' ', '')" class="contact-num">
+              {{ c.number }} <em>({{ c.name }})</em>
+            </a>
+            <span class="contact-sep" *ngIf="!last">·</span>
+          </ng-container>
         </div>
 
       </div>

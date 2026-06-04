@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CompanyConfig, HeaderConfig } from '../models/config.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ConfigService {
 
   constructor(private http: HttpClient) {}
 
-  async loadConfig(companyId: string = 'manchestergems'): Promise<HeaderConfig> {
+  async loadConfig(companyId: string = environment.companyId): Promise<HeaderConfig> {
     try {
       const companies = await this.http.get<CompanyConfig[]>('/assets/config/companies.json').toPromise();
       

@@ -6,7 +6,8 @@ import { ArtistsSectionComponent } from './artists-section/artists-section.compo
 import { VenuesSectionComponent } from './venues-section/venues-section.component';
 import { ContactSectionComponent } from './contact-section/contact-section.component';
 import { FooterComponent } from './footer/footer.component';
-import { EventConfig, VENUE_DATA, ARTIST_DATA, SPONSOR_DATA, CONTACT_DATA, EVENT_CONFIG } from './common/event-data';
+import { EventConfig, getEventData } from './common/event-data';
+import { environment } from '../../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
@@ -27,12 +28,12 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
   styleUrls: ['./event-landing.component.scss']
 })
 export class EventLandingComponent implements OnInit {
-  // All data from central file
-  eventConfig: EventConfig = EVENT_CONFIG;
-  venues = VENUE_DATA;
-  artists = ARTIST_DATA;
-  sponsors = SPONSOR_DATA;
-  contactNumbers = CONTACT_DATA;
+  private readonly _data = getEventData(environment.companyId);
+  eventConfig: EventConfig = this._data.eventConfig;
+  venues = this._data.venues;
+  artists = this._data.artists;
+  sponsors = this._data.sponsors;
+  contactNumbers = this._data.contacts;
 
   selectedVenueId: string = 'blackpool';
   isScrolled: boolean = false;

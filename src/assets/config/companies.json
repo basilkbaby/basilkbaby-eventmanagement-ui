@@ -20,42 +20,115 @@
         "address": "E6 1LW, London"
       }
     },
-"navigation": {
-    "menuItems": [
-      {
-        "label": "Home",
-        "routerLink": "/home",
-        "type": "home" ,      
-        "external": false
-      },
-      {
-        "label": "Artists",
-        "routerLink": "#artists",
-        "type": "events",     
-        "external": false
-      },
-      {
-        "label": "Venues",
-        "routerLink": "#venues",
-        "type": "events",     
-        "external": false
-      },
-      {
-        "label": "Terms and conditions",
-        "routerLink": "#privacy",
-        "type": "about" ,      
-        "external": false
-      },
-      {
-        "label": "Contact Us",
-        "routerLink": "#contactus",
-        "external": false,
-        "type": "contact"
-      }
-    ],
-    "showSearch": true,
-    "showCart": true
+    "navigation": {
+      "menuItems": [
+        {
+          "label": "Home",
+          "routerLink": "/home",
+          "type": "home",
+          "external": false
+        },
+        {
+          "label": "Artists",
+          "routerLink": "#artists",
+          "type": "events",
+          "external": false
+        },
+        {
+          "label": "Venues",
+          "routerLink": "#venues",
+          "type": "events",
+          "external": false
+        },
+        {
+          "label": "Terms and conditions",
+          "routerLink": "#privacy",
+          "type": "about",
+          "external": false
+        },
+        {
+          "label": "Contact Us",
+          "routerLink": "#contactus",
+          "external": false,
+          "type": "contact"
+        }
+      ],
+      "showSearch": true,
+      "showCart": true
+    },
+    "theme": {
+      "backgroundColor": "#1a1a2e",
+      "textColor": "#FFFFFF",
+      "buttonColor": "#e94560",
+      "buttonTextColor": "#FFFFFF",
+      "glassBackground": "rgba(255, 255, 255, 0.1)",
+      "glassBorder": "rgba(255, 255, 255, 0.15)",
+      "headerStyle": "minimal"
+    },
+    "features": {
+      "enableAuth": true,
+      "enableCart": true,
+      "enableSearch": false,
+      "showContactInfo": true
+    }
   },
+  {
+    "id": "vanchi",
+    "name": "Vanchi South Indian Restaurant",
+    "domain": "vanchi",
+    "company": {
+      "name": "Vanchi South Indian Restaurant",
+      "logo": {
+        "text": "Vanchi",
+        "sublabel": "South Indian Restaurant",
+        "color": "#FFFFFF",
+        "backgroundColor": "#1a1a2e"
+      },
+      "primaryColor": "#1a1a2e",
+      "secondaryColor": "#e94560",
+      "accentColor": "#f9a826",
+      "contact": {
+        "phone": "+44 7878896384",
+        "email": "events@manchestergems.co.uk",
+        "address": "E6 1LW, London"
+      }
+    },
+    "navigation": {
+      "menuItems": [
+        {
+          "label": "Home",
+          "routerLink": "/home",
+          "type": "home",
+          "external": false
+        },
+        {
+          "label": "Artists",
+          "routerLink": "#artists",
+          "type": "events",
+          "external": false
+        },
+        {
+          "label": "Venues",
+          "routerLink": "#venues",
+          "type": "events",
+          "external": false
+        },
+        {
+          "label": "Terms and conditions",
+          "routerLink": "#privacy",
+          "type": "about",
+          "external": false
+        },
+        {
+          "label": "Contact Us",
+          "routerLink": "#contactus",
+          "external": false,
+          "type": "contact"
+        }
+      ],
+      "showSearch": true,
+      "showCart": true
+    },
     "theme": {
       "backgroundColor": "#1a1a2e",
       "textColor": "#FFFFFF",

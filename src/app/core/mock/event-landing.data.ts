@@ -1,0 +1,463 @@
+export interface Venue {
+  id: string;
+  name: string;
+  location: string;
+  address: string;
+  date: string;
+  time: string;
+  gateopentime: string;
+  mapUrl: string;
+  imageUrl: string;
+  capacity: string;
+  features: string[];
+  ticketsOpen?: boolean;
+  eventId: string;
+}
+
+export interface Artist {
+  id: number;
+  name: string;
+  role: string;
+  imageUrl: string;
+  bio: string;
+  social: {
+    instagram?: string;
+    twitter?: string;
+    facebook?: string;
+  };
+}
+
+export interface Sponsor {
+  name: string;
+  logo: string;
+  tier: 'platinum' | 'gold' | 'silver' | 'partner';
+}
+
+export interface Contact {
+  number: string;
+  name: string;
+  icon: string;
+}
+
+export interface Production {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface HeroSponsor {
+  name: string;
+  logo: string;
+}
+
+export interface EventConfig {
+  logo: {
+    text: string;
+    year: string;
+  };
+  navLinks: Array<{ label: string; section: string }>;
+  bannerImages: string[];
+  presenters: string[];
+  stats: Array<{ number: string; label: string }>;
+  mainTitle: {
+    line1: string;
+    line2: string;
+    year: string;
+  };
+  tagline: string;
+  productions: Production[];
+  year: string;
+  eyebrow: string;
+  tags: string[];
+  supportArtistsLines: string[];
+  leadArtists: string[];
+  mainSponsors: HeroSponsor[];
+  supportingSponsors: HeroSponsor[];
+}
+
+export interface CompanyEventData {
+  companyId: string;
+  venues: Venue[];
+  artists: Artist[];
+  sponsors: Sponsor[];
+  contacts: Contact[];
+  eventConfig: EventConfig;
+}
+
+const MANCHESTERGEMS_DATA: CompanyEventData = {
+  companyId: 'manchestergems',
+  venues: [
+    {
+      id: 'blackpool',
+      name: 'Winter Gardens Blackpool',
+      location: 'Blackpool',
+      address: '97 Church St., Blackpool FY1 1HL',
+      date: '22nd AUGUST 2026',
+      time: '6:00 PM',
+      gateopentime: '5:00 PM',
+      mapUrl: 'https://maps.google.com/?q=Winter+Gardens+Blackpool',
+      imageUrl: 'https://www.creativetourist.com/app/uploads/2020/12/367e8f571aa80544cd66907f2acf31aa.jpg',
+      capacity: '1,000 seats',
+      features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
+      ticketsOpen: true,
+      eventId: '5b23904a-2ba5-4bbe-ae62-acacbe4677cb'
+    }
+  ],
+  artists: [
+    {
+      id: 1,
+      name: 'NADIR SHAH',
+      role: 'Show Director',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Nadirshah2016SOP.jpg',
+      bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
+      social: { instagram: '@nadirshahofficial', twitter: '@nadirshah' }
+    },
+    {
+      id: 2,
+      name: 'Samad Sulaiman',
+      role: 'Actor & Singer',
+      imageUrl: 'https://m3db.com/sites/default/files/styles/artist_profile_pic_zoom/public/artists-profile-photos/Samad%20Sulaiman.jpg?itok=94DSOywU',
+      bio: 'Powerhouse vocalist with a range that captivates audiences. Has performed in over 500 shows worldwide and collaborated with top artists.',
+      social: { instagram: '@pauljohnmusic', facebook: '@pauljohnofficial' }
+    },
+    {
+      id: 3,
+      name: 'RANJINI JOSE',
+      role: 'Lead Vocalist',
+      imageUrl: 'assets/images/events/nadirshow/artist/ranjini.jpg',
+      bio: 'Acclaimed choreographer known for fusion of contemporary and traditional styles. Has won multiple dance awards and trained performers worldwide.',
+      social: { instagram: '@ranjinijose', twitter: '@ranjinidance' }
+    },
+    {
+      id: 4,
+      name: 'Dayyana Hameed',
+      role: 'Actress',
+      imageUrl: 'https://m.media-amazon.com/images/M/MV5BODI0NmUyMzgtMzM2Yi00NzVlLWFmYmItYjcyMThmMDBkMzNjXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      bio: 'Musical genius behind the live orchestra. Composer and producer with a unique ability to blend genres and create unforgettable musical experiences.',
+      social: { instagram: '@roxonmusic', twitter: '@roxonlive' }
+    },
+    {
+      id: 5,
+      name: 'Aswanth Anilkumar',
+      role: 'Mimic & Comedian',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfpf_lXMy35GQ-s5Cw-I5lr8IS7KqJyO9b-g&s',
+      bio: 'Guitar virtuoso known for electrifying solos and melodic compositions. Has shared stage with international artists and headlined major festivals.',
+      social: { instagram: '@jinsoguitar', facebook: '@jinsomusic' }
+    },
+    {
+      id: 6,
+      name: 'Bijesh Chelari',
+      role: 'Mimic & Comedian',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiLkK7Hrg2BNEVhcZnrR1C-ZlUOrgP9GLomQ&s',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 7,
+      name: 'Dream Team UK',
+      role: 'Dance troupe',
+      imageUrl: 'assets/images/events/nadirshow/artist/dreamteam.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 8,
+      name: 'Jinso Davis',
+      role: 'Director & Singer',
+      imageUrl: 'assets/images/events/nadirshow/artist/Jinso.PNG',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 9,
+      name: "Roxon D'Cruz",
+      role: 'Director & DJ',
+      imageUrl: 'assets/images/events/nadirshow/artist/Roxon.PNG',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 10,
+      name: 'Jojo Mathew',
+      role: 'Drums',
+      imageUrl: 'assets/images/events/nadirshow/artist/JojoMathew.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 11,
+      name: 'Mathew',
+      role: 'Tabla',
+      imageUrl: 'assets/images/events/nadirshow/artist/mathew.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 12,
+      name: 'Sambath Selam',
+      role: 'Trapeze Artist',
+      imageUrl: 'assets/images/events/nadirshow/artist/Sambath.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 13,
+      name: 'Sunil Prayag',
+      role: 'Keyboard',
+      imageUrl: 'assets/images/events/nadirshow/artist/Sunil.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    }
+  ],
+  sponsors: [
+    { name: 'R&J EVENTS', logo: 'https://placehold.co/200x100/ffd700/0a0815?text=R%26J', tier: 'platinum' },
+    { name: 'LIFE LINE PROTECT', logo: 'https://placehold.co/200x100/ffd700/0a0815?text=LIFE+LINE%0APROTECT', tier: 'platinum' },
+    { name: 'PAUL JOHN & CO SOLICITORS', logo: 'https://placehold.co/200x100/ffd700/0a0815?text=PAUL+JOHN%0ASOLICITORS', tier: 'platinum' }
+  ],
+  contacts: [
+    { number: '+44 7534 446526', name: 'JINSO', icon: 'fa-ticket' },
+    { number: '+44 7880 111939', name: 'General Inquiries', icon: 'fa-phone' },
+    { number: '+44 7480 198786', name: 'ROXON', icon: 'fa-music' }
+  ],
+  eventConfig: {
+    logo: { text: 'R & J EVENTS', year: 'Manchester Gems' },
+    navLinks: [
+      { label: 'HOME', section: 'home' },
+      { label: 'ARTISTS', section: 'artists' },
+      { label: 'VENUES', section: 'venues' },
+      { label: 'SPONSORS', section: 'sponsors' }
+    ],
+    bannerImages: ['assets/images/events/nadirshow/banner1.jpeg'],
+    presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
+    stats: [
+      { number: '4', label: 'CITIES' },
+      { number: '15+', label: 'ARTISTS' },
+      { number: '20K+', label: 'FANS' }
+    ],
+    mainTitle: { line1: 'NADIR 2K26', line2: 'SHOW @UK', year: '2026' },
+    tagline: 'NONSTOP MUSIC, DANCE & MIMICS',
+    productions: [
+      { icon: 'fa-music', title: 'LIVE ORCHESTRA', description: '15 Piece Band' },
+      { icon: 'fa-user', title: '6 DANCERS', description: 'Professional Crew' },
+      { icon: 'fa-volume-up', title: 'SOUND ENGINEER', description: 'Dolby Atmos' },
+      { icon: 'fa-lightbulb', title: 'LIGHTING DESIGN', description: 'LED Wall & Lasers' }
+    ],
+    year: '2026',
+    eyebrow: 'R&J Events Presents',
+    tags: ['100% Entertainment', 'Nonstop Music', 'Dance & Mimics'],
+    supportArtistsLines: [
+      'Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)',
+      'Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra & Dancers'
+    ],
+    leadArtists: ['Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
+    mainSponsors: [
+      { name: 'Kerala Curry House',        logo: 'assets/images/events/nadirshow/sponsors/curryhouse.jpg' },
+      { name: 'Paul John & Co Solicitors', logo: 'assets/images/events/nadirshow/sponsors/pjc.svg' },
+      { name: 'Shan Properties',           logo: 'assets/images/events/nadirshow/sponsors/shan.jpg' },
+      { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' }
+    ],
+    supportingSponsors: [
+      { name: 'Chrystal Hyper Market', logo: 'assets/images/events/nadirshow/sponsors/chrystal-hyper-market.png' },
+      { name: 'Family Shop',           logo: 'assets/images/events/nadirshow/sponsors/family-shop.png' },
+      { name: 'Seacom Accountancy',    logo: 'assets/images/events/nadirshow/sponsors/seacom-accountancy.png' },
+      { name: 'Music List',            logo: 'assets/images/events/nadirshow/sponsors/music-list.png' },
+      { name: 'Ethal',                 logo: 'assets/images/events/nadirshow/sponsors/ethal.png' }
+    ]
+  }
+};
+
+const VANCHI_DATA: CompanyEventData = {
+  companyId: 'vanchi',
+  venues: [
+    {
+      id: 'birmingham',
+      name: 'NEC Birmingham',
+      location: 'Birmingham',
+      address: 'North Ave, Marston Green, Birmingham B40 1NT',
+      date: '15th NOVEMBER 2026',
+      time: '6:00 PM',
+      gateopentime: '5:00 PM',
+      mapUrl: 'https://maps.google.com/?q=NEC+Birmingham',
+      imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      capacity: '2,000 seats',
+      features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
+      ticketsOpen: true,
+      eventId: 'vanchi-event-001'
+    }
+  ],
+  artists: [ 
+    {
+      id: 1,
+      name: 'Dileep',
+      role: 'Staring',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-NdoA-IhnpKTyHR2N2PdKBSWeCAyzNM2eVZzFn5Otl217d0FBd6GsjMY28fLHDwb-AJpNOD4jxsMZqxqQY0U6q-L1EGFyUgmQcZaI6D4&s=10',
+      bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
+      social: { instagram: '@nadirshahofficial', twitter: '@nadirshah' }
+    },
+    {
+      id: 11,
+      name: 'NADIR SHAH',
+      role: 'Show Director',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Nadirshah2016SOP.jpg',
+      bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
+      social: { instagram: '@nadirshahofficial', twitter: '@nadirshah' }
+    },
+    {
+      id: 2,
+      name: 'Samad Sulaiman',
+      role: 'Actor & Singer',
+      imageUrl: 'https://m3db.com/sites/default/files/styles/artist_profile_pic_zoom/public/artists-profile-photos/Samad%20Sulaiman.jpg?itok=94DSOywU',
+      bio: 'Powerhouse vocalist with a range that captivates audiences. Has performed in over 500 shows worldwide and collaborated with top artists.',
+      social: { instagram: '@pauljohnmusic', facebook: '@pauljohnofficial' }
+    },
+    {
+      id: 3,
+      name: 'RANJINI JOSE',
+      role: 'Lead Vocalist',
+      imageUrl: 'assets/images/events/nadirshow/artist/ranjini.jpg',
+      bio: 'Acclaimed choreographer known for fusion of contemporary and traditional styles. Has won multiple dance awards and trained performers worldwide.',
+      social: { instagram: '@ranjinijose', twitter: '@ranjinidance' }
+    },
+    {
+      id: 4,
+      name: 'Dayyana Hameed',
+      role: 'Actress',
+      imageUrl: 'https://m.media-amazon.com/images/M/MV5BODI0NmUyMzgtMzM2Yi00NzVlLWFmYmItYjcyMThmMDBkMzNjXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      bio: 'Musical genius behind the live orchestra. Composer and producer with a unique ability to blend genres and create unforgettable musical experiences.',
+      social: { instagram: '@roxonmusic', twitter: '@roxonlive' }
+    },
+    {
+      id: 5,
+      name: 'Aswanth Anilkumar',
+      role: 'Mimic & Comedian',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfpf_lXMy35GQ-s5Cw-I5lr8IS7KqJyO9b-g&s',
+      bio: 'Guitar virtuoso known for electrifying solos and melodic compositions. Has shared stage with international artists and headlined major festivals.',
+      social: { instagram: '@jinsoguitar', facebook: '@jinsomusic' }
+    },
+    {
+      id: 6,
+      name: 'Bijesh Chelari',
+      role: 'Mimic & Comedian',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiLkK7Hrg2BNEVhcZnrR1C-ZlUOrgP9GLomQ&s',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 7,
+      name: 'Dream Team UK',
+      role: 'Dance troupe',
+      imageUrl: 'assets/images/events/nadirshow/artist/dreamteam.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 8,
+      name: 'Jinso Davis',
+      role: 'Director & Singer',
+      imageUrl: 'assets/images/events/nadirshow/artist/Jinso.PNG',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 9,
+      name: "Roxon D'Cruz",
+      role: 'Director & DJ',
+      imageUrl: 'assets/images/events/nadirshow/artist/Roxon.PNG',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 10,
+      name: 'Jojo Mathew',
+      role: 'Drums',
+      imageUrl: 'assets/images/events/nadirshow/artist/JojoMathew.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 11,
+      name: 'Mathew',
+      role: 'Tabla',
+      imageUrl: 'assets/images/events/nadirshow/artist/mathew.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 12,
+      name: 'Sambath Selam',
+      role: 'Trapeze Artist',
+      imageUrl: 'assets/images/events/nadirshow/artist/Sambath.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    },
+    {
+      id: 13,
+      name: 'Sunil Prayag',
+      role: 'Keyboard',
+      imageUrl: 'assets/images/events/nadirshow/artist/Sunil.jpeg',
+      bio: 'Versatile singer with a soulful voice that moves audiences. Trained in multiple genres and brings emotional depth to every performance.',
+      social: { instagram: '@dayanahameed', twitter: '@dayanasings' }
+    }
+  ],
+  sponsors: [
+    { name: 'VANCHI SOUTH INDIAN RESTURANT', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=VANCHI', tier: 'platinum' },
+    { name: 'KERALA KUTTIES UK', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=KERALA+KUTTIES', tier: 'platinum' },
+    { name: 'DESI CONNECT', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=DESI+CONNECT', tier: 'gold' }
+  ],
+  contacts: [
+    { number: '+44 7700 900001', name: 'VANCHI SOUTH INDIAN RESTURANT', icon: 'fa-ticket' },
+    { number: '+44 7700 900002', name: 'General Inquiries', icon: 'fa-phone' },
+    { number: '+44 7700 900003', name: 'Sponsorship', icon: 'fa-star' }
+  ],
+  eventConfig: {
+    logo: { text: 'VANCHI SOUTH INDIAN RESTURANT', year: 'Vanchi 2026' },
+    navLinks: [
+      { label: 'HOME', section: 'home' },
+      { label: 'ARTISTS', section: 'artists' },
+      { label: 'VENUES', section: 'venues' },
+      { label: 'SPONSORS', section: 'sponsors' }
+    ],
+    bannerImages: ['assets/images/events/vanchi/banner1.jpeg'],
+    presenters: ['VANCHI SOUTH INDIAN RESTURANT', 'KERALA KUTTIES UK', 'DESI CONNECT'],
+    stats: [
+      { number: '2', label: 'CITIES' },
+      { number: '10+', label: 'ARTISTS' },
+      { number: '5K+', label: 'FANS' }
+    ],
+    mainTitle: { line1: 'Dileep & Nadirshow ', line2: '@ Uk 2K26', year: '2026' },
+    tagline: 'MUSIC, COMEDY & DANCE EXTRAVAGANZA',
+    productions: [
+      { icon: 'fa-music', title: 'LIVE BAND', description: '10 Piece Ensemble' },
+      { icon: 'fa-user', title: '4 DANCERS', description: 'Professional Crew' },
+      { icon: 'fa-volume-up', title: 'SOUND ENGINEER', description: 'Crystal Clear Audio' },
+      { icon: 'fa-lightbulb', title: 'LIGHTING DESIGN', description: 'Dynamic LED Stage' }
+    ],
+    year: '2026',
+    eyebrow: 'VANCHI SOUTH INDIAN RESTURANT Presents',
+    tags: ['100% Entertainment', 'Nonstop Music', 'Comedy & Dance'],
+    supportArtistsLines: [
+      'Harisankar K S (Comedy) · Rhythmica Dance Crew (Special Act)',
+      'Live Band · Sound Engineers · Professional Lighting Crew'
+    ],
+    leadArtists: ['Dileep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
+    mainSponsors: [
+      { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'assets/images/events/vanchi/sponsors/vanchi.png' },
+      { name: 'Kerala Kutties UK', logo: 'assets/images/events/vanchi/sponsors/kerala-kutties.png' },
+      { name: 'Desi Connect',      logo: 'assets/images/events/vanchi/sponsors/desi-connect.png' }
+    ],
+    supportingSponsors: [
+      { name: 'Sponsor One',   logo: 'assets/images/events/vanchi/sponsors/sponsor1.png' },
+      { name: 'Sponsor Two',   logo: 'assets/images/events/vanchi/sponsors/sponsor2.png' },
+      { name: 'Sponsor Three', logo: 'assets/images/events/vanchi/sponsors/sponsor3.png' }
+    ]
+  }
+};
+
+export const ALL_COMPANY_EVENT_DATA: CompanyEventData[] = [
+  MANCHESTERGEMS_DATA,
+  VANCHI_DATA
+];
+
+export function getEventData(companyId: string): CompanyEventData {
+  return ALL_COMPANY_EVENT_DATA.find(d => d.companyId === companyId) ?? MANCHESTERGEMS_DATA;
+}
