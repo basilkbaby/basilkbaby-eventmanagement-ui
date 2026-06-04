@@ -98,18 +98,18 @@
 
       <!-- Right Panel: Seat Map -->
       <div class="map-panel">
-        <!-- Stage -->
-        <div class="stage-container">
-          <div class="stage">
-            <span>STAGE</span>
-            <div class="stage-info">Main performance area this way</div>
-          </div>
-        </div>
-
         <!-- Seat Map -->
-        <div class="seat-map-container" 
-             [style.transform]="'scale(' + zoomLevel + ')'" 
+        <div class="seat-map-container"
+             [style.transform]="'scale(' + zoomLevel + ')'"
              [style.transformOrigin]="'center'">
+          <!-- Stage -->
+          <div class="stage-container">
+            <div class="stage">
+              <span>STAGE</span>
+              <div class="stage-info">Main performance area this way</div>
+            </div>
+          </div>
+
           <div class="seat-map">
             <!-- Main Section -->
             <div class="seat-section">

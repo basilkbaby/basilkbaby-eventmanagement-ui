@@ -99,6 +99,9 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   private hoverProg:   Map<string, number> = new Map();
   private prevHoverId: string | null = null;
 
+  // World-space center X of the seat content — stage is centred over this
+  private contentCenterX = 700; // default: CANVAS_W / 2; updated in centreView()
+
   // Colors
   private readonly SEL_COLOR = '#22C55E';
   private readonly SEL_RING  = 'rgba(34,197,94,0.20)';
@@ -237,10 +240,12 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
       this.zoom = Math.max(0.2, Math.min(1.4, Math.min(zx, zy)));
       this.panX = pad + (w - pad * 2 - contentW * this.zoom) / 2 - (minX - this.SR * 2) * this.zoom;
       this.panY = pad + (h - pad * 2 - contentH * this.zoom) / 2 - minY * this.zoom;
+      this.contentCenterX = (minX + maxX) / 2;
     } else {
       this.zoom = 0.72;
       this.panX = (w - this.CANVAS_W * this.zoom) / 2;
       this.panY = Math.max(16, (h - this.CANVAS_H * this.zoom) / 2);
+      this.contentCenterX = this.CANVAS_W / 2;
     }
     this.dirty = true;
   }
@@ -297,7 +302,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   // ── Stage ──────────────────────────────────────────────────────────────────
 
   private drawStage(ctx: CanvasRenderingContext2D) {
-    const x = (this.CANVAS_W - this.STAGE_W) / 2, y = 10;
+    const x = this.contentCenterX - this.STAGE_W / 2, y = 10;
     const w = this.STAGE_W, h = this.STAGE_H;
 
     // Dark filled card
