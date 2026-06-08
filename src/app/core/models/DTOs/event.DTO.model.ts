@@ -141,11 +141,29 @@ export interface EventSettingsDto {
   requiredFields: string;
   cancellationDeadline: string;
 
-  // Helper properties (these would be computed in Angular component/services)
+  // Service fee
+  applyServiceFee: boolean;
+  serviceFeePercentage: number;
+  serviceFeeFixedAmount?: number;
+  serviceFeeIncludedInPrice: boolean;
+
+  // Bulk discount
+  enableBulkDiscount: boolean;
+  bulkDiscountThreshold: number;
+  bulkDiscountPercentage: number;
+  bulkDiscountFixedAmount?: number;
+  bulkDiscountMaxAmount?: number;
+  bulkDiscountName: string;
+
+  // Helper properties
   tagList: string[];
   requiredFieldList: string[];
   hasAgeRestriction: boolean;
   ageRestrictionDisplay: string;
+  hasServiceFee: boolean;
+  hasBulkDiscount: boolean;
+  serviceFeeDisplay: string;
+  bulkDiscountDisplay: string;
 
   createdAt: Date | string;
   updatedAt?: Date | string;
@@ -250,6 +268,12 @@ export interface EventCouponDto {
   maxUses: number;
   currentUses: number;
   isActive: boolean;
+
+  // Automatic discount fields
+  isAutomatic: boolean;
+  canApplyWithCoupon: boolean;
+  minTickets: number;
+  discountType: number;
 
   // Helper properties
   isValid: boolean;

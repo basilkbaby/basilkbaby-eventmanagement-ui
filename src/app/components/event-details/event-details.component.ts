@@ -7,7 +7,7 @@ import { Event, TicketTier } from '../../core/models/event.model';
 import { MOCK_EVENTS } from '../../core/mock/mock-events.data';
 import { EventService } from '../../core/services/event.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
-import { EventDetailDto } from '../../core/models/DTOs/event.DTO.model';
+import { EventAdditionalDetailDto, EventDetailDto } from '../../core/models/DTOs/event.DTO.model';
 import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 import { OrganizationType } from '../../core/models/Enums/event.enums';
 import { OrganizationFilterPipe } from '../../core/pipes/custom/organization-filter.pipe';
@@ -137,6 +137,32 @@ getSectionAvailability(section: string): number {
 }
 
 
+get importantDetails(): EventAdditionalDetailDto[] {
+  return this.event?.additionalDetails?.filter(d => d.isVisible && d.typeDisplay === 'IMPORTANT') ?? [];
+}
+
+get policyDetails(): EventAdditionalDetailDto[] {
+  return this.event?.additionalDetails?.filter(d => d.isVisible && d.typeDisplay === 'POLICY') ?? [];
+}
+
+get infoDetails(): EventAdditionalDetailDto[] {
+  return this.event?.additionalDetails?.filter(d => d.isVisible && (d.typeDisplay === 'GENERAL' || d.typeDisplay === 'NOTE')) ?? [];
+}
+
+get hasAdditionalInfo(): boolean {
+  return (this.policyDetails.length + this.infoDetails.length) > 0;
+}
+
+get organizersWithContact() {
+  return (this.event?.sponsors ?? []).filter(
+    s => s.type === OrganizationType.Organizer && (s.contactPhone || s.contactEmail)
+  );
+}
+
+get automaticCoupons() {
+  return (this.event?.coupons ?? []).filter(c => c.isAutomatic && c.isValid);
+}
+
 scrollToSection(sectionId: string): void {
   const element = document.getElementById(sectionId);
   if (element) {
@@ -161,5 +187,15 @@ shareEvent(): void {
 saveEvent(): void {
   // Implement save to favorites
   //alert('Event saved to your favorites!');
+}
+
+splitPhones(phone: string): string[] {
+  return phone.split(',').map(p => p.trim()).filter(p => p.length > 0);
+}
+
+whatsappLink(phone: string): string {
+  const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  const number = cleaned.startsWith('+') ? cleaned.slice(1) : cleaned;
+  return `https://wa.me/${number}`;
 }
 }
