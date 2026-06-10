@@ -23,6 +23,7 @@ export class AppComponent {
     private cartService: CartService,
     private router: Router
   ) {
+    this.currentRoute = this.router.url;
  // Subscribe to cart state
  // Subscribe to cart state changes
     this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
@@ -40,10 +41,10 @@ export class AppComponent {
   }
 
   title = 'TicketFlow - Modern Ticket System';
-  
+
   // Track the current theme
   currentTheme: 'light' | 'dark' = 'light';
-    currentRoute: string = '';
+  currentRoute: string = '/';
 
   // Method to toggle between themes
   toggleTheme(): void {

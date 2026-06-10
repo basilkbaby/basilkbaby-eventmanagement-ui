@@ -6,6 +6,7 @@ export interface HeaderConfig {
       color: string;
       backgroundColor: string;
       sublabel: string;
+      logoUrl?: string;
     };
     primaryColor: string;
     secondaryColor: string;

@@ -3,9 +3,11 @@
 
     <!-- Logo -->
     <a class="nav-logo" (click)="scrollTo.emit('hero')">
-      <img [src]="logo.logoUrl" [alt]="logo.text" class="nav-logo__img" [hidden]="!logo.logoUrl" />
-      <span class="nav-logo__text" [hidden]="logo.logoUrl">{{ logo.text }}</span>
-      <span class="nav-logo__year" [hidden]="logo.logoUrl">{{ logo.year }}</span>
+      <img *ngIf="logo.logoUrl" [src]="logo.logoUrl" [alt]="logo.text" class="nav-logo__img" />
+      <ng-container *ngIf="!logo.logoUrl">
+        <span class="nav-logo__text">{{ logo.text }}</span>
+        <span class="nav-logo__year">{{ logo.year }}</span>
+      </ng-container>
     </a>
 
     <!-- Centre links (desktop) -->

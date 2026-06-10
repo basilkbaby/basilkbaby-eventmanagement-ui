@@ -178,8 +178,14 @@
 
       <!-- Logo from config.company.logo -->
       <a class="nav-logo" routerLink="/">
-        <span class="nav-logo__text">{{ logoText }}</span>
-        <span class="nav-logo__sub" *ngIf="logoSublabel">{{ logoSublabel }}</span>
+        <img *ngIf="config?.company?.logo?.logoUrl"
+             [src]="config!.company.logo.logoUrl"
+             [alt]="logoText"
+             class="nav-logo__img" />
+        <ng-container *ngIf="!config?.company?.logo?.logoUrl">
+          <span class="nav-logo__text">{{ logoText }}</span>
+          <span class="nav-logo__sub" *ngIf="logoSublabel">{{ logoSublabel }}</span>
+        </ng-container>
       </a>
 
       <!-- Desktop nav links from config -->

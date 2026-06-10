@@ -281,10 +281,11 @@ $m-r-sm:      8px;
 }
 
 .nav-logo {
-  display: flex; align-items: baseline; gap: 5px;
+  display: flex; align-items: center; gap: 5px;
   text-decoration: none; cursor: pointer; flex-shrink: 0; user-select: none;
+  &__img { height: 48px; width: auto; max-width: 200px; object-fit: contain; display: block; }
   &__text { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 800; color: $m-ink; letter-spacing: -.01em; text-transform: uppercase; line-height: 1; }
-  &__year { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: $m-slate; letter-spacing: .04em; opacity: .7; }
+  &__sub { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: $m-slate; letter-spacing: .04em; opacity: .7; }
 }
 
 .nav-links {

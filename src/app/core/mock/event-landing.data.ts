@@ -226,7 +226,9 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
       { label: 'HOME', section: 'home' },
       { label: 'ARTISTS', section: 'artists' },
       { label: 'VENUES', section: 'venues' },
-      { label: 'SPONSORS', section: 'sponsors' }
+      { label: 'SPONSORS', section: 'sponsors' },
+      { label: 'TERMS', section: 'privacy' },
+      { label: 'CONTACT', section: 'contactus' }
     ],
     bannerImages: ['assets/images/events/nadirshow/banner1.jpeg'],
     presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
@@ -411,10 +413,11 @@ const VANCHI_DATA: CompanyEventData = {
   eventConfig: {
     logo: { text: 'VANCHI SOUTH INDIAN RESTURANT', year: 'Vanchi 2026', logoUrl: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
     navLinks: [
-      { label: 'HOME', section: 'home' },
-      { label: 'ARTISTS', section: 'artists' },
-      { label: 'VENUES', section: 'venues' },
-      { label: 'SPONSORS', section: 'sponsors' }
+      { label: 'Home', section: 'home' },
+      { label: 'Artists', section: 'artists' },
+      { label: 'Venues', section: 'venues' },
+      { label: 'Terms and Conditions', section: 'privacy' },
+      { label: 'Contact Us', section: 'contactus' }
     ],
     bannerImages: ['https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/nadirshah-dileep.jpeg'],
     presenters: ['VANCHI SOUTH INDIAN RESTURANT', 'KERALA KUTTIES UK', 'DESI CONNECT'],

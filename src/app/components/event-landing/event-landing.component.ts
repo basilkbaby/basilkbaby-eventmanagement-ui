@@ -79,15 +79,12 @@ export class EventLandingComponent implements OnInit {
     this.selectedArtist = null;
   }
 
-  buyTickets(eventId: string) {
-    this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
-    
-    // const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-    //   .test(navigator.userAgent);
-    // if(isMobile)
-    //     this.router.navigate(['/events', eventId, 'mobileseatmap']);
-    //     else
-    //   this.router.navigate(['/events', eventId, 'seatmap']); //seatstheatre
+  buyTickets(eventId?: string) {
+    if (eventId) {
+      this.router.navigate(['/events', eventId, 'seatmap']);
+    } else {
+      this.router.navigate(['/tickets/lookup']);
+    }
   }
 
 }

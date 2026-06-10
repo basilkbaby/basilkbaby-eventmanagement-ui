@@ -111,6 +111,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.configSub?.unsubscribe();
     this.routerSub?.unsubscribe();
     this.cartSub?.unsubscribe();
+    document.body.style.paddingTop = '0';
   }
 
   // ── Navigation ─────────────────────────────────────────────────────────────

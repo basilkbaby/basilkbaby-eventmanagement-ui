@@ -21,15 +21,12 @@ $r-sm:   8px;
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba($white, .92);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  background: $white;
   border-bottom: 1px solid transparent;
-  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  transition: border-color .2s ease, box-shadow .2s ease;
   font-family: 'DM Sans', sans-serif;
 
   &--scrolled {
-    background: rgba($white, .98);
     border-bottom-color: $border;
     box-shadow: 0 1px 12px rgba(0,0,0,.07);
   }

@@ -82,7 +82,8 @@
         "text": "Vanchi",
         "sublabel": "South Indian Restaurant",
         "color": "#FFFFFF",
-        "backgroundColor": "#1a1a2e"
+        "backgroundColor": "#1a1a2e",
+        "logoUrl": "https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg"
       },
       "primaryColor": "#1a1a2e",
       "secondaryColor": "#e94560",

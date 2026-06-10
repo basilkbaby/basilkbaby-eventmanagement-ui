@@ -6,6 +6,11 @@
   color: #f0eaff;
   position: relative;
   overflow-x: hidden;
+  padding-top: 82px;
+
+  @media (max-width: 768px) {
+    padding-top: 58px;
+  }
 }
 
 .modal {
