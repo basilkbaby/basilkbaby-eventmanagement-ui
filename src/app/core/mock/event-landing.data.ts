@@ -223,12 +223,11 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
   eventConfig: {
     logo: { text: 'R & J EVENTS', year: 'Manchester Gems' },
     navLinks: [
-      { label: 'HOME', section: 'home' },
-      { label: 'ARTISTS', section: 'artists' },
-      { label: 'VENUES', section: 'venues' },
-      { label: 'SPONSORS', section: 'sponsors' },
-      { label: 'TERMS', section: 'privacy' },
-      { label: 'CONTACT', section: 'contactus' }
+      { label: 'Home', section: 'home' },
+      { label: 'Artists', section: 'artists' },
+      { label: 'Venues', section: 'venues' },
+      { label: 'Terms and Conditions', section: 'privacy' },
+      { label: 'Contact Us', section: 'contactus' }
     ],
     bannerImages: ['assets/images/events/nadirshow/banner1.jpeg'],
     presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
