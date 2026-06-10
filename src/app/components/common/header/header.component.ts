@@ -39,7 +39,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private router:        Router,
     private cartService:   CartService
-  ) {}
+  ) {
+    // APP_INITIALIZER guarantees config is loaded before any component renders,
+    // so getConfig() returns the real value on first construction — no flash.
+    this.config = this.configService.getConfig();
+    if (this.config) {
+      this.activeTheme = (this.config.theme?.headerStyle as HeaderTheme) ?? 'full';
+      this.applyTheme(this.config);
+    }
+  }
 
   // ── Convenience getters ────────────────────────────────────────────────────
 

@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
-  @Input() logo: { text: string; year: string } = { text: '', year: '' };
+  @Input() logo: { text: string; year: string; logoUrl?: string } = { text: '', year: '' };
   @Input() year: string = new Date().getFullYear().toString();
 
   navLinks = ['Home', 'Artists', 'Venues', 'Tickets', 'Contact'];

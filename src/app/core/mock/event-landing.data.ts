@@ -54,6 +54,7 @@ export interface EventConfig {
   logo: {
     text: string;
     year: string;
+    logoUrl?: string;
   };
   navLinks: Array<{ label: string; section: string }>;
   bannerImages: string[];
@@ -401,8 +402,6 @@ const VANCHI_DATA: CompanyEventData = {
   ],
   sponsors: [
     { name: 'VANCHI SOUTH INDIAN RESTURANT', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg', tier: 'platinum' },
-    { name: 'KERALA KUTTIES UK', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=KERALA+KUTTIES', tier: 'platinum' },
-    { name: 'DESI CONNECT', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=DESI+CONNECT', tier: 'gold' }
   ],
   contacts: [
     { number: '07817105925', name: 'Sujith', icon: 'fa-ticket' },
@@ -410,7 +409,7 @@ const VANCHI_DATA: CompanyEventData = {
     { number: 'vanchirestaurantltd@gmail.com', name: 'Email', icon: 'fa-envelope' }
   ],
   eventConfig: {
-    logo: { text: 'VANCHI SOUTH INDIAN RESTURANT', year: 'Vanchi 2026' },
+    logo: { text: 'VANCHI SOUTH INDIAN RESTURANT', year: 'Vanchi 2026', logoUrl: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
     navLinks: [
       { label: 'HOME', section: 'home' },
       { label: 'ARTISTS', section: 'artists' },
@@ -427,17 +426,17 @@ const VANCHI_DATA: CompanyEventData = {
     mainTitle: { line1: 'Dileep & Nadirshow ', line2: '@ Uk 2K26', year: '2026' },
     tagline: 'MUSIC, COMEDY & DANCE EXTRAVAGANZA',
     productions: [
-      { icon: 'fa-music', title: 'LIVE BAND', description: '10 Piece Ensemble' },
-      { icon: 'fa-user', title: '4 DANCERS', description: 'Professional Crew' },
-      { icon: 'fa-volume-up', title: 'SOUND ENGINEER', description: 'Crystal Clear Audio' },
-      { icon: 'fa-lightbulb', title: 'LIGHTING DESIGN', description: 'Dynamic LED Stage' }
+      { icon: 'fa-music', title: 'LIVE ORCHESTRA', description: '15 Piece Band' },
+      { icon: 'fa-user', title: '6 DANCERS', description: 'Professional Crew' },
+      { icon: 'fa-volume-up', title: 'SOUND ENGINEER', description: 'Dolby Atmos' },
+      { icon: 'fa-lightbulb', title: 'LIGHTING DESIGN', description: 'LED Wall & Lasers' }
     ],
     year: '2026',
     eyebrow: 'VANCHI SOUTH INDIAN RESTURANT Presents',
     tags: ['100% Entertainment', 'Nonstop Music', 'Comedy & Dance'],
     supportArtistsLines: [
-      'Harisankar K S (Comedy) · Rhythmica Dance Crew (Special Act)',
-      'Live Band · Sound Engineers · Professional Lighting Crew'
+      'Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)',
+      'Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra & Dancers'
     ],
     leadArtists: ['Dileep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
     mainSponsors: [

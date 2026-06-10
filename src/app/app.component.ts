@@ -5,7 +5,6 @@ import { CartService } from './core/services/cart.service';
 import { HeaderComponent } from './components/common/header/header.component';
 import { EventListComponent } from './components/event-list/event-list.component';
 import { filter, Subscription } from 'rxjs';
-import { ConfigService } from './core/services/config.service';
 import { FooterComponent } from './components/common/footer/footer.component';
 import { NotificationComponent } from './components/common/notification/notification.component';
 
@@ -22,8 +21,7 @@ export class AppComponent {
 
   constructor(
     private cartService: CartService,
-    private router: Router,
-    private configService: ConfigService
+    private router: Router
   ) {
  // Subscribe to cart state
  // Subscribe to cart state changes
@@ -39,11 +37,6 @@ export class AppComponent {
         this.currentRoute = event.url;
       });
 
-      this.configService.loadConfig().then(() => {
-      console.log('Configuration loaded successfully');
-    }).catch(error => {
-      console.error('Failed to load configuration:', error);
-    });
   }
 
   title = 'TicketFlow - Modern Ticket System';

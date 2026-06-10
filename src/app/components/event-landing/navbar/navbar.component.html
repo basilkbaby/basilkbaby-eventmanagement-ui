@@ -3,8 +3,9 @@
 
     <!-- Logo -->
     <a class="nav-logo" (click)="scrollTo.emit('hero')">
-      <span class="nav-logo__text">{{ logo.text }}</span>
-      <span class="nav-logo__year">{{ logo.year }}</span>
+      <img [src]="logo.logoUrl" [alt]="logo.text" class="nav-logo__img" [hidden]="!logo.logoUrl" />
+      <span class="nav-logo__text" [hidden]="logo.logoUrl">{{ logo.text }}</span>
+      <span class="nav-logo__year" [hidden]="logo.logoUrl">{{ logo.year }}</span>
     </a>
 
     <!-- Centre links (desktop) -->

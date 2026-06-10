@@ -41,8 +41,23 @@ $r-pill: 999px;
 
 .footer-logo {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 5px;
+
+  &__img {
+    height: 90px;
+    width: auto;
+    max-width: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
 
   &__text {
     font-family: 'Barlow Condensed', sans-serif;

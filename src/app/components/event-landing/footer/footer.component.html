@@ -7,8 +7,11 @@
       <!-- Brand -->
       <div class="footer-brand">
         <div class="footer-logo">
-          <span class="footer-logo__text">{{ logo.text }}</span>
-          <span class="footer-logo__year">{{ logo.year }}</span>
+          <img *ngIf="logo.logoUrl" [src]="logo.logoUrl" [alt]="logo.text" class="footer-logo__img" />
+          <div class="footer-logo__name">
+            <span class="footer-logo__text">{{ logo.text }}</span>
+            <span class="footer-logo__year">{{ logo.year }}</span>
+          </div>
         </div>
         <p class="footer-tagline">100% Entertainment · Live Stage Show</p>
         <!-- Social icons -->
