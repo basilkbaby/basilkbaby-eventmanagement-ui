@@ -20,7 +20,8 @@ jobs:
           submodules: true
           lfs: false
       - name: Inject company ID
-        run: sed -i "s/companyId: '[^']*'/companyId: 'manchestergems'/" src/environments/environment.prod.ts
+        run: |
+          sed -i "s/companyId: '[^']*'/companyId: 'manchestergems'/" src/environments/environment.prod.ts
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
