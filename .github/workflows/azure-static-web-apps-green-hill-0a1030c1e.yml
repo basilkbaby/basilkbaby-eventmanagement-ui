@@ -22,6 +22,7 @@ jobs:
       - name: Inject company ID
         run: |
           sed -i "s/companyId: '[^']*'/companyId: 'vanchi'/" src/environments/environment.prod.ts
+          sed -i "s/companyId: '[^']*'/companyId: 'vanchi'/" src/environments/environment.ts
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
