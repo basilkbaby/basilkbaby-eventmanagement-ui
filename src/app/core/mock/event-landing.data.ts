@@ -281,7 +281,7 @@ const VANCHI_DATA: CompanyEventData = {
       gateopentime: '5:00 PM',
       mapUrl: 'https://maps.google.com/?q=Maidstone+Leisure+Centre+ME15+7RN',
       imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      capacity: '2,000 seats',
+      capacity: '1,000 seats',
       features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
       ticketsOpen: true,
       eventId: '75bba2fa-17d9-490e-9186-1563cf5b0fee'
