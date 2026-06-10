@@ -99,7 +99,7 @@
         <div class="contact-strip" *ngIf="contacts.length">
           <span class="micro-label" style="margin:0 8px 0 0">Info &amp; Tickets:</span>
           <ng-container *ngFor="let c of contacts; let last = last">
-            <a [href]="'tel:' + c.number.replace(' ', '')" class="contact-num">
+            <a [href]="c.number.includes('@') ? 'mailto:' + c.number : 'tel:' + c.number" class="contact-num">
               {{ c.number }} <em>({{ c.name }})</em>
             </a>
             <span class="contact-sep" *ngIf="!last">·</span>

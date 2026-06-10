@@ -270,19 +270,19 @@ const VANCHI_DATA: CompanyEventData = {
   companyId: 'vanchi',
   venues: [
     {
-      id: 'birmingham',
-      name: 'NEC Birmingham',
-      location: 'Birmingham',
-      address: 'North Ave, Marston Green, Birmingham B40 1NT',
-      date: '15th NOVEMBER 2026',
+      id: 'maidstone',
+      name: 'Maidstone Leisure Centre',
+      location: 'Maidstone',
+      address: 'Maidstone Leisure Centre, ME15 7RN',
+      date: '4th SEPTEMBER 2026',
       time: '6:00 PM',
       gateopentime: '5:00 PM',
-      mapUrl: 'https://maps.google.com/?q=NEC+Birmingham',
+      mapUrl: 'https://maps.google.com/?q=Maidstone+Leisure+Centre+ME15+7RN',
       imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       capacity: '2,000 seats',
       features: ['Live Orchestra', 'Disabled Access', 'Parking Available'],
       ticketsOpen: true,
-      eventId: 'vanchi-event-001'
+      eventId: '75bba2fa-17d9-490e-9186-1563cf5b0fee'
     }
   ],
   artists: [ 
@@ -400,14 +400,14 @@ const VANCHI_DATA: CompanyEventData = {
     }
   ],
   sponsors: [
-    { name: 'VANCHI SOUTH INDIAN RESTURANT', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=VANCHI', tier: 'platinum' },
+    { name: 'VANCHI SOUTH INDIAN RESTURANT', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg', tier: 'platinum' },
     { name: 'KERALA KUTTIES UK', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=KERALA+KUTTIES', tier: 'platinum' },
     { name: 'DESI CONNECT', logo: 'https://placehold.co/200x100/1a1a2e/ffffff?text=DESI+CONNECT', tier: 'gold' }
   ],
   contacts: [
-    { number: '+44 7700 900001', name: 'VANCHI SOUTH INDIAN RESTURANT', icon: 'fa-ticket' },
-    { number: '+44 7700 900002', name: 'General Inquiries', icon: 'fa-phone' },
-    { number: '+44 7700 900003', name: 'Sponsorship', icon: 'fa-star' }
+    { number: '07817105925', name: 'Sujith', icon: 'fa-ticket' },
+    { number: '07578776316', name: 'Sneha', icon: 'fa-phone' },
+    { number: 'vanchirestaurantltd@gmail.com', name: 'Email', icon: 'fa-envelope' }
   ],
   eventConfig: {
     logo: { text: 'VANCHI SOUTH INDIAN RESTURANT', year: 'Vanchi 2026' },
@@ -417,7 +417,7 @@ const VANCHI_DATA: CompanyEventData = {
       { label: 'VENUES', section: 'venues' },
       { label: 'SPONSORS', section: 'sponsors' }
     ],
-    bannerImages: ['assets/images/events/vanchi/banner1.jpeg'],
+    bannerImages: ['https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/nadirshah-dileep.jpeg'],
     presenters: ['VANCHI SOUTH INDIAN RESTURANT', 'KERALA KUTTIES UK', 'DESI CONNECT'],
     stats: [
       { number: '2', label: 'CITIES' },
@@ -441,14 +441,10 @@ const VANCHI_DATA: CompanyEventData = {
     ],
     leadArtists: ['Dileep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
     mainSponsors: [
-      { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'assets/images/events/vanchi/sponsors/vanchi.png' },
-      { name: 'Kerala Kutties UK', logo: 'assets/images/events/vanchi/sponsors/kerala-kutties.png' },
-      { name: 'Desi Connect',      logo: 'assets/images/events/vanchi/sponsors/desi-connect.png' }
+      { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
+      { name: 'Excellent Financial Services', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/excellent.jpg' },
     ],
     supportingSponsors: [
-      { name: 'Sponsor One',   logo: 'assets/images/events/vanchi/sponsors/sponsor1.png' },
-      { name: 'Sponsor Two',   logo: 'assets/images/events/vanchi/sponsors/sponsor2.png' },
-      { name: 'Sponsor Three', logo: 'assets/images/events/vanchi/sponsors/sponsor3.png' }
     ]
   }
 };

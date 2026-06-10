@@ -73,10 +73,10 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 // ─── GRID ────────────────────────────────────────────────────────
 .hero-container {
   display: grid;
-  grid-template-columns: 460px 1fr;
-  gap: 56px;
+  grid-template-columns: 420px 1fr;
+  gap: 36px;
   align-items: flex-start;
-  padding: 48px 0 52px;
+  padding: 28px 0 32px;
 }
 
 // ─── LEFT ────────────────────────────────────────────────────────
@@ -91,11 +91,11 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   letter-spacing: .11em;
   text-transform: uppercase;
   color: $slate;
-  padding: 5px 14px 5px 10px;
+  padding: 4px 12px 4px 8px;
   background: $slate-pale;
   border: 1px solid $slate-tint;
   border-radius: $r-pill;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .eyebrow-pip {
@@ -112,18 +112,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   line-height: .9;
   letter-spacing: -.01em;
   text-transform: uppercase;
-  margin: 0 0 16px;
+  margin: 0 0 10px;
 }
 
 .title-main {
   display: block;
-  font-size: clamp(48px, 5.2vw, 80px);
+  font-size: clamp(38px, 4vw, 60px);
   color: $ink;
 }
 
 .title-sub {
   display: block;
-  font-size: clamp(40px, 4.4vw, 68px);
+  font-size: clamp(32px, 3.4vw, 52px);
   background: linear-gradient(130deg, $slate 10%, $slate-mid 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -139,8 +139,8 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 // Tags
 .hero-tags {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  margin-bottom: 20px;
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-bottom: 12px;
 }
 
 .tag {
@@ -153,17 +153,17 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 }
 
 // Artists
-.artists-block { margin-bottom: 22px; }
+.artists-block { margin-bottom: 14px; }
 
 .micro-label {
   font-size: 10px; font-weight: 600;
   letter-spacing: .1em; text-transform: uppercase;
-  color: $ink-4; margin-bottom: 7px; display: block;
+  color: $ink-4; margin-bottom: 4px; display: block;
 }
 
 .artists-lead {
-  font-size: 14.5px; font-weight: 600;
-  color: $ink; line-height: 1.6; margin-bottom: 4px;
+  font-size: 13.5px; font-weight: 600;
+  color: $ink; line-height: 1.5; margin-bottom: 3px;
 }
 
 .artist-sep { color: $slate-tint; }
@@ -173,7 +173,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 }
 
 // Venue selector
-.venue-selector { margin-bottom: 14px; }
+.venue-selector { margin-bottom: 10px; }
 
 .venue-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -208,8 +208,8 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 // Venue card
 .venue-card {
   background: $white; border: 1.5px solid $border;
-  border-radius: $r-lg; padding: 16px 18px;
-  margin-bottom: 22px; box-shadow: $sh-md;
+  border-radius: $r-md; padding: 12px 14px;
+  margin-bottom: 14px; box-shadow: $sh-md;
   animation: popIn .2s ease both;
 }
 
@@ -220,10 +220,10 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .vc-row {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px; margin-bottom: 12px;
+  gap: 8px; margin-bottom: 8px;
 }
 
-.vc-divider { height: 1px; background: $border; margin-bottom: 12px; }
+.vc-divider { height: 1px; background: $border; margin-bottom: 8px; }
 
 .vc-block { display: flex; flex-direction: column; gap: 3px; }
 
@@ -238,16 +238,16 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 // CTAs
 .hero-ctas {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 18px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px; flex-wrap: wrap;
 }
 
 .btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 26px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px;
   background: $slate; color: $white;
   border: none; border-radius: $r-pill;
-  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
   cursor: pointer;
   box-shadow: 0 6px 22px rgba($slate, .28);
   transition: all .2s ease;
@@ -264,10 +264,10 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .btn-ghost {
   display: inline-flex; align-items: center;
-  padding: 13px 22px; background: transparent;
+  padding: 10px 18px; background: transparent;
   color: $ink; border: 1.5px solid $border;
   border-radius: $r-pill;
-  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
   cursor: pointer; transition: all .2s;
 
   &:hover { border-color: $slate; color: $slate; background: $slate-pale; }
@@ -377,7 +377,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .fstat {
   display: flex; flex-direction: column; align-items: center;
-  padding: 10px 18px; gap: 1px;
+  padding: 8px 14px; gap: 1px;
 
   & + & { border-left: 1px solid $border; }
 
@@ -399,7 +399,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 // ─── SPONSORS (below slider) ─────────────────────────────────────
 .slider-sponsors {
-  margin-top: 28px; // clear the dots (26px) + gap
+  margin-top: 20px;
   padding: 0;
 }
 
@@ -428,8 +428,8 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   cursor: default;
 
   &__logo {
-    width: 70px;
-    height: 70px;
+    width: 58px;
+    height: 58px;
     border-radius: $r-sm;
     background: $white;
     border: 1px solid $border;
@@ -493,15 +493,15 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 // ─── Responsive ──────────────────────────────────────────────────
 @media (max-width: 1100px) {
-  .hero-container { grid-template-columns: 380px 1fr; gap: 36px; }
+  .hero-container { grid-template-columns: 360px 1fr; gap: 28px; }
 }
 
 @media (max-width: 900px) {
   .hero-container {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 24px;
     text-align: center;
-    padding: 32px 0 40px;
+    padding: 20px 0 28px;
   }
 
   .hero-left {
@@ -544,10 +544,10 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
   .hero-wrap { padding: 0 16px; }
 
-  .hero-container { gap: 24px; padding: 24px 0 36px; }
+  .hero-container { gap: 18px; padding: 16px 0 24px; }
 
-  .title-main { font-size: 44px; }
-  .title-sub  { font-size: 36px; }
+  .title-main { font-size: 36px; }
+  .title-sub  { font-size: 30px; }
 
   .hero-tags { justify-content: center; }
 

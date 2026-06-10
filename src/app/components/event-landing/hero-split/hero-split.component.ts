@@ -21,7 +21,7 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
   @Output() scrollTo  = new EventEmitter<string>();
   @Output() buyTickets = new EventEmitter<string>();
 
-  selectedVenueId = 'blackpool';
+  selectedVenueId = '';
 
   get selectedVenue() {
     return this.venues.find(v => v.id === this.selectedVenueId) || this.venues[0];
