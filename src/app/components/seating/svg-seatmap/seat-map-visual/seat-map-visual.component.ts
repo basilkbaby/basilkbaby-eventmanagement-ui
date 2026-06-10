@@ -292,16 +292,16 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
     // Plain light card
     ctx.shadowColor = 'rgba(0,0,0,0.06)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
-    ctx.fillStyle   = '#f8f9fb';
+    ctx.fillStyle   = '#4b5563';
     this.rrect(ctx, x, y, w, h, 10); ctx.fill();
     ctx.shadowColor = 'transparent';
 
     // Simple border
-    ctx.strokeStyle = '#dde2ec'; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#374151'; ctx.lineWidth = 1.5;
     this.rrect(ctx, x, y, w, h, 10); ctx.stroke();
 
     // Label
-    ctx.fillStyle    = '#475569';
+    ctx.fillStyle    = '#f1f5f9';
     ctx.font         = `700 13px "DM Sans","Helvetica Neue",sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
