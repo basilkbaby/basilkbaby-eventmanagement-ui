@@ -1,18 +1,11 @@
 import { Routes } from '@angular/router';
-import { CartComponent } from './components/cart/cart.component';
-import { ConfirmationComponent } from './components/confirmation/confirmation.component';
-import { TicketLookupComponent } from './components/ticket-lookup/ticket-lookup.component';
-import { AboutUsComponent } from './components/pages/about-us/about-us.component';
-import { ContactUsComponent } from './components/pages/contact-us/contact-us.component';
-import { SVGSeatmapComponent } from './components/seating/svg-seatmap/svg-seatmap.component';
 import { TicketInfoComponent } from './components/ticket-info/ticket-info.component';
 
 
 export const routes: Routes = [
-  { 
-    path: '', 
-    loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent),  
-    title: 'Home' 
+  {
+    path: '',
+    loadComponent: () => import('./components/event-landing/event-landing.component').then(m => m.EventLandingComponent)
   },
   // { 
   //   path: '', 

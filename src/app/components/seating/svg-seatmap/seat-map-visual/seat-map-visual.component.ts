@@ -91,9 +91,10 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   tooltip: TooltipData | null = null;
 
   // Caches
-  private selectedSet = new Set<string>();
-  private colorCache  = new Map<string, string>();
+  private selectedSet   = new Set<string>();
+  private colorCache    = new Map<string, string>();
   private sectionBounds = new Map<string, { minX: number; maxX: number; minY: number; maxY: number }>();
+  private seatsCenterX  = 700; // CANVAS_W / 2 — updated in rebuildCaches
 
   // Hover animation
   private hoverProg:   Map<string, number> = new Map();
@@ -286,7 +287,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
   // ── Stage ──────────────────────────────────────────────────────────────────
 
   private drawStage(ctx: CanvasRenderingContext2D) {
-    const x = (this.CANVAS_W - this.STAGE_W) / 2, y = 10;
+    const x = this.seatsCenterX - this.STAGE_W / 2, y = 10;
     const w = this.STAGE_W, h = this.STAGE_H;
 
     // Plain light card
@@ -778,6 +779,7 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
 
     // Cache per-section bounding box — used by section label drawing
     this.sectionBounds.clear();
+    let globalMinX = Infinity, globalMaxX = -Infinity;
     for (const s of this.seats) {
       const b = this.sectionBounds.get(s.sectionId);
       if (!b) {
@@ -788,6 +790,11 @@ export class SeatMapVisualComponent implements AfterViewInit, OnDestroy, OnChang
         if (s.cy < b.minY) b.minY = s.cy;
         if (s.cy > b.maxY) b.maxY = s.cy;
       }
+      if (s.cx < globalMinX) globalMinX = s.cx;
+      if (s.cx > globalMaxX) globalMaxX = s.cx;
+    }
+    if (globalMinX !== Infinity) {
+      this.seatsCenterX = (globalMinX + globalMaxX) / 2;
     }
     this.scheduleRender();
   }
