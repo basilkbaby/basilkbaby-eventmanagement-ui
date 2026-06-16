@@ -106,6 +106,14 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
   ],
   artists: [
     {
+      id: 0,
+      name: 'Dilieep',
+      role: 'Staring',
+      imageUrl: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/dileep.jpeg',
+      bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
+      social: { instagram: '@nadirshahofficial', twitter: '@nadirshah' }
+    },
+    {
       id: 1,
       name: 'NADIR SHAH',
       role: 'Show Director',
@@ -229,14 +237,14 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
       { label: 'Terms and Conditions', section: 'privacy' },
       { label: 'Contact Us', section: 'contactus' }
     ],
-    bannerImages: ['assets/images/events/nadirshow/banner1.jpeg'],
+    bannerImages: ['https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah-dileep-blackpool.PNG'],
     presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
     stats: [
       { number: '4', label: 'CITIES' },
       { number: '15+', label: 'ARTISTS' },
       { number: '20K+', label: 'FANS' }
     ],
-    mainTitle: { line1: 'NADIR 2K26', line2: 'SHOW @UK', year: '2026' },
+    mainTitle: { line1: 'Dilieep Nadir', line2: 'Show @ Uk', year: '2026' },
     tagline: 'NONSTOP MUSIC, DANCE & MIMICS',
     productions: [
       { icon: 'fa-music', title: 'LIVE ORCHESTRA', description: '15 Piece Band' },
@@ -290,7 +298,7 @@ const VANCHI_DATA: CompanyEventData = {
   artists: [ 
     {
       id: 1,
-      name: 'Dileep',
+      name: 'Dilieep',
       role: 'Staring',
       imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-NdoA-IhnpKTyHR2N2PdKBSWeCAyzNM2eVZzFn5Otl217d0FBd6GsjMY28fLHDwb-AJpNOD4jxsMZqxqQY0U6q-L1EGFyUgmQcZaI6D4&s=10',
       bio: 'Award-winning performer and show director with over 15 years of experience in live entertainment. Known for his dynamic stage presence and innovative direction.',
@@ -425,7 +433,7 @@ const VANCHI_DATA: CompanyEventData = {
       { number: '10+', label: 'ARTISTS' },
       { number: '5K+', label: 'FANS' }
     ],
-    mainTitle: { line1: 'Dileep & Nadirshow ', line2: '@ Uk 2K26', year: '2026' },
+    mainTitle: { line1: 'Dilieep & Nadirshow ', line2: '@ Uk 2K26', year: '2026' },
     tagline: 'MUSIC, COMEDY & DANCE EXTRAVAGANZA',
     productions: [
       { icon: 'fa-music', title: 'LIVE ORCHESTRA', description: '15 Piece Band' },
@@ -440,7 +448,7 @@ const VANCHI_DATA: CompanyEventData = {
       'Aswanth Anilkumar (Mimicry) · Bijesh Chelari (Mimicry) · Sambath (Special Act)',
       'Roxon · Jinso · Sunil Mundakkayam · Jojo Mathew · Live Orchestra & Dancers'
     ],
-    leadArtists: ['Dileep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
+    leadArtists: ['Dilieep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
     mainSponsors: [
       { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
       { name: 'Excellent Financial Services', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/excellent.jpg' },

@@ -2,7 +2,7 @@ export const environment = {
   production: false,
   apiUrl: 'https://crowdpass.azurewebsites.net',
   appName: 'Identity Service',
-  companyId: 'vanchi', //manchestergems   vanchi
+  companyId: 'manchestergems', //manchestergems   vanchi
   identityUrl: 'http://localhost:55884', // Your identity service
   identityAPIUrl: 'https://localhost:7114', // Your identity service
   stripe: {
