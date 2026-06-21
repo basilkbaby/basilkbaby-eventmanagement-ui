@@ -30,6 +30,28 @@
     </div>
   </div>
 
+  <!-- Payment received, order still being finalised (webhook will complete it) -->
+  <div class="order-complete" *ngIf="fulfillmentPending">
+    <div class="success-animation">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+        <path d="M22 4L12 14.01l-3-3" stroke="#10b981" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    <h1>Payment Received</h1>
+    <p class="success-message">Your payment was successful and your booking is being finalised. Your tickets will be
+      emailed to you shortly — there's no need to pay again. If you don't receive them within a few minutes, please
+      contact support with your payment reference.</p>
+
+    <div class="completion-actions">
+      <button class="continue-shopping-btn" (click)="continueShopping()">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+
   <!-- Checkout Form -->
   <div class="checkout-content" *ngIf="!loading && !orderComplete && cartSummary.seatCount > 0">
     <!-- Header -->

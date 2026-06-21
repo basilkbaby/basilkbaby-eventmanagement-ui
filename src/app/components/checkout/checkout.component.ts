@@ -52,6 +52,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   processing: boolean = false;
   orderComplete: boolean = false;
+  // True once Stripe has captured the payment. Used to avoid showing a scary error
+  // if the follow-up "complete booking" call fails — the webhook will finalise the order.
+  paymentSucceeded: boolean = false;
+  // Payment succeeded but the complete call didn't confirm an order; webhook fallback will.
+  fulfillmentPending: boolean = false;
   orderId: string = '';
   showFormErrors: boolean = false;
   showPrivacyPolicy = false;
@@ -136,15 +141,21 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.checkoutSubscription = this.cartService.checkout$.subscribe({
       next: (response) => {
         this.processing = false;
-        if (response.success && response.data) {
+        if (response.success && response.data && response.data.orderId) {
           this.orderComplete = true;
           this.orderId = response.data.orderId;
           this.cdr.detectChanges();
-          
+
           // Navigate to confirmation page
           setTimeout(() => {
             this.router.navigate(['/confirmation', response.data!.orderId]);
           }, 2000);
+        } else if (this.paymentSucceeded) {
+          // Payment went through but booking wasn't confirmed in this response.
+          // The Stripe webhook will finalise the order server-side, so reassure the
+          // customer instead of showing an error (which would tempt them to pay again).
+          this.fulfillmentPending = true;
+          this.cdr.detectChanges();
         } else {
           this.stripeError = response.error || 'Checkout failed';
           this.cdr.detectChanges();
@@ -152,7 +163,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.processing = false;
-        this.stripeError = 'Checkout processing failed';
+        if (this.paymentSucceeded) {
+          this.fulfillmentPending = true;
+        } else {
+          this.stripeError = 'Checkout processing failed';
+        }
         this.cdr.detectChanges();
       }
     });
@@ -321,6 +336,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.processing = false;
         this.cdr.detectChanges();
       } else if (paymentIntent?.status === 'succeeded') {
+        // Money has been captured by Stripe from this point on.
+        this.paymentSucceeded = true;
         await this.processOrder(paymentIntent.id);
       } else {
         this.stripeError = 'Payment not completed';

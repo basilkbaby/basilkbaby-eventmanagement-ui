@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, finalize, map, Observable, of, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, Observable, of, Subject, tap, throwError, retry, timer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   AddToCartRequest,
@@ -171,9 +171,24 @@ export class CartService {
       });
   }
 
-  // Complete checkout
+  // Complete checkout. Payment has already been captured by Stripe before this runs,
+  // so we retry transient failures (network drops / 5xx) to give the order the best
+  // chance of completing synchronously. Deterministic client errors (4xx) are not retried.
   checkout(checkoutData: CheckoutRequest): void {
     this.http.post<CheckoutResponse>(`${this.baseUrl}/checkout/complete`, checkoutData)
+      .pipe(
+        retry({
+          count: 3,
+          delay: (error, retryCount) => {
+            const status = error?.status ?? 0;
+            // Only retry on network errors (status 0) or server errors (>= 500).
+            if (status !== 0 && status < 500) {
+              return throwError(() => error);
+            }
+            return timer(1500 * retryCount);
+          }
+        })
+      )
       .subscribe({
         next: (response) => {
           if (response.success) {
