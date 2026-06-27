@@ -237,7 +237,7 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
       { label: 'Terms and Conditions', section: 'privacy' },
       { label: 'Contact Us', section: 'contactus' }
     ],
-    bannerImages: ['https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah-dileep-blackpool.PNG'],
+    bannerImages: ['https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah-dileep-blackpoolv1.PNG'],
     presenters: ['R&J EVENTS', 'LIFE PROTECT', 'PROUDLY PRESENCE'],
     stats: [
       { number: '4', label: 'CITIES' },
