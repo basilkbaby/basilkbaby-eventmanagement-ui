@@ -264,7 +264,8 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
       { name: 'Kerala Curry House',        logo: 'assets/images/events/nadirshow/sponsors/curryhouse.jpg' },
       { name: 'Paul John & Co Solicitors', logo: 'assets/images/events/nadirshow/sponsors/pjc.svg' },
       { name: 'Shan Properties',           logo: 'assets/images/events/nadirshow/sponsors/shan.jpg' },
-      { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' }
+      { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' },
+      { name: 'Idealistic Mortgage & Insurance', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/idealistic.jpeg' }
     ],
     supportingSponsors: [
       { name: 'Chrystal Hyper Market', logo: 'assets/images/events/nadirshow/sponsors/chrystal-hyper-market.png' },
