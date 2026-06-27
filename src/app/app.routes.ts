@@ -30,10 +30,15 @@ export const routes: Routes = [
     title: 'Event Detail'  
   }, 
   {
+    path: 'group/:id',
+    loadComponent: () => import('./components/group/group.component').then(m => m.GroupComponent),
+    title: 'Group'
+  },
+  {
     path: 'events/:id/seatmap',
-    loadComponent: () => import('./components/seating/svg-seatmap/svg-seatmap.component').then(m => m.SVGSeatmapComponent),  
+    loadComponent: () => import('./components/seating/svg-seatmap/svg-seatmap.component').then(m => m.SVGSeatmapComponent),
     title : 'Seat Selection'
-  },    
+  },
   {
     path: 'events/:id/mobileseatmap',
     loadComponent: () => import('./components/seating/mobile-section-selector/mobile-section-selector.component').then(

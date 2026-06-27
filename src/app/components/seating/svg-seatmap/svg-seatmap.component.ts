@@ -16,6 +16,7 @@ import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
 import { AnalyticsService } from '../../../core/services/analytics.service';
+import { EventService } from '../../../core/services/event.service';
 
 @Component({
   selector: 'app-svg-seatmap',
@@ -30,6 +31,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
   // ── State ──────────────────────────────────────────────────────────────────
   loading          = true;
+  inactive         = false; // event is hidden (inactive) and no valid preview key
   venueData!:      VenueData;
   seats:           Seat[]         = [];
   selectedSeats:   SelectedSeat[] = [];
@@ -62,13 +64,29 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     private route:               ActivatedRoute,
     private router:              Router,
     private notificationService: NotificationService,
-    private analytics:           AnalyticsService
+    private analytics:           AnalyticsService,
+    private eventService:        EventService
   ) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.eventId = params['id'];
-      this.getSeatMap(this.eventId);
+      // Verify the event is visible before loading seats. An inactive event
+      // returns 403 unless a valid ?preview=<key> is supplied (admin preview).
+      const preview = this.route.snapshot.queryParamMap.get('preview');
+      this.loading = true;
+      this.eventService.getEventById(this.eventId, preview).subscribe({
+        next: () => this.getSeatMap(this.eventId),
+        error: (err) => {
+          if (err?.status === 403) {
+            this.inactive = true;
+            this.loading = false;
+          } else {
+            // Other errors (e.g. transient) shouldn't block booking — try the seat map.
+            this.getSeatMap(this.eventId);
+          }
+        }
+      });
     });
   }
 

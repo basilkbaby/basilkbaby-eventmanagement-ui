@@ -40,14 +40,23 @@ export class EventService {
     return this.http.get<EventDto[]>(this.baseUrl, { params });
   }
 
-  // GET: Get single event by ID
-  getEventById(eventId: string): Observable<EventDetailDto> {
-    return this.http.get<EventDetailDto>(`${this.baseUrl}/${eventId}`);
+  // GET: all events that belong to a group (artist/tour across venues).
+  getEventsByGroup(groupId: string): Observable<EventDto[]> {
+    return this.http.get<EventDto[]>(`${this.baseUrl}/group/${groupId}`);
   }
 
-  // GET: Get event details with all related data
-  getEventDetails(eventId: string): Observable<EventDetailDto> {
-    return this.http.get<EventDetailDto>(`${this.baseUrl}/GetEventDetails/${eventId}`);
+  // GET: Get single event by ID. `preview` lets an admin view an inactive event.
+  getEventById(eventId: string, preview?: string | null): Observable<EventDetailDto> {
+    let params = new HttpParams();
+    if (preview) params = params.set('preview', preview);
+    return this.http.get<EventDetailDto>(`${this.baseUrl}/${eventId}`, { params });
+  }
+
+  // GET: Get event details with all related data. `preview` lets an admin view an inactive event.
+  getEventDetails(eventId: string, preview?: string | null): Observable<EventDetailDto> {
+    let params = new HttpParams();
+    if (preview) params = params.set('preview', preview);
+    return this.http.get<EventDetailDto>(`${this.baseUrl}/GetEventDetails/${eventId}`, { params });
   }
 
 

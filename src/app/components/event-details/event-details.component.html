@@ -9,6 +9,14 @@
     <p>Loading event details...</p>
   </div>
 
+  <!-- ── Inactive State ──────────────────────────────────────────────────── -->
+  <div class="inactive-state" *ngIf="inactive && !loading" role="status">
+    <div class="inactive-state__icon" aria-hidden="true">🚫</div>
+    <h1>Event is inactive</h1>
+    <p>This event is currently not available. Please check back later.</p>
+    <a class="inactive-state__btn" routerLink="/events">Browse other events</a>
+  </div>
+
   <!-- ── Main Event Details ──────────────────────────────────────────────── -->
   <div class="event-details" *ngIf="event && !loading">
 

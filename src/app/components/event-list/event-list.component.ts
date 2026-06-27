@@ -1,7 +1,7 @@
 // event-list.component.ts
 import { Component, HostListener, OnInit, OnDestroy, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component';
@@ -57,7 +57,16 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
   public searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private router: Router) {}
+
+  // Navigate to the group page from a card without triggering the card's own link.
+  openGroup(ev: EventDto, domEvent: Event): void {
+    domEvent.preventDefault();
+    domEvent.stopPropagation();
+    if (ev.groupId) {
+      this.router.navigate(['/group', ev.groupId]);
+    }
+  }
 
   ngOnInit(): void {
     this.setupSearchDebounce();

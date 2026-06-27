@@ -476,3 +476,26 @@ $sw:       320px;
 @media (max-width: 390px) {
   .sidebar.has-selection { max-height: 52dvh; }
 }
+/* ── Inactive (hidden) event state ──────────────────────────────────────── */
+.seatmap-inactive {
+  max-width: 520px;
+  margin: 80px auto;
+  padding: 40px 24px;
+  text-align: center;
+
+  &__icon { font-size: 56px; line-height: 1; margin-bottom: 16px; }
+
+  h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px; }
+  p  { color: #6b7280; margin: 0 0 24px; }
+
+  &__btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 10px;
+    background: #10b981;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    &:hover { background: #0e9f6e; }
+  }
+}

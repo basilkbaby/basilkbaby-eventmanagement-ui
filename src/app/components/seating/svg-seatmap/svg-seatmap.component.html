@@ -1,4 +1,12 @@
-<div class="page" *ngIf="!loading">
+<!-- Event hidden / inactive -->
+<div class="seatmap-inactive" *ngIf="inactive && !loading" role="status">
+  <div class="seatmap-inactive__icon" aria-hidden="true">🚫</div>
+  <h1>Event is inactive</h1>
+  <p>This event is currently not available for booking. Please check back later.</p>
+  <a class="seatmap-inactive__btn" routerLink="/events">Browse other events</a>
+</div>
+
+<div class="page" *ngIf="!loading && !inactive">
 
   <!-- ══════════ MAP COLUMN ══════════════════════════════════════════════════ -->
   <main class="map-col">

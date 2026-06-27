@@ -38,6 +38,8 @@ export interface EventDto
     venueName : string;
     venueCity : string;
     startingFromPrice : string;
+    groupId: string | null;
+    groupName: string | null;
 }
 
 

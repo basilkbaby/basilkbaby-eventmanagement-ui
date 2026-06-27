@@ -24,6 +24,7 @@ import { DurationPipe } from '../../core/pipes/common/duration.pipe';
 export class EventDetailsComponent implements OnInit {
   event: EventDetailDto | null = null;
   loading: boolean = true;
+  inactive: boolean = false; // event is hidden (inactive) and no valid preview key
   cartItemCount: number = 0;
   OrganizationType = OrganizationType;
   // Add these properties
@@ -41,7 +42,9 @@ export class EventDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const eventId = params['id'];
-      this.loadEventDetails(eventId);
+      // ?preview=<key> lets an admin view an inactive (hidden) event.
+      const preview = this.route.snapshot.queryParamMap.get('preview');
+      this.loadEventDetails(eventId, preview);
     });
 
     this.cartStateSubscription = this.cartService.currentCartState$.subscribe({
@@ -58,10 +61,10 @@ export class EventDetailsComponent implements OnInit {
     }
   }
 
-  loadEventDetails(eventId: string): void {
+  loadEventDetails(eventId: string, preview?: string | null): void {
     this.loading = true;
       // Use getEventDetails to get full event with all related data
-      this.eventService.getEventDetails(eventId).subscribe({
+      this.eventService.getEventDetails(eventId, preview).subscribe({
         next: (event) => {
           this.event = event;
           this.analytics.trackPageView(this.router.url, `Event Detail – ${event.title}`);
@@ -69,6 +72,8 @@ export class EventDetailsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading event:', error);
+          // 403 => event is inactive (hidden from the public).
+          this.inactive = error?.status === 403;
           this.loading = false;
         }
       });
