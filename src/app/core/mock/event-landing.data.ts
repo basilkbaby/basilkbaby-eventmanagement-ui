@@ -261,11 +261,11 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
     ],
     leadArtists: ['Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
     mainSponsors: [
+      { name: 'Idealistic Mortgage & Insurance', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/idealistic.jpeg' },
       { name: 'Kerala Curry House',        logo: 'assets/images/events/nadirshow/sponsors/curryhouse.jpg' },
       { name: 'Paul John & Co Solicitors', logo: 'assets/images/events/nadirshow/sponsors/pjc.svg' },
       { name: 'Shan Properties',           logo: 'assets/images/events/nadirshow/sponsors/shan.jpg' },
-      { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' },
-      { name: 'Idealistic Mortgage & Insurance', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/idealistic.jpeg' }
+      { name: 'Life Line Mortgage',        logo: 'assets/images/events/nadirshow/sponsors/lifeline.png' }
     ],
     supportingSponsors: [
       { name: 'Chrystal Hyper Market', logo: 'assets/images/events/nadirshow/sponsors/chrystal-hyper-market.png' },
