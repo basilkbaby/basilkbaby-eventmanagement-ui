@@ -667,3 +667,10 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 
   &:hover { background: rgba(16, 185, 129, .22); transform: translateY(-1px); }
 }
+
+/* Static group badge (homepage collapsed group card — not a link) */
+.el-card__group--static {
+  cursor: default;
+  background: rgba(16, 185, 129, .12);
+  &:hover { background: rgba(16, 185, 129, .12); transform: none; }
+}

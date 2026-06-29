@@ -8,10 +8,11 @@ import { HeroSliderComponent } from '../pages/hero-slider/hero-slider.component'
 import { LoadingSpinnerComponent } from '../common/loading-spinner/loading-spinner.component';
 import { EventDto } from '../../core/models/DTOs/event.DTO.model';
 import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
+import { collapseByGroup, DisplayEvent } from '../../core/utils/event-group.util';
 
 interface EventGroup {
   label: string;
-  events: EventDto[];
+  events: DisplayEvent[];
 }
 
 const MONTHS = ['January','February','March','April','May','June',
@@ -41,6 +42,8 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
   @Input() events: EventDto[] = [];
   @Input() isLoading: boolean = true;
   @Input() error: string | null = null;
+  // When true, events of the same group collapse to one card linking to the group page.
+  @Input() collapseGroups: boolean = false;
 
   @Output() retryLoad = new EventEmitter<void>();
   @Output() filterChanged = new EventEmitter<{
@@ -48,7 +51,7 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
     dateFilter: 'upcoming' | 'past' | 'all';
   }>();
 
-  filteredEvents: EventDto[] = [];
+  filteredEvents: DisplayEvent[] = [];
   groupedEvents: EventGroup[] = [];
   searchTerm: string = '';
   dateFilter: 'upcoming' | 'past' | 'all' = 'upcoming';
@@ -144,11 +147,23 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
       return this.dateFilter === 'past' ? db - da : da - db;
     });
 
-    this.filteredEvents = result;
-    this.groupedEvents  = this.buildGroups(result);
+    // On the homepage, collapse each group to a single representative card.
+    const display: DisplayEvent[] = this.collapseGroups ? collapseByGroup(result) : result;
+
+    this.filteredEvents = display;
+    this.groupedEvents  = this.buildGroups(display);
   }
 
-  private buildGroups(events: EventDto[]): EventGroup[] {
+  // Card routing / title differ for a group representative vs a single event.
+  cardLink(ev: DisplayEvent): any[] {
+    return ev._isGroup ? ['/group', ev.groupId] : ['/events', ev.id];
+  }
+
+  cardTitle(ev: DisplayEvent): string {
+    return ev._isGroup ? (ev.groupName || ev.title) : ev.title;
+  }
+
+  private buildGroups(events: DisplayEvent[]): EventGroup[] {
     const map = new Map<string, EventDto[]>();
 
     for (const ev of events) {
