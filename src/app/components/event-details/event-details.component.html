@@ -56,7 +56,7 @@
             </svg>
             <div class="ed-stat__body">
               <span class="ed-stat__label">Date</span>
-              <span class="ed-stat__value">{{ event.startDate | formatDate }}</span>
+              <span class="ed-stat__value">{{ event.startDate | formatDate:'EEEE, MMMM d, yyyy' }}</span>
               <span class="ed-stat__sub">{{ event.startTime | formatTime }} &bull; {{ event.startTime | duration:event.endTime }}</span>
               <span class="ed-stat__sub">Gates open {{ event.gateOpenTime | formatTime }}</span>
             </div>
@@ -210,7 +210,7 @@
               </div>
               <div class="ed-info-item__body">
                 <span class="ed-info-item__label">Date</span>
-                <span class="ed-info-item__value">{{ event.startDate | formatDate }}</span>
+                <span class="ed-info-item__value">{{ event.startDate | formatDate:'EEEE, MMMM d, yyyy' }}</span>
               </div>
             </div>
 
