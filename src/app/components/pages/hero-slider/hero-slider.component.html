@@ -1,5 +1,5 @@
 <!-- hero-slider.component.html -->
-<section class="hero" *ngIf="!isLoading && featuredEvents.length > 0">
+<section class="hero" *ngIf="!isLoading && hasFeatured">
 
   <div class="hero-bg" aria-hidden="true">
     <div class="bg-blob bg-blob--1"></div>
@@ -8,7 +8,11 @@
   </div>
 
   <div class="hero-wrap">
-    <div class="hero-container" *ngIf="selectedEvent">
+
+    <!-- One hero block per group. A single group looks exactly as before;
+         multiple groups stack vertically, each with its own venue selector. -->
+    <ng-container *ngFor="let group of groups; let g = index">
+    <div class="hero-container" [class.hero-container--stacked]="g > 0" *ngIf="selectedEvent(g) as selectedEvent">
 
       <!-- ═══ LEFT — text content ═══ -->
       <div class="hero-left">
@@ -102,14 +106,14 @@
       </div>
 
       <!-- ═══ VENUE SELECTOR — spans full width below both columns ═══ -->
-      <div class="event-selector" *ngIf="featuredEvents.length > 1">
+      <div class="event-selector" *ngIf="group.length > 1">
         <span class="micro-label">Select Venue</span>
         <div class="event-chips">
           <button
-            *ngFor="let event of featuredEvents; let i = index"
+            *ngFor="let event of group; let i = index"
             class="event-chip"
-            [class.active]="i === selectedIndex"
-            (click)="selectEvent(i)"
+            [class.active]="i === selectedIndices[g]"
+            (click)="selectEvent(g, i)"
           >
             <span class="chip-inner">
               <svg class="chip-icon" width="15" height="15" viewBox="0 0 16 16" fill="none">
@@ -119,7 +123,7 @@
               </svg>
               <span class="chip-text">
                 <span class="chip-city">{{ event.venueCity }}</span>
-                <span class="chip-date chip-date--full">{{ event.startDate | formatDate }}</span>
+                <span class="chip-date chip-date--full">{{ event.startDate | formatDate:'EEEE, MMMM d, yyyy' }}</span>
                 <span class="chip-date chip-date--short">{{ formatShortDate(event.startDate) }}</span>
               </span>
             </span>
@@ -128,12 +132,14 @@
       </div>
 
     </div>
+    </ng-container>
+
   </div>
 
 </section>
 
 <!-- Empty state -->
-<div *ngIf="!isLoading && featuredEvents.length === 0" class="no-events">
+<div *ngIf="!isLoading && !hasFeatured" class="no-events">
   <div class="empty-state">
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C25A3C" stroke-width="1.4">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>

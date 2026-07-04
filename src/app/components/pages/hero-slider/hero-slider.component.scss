@@ -85,6 +85,11 @@ $r-pill: 999px;
   padding: 48px 0 32px;
 }
 
+// Second and later group blocks stack below the first with a divider.
+.hero-container--stacked {
+  border-top: 1px solid $border;
+}
+
 // ── LEFT ──────────────────────────────────────────────────────────────────────
 .hero-left {
   grid-area: left;
