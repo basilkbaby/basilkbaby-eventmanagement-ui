@@ -27,7 +27,7 @@
         <div class="stat-strip">
           <div class="stat-block" *ngIf="selectedEvent.startDate">
             <span class="stat-label">Date</span>
-            <span class="stat-value">{{ selectedEvent.startDate | formatDate }}</span>
+            <span class="stat-value">{{ selectedEvent.startDate | formatDate:'EEEE, MMMM d, yyyy' }}</span>
           </div>
           <div class="stat-divider" *ngIf="selectedEvent.startDate && selectedEvent.gateOpenTime"></div>
           <div class="stat-block" *ngIf="selectedEvent.gateOpenTime">
