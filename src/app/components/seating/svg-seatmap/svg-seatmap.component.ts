@@ -12,7 +12,7 @@ import {
   SelectedSeat, TicketType, VenueData, VenueSection
 } from '../../../core/models/seats.model';
 import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.component';
-import { applyCurveToSection, applyRotationToSection } from '../../../core/utils/seat-curve.util';
+import { applyCurveToSection, applyRotationToSection, parseRowNums } from '../../../core/utils/seat-curve.util';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
@@ -183,7 +183,12 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         const baseWidth  = tc - fc + 1;
         const baseCentre = colPos + (baseWidth - 1) / 2;
         // Seat numbering starts at this section's SeatStartNumber (default 1).
-        const seatNumberOffset = Math.max(1, section.seatStartNumber || 1) - 1;
+        const sectionStart = Math.max(1, section.seatStartNumber || 1);
+        // Per-row overrides: RowSeatCounts gives each row its own width (and optionally its
+        // own start number). Absent -> previous behaviour (fixed cols / taper).
+        const rowCounts = parseRowNums((cfg as any).rowSeatCounts);
+        const rowStarts = parseRowNums((cfg as any).rowStartNumbers);
+        const shaped    = !!rowCounts;
 
         const seatNum = (a: number, tot: number): number => {
           if (dir === 'right') return tot - a + 1;
@@ -206,22 +211,28 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
             ? contGen.getNextLetter(skip)
             : this.rowLetterForIndex(perRowIdx++, skip);
 
-          const rowWidth = baseWidth + step * (r - fr);
+          const ri = r - fr;
+          const rowWidth = shaped
+            ? (rowCounts![ri] > 0 ? rowCounts![ri] : baseWidth)
+            : baseWidth + step * ri;
+          const rowStart = shaped && rowStarts && rowStarts[ri] > 0 ? rowStarts[ri] : sectionStart;
+          const rowOffsetNum = rowStart - 1;
+          const shapedRow = shaped || step > 0;
           let minX = Infinity, maxX = -Infinity;
 
           for (let k = 0; k < rowWidth; k++) {
-            // Tapered rows widen symmetrically around the block centre; un-tapered rows
-            // keep the original left-to-right packing (including column gaps).
+            // Shaped rows (per-row counts or taper) widen symmetrically around the block
+            // centre; plain rows keep the original left-to-right packing (incl. column gaps).
             let cp: number;
             let sn: number;
-            if (step > 0) {
+            if (shapedRow) {
               cp = baseCentre - (rowWidth - 1) / 2 + k;
-              sn = seatNum(k + 1, rowWidth) + seatNumberOffset;
+              sn = seatNum(k + 1, rowWidth) + rowOffsetNum;
             } else {
               const c = fc + k;
               const colOffset = gapCols.filter((g:number) => c > g).length * gapSize;
               cp = colPos + (c - fc) + colOffset;
-              sn = seatNum(c - fc + 1, baseWidth) + seatNumberOffset;
+              sn = seatNum(c - fc + 1, baseWidth) + rowOffsetNum;
             }
 
             const short  = sName.charAt(0);
@@ -245,7 +256,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
               sectionConfigId: cfg.id, ticketType: cfg.type,
               status, price: cfg.customPrice || 0, color: cfg.color,
               gridRow: globalRow, gridColumn: Math.round(cp) + 1,
-              isStandingArea: false, originalColumn: step > 0 ? k + 1 : fc + k,
+              isStandingArea: false, originalColumn: shapedRow ? k + 1 : fc + k,
               numberingDirection: dir, blockIndex: ci,
               blockLetter: block, blockStartSeat: 1,
               blockTotalSeats: rowWidth, rowNumberingType: numType
@@ -255,7 +266,10 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
           rowLabelPos.set(`${section.id}-${block}-${rowLetter}`, { minX, maxX, y: section.y + globalRow * 26, dir, block, letter: rowLetter });
         }
 
-        if (step > 0) {
+        if (shaped) {
+          const maxW = Math.max(baseWidth, ...rowCounts!.map(n => (n > 0 ? n : 0)));
+          colPos += maxW + 2;
+        } else if (step > 0) {
           colPos += baseWidth + step * (tr - fr) + 2;
         } else {
           colPos += (tc - fc + 1);

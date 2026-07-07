@@ -9,6 +9,17 @@
 const CURVE_PHI_CAP = 1.15;
 
 /**
+ * Parse a CSV like "30,32,34" into numbers, preserving index alignment (blanks/invalid → NaN).
+ * Returns null when there's nothing usable so callers fall back to the old behaviour.
+ * Kept identical to the admin generator's parseRowNums.
+ */
+export function parseRowNums(csv: string | null | undefined): number[] | null {
+  if (!csv) return null;
+  const arr = csv.split(',').map(s => { const n = parseInt(s.trim(), 10); return isNaN(n) ? NaN : n; });
+  return arr.some(n => !isNaN(n)) ? arr : null;
+}
+
+/**
  * Bends one section's seats (and its row labels) onto a bounded arc, in place.
  * `points` and `labels` must contain ONLY the items for a single section.
  * curveStrength 0 (or falsy) is a no-op — the section stays a flat grid.

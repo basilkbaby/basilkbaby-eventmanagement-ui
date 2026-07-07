@@ -65,7 +65,8 @@ export interface SectionRowConfig {
   gapAfterColumn?: number;         // Gap after this column (e.g., 12)
   gapSize?: number;                // Size of gap (default: 1)
   gapColumns?: string;   // Comma-separated columns after which gaps appear e.g. "10,15,20"
-
+  rowSeatCounts?: string;          // CSV per-row seat counts, e.g. "30,32,34" (overrides width)
+  rowStartNumbers?: string;        // CSV per-row starting seat numbers (aligned to rowSeatCounts)
 }
 
 // seats.model.ts
