@@ -451,7 +451,9 @@ const VANCHI_DATA: CompanyEventData = {
     leadArtists: ['Dilieep', 'Nadirshah', 'Ranjini Jose', 'Samad Sulaiman', 'Dayana Hameed'],
     mainSponsors: [
       { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
-      { name: 'Excellent Financial Services', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/excellent.jpg' },
+      { name: 'EXCELLENT FINANCIAL SERVICES', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/excellent.jpg' },
+      { name: 'JOANNA HOLIDAYS', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/joannaholidays.jpeg' },
+
     ],
     supportingSponsors: [
     ]
