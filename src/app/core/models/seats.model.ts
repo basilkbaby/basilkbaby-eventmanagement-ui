@@ -37,6 +37,7 @@ export interface VenueSection {
   curveStrength?: number;          // 0 = flat grid; 1-100 bends rows onto a bounded arc
   rotation?: number;               // degrees; rotates the whole block around its centre
   rowWidthStep?: number;           // taper: extra seats added per row going back
+  seatStartNumber?: number;        // first seat number in the section (default 1)
   numberingDirection ? : string;
   rowConfigs: SectionRowConfig[];
   rowNumberingType?: RowNumberingType;

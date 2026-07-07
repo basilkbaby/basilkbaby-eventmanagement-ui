@@ -182,6 +182,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         const step       = Math.max(0, section.rowWidthStep || 0);
         const baseWidth  = tc - fc + 1;
         const baseCentre = colPos + (baseWidth - 1) / 2;
+        // Seat numbering starts at this section's SeatStartNumber (default 1).
+        const seatNumberOffset = Math.max(1, section.seatStartNumber || 1) - 1;
 
         const seatNum = (a: number, tot: number): number => {
           if (dir === 'right') return tot - a + 1;
@@ -214,12 +216,12 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
             let sn: number;
             if (step > 0) {
               cp = baseCentre - (rowWidth - 1) / 2 + k;
-              sn = seatNum(k + 1, rowWidth);
+              sn = seatNum(k + 1, rowWidth) + seatNumberOffset;
             } else {
               const c = fc + k;
               const colOffset = gapCols.filter((g:number) => c > g).length * gapSize;
               cp = colPos + (c - fc) + colOffset;
-              sn = seatNum(c - fc + 1, baseWidth);
+              sn = seatNum(c - fc + 1, baseWidth) + seatNumberOffset;
             }
 
             const short  = sName.charAt(0);
