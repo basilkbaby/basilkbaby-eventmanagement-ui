@@ -12,6 +12,7 @@ import {
   SelectedSeat, TicketType, VenueData, VenueSection
 } from '../../../core/models/seats.model';
 import { SeatMapVisualComponent } from './seat-map-visual/seat-map-visual.component';
+import { applyCurveToSection, applyRotationToSection } from '../../../core/utils/seat-curve.util';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
@@ -152,6 +153,9 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
       if (type === SeatSectionType.FOH) return;
       if (type === SeatSectionType.STANDING) { this.createStandingSection(section); return; }
 
+      const seatStart  = this.seats.length;
+      const labelStart = this.rowLabels.length;
+
       const sName       = section.name.toUpperCase();
       const rowOffset   = section.rowOffset || 0;
       const numType     = section.rowNumberingType || defNumType;
@@ -174,8 +178,12 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         if (ci > 0) colPos += 2;
         let perRowIdx = 0;
 
-        const seatNum = (c: number): number => {
-          const a = c - fc + 1, tot = tc - fc + 1;
+        // Row taper: each row going back gets `step` extra seats, centred on the block.
+        const step       = Math.max(0, section.rowWidthStep || 0);
+        const baseWidth  = tc - fc + 1;
+        const baseCentre = colPos + (baseWidth - 1) / 2;
+
+        const seatNum = (a: number, tot: number): number => {
           if (dir === 'right') return tot - a + 1;
           if (dir === 'center') {
             const mid = tot / 2;
@@ -196,17 +204,29 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
             ? contGen.getNextLetter(skip)
             : this.rowLetterForIndex(perRowIdx++, skip);
 
+          const rowWidth = baseWidth + step * (r - fr);
           let minX = Infinity, maxX = -Infinity;
 
-          for (let c = fc; c <= tc; c++) {
-            const colOffset = gapCols.filter((g:number) => c > g).length * gapSize;
-            const sn        = seatNum(c);
-            const short     = sName.charAt(0);
-            const seatId    = numType === RowNumberingType.CONTINUOUS
+          for (let k = 0; k < rowWidth; k++) {
+            // Tapered rows widen symmetrically around the block centre; un-tapered rows
+            // keep the original left-to-right packing (including column gaps).
+            let cp: number;
+            let sn: number;
+            if (step > 0) {
+              cp = baseCentre - (rowWidth - 1) / 2 + k;
+              sn = seatNum(k + 1, rowWidth);
+            } else {
+              const c = fc + k;
+              const colOffset = gapCols.filter((g:number) => c > g).length * gapSize;
+              cp = colPos + (c - fc) + colOffset;
+              sn = seatNum(c - fc + 1, baseWidth);
+            }
+
+            const short  = sName.charAt(0);
+            const seatId = numType === RowNumberingType.CONTINUOUS
               ? `${short}-${rowLetter}${sn}`
               : `${short}-${block}-${rowLetter}${sn}`;
 
-            const cp = colPos + (c - fc) + colOffset;
             // 26 = GAP constant in seat-map-visual (SR=10, diameter=20, gap between edges=6px)
             const cx = section.x + cp * 26;
             const cy = section.y + globalRow * 26;
@@ -222,19 +242,23 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
               sectionId: section.id, sectionName: section.sectionLabel || section.name,
               sectionConfigId: cfg.id, ticketType: cfg.type,
               status, price: cfg.customPrice || 0, color: cfg.color,
-              gridRow: globalRow, gridColumn: cp + 1,
-              isStandingArea: false, originalColumn: c,
+              gridRow: globalRow, gridColumn: Math.round(cp) + 1,
+              isStandingArea: false, originalColumn: step > 0 ? k + 1 : fc + k,
               numberingDirection: dir, blockIndex: ci,
               blockLetter: block, blockStartSeat: 1,
-              blockTotalSeats: tc - fc + 1, rowNumberingType: numType
+              blockTotalSeats: rowWidth, rowNumberingType: numType
             });
           }
 
           rowLabelPos.set(`${section.id}-${block}-${rowLetter}`, { minX, maxX, y: section.y + globalRow * 26, dir, block, letter: rowLetter });
         }
 
-        colPos += (tc - fc + 1);
-        colPos += gapCols.filter((g:number) => g >= fc && g < tc).length * gapSize;
+        if (step > 0) {
+          colPos += baseWidth + step * (tr - fr) + 2;
+        } else {
+          colPos += (tc - fc + 1);
+          colPos += gapCols.filter((g:number) => g >= fc && g < tc).length * gapSize;
+        }
       });
 
       rowLabelPos.forEach(pos => {
@@ -244,6 +268,10 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         else { lx = pos.block === 'R' ? pos.maxX + 15 : pos.minX - 15; side = pos.block === 'R' ? 'right' : 'left'; }
         this.rowLabels.push({ x: lx, y: pos.y + 4, label: pos.letter, side });
       });
+
+      // Bend this section's rows onto an arc, then tilt the whole block, when configured.
+      applyCurveToSection(this.seats.slice(seatStart), this.rowLabels.slice(labelStart), section.curveStrength);
+      applyRotationToSection(this.seats.slice(seatStart), this.rowLabels.slice(labelStart), section.rotation);
     });
   }
 
