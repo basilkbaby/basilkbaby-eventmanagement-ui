@@ -198,8 +198,10 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         const shaped    = !!rowCounts || step > 0;
         // Effective block width = the WIDEST row, so centring and advance stay consistent
         // even when per-row counts (or taper) differ from the column range.
+        // A per-row value of 0 = an intentionally empty row; only a blank/invalid entry
+        // (NaN) falls back to the column width.
         const blockWidth = rowCounts
-          ? Math.max(1, ...rowCounts.map(n => (n > 0 ? n : baseWidth)))
+          ? Math.max(1, ...rowCounts.map(n => (Number.isFinite(n) ? n : baseWidth)))
           : step > 0 ? baseWidth + step * (tr - fr)
           : baseWidth;
         // Row alignment within the block. "auto" = edges fan outward, middle centred.
@@ -242,7 +244,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
           const ri = r - fr;
           const rowWidth = rowCounts
-            ? (rowCounts[ri] > 0 ? rowCounts[ri] : baseWidth)
+            ? (Number.isFinite(rowCounts[ri]) ? rowCounts[ri] : baseWidth)
             : step > 0 ? baseWidth + step * ri
             : baseWidth;
           const rowStart = rowCounts && rowStarts && rowStarts[ri] > 0 ? rowStarts[ri] : sectionStart;
@@ -298,17 +300,19 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
           // One label per physical row (merge all blocks), so the row letter shows once at
           // the row's start even when blocks share a block letter. Keep the leftmost block's
-          // letter/direction (blocks are sorted left→right).
-          const rowKey = `${section.id}-${globalRow}`;
-          const exLbl = rowLabelPos.get(rowKey);
-          rowLabelPos.set(rowKey, {
-            minX: Math.min(minX, exLbl?.minX ?? Infinity),
-            maxX: Math.max(maxX, exLbl?.maxX ?? -Infinity),
-            y: section.y + globalRow * 26,
-            dir: exLbl?.dir ?? dir,
-            block: exLbl?.block ?? block,
-            letter: exLbl?.letter ?? rowLetter
-          });
+          // letter/direction (blocks are sorted left→right). Skip empty rows (no seats).
+          if (minX !== Infinity) {
+            const rowKey = `${section.id}-${globalRow}`;
+            const exLbl = rowLabelPos.get(rowKey);
+            rowLabelPos.set(rowKey, {
+              minX: Math.min(minX, exLbl?.minX ?? Infinity),
+              maxX: Math.max(maxX, exLbl?.maxX ?? -Infinity),
+              y: section.y + globalRow * 26,
+              dir: exLbl?.dir ?? dir,
+              block: exLbl?.block ?? block,
+              letter: exLbl?.letter ?? rowLetter
+            });
+          }
         }
 
         if (shaped) {
