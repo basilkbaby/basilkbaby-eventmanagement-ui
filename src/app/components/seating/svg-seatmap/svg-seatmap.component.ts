@@ -141,6 +141,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     (['reservedSeats', 'blockedSeats', 'soldSeats', 'unavailableSeats'] as (keyof SeatManagement)[])
       .forEach(cat => this.venueData.seatManagement[cat]?.forEach(o => statusMap.set(o.seatId, o)));
 
+    // Shared across sections so CONTINUOUS numbering runs venue-wide (letters never repeat).
     const contGen = this.createLetterGenerator();
     const defNumType = RowNumberingType.PERSECTION;
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -160,6 +161,9 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
       const rowOffset   = section.rowOffset || 0;
       const numType     = section.rowNumberingType || defNumType;
       const secSkip     = section.skipRowLetters || [];
+      // One continuous letter per physical row, shared across all blocks of that row.
+      // The generator (contGen) is shared across sections, so letters continue venue-wide.
+      const contRowLetters  = new Map<number, string>();
       const rowLabelPos = new Map<string, { minX: number; maxX: number; y: number; dir: 'left'|'right'|'center'; block: string; letter: string }>();
 
       let colPos = 0;
@@ -221,9 +225,15 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
 
         for (let r = fr; r <= tr; r++) {
           const globalRow = r + rowOffset;
-          const rowLetter = numType === RowNumberingType.CONTINUOUS
-            ? contGen.getNextLetter(skip)
-            : this.rowLetterForIndex(perRowIdx++, skip);
+          let rowLetter: string;
+          if (numType === RowNumberingType.CONTINUOUS) {
+            // One letter per physical row, reused across every block of that row.
+            const cached = contRowLetters.get(globalRow);
+            if (cached !== undefined) { rowLetter = cached; }
+            else { rowLetter = contGen.getNextLetter(skip); contRowLetters.set(globalRow, rowLetter); }
+          } else {
+            rowLetter = this.rowLetterForIndex(perRowIdx++, skip);
+          }
 
           const ri = r - fr;
           const rowWidth = rowCounts
@@ -281,7 +291,19 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
             });
           }
 
-          rowLabelPos.set(`${section.id}-${block}-${rowLetter}`, { minX, maxX, y: section.y + globalRow * 26, dir, block, letter: rowLetter });
+          // One label per physical row (merge all blocks), so the row letter shows once at
+          // the row's start even when blocks share a block letter. Keep the leftmost block's
+          // letter/direction (blocks are sorted left→right).
+          const rowKey = `${section.id}-${globalRow}`;
+          const exLbl = rowLabelPos.get(rowKey);
+          rowLabelPos.set(rowKey, {
+            minX: Math.min(minX, exLbl?.minX ?? Infinity),
+            maxX: Math.max(maxX, exLbl?.maxX ?? -Infinity),
+            y: section.y + globalRow * 26,
+            dir: exLbl?.dir ?? dir,
+            block: exLbl?.block ?? block,
+            letter: exLbl?.letter ?? rowLetter
+          });
         }
 
         if (shaped) {
