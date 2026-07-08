@@ -193,6 +193,8 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         // own start number). Absent -> previous behaviour (fixed cols / taper).
         const rowCounts = parseRowNums((cfg as any).rowSeatCounts);
         const rowStarts = parseRowNums((cfg as any).rowStartNumbers);
+        // Optional per-row letter overrides (CSV aligned to the block's rows).
+        const rowLettersArr: string[] = ((cfg as any).rowLetters || '').split(',').map((s: string) => s.trim());
         const shaped    = !!rowCounts || step > 0;
         // Effective block width = the WIDEST row, so centring and advance stay consistent
         // even when per-row counts (or taper) differ from the column range.
@@ -234,6 +236,9 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
           } else {
             rowLetter = this.rowLetterForIndex(perRowIdx++, skip);
           }
+          // Explicit per-row letter wins when provided.
+          const letterOverride = rowLettersArr[r - fr];
+          if (letterOverride) rowLetter = letterOverride;
 
           const ri = r - fr;
           const rowWidth = rowCounts
