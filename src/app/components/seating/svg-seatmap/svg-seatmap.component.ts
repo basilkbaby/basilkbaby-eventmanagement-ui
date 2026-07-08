@@ -175,20 +175,34 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         const gapSize  = cfg.gapSize || 1;
         const skip     = cfg.skipRowLetters || secSkip;
 
-        if (ci > 0) colPos += 2;
+        // Aisle (in columns) inserted before each block after the first. Per-section, default 2.
+        const blockGap = Math.max(0, section.blockGap ?? 2);
+        if (ci > 0) colPos += blockGap;
         let perRowIdx = 0;
 
         // Row taper: each row going back gets `step` extra seats, centred on the block.
         const step       = Math.max(0, section.rowWidthStep || 0);
         const baseWidth  = tc - fc + 1;
-        const baseCentre = colPos + (baseWidth - 1) / 2;
         // Seat numbering starts at this section's SeatStartNumber (default 1).
         const sectionStart = Math.max(1, section.seatStartNumber || 1);
         // Per-row overrides: RowSeatCounts gives each row its own width (and optionally its
         // own start number). Absent -> previous behaviour (fixed cols / taper).
         const rowCounts = parseRowNums((cfg as any).rowSeatCounts);
         const rowStarts = parseRowNums((cfg as any).rowStartNumbers);
-        const shaped    = !!rowCounts;
+        const shaped    = !!rowCounts || step > 0;
+        // Effective block width = the WIDEST row, so centring and advance stay consistent
+        // even when per-row counts (or taper) differ from the column range.
+        const blockWidth = rowCounts
+          ? Math.max(1, ...rowCounts.map(n => (n > 0 ? n : baseWidth)))
+          : step > 0 ? baseWidth + step * (tr - fr)
+          : baseWidth;
+        // Row alignment within the block. "auto" = edges fan outward, middle centred.
+        const blockCount = sortedCfgs.length;
+        const align = ((cfg as any).rowAlign || 'auto').toLowerCase();
+        const resolvedAlign = align !== 'auto' ? align
+          : (blockCount > 1 && ci === 0) ? 'right'
+          : (blockCount > 1 && ci === blockCount - 1) ? 'left'
+          : 'center';
 
         const seatNum = (a: number, tot: number): number => {
           if (dir === 'right') return tot - a + 1;
@@ -212,21 +226,25 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
             : this.rowLetterForIndex(perRowIdx++, skip);
 
           const ri = r - fr;
-          const rowWidth = shaped
-            ? (rowCounts![ri] > 0 ? rowCounts![ri] : baseWidth)
-            : baseWidth + step * ri;
-          const rowStart = shaped && rowStarts && rowStarts[ri] > 0 ? rowStarts[ri] : sectionStart;
+          const rowWidth = rowCounts
+            ? (rowCounts[ri] > 0 ? rowCounts[ri] : baseWidth)
+            : step > 0 ? baseWidth + step * ri
+            : baseWidth;
+          const rowStart = rowCounts && rowStarts && rowStarts[ri] > 0 ? rowStarts[ri] : sectionStart;
           const rowOffsetNum = rowStart - 1;
-          const shapedRow = shaped || step > 0;
+          // Anchor shaped rows: left = flush left, right = flush right, center = centred.
+          const rowAnchor = resolvedAlign === 'left' ? 0
+                          : resolvedAlign === 'right' ? (blockWidth - rowWidth)
+                          : (blockWidth - rowWidth) / 2;
           let minX = Infinity, maxX = -Infinity;
 
           for (let k = 0; k < rowWidth; k++) {
-            // Shaped rows (per-row counts or taper) widen symmetrically around the block
-            // centre; plain rows keep the original left-to-right packing (incl. column gaps).
+            // Shaped rows (per-row counts or taper) anchor per numbering direction; plain
+            // rows keep the original left-to-right packing (incl. column gaps).
             let cp: number;
             let sn: number;
-            if (shapedRow) {
-              cp = baseCentre - (rowWidth - 1) / 2 + k;
+            if (shaped) {
+              cp = colPos + rowAnchor + k;
               sn = seatNum(k + 1, rowWidth) + rowOffsetNum;
             } else {
               const c = fc + k;
@@ -256,7 +274,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
               sectionConfigId: cfg.id, ticketType: cfg.type,
               status, price: cfg.customPrice || 0, color: cfg.color,
               gridRow: globalRow, gridColumn: Math.round(cp) + 1,
-              isStandingArea: false, originalColumn: shapedRow ? k + 1 : fc + k,
+              isStandingArea: false, originalColumn: shaped ? k + 1 : fc + k,
               numberingDirection: dir, blockIndex: ci,
               blockLetter: block, blockStartSeat: 1,
               blockTotalSeats: rowWidth, rowNumberingType: numType
@@ -267,10 +285,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         }
 
         if (shaped) {
-          const maxW = Math.max(baseWidth, ...rowCounts!.map(n => (n > 0 ? n : 0)));
-          colPos += maxW + 2;
-        } else if (step > 0) {
-          colPos += baseWidth + step * (tr - fr) + 2;
+          colPos += blockWidth;
         } else {
           colPos += (tc - fc + 1);
           colPos += gapCols.filter((g:number) => g >= fc && g < tc).length * gapSize;
