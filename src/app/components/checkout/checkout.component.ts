@@ -67,6 +67,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   // Payment intent data
   private clientSecret: string = '';
   private paymentIntentId: string = '';
+  // Set once a payment has actually succeeded — never re-charge; only complete the order.
+  private paidPaymentIntentId: string = '';
   
   private checkoutSubscription: Subscription | undefined;
   private cartStateSubscription: Subscription | undefined;
@@ -278,9 +280,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   // Initialize payment flow - KEPT AS IS but only called when customer info is valid
+  private paymentInitInFlight = false;
   private async initializePayment(): Promise<void> {
+    // Guard against concurrent re-entry creating duplicate intents before the id is stored.
+    if (this.paymentInitInFlight) return;
+    this.paymentInitInFlight = true;
     try {
-      // Create payment intent
+      // Create payment intent (backend reuses this.paymentIntentId when present)
       const paymentIntentResponse = await this.createPaymentIntent(this.cartSummary.total);
 
       // Load Stripe
@@ -299,6 +305,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     } catch (error: any) {
       this.stripeError = error.message || 'Failed to initialize payment';
       this.cdr.detectChanges();
+    } finally {
+      this.paymentInitInFlight = false;
     }
   }
 
@@ -386,6 +394,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Payment already succeeded this session — never re-charge; just (re)complete the
+    // idempotent order. This stops the "pay again after 3DS success" double-charge.
+    if (this.paidPaymentIntentId) {
+      this.processing = true;
+      this.cdr.detectChanges();
+      await this.processOrder(this.paidPaymentIntentId);
+      return;
+    }
+
     if (!this.stripe || !this.elements) {
       this.stripeError = 'Payment form not ready';
       return;
@@ -425,13 +442,26 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         redirect: 'if_required'
       });
 
+      const resolvedIntentId = paymentIntent?.id || this.paymentIntentId;
+
       if (error) {
+        // confirmPayment can report an error even after the charge went through (e.g. the
+        // intent already succeeded via 3DS). Verify with the server before failing so we
+        // complete the order instead of prompting a re-charge.
+        const verified = await this.checkPaymentStatusNow(resolvedIntentId);
+        if (verified === 'succeeded') {
+          this.paidPaymentIntentId = resolvedIntentId;
+          sessionStorage.removeItem('checkout_pending');
+          await this.processOrder(resolvedIntentId);
+          return;
+        }
         sessionStorage.removeItem('checkout_pending');
         this.stripeError = error.message || 'Payment failed';
         this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
         this.processing = false;
         this.cdr.detectChanges();
       } else if (paymentIntent?.status === 'succeeded') {
+        this.paidPaymentIntentId = paymentIntent.id;
         sessionStorage.removeItem('checkout_pending');
         await this.processOrder(paymentIntent.id);
       } else if (paymentIntent?.status === 'processing') {
@@ -439,6 +469,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const finalStatus = await this.pollPaymentStatus(paymentIntent.id);
         sessionStorage.removeItem('checkout_pending');
         if (finalStatus === 'succeeded') {
+          this.paidPaymentIntentId = paymentIntent.id;
           await this.processOrder(paymentIntent.id);
         } else if (finalStatus === 'timeout') {
           this.stripeError = 'Payment is still processing. You will receive a confirmation email once it completes.';
@@ -452,6 +483,24 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         }
       } else {
+        // Unknown/absent status from confirmPayment — don't assume failure. Verify with the
+        // server: the 3DS charge may have actually succeeded (or still be processing).
+        const verified = await this.checkPaymentStatusNow(resolvedIntentId);
+        if (verified === 'succeeded') {
+          this.paidPaymentIntentId = resolvedIntentId;
+          sessionStorage.removeItem('checkout_pending');
+          await this.processOrder(resolvedIntentId);
+          return;
+        }
+        if (verified === 'processing') {
+          const finalStatus = await this.pollPaymentStatus(resolvedIntentId);
+          if (finalStatus === 'succeeded') {
+            this.paidPaymentIntentId = resolvedIntentId;
+            sessionStorage.removeItem('checkout_pending');
+            await this.processOrder(resolvedIntentId);
+            return;
+          }
+        }
         sessionStorage.removeItem('checkout_pending');
         this.stripeError = 'Payment not completed';
         this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
@@ -465,6 +514,20 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.analytics.trackPaymentError(this.stripeError, this.cartSummary.eventId ?? '');
       this.processing = false;
       this.cdr.detectChanges();
+    }
+  }
+
+  // One-shot Stripe payment status check (server reads the intent from the event's account).
+  private async checkPaymentStatusNow(paymentIntentId: string): Promise<string> {
+    const eid = this.cartSummary.eventId ?? '';
+    if (!paymentIntentId || !eid) return 'unknown';
+    try {
+      const r = await lastValueFrom(
+        this.http.get<{ status: string }>(`${environment.apiUrl}/api/checkout/payment-status/${paymentIntentId}/${eid}`)
+      );
+      return r.status;
+    } catch {
+      return 'unknown';
     }
   }
 
@@ -522,6 +585,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           currency: 'gbp',
           eventId: eventId,
           cartId: this.cartSummary.cartId,
+          // Reuse the intent we already created this session (backend updates it in place).
+          paymentIntentId: this.paymentIntentId || null,
           metadata: metadata,
           customer: {
             firstName: this.customerForm.get('firstName')?.value,
