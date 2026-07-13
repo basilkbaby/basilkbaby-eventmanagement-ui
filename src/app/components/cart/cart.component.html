@@ -28,6 +28,15 @@
       <button class="cart-error__retry" (click)="refreshCart()">Retry</button>
     </div>
 
+    <!-- Sold-out warning — a seat in the cart was bought by someone else -->
+    <div class="cart-error" *ngIf="soldSeatsMessage">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>{{ soldSeatsMessage }}</span>
+    </div>
+
     <!-- ── Two-column layout ───────────────────────────────────────────────── -->
     <div class="cart-layout" *ngIf="cartItems.length > 0">
 

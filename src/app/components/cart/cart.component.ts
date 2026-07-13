@@ -19,6 +19,8 @@ export class CartComponent implements OnInit, OnDestroy {
   cartSummary: CartSummaryDto = this.getEmptyCartSummary();
   loading: boolean = true;
   errorMessage: string = '';
+  soldSeats: string[] = [];
+  soldSeatsMessage: string = '';
   
   private cartStateSubscription: Subscription | undefined;
   private cartDetailsSubscription: Subscription | undefined;
@@ -47,6 +49,7 @@ export class CartComponent implements OnInit, OnDestroy {
           if (this.cartSummary.cartItems?.length) {
             this.analytics.trackViewCart(this.cartSummary, this.cartSummary.eventId ?? '');
           }
+          this.checkForSoldSeats();
         }
       },
       error: (error) => {
@@ -71,6 +74,18 @@ export class CartComponent implements OnInit, OnDestroy {
   loadCartData(): void {
     this.loading = true;
     this.cartService.getCartDetails();
+  }
+
+  // Warn if any seat in the cart has already been sold to someone else.
+  private checkForSoldSeats(): void {
+    const cartId = this.cartService.getCurrentCartId();
+    if (!cartId) return;
+    this.cartService.checkSoldSeats(cartId).subscribe(sold => {
+      this.soldSeats = sold || [];
+      this.soldSeatsMessage = this.soldSeats.length
+        ? `These seats are no longer available (already sold): ${this.soldSeats.join(', ')}. Please remove them to continue.`
+        : '';
+    });
   }
 
 

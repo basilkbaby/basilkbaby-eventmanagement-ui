@@ -63,6 +63,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   elements: StripeElements | null = null;
   paymentElement: StripePaymentElement | null = null;
   stripeError: string = '';
+  soldSeatsMessage: string = '';
   
   // Payment intent data
   private clientSecret: string = '';
@@ -149,7 +150,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             this.router.navigate(['/confirmation', response.data!.orderId]);
           }, 2000);
         } else {
-          const message = response.error || 'Checkout failed. Please contact support.';
+          let message = response.error || 'Checkout failed. Please contact support.';
+          // Post-payment double-booking guard fired — make it human-readable.
+          if (message.includes('SEATS_ALREADY_SOLD')) {
+            const seats = message.split(':')[1] || '';
+            message = `Sorry — these seats were just taken by another customer${seats ? ' (' + seats + ')' : ''}. ` +
+                      `Your payment has been received; please contact support with reference ${this.paymentIntentId || this.paidPaymentIntentId} for a refund.`;
+            this.soldSeatsMessage = message;
+          }
           this.stripeError = message;
           this.notificationService.showError(message, 'Payment Error', 8000);
           this.cdr.detectChanges();
@@ -277,6 +285,24 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     
     this.loading = true;
     this.cartService.getCartDetails(cartId); // This triggers the API call
+    this.verifySeatsAvailable(cartId); // warn early if a seat was already sold
+  }
+
+  // Checks the backend for seats in this cart that have already been sold. Returns true if
+  // all seats are still available. Sets soldSeatsMessage (and stripeError) when some aren't.
+  private async verifySeatsAvailable(cartId: string): Promise<boolean> {
+    try {
+      const sold = await lastValueFrom(this.cartService.checkSoldSeats(cartId));
+      if (sold && sold.length) {
+        this.soldSeatsMessage = `These seats have already been sold: ${sold.join(', ')}. Please return to your cart and remove them.`;
+        this.cdr.detectChanges();
+        return false;
+      }
+      this.soldSeatsMessage = '';
+      return true;
+    } catch {
+      return true; // don't block checkout on a check failure
+    }
   }
 
   // Initialize payment flow - KEPT AS IS but only called when customer info is valid
@@ -303,6 +329,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       await this.initializePaymentElement();
       
     } catch (error: any) {
+      if (error?.alreadyPaid) {
+        // The cart was already paid (e.g. an earlier attempt succeeded) — don't offer payment again.
+        this.showPaymentSection = false;
+        this.soldSeatsMessage = 'This cart has already been paid. Please check your email for your tickets, or contact support if you have not received them.';
+        this.notificationService.showInfo(this.soldSeatsMessage, 'Already Paid', 0);
+        this.cdr.detectChanges();
+        return;
+      }
       this.stripeError = error.message || 'Failed to initialize payment';
       this.cdr.detectChanges();
     } finally {
@@ -413,6 +447,17 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     
     try {
       this.analytics.trackAddPaymentInfo(this.cartSummary, this.cartSummary.eventId ?? '');
+
+      // Final availability check right before charging — don't take money for a seat that
+      // was just sold to someone else.
+      const stillAvailable = await this.verifySeatsAvailable(this.cartSummary.cartId ?? '');
+      if (!stillAvailable) {
+        this.stripeError = this.soldSeatsMessage;
+        this.notificationService.showError(this.soldSeatsMessage, 'Seats Unavailable', 8000);
+        this.processing = false;
+        this.cdr.detectChanges();
+        return;
+      }
 
       const { error: submitError } = await this.elements.submit();
       if (submitError) {
@@ -600,6 +645,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       
       return response;
     } catch (error: any) {
+      // Cart already paid (409) — the backend blocked a second charge for this cart.
+      if (error?.error?.alreadyPaid) {
+        const e: any = new Error(error.error.error || 'This cart has already been paid.');
+        e.alreadyPaid = true;
+        throw e;
+      }
       const message = error.error?.error || error.error?.message || error.message || 'Payment initialization failed';
       throw new Error(message);
     }

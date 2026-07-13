@@ -78,7 +78,7 @@
     <div class="sidebar-hd">
       <div class="ev-meta">
         <h1 class="ev-name">{{ venueData.eventName }}</h1>
-        <p class="ev-date">{{ venueData.eventDate | formatDate }}</p>
+        <p class="ev-date">{{ venueData.eventDate | formatDate:'EEEE, MMMM d, yyyy' }}</p>
       </div>
       <div class="sel-badge" *ngIf="selectedSeats.length > 0 && !showGAPanel">
         <span>{{ selectedSeats.length }}</span>

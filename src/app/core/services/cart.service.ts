@@ -172,6 +172,15 @@ export class CartService {
   }
 
   // Complete checkout
+  // Returns the seats in this cart that have already been sold (booked by another order).
+  checkSoldSeats(cartId: string): Observable<string[]> {
+    return this.http.get<{ success: boolean; soldSeats: string[] }>(`${this.baseUrl}/cart/${cartId}/sold-seats`)
+      .pipe(
+        map(r => r?.soldSeats ?? []),
+        catchError(() => of([]))
+      );
+  }
+
   checkout(checkoutData: CheckoutRequest): void {
     this.http.post<CheckoutResponse>(`${this.baseUrl}/checkout/complete`, checkoutData)
       .subscribe({
