@@ -151,13 +151,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           }, 2000);
         } else {
           let message = response.error || 'Checkout failed. Please contact support.';
-          // Post-payment double-booking guard fired — make it human-readable.
+          const ref = this.paidPaymentIntentId || this.paymentIntentId;
+          // Legacy fallback: older API builds returned the raw code instead of a message.
           if (message.includes('SEATS_ALREADY_SOLD')) {
             const seats = message.split(':')[1] || '';
-            message = `Sorry — these seats were just taken by another customer${seats ? ' (' + seats + ')' : ''}. ` +
-                      `Your payment has been received; please contact support with reference ${this.paymentIntentId || this.paidPaymentIntentId} for a refund.`;
-            this.soldSeatsMessage = message;
+            message = `Sorry — these seats were just taken by another customer${seats ? ' (' + seats + ')' : ''}. Your payment has been received.`;
           }
+          // We only get here after the payment succeeded, so money was taken — always give the
+          // customer a reference so support can locate and refund the charge.
+          if (ref && !message.includes(ref)) {
+            message += ` Please contact support with reference ${ref} for a refund.`;
+          }
+          this.soldSeatsMessage = message;
           this.stripeError = message;
           this.notificationService.showError(message, 'Payment Error', 8000);
           this.cdr.detectChanges();
