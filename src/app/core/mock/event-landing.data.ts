@@ -453,6 +453,7 @@ const VANCHI_DATA: CompanyEventData = {
       { name: 'VANCHI SOUTH INDIAN RESTURANT',     logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/vanchi.jpeg' },
       { name: 'EXCELLENT FINANCIAL SERVICES', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/excellent.jpg' },
       { name: 'JOANNA HOLIDAYS', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/joannaholidays.jpeg' },
+      { name: 'MAIDSTONE MALAYALEE ASSOCIATION', logo: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/nadirshah/MAIDSTONEMALAYALEEASSOCIATION.jpeg' },
 
     ],
     supportingSponsors: [
