@@ -81,8 +81,12 @@ export class EventDetailsComponent implements OnInit {
 
   navigateToSeatSelection(): void {
     if (this.event && !this.event.isPast) {
-      this.router.navigate(['/events', this.event.id, 'seatmap']); //seatstheatre
-
+      // General-admission events (SeatingMode = 2) have no seat map — go to ticket selection.
+      if ((this.event as any).seatingMode === 2) {
+        this.router.navigate(['/events', this.event.id, 'tickets']);
+      } else {
+        this.router.navigate(['/events', this.event.id, 'seatmap']); //seatstheatre
+      }
     }
   }
 

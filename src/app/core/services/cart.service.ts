@@ -80,6 +80,34 @@ export class CartService {
   }
 
 
+  // General-admission: add ticket categories with quantities (creates the cart).
+  addTicketsToCart(eventId: string, tickets: { ticketTypeId: string; quantity: number }[]): Observable<CartDetailsResponse> {
+    const sessionId = this.getOrCreateSessionId();
+    const request = { eventId, sessionId, tickets };
+
+    return this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart/tickets`, request)
+      .pipe(
+        tap(response => {
+          if (response.success && response.data) {
+            this.currentCartId = response.data.cartId;
+            this.currentEventId = response.data.eventId;
+            this.saveCartIdToStorage();
+            this.updateCartState(response.data);
+          }
+          this.cartDetailsSubject.next(response);
+        }),
+        catchError(error => {
+          const errorResponse: CartDetailsResponse = {
+            success: false,
+            error: error.error?.error || error.error?.message || error.message,
+            data: undefined
+          };
+          this.cartDetailsSubject.next(errorResponse);
+          return throwError(() => error);
+        })
+      );
+  }
+
   // Get cart details from API
   getCartDetails(cartId?: string): void {
     const idToUse = cartId || this.currentCartId;

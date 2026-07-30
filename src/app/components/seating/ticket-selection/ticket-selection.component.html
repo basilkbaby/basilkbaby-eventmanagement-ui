@@ -1,0 +1,55 @@
+<div class="ts-page">
+  <div class="ts-header" *ngIf="event">
+    <a [routerLink]="['/events', eventId]" class="ts-back">← Back</a>
+    <h1 class="ts-title">{{ event.title }}</h1>
+    <p class="ts-date" *ngIf="event.startDate">{{ event.startDate | date:'EEEE, MMMM d, yyyy' }}</p>
+  </div>
+
+  <div class="ts-body">
+    <div class="ts-list">
+      <h2>Select tickets</h2>
+
+      <div *ngIf="loading" class="ts-muted">Loading tickets…</div>
+      <div *ngIf="!loading && tickets.length === 0" class="ts-muted">No tickets are currently on sale for this event.</div>
+
+      <div class="ts-ticket" *ngFor="let t of tickets" [class.soldout]="t.soldOut || maxFor(t) <= 0">
+        <div class="ts-ticket-info">
+          <div class="ts-ticket-name">{{ t.name }}</div>
+          <div class="ts-ticket-desc" *ngIf="t.description">{{ t.description }}</div>
+          <div class="ts-ticket-price">{{ t.price === 0 ? 'Free' : ('£' + (t.price | number:'1.2-2')) }}</div>
+          <div class="ts-ticket-left" *ngIf="!t.soldOut && t.available <= 10">Only {{ t.available }} left</div>
+          <div class="ts-ticket-left sold" *ngIf="t.soldOut || maxFor(t) <= 0">Sold out</div>
+        </div>
+        <div class="ts-stepper" *ngIf="!t.soldOut && maxFor(t) > 0">
+          <button (click)="dec(t)" [disabled]="t.qty === 0" aria-label="decrease">−</button>
+          <span class="ts-qty">{{ t.qty }}</span>
+          <button (click)="inc(t)" [disabled]="t.qty >= maxFor(t)" aria-label="increase">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ts-summary" *ngIf="!loading && tickets.length">
+      <h3>Order summary</h3>
+      <div class="ts-line" *ngFor="let t of tickets">
+        <ng-container *ngIf="t.qty > 0">
+          <span>{{ t.qty }} × {{ t.name }}</span>
+          <span>£{{ (t.qty * t.price) | number:'1.2-2' }}</span>
+        </ng-container>
+      </div>
+      <div class="ts-line" *ngIf="totalQty > 0">
+        <span>Service fee</span>
+        <span>£{{ serviceFee | number:'1.2-2' }}</span>
+      </div>
+      <div class="ts-total">
+        <span>Total</span>
+        <span>£{{ total | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="ts-error" *ngIf="error">{{ error }}</div>
+
+      <button class="ts-cta" [disabled]="totalQty === 0 || adding" (click)="continue()">
+        {{ adding ? 'Adding…' : 'Continue to checkout' }}
+      </button>
+    </div>
+  </div>
+</div>
