@@ -92,7 +92,7 @@ const MANCHESTERGEMS_DATA: CompanyEventData = {
       id: 'blackpool',
       name: 'Winter Gardens Blackpool',
       location: 'Blackpool',
-      address: '97 Church St., Blackpool FY1 1HL',
+      address: '97 Church St., Blackpool FY1 4JR',
       date: '22nd AUGUST 2026',
       time: '6:00 PM',
       gateopentime: '5:00 PM',
