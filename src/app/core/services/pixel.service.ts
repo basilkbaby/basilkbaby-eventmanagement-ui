@@ -39,8 +39,13 @@ export class PixelService {
     if (!this.inited.has(pixelId)) {
       fbq('init', pixelId);
       this.inited.add(pixelId);
+      // Base PageView fires once when this event's pixel first activates (replaces the
+      // global fbq('track','PageView') we can't use in a per-event setup).
+      fbq('trackSingle', pixelId, 'PageView');
     }
-    fbq('trackSingle', pixelId, eventName, data || {});
+    if (eventName !== 'PageView') {
+      fbq('trackSingle', pixelId, eventName, data || {});
+    }
   }
 
   /** Resolve the event's pixel and fire a standard Meta event against it. */
