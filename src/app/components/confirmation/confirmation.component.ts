@@ -8,6 +8,7 @@ import { Order, Ticket } from '../../core/models/order.model';
 import { CartService } from '../../core/services/cart.service';
 import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { PixelService } from '../../core/services/pixel.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -33,7 +34,8 @@ resending: boolean = false;
     private orderService: OrderService,
     private ticketService: TicketService,
     private cartService: CartService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private pixel: PixelService
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +61,7 @@ resending: boolean = false;
       next: (order) => {
         this.order = order;
         this.analytics.trackPurchase(order);
+        this.pixel.purchase(order.eventId, order.totalAmount, order.orderNumber || order.orderId);
         this.loading = false;
       },
       error: (error) => {

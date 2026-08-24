@@ -7,6 +7,7 @@ import { Event, TicketTier } from '../../core/models/event.model';
 import { MOCK_EVENTS } from '../../core/mock/mock-events.data';
 import { EventService } from '../../core/services/event.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { PixelService } from '../../core/services/pixel.service';
 import { EventAdditionalDetailDto, EventDetailDto } from '../../core/models/DTOs/event.DTO.model';
 import { FormatDatePipe } from '../../core/pipes/format-date.pipe';
 import { OrganizationType } from '../../core/models/Enums/event.enums';
@@ -36,7 +37,8 @@ export class EventDetailsComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private eventService: EventService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private pixel: PixelService
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +70,7 @@ export class EventDetailsComponent implements OnInit {
         next: (event) => {
           this.event = event;
           this.analytics.trackPageView(this.router.url, `Event Detail – ${event.title}`);
+          this.pixel.viewContent(event.id);
           this.loading = false;
         },
         error: (error) => {

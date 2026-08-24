@@ -22,6 +22,7 @@ import { emailMatchValidator } from '../../core/validators/email-match-validator
 import { CouponData, CouponResponse } from '../../core/models/DTOs/checkout.DTo.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { PixelService } from '../../core/services/pixel.service';
 
 @Component({
   selector: 'app-checkout',
@@ -94,7 +95,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private notificationService: NotificationService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private pixel: PixelService
   ) {
     this.checkoutForm = this.createCheckoutForm();
     
@@ -102,6 +104,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.checkoutForm.get('customer')?.statusChanges.subscribe(status => {
       if (status === 'VALID' && !this.showPaymentSection && this.cartSummary.seatCount > 0) {
         this.showPaymentSection = true;
+        this.pixel.initiateCheckout(this.cartSummary.eventId ?? '', this.cartSummary.total, this.cartSummary.seatCount);
         this.cdr.detectChanges();
         // In recovery mode the payment was already taken — don't create a new payment intent
         if (!this.recoveryPaymentIntentId) {
@@ -452,6 +455,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     
     try {
       this.analytics.trackAddPaymentInfo(this.cartSummary, this.cartSummary.eventId ?? '');
+      this.pixel.addPaymentInfo(this.cartSummary.eventId ?? '', this.cartSummary.total);
 
       // Final availability check right before charging — don't take money for a seat that
       // was just sold to someone else.

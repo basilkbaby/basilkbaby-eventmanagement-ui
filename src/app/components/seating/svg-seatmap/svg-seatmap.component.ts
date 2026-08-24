@@ -17,6 +17,7 @@ import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GeneralAdmissionComponent } from '../general-admission/general-admission.component';
 import { AnalyticsService } from '../../../core/services/analytics.service';
+import { PixelService } from '../../../core/services/pixel.service';
 import { EventService } from '../../../core/services/event.service';
 
 @Component({
@@ -66,6 +67,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
     private router:              Router,
     private notificationService: NotificationService,
     private analytics:           AnalyticsService,
+    private pixel:               PixelService,
     private eventService:        EventService
   ) {}
 
@@ -467,6 +469,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         if (res.success && res.data) {
           this.analytics.trackAddToCart(seatsSnapshot, this.eventId, this.venueData?.eventName ?? '');
+          this.pixel.addToCart(this.eventId, seatsSnapshot.reduce((t, s) => t + s.price, 0));
           this.clearSelection();
           this.router.navigate(['/cart']);
         } else {
