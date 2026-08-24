@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Sponsor, HeroSponsor, Contact } from '../common/event-data';
+import { isEventFinished } from '../../../core/utils/event-date.util';
 
 @Component({
   selector: 'app-hero-split',
@@ -70,8 +71,13 @@ export class HeroSplitComponent implements OnInit, OnDestroy {
   @Input() mainSponsors: HeroSponsor[] = [];
   @Input() supportingSponsors: HeroSponsor[] = [];
 
+  isEventFinished(venue: any): boolean {
+    return isEventFinished(venue?.date);
+  }
+
   handleTicketClick(venue: any) {
-   this.buyTickets.emit(venue.eventId);
+    if (this.isEventFinished(venue)) return; // Finished events can't be booked
+    this.buyTickets.emit(venue.eventId);
     // "Soon" venues: button is disabled so click is blocked at template level
   }
 

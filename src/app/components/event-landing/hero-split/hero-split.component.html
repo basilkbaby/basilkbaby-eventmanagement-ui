@@ -81,12 +81,18 @@
 
         <!-- CTAs -->
         <div class="hero-ctas">
-          <button class="btn-primary" (click)="handleTicketClick(selectedVenue)">
+          <button class="btn-primary" *ngIf="!isEventFinished(selectedVenue)" (click)="handleTicketClick(selectedVenue)">
             Get Tickets
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
+          <span class="btn-finished" *ngIf="isEventFinished(selectedVenue)">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Event Finished
+          </span>
           <button class="btn-ghost" (click)="scrollTo.emit('venues')">
             Venues
           </button>

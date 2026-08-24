@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { isEventFinished } from '../../../core/utils/event-date.util';
 
 @Component({
   selector: 'app-venues-section',
@@ -19,11 +20,16 @@ export class VenuesSectionComponent {
     return this.venues.find(v => v.id === this.selectedVenueId) || this.venues[0];
   }
 
+  isEventFinished(venue: any): boolean {
+    return isEventFinished(venue?.date);
+  }
+
   isTicketAvailable(venue: any): boolean {
-    return venue?.ticketsOpen === true;
+    return venue?.ticketsOpen === true && !this.isEventFinished(venue);
   }
 
   getTicketStatusMessage(venue: any): string {
+    if (this.isEventFinished(venue)) return 'Event Finished';
     return venue?.ticketsOpen ? 'Get Tickets' : 'Tickets Open Soon';
   }
 

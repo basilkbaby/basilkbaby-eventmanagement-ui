@@ -262,6 +262,16 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   }
 }
 
+.btn-finished {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px;
+  background: $slate-pale; color: $ink-3;
+  border: 1.5px solid $border;
+  border-radius: $r-pill;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: default;
+}
+
 .btn-ghost {
   display: inline-flex; align-items: center;
   padding: 10px 18px; background: transparent;

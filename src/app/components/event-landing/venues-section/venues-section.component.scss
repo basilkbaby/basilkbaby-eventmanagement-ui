@@ -181,6 +181,11 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
     background: $amber-pale;
     color: $amber;
   }
+
+  &--ended {
+    background: $border;
+    color: $ink-3;
+  }
 }
 
 .tab-arrow {
