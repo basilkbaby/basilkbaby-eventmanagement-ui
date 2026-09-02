@@ -352,6 +352,7 @@ export class SVGSeatmapComponent implements OnInit, OnDestroy {
       sectionConfigId: cfg.id, ticketType: cfg.type,
       status: SeatStatus.AVAILABLE, price: cfg.customPrice || 0, color: cfg.color,
       gridRow: section.rows, gridColumn: section.seatsPerRow,
+      barrierSides: section.barrierSides ?? null, barrierLabel: section.barrierLabel ?? null,
       isStandingArea: true, blockIndex: 0, blockStartSeat: 0, blockTotalSeats: 0, blockLetter: 'A'
     });
   }
