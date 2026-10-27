@@ -98,7 +98,10 @@
                 }
               ],
               "outputHashing": "all",
-              "index": "src/index.crowdpass.html",
+              "index": {
+                "input": "src/index.crowdpass.html",
+                "output": "index.html"
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

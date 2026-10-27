@@ -214,6 +214,13 @@ export class EventListComponent implements OnInit, OnDestroy, OnChanges {
     this.filterChanged.emit({ searchTerm: this.searchTerm, dateFilter: this.dateFilter });
   }
 
+  // True when the system has at least one event (regardless of the current filter/search).
+  // Lets the template show a "coming soon" message when there are none at all, vs a
+  // "no matches, reset filters" message when events exist but are filtered out.
+  get hasAnyEvents(): boolean {
+    return (this.events?.length ?? 0) > 0;
+  }
+
   retryLoadEvents(): void { this.retryLoad.emit(); }
 
   handleImageError(event: any): void {
