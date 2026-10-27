@@ -1,71 +1,77 @@
-/* CrowdPass theme overrides — dark + gold.
-   Loaded AFTER styles.scss for the `crowdpass` build only (angular.json styles array),
-   so these :root values win over the default light terracotta palette. Compiled into the
-   bundle => no runtime fetch, no theme flash. Maps onto the REAL design-system variables
-   (the ones components actually use), not the unused --brand-* vars. */
+/* CrowdPass / Manickath theme overrides — Midnight Navy & Champagne (black-tie elegant).
+   Loaded AFTER styles.scss for the crowdpass/manickath builds only (angular.json styles
+   array), so these :root values win over the default light terracotta palette. Compiled
+   into the bundle => no runtime fetch, no theme flash. Maps onto the REAL design-system
+   variables (the ones components actually use) plus the namespaced component vars whose
+   fallbacks keep the default/v4 build identical.
+
+   Palette: midnight-navy canvas, deep-navy surfaces, champagne-gold primary, soft
+   champagne accent, steel-blue secondary, warm-white text. To retheme again, change the
+   values in this one file. */
 
 :root {
-  /* Primary — Gold */
-  --primary-50:  #fffbea;
-  --primary-100: #fff3c4;
-  --primary-200: #ffe88a;
-  --primary-300: #ffdf57;
-  --primary-400: #ffd60a;   /* brand gold */
-  --primary-500: #ffd60a;   /* brand gold (buttons/accents) */
-  --primary-600: #f59e0b;   /* amber (hover/darker) */
-  --primary-700: #d98706;
-  --primary-800: #b06e05;
-  --primary-900: #7a4d03;
+  /* Primary — Champagne gold */
+  --primary-50:  #faf6ec;
+  --primary-100: #f2e8cf;
+  --primary-200: #e9d8ad;
+  --primary-300: #e0c88c;   /* light champagne */
+  --primary-400: #d6ba78;
+  --primary-500: #d9bd83;   /* brand champagne (buttons/accents) */
+  --primary-600: #c0a263;   /* deeper champagne (hover/darker) */
+  --primary-700: #9c834c;
+  --primary-800: #746237;
+  --primary-900: #4c4024;
 
-  /* Accent — Amber */
-  --accent-50:  #fff3e0;
-  --accent-100: #ffe0b2;
-  --accent-200: #ffcc80;
-  --accent-300: #ffb74d;
-  --accent-400: #f59e0b;
-  --accent-500: #f59e0b;
-  --accent-600: #d98706;
-  --accent:       #f59e0b;
-  --accent-hover: #ffd60a;
+  /* Accent — Soft champagne */
+  --accent-50:  #fbf7ed;
+  --accent-100: #f5ebd2;
+  --accent-200: #eeddb4;
+  --accent-300: #e6d2a8;
+  --accent-400: #ddc48e;
+  --accent-500: #e6d2a8;
+  --accent-600: #c9ad77;
+  --accent:       #e6d2a8;
+  --accent-hover: #f0e2bd;
 
-  /* Gradients */
-  --gradient-primary:   linear-gradient(135deg, #ffd60a 0%, #f59e0b 100%);
-  --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #ffd60a 100%);
-  --gradient-sage:      linear-gradient(135deg, #f59e0b 0%, #ffd60a 100%);
+  /* Gradients — champagne */
+  --gradient-primary:   linear-gradient(135deg, #e6d2a8 0%, #d9bd83 100%);
+  --gradient-secondary: linear-gradient(135deg, #d9bd83 0%, #c0a263 100%);
+  --gradient-sage:      linear-gradient(135deg, #d9bd83 0%, #e6d2a8 100%);
 
-  /* Surfaces — dark */
-  --surface-bg:          #0d0d0f;
-  --surface-card:        #16161b;
-  --surface-card-border: rgba(255, 214, 10, 0.18);
-  --surface-card-alt:    #1e1e26;
+  /* Surfaces — navy */
+  --surface-bg:          #0d1320;
+  --surface-card:        #161f30;
+  --surface-card-border: rgba(220, 192, 138, 0.20);
+  --surface-card-alt:    #1e2a40;
 
-  /* Backgrounds — dark */
-  --bg-primary:   #0d0d0f;
-  --bg-secondary: #16161b;
-  --bg-tertiary:  #1e1e26;
+  /* Backgrounds — midnight navy */
+  --bg-primary:   #0d1320;
+  --bg-secondary: #161f30;
+  --bg-tertiary:  #1e2a40;
 
-  /* Text — light */
-  --text-primary:   #f5f5f7;
-  --text-secondary: #b8b8c0;
-  --text-tertiary:  #83838c;
-  --text-inverse:   #0d0d0f;   /* dark text on gold buttons/badges */
+  /* Text — warm white */
+  --text-primary:   #f2f1ea;
+  --text-secondary: #c3cad8;
+  --text-tertiary:  #8793a6;
+  --text-inverse:   #10192a;   /* deep navy text on champagne buttons/badges */
 
-  /* Neutral ramp — INVERTED so "light gray" fills become dark and "dark gray" text becomes light */
-  --gray-50:  #18181b;
-  --gray-100: #27272a;
-  --gray-200: #3f3f46;
-  --gray-300: #52525b;
-  --gray-400: #71717a;
-  --gray-500: #a1a1aa;
-  --gray-600: #d4d4d8;
-  --gray-700: #e4e4e7;
-  --gray-800: #f4f4f5;
-  --gray-900: #fafafa;
+  /* Neutral ramp — INVERTED + navy-tinted so "light gray" fills become dark and
+     "dark gray" text becomes light. */
+  --gray-50:  #151d2c;
+  --gray-100: #1f2a3f;
+  --gray-200: #2c3a52;
+  --gray-300: #3e4f6b;
+  --gray-400: #5f6e88;
+  --gray-500: #8795aa;
+  --gray-600: #b6c0d0;
+  --gray-700: #d6dde7;
+  --gray-800: #eaeef4;
+  --gray-900: #f6f8fb;
 
-  /* Borders — subtle on dark (defined via gray ramp, re-pointed here for clarity) */
-  --border-light:  rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-dark:   rgba(255, 255, 255, 0.24);
+  /* Borders — champagne-tinted on navy */
+  --border-light:  rgba(230, 210, 168, 0.10);
+  --border-medium: rgba(230, 210, 168, 0.16);
+  --border-dark:   rgba(230, 210, 168, 0.26);
 
   /* Shadows — deeper for dark surfaces */
   --shadow-sm:   0 1px 2px 0 rgba(0,0,0,0.5);
@@ -74,39 +80,115 @@
   --shadow-lg:   0 10px 15px -3px rgba(0,0,0,0.6), 0 4px 6px -2px rgba(0,0,0,0.5);
   --shadow-xl:   0 20px 40px -8px rgba(0,0,0,0.7), 0 8px 16px -4px rgba(0,0,0,0.6);
 
-  /* Hero/dark surface — keep dark, gold border */
-  --surface-dark:        #16161b;
-  --surface-dark-2:      #1e1e26;
-  --surface-dark-border: rgba(255, 214, 10, 0.22);
+  /* Hero/dark surface — navy, champagne border */
+  --surface-dark:        #161f30;
+  --surface-dark-2:      #1e2a40;
+  --surface-dark-border: rgba(220, 192, 138, 0.24);
 
-  /* Header CTA button — gold fill, dark readable text (default build = orange, unchanged) */
-  --nav-cta-bg:       #ffd60a;   /* brand gold */
-  --nav-cta-bg-hover: #f59e0b;   /* amber on hover */
-  --nav-cta-fg:       #0d0d0f;   /* dark text on gold */
+  /* Header (minimal navbar) surface + accents — follow the site theme */
+  --nav-bar-bg:              rgba(13, 19, 32, 0.94);   /* navy, glassy       */
+  --nav-bar-bg-scrolled:     rgba(13, 19, 32, 0.98);
+  --nav-bar-border:          rgba(230, 210, 168, 0.20); /* champagne hairline */
+  --nav-bar-border-scrolled: rgba(230, 210, 168, 0.30);
+  --nav-accent:              #d9bd83;                   /* active underline + cart badge */
+
+  /* Header CTA button — champagne fill, deep-navy readable text */
+  --nav-cta-bg:       #d9bd83;   /* champagne */
+  --nav-cta-bg-hover: #e6d2a8;   /* soft champagne on hover */
+  --nav-cta-fg:       #10192a;   /* deep navy text on champagne */
+
+  /* ── Primary CTAs — champagne with deep-navy text ──────────────────────────
+     These namespaced vars only exist in this build; shared components fall back
+     to their original colours on default/v4. */
+  --hero-cta-bg:       #d9bd83;  /* homepage hero "Get Tickets"  */
+  --hero-cta-bg-hover: #e6d2a8;
+  --hero-cta-fg:       #10192a;
+
+  /* ── Featured-events hero palette (was a hardcoded light cream theme) ─────── */
+  --hero-bg:         #0d1320;                  /* section background        */
+  --hero-card:       #161f30;                  /* stat strip, chips, rings  */
+  --hero-border:     rgba(230, 210, 168, 0.14);
+  --hero-accent:     #e0c88c;                  /* title / chips / labels    */
+  --hero-accent-dk:  #d9bd83;
+  --hero-accent-lt:  #efdcb2;
+  --hero-accent-dim: rgba(220, 192, 138, 0.14);
+  --hero-sage:       #8fa6c2;                  /* secondary accent → steel blue */
+  --hero-sage-lt:    #abbdd4;
+  --hero-sage-dim:   rgba(143, 166, 194, 0.16);
+  --hero-amber:      #e6d2a8;                  /* "from" price value → champagne */
+  --hero-amber-dk:   #d9bd83;
+  --hero-amber-dim:  rgba(230, 210, 168, 0.12);
+  --hero-ink:        #f2f1ea;                  /* headings / values         */
+  --hero-body:       #c3cad8;
+  --hero-muted:      #8793a6;
+  --hero-white:      #161f30;                  /* was #fff surfaces (badge) → navy */
+  --ed-cta-bg:         #d9bd83;  /* event-details primary buttons */
+  --ed-cta-bg-hover:   #e6d2a8;
+  --ed-cta-fg:         #10192a;
+
+  /* ── General-admission ticket picker (ticket-selection.component) ─────────── */
+  --ts-text:           #f2f1ea;
+  --ts-muted:          #c3cad8;
+  --ts-line:           #d2d9e3;
+  --ts-price:          #e6d2a8;
+  --ts-border:         rgba(230, 210, 168, 0.14);
+  --ts-ticket-bg:      rgba(255, 255, 255, 0.03);
+  --ts-summary-bg:     rgba(220, 192, 138, 0.07);
+  --ts-stepper-bg:     #1e2a40;
+  --ts-stepper-border: rgba(230, 210, 168, 0.22);
+  --ts-left:           #9bb0cc;
+  --ts-sold:           #ff8a8a;
+  --ts-error-bg:       rgba(239, 68, 68, 0.12);
+  --ts-error-fg:       #ff9b9b;
+  --ts-cta-bg:         #d9bd83;
+  --ts-cta-fg:         #10192a;
+
+  /* ── Checkout — cards/inputs were hardcoded #fff (invisible light-on-light) ── */
+  --co-card-bg:        #161f30;
+  --co-input-bg:       #0d1320;
+  --co-input-fg:       #f2f1ea;
+
+  /* ── Event-details depth (navy cards, champagne glow, poster ring) ───────── */
+  --ed-page-bg:
+      radial-gradient(1100px 460px at 50% -6%, rgba(220, 192, 138, 0.09), transparent 60%),
+      #0d1320;
+  --ed-hero-bg:
+      radial-gradient(620px 320px at 82% 18%, rgba(230, 210, 168, 0.11), transparent 70%);
+  --ed-card-bg:            linear-gradient(180deg, #1b2740 0%, #121a2b 100%);
+  --ed-card-border-color:  rgba(230, 210, 168, 0.18);
+  --ed-card-shadow:
+      0 12px 34px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --ed-poster-shadow:
+      0 20px 54px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(230, 210, 168, 0.26),
+      0 0 46px rgba(220, 192, 138, 0.16);
+  --ed-bar-bg:     linear-gradient(180deg, #172032 0%, #0f1724 100%);
+  --ed-bar-shadow: 0 -8px 30px rgba(0, 0, 0, 0.55);
 }
 
 /* Page background so the shell itself is dark (covers areas not painted by a component). */
 html, body {
-  background-color: #0d0d0f;
+  background-color: #0d1320;
   color: var(--text-primary);
 }
 
 /* ── Event-landing microsite overrides (--ec-*) ──────────────────────────────────
    The per-event landing components use their own slate palette via namespaced
    --ec-* variables that fall back to their original hexes. Defining them here (and
-   ONLY here, in the crowdpass build) flips that microsite to dark + gold while the
-   default build, where these are undefined, keeps its original slate look. CSS vars
-   cascade through the DOM, so these reach the components' scoped styles. */
+   ONLY here, in the crowdpass build) flips that microsite to navy + champagne while
+   the default build, where these are undefined, keeps its original slate look. CSS
+   vars cascade through the DOM, so these reach the components' scoped styles. */
 :root {
-  --ec-accent:    #ffd60a;              /* was slate — now gold */
-  --ec-accent-2:  #f59e0b;
-  --ec-on-accent: #0d0d0f;             /* dark text on a gold fill */
-  --ec-surface:   #16161b;             /* cards / panels (was #fff) */
-  --ec-surface-2: #1e1e26;             /* section / pale backgrounds */
-  --ec-text:      #f5f5f7;
-  --ec-text-2:    #d2d2d8;
-  --ec-text-3:    #b8b8c0;
-  --ec-text-4:    #83838c;
-  --ec-border:    rgba(255, 255, 255, 0.12);
-  --ec-section-dark: #0d0d0f;          /* large dark section surfaces (e.g. contact) */
+  --ec-accent:    #d9bd83;             /* was slate — now champagne */
+  --ec-accent-2:  #e6d2a8;
+  --ec-on-accent: #10192a;             /* deep navy text on a champagne fill */
+  --ec-surface:   #161f30;             /* cards / panels (was #fff) */
+  --ec-surface-2: #1e2a40;             /* section / pale backgrounds */
+  --ec-text:      #f2f1ea;
+  --ec-text-2:    #d2d9e3;
+  --ec-text-3:    #c3cad8;
+  --ec-text-4:    #8793a6;
+  --ec-border:    rgba(230, 210, 168, 0.14);
+  --ec-section-dark: #0d1320;          /* large dark section surfaces (e.g. contact) */
 }

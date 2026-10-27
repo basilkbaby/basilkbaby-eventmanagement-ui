@@ -275,16 +275,18 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba(30,28,24,0.94);
+  // Header surface/border/accent routed through namespaced vars; fallbacks keep the
+  // default/v4 build identical, styles.crowdpass.scss overrides them to the site theme.
+  background: var(--nav-bar-bg, rgba(30,28,24,0.94));
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border-bottom: 1px solid rgba(194,90,60,0.20);
+  border-bottom: 1px solid var(--nav-bar-border, rgba(194,90,60,0.20));
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
   font-family: 'DM Sans', sans-serif;
 
   &--scrolled {
-    background: rgba(30,28,24,0.98);
-    border-bottom-color: rgba(194,90,60,0.30);
+    background: var(--nav-bar-bg-scrolled, rgba(30,28,24,0.98));
+    border-bottom-color: var(--nav-bar-border-scrolled, rgba(194,90,60,0.30));
     box-shadow: 0 2px 20px rgba(0,0,0,.28);
   }
 }
@@ -313,7 +315,7 @@
   transition: color .15s ease, background .15s ease; white-space: nowrap; user-select: none;
   &::after {
     content: ''; position: absolute; bottom: 2px; left: 14px; right: 14px; height: 2px;
-    background: #C25A3C; border-radius: 2px; transform: scaleX(0);
+    background: var(--nav-accent, #C25A3C); border-radius: 2px; transform: scaleX(0);
     transform-origin: center; transition: transform .2s ease;
   }
   &:hover { color: #fff; background: rgba(255,255,255,0.06); &::after { transform: scaleX(1); } }
@@ -331,7 +333,7 @@
   &:hover { background: rgba(255,255,255,0.08); color: #fff; }
   &__count {
     position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
-    background: #C25A3C; color: #fff; border-radius: 50%;
+    background: var(--nav-accent, #C25A3C); color: #fff; border-radius: 50%;
     font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
   }
 }
@@ -374,10 +376,10 @@
 .nav-mobile-drawer {
   display: none; flex-direction: column; padding: 0 20px;
   overflow: hidden; max-height: 0; border-top: 1px solid transparent;
-  background: rgba(30,28,24,0.98);
+  background: var(--nav-bar-bg-scrolled, rgba(30,28,24,0.98));
   transition: max-height .28s ease, padding .28s ease, border-color .28s ease;
 
-  &--open { max-height: 480px; padding: 12px 20px 16px; border-top-color: rgba(194,90,60,0.25); }
+  &--open { max-height: 480px; padding: 12px 20px 16px; border-top-color: var(--nav-bar-border, rgba(194,90,60,0.25)); }
 
   &__link {
     padding: 11px 4px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55);

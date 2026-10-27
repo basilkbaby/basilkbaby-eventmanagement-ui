@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TicketTypeService, PublicTicketType } from '../../../core/services/ticket-type.service';
@@ -17,7 +17,11 @@ interface SelectableTicket extends PublicTicketType {
   styleUrls: ['./ticket-selection.component.scss']
 })
 export class TicketSelectionComponent implements OnInit {
-  eventId = '';
+  // When used as a child (e.g. embedded in the event-details page for general-admission
+  // events) the host passes the id + sets embedded=true. Standalone (routed) use falls
+  // back to the route param and shows its own header.
+  @Input() eventId = '';
+  @Input() embedded = false;
   event: any = null;
   tickets: SelectableTicket[] = [];
   loading = true;
@@ -35,7 +39,8 @@ export class TicketSelectionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.eventId = this.route.snapshot.paramMap.get('id') || '';
+    // Prefer an explicitly-bound id (embedded mode); otherwise read it from the route.
+    this.eventId = this.eventId || this.route.snapshot.paramMap.get('id') || '';
 
     this.eventService.getEventDetails(this.eventId).subscribe({
       next: (e) => this.event = e,

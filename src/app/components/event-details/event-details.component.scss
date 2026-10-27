@@ -26,10 +26,12 @@ $on-brand:  var(--text-inverse);
 
 // ── Shared card ───────────────────────────────────────────────────────────────
 %card {
-  background: $bg-card;
-  border: 1px solid $border;
+  // Namespaced so the dark (crowdpass/manickath) build can add depth — gradient
+  // surface, gold-tinted border, real shadow. Fallbacks keep default/v4 identical.
+  background: var(--ed-card-bg, #{$bg-card});
+  border: 1px solid var(--ed-card-border-color, #{$border});
   border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(194, 90, 60, 0.06);
+  box-shadow: var(--ed-card-shadow, 0 2px 12px rgba(194, 90, 60, 0.06));
   padding: 28px;
 
   @media (max-width: 768px) { padding: 20px; }
@@ -70,7 +72,7 @@ $on-brand:  var(--text-inverse);
 // ════════════════════════════════════════════════════════════════════════════
 .ed-page {
   @extend %font-body;
-  background: $bg;
+  background: var(--ed-page-bg, #{$bg});
   min-height: 100vh;
   padding-bottom: 80px;
 
@@ -108,6 +110,7 @@ $on-brand:  var(--text-inverse);
   max-width: 1400px;
   margin: 0 auto;
   padding: 36px 32px 40px;
+  background: var(--ed-hero-bg, transparent);
   display: grid;
   grid-template-columns: 560px 1fr;
   gap: 40px;
@@ -124,7 +127,7 @@ $on-brand:  var(--text-inverse);
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(30, 28, 24, 0.18);
+  box-shadow: var(--ed-poster-shadow, 0 8px 32px rgba(30, 28, 24, 0.18));
   background: $bg;
 
   @media (max-width: 860px) { border-radius: 12px; }
@@ -215,11 +218,11 @@ $on-brand:  var(--text-inverse);
   display: flex;
   align-items: flex-start;
   gap: 0;
-  background: $bg-card;
-  border: 1px solid $border;
+  background: var(--ed-card-bg, #{$bg-card});
+  border: 1px solid var(--ed-card-border-color, #{$border});
   border-radius: 12px;
   padding: 18px 20px;
-  box-shadow: 0 2px 8px rgba(194, 90, 60, 0.06);
+  box-shadow: var(--ed-card-shadow, 0 2px 8px rgba(194, 90, 60, 0.06));
   flex-wrap: wrap;
   row-gap: 14px;
 
@@ -1249,8 +1252,10 @@ $on-brand:  var(--text-inverse);
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: $amber;
-  color: $on-brand;
+  // Namespaced vars so CrowdPass/Manickath can make the primary CTA brand-gold
+  // (styles.crowdpass.scss); fallbacks keep the default/v4 build identical.
+  background: var(--ed-cta-bg, #{$amber});
+  color: var(--ed-cta-fg, #{$on-brand});
   border: none;
   border-radius: 10px;
   padding: 14px 28px;
@@ -1265,7 +1270,7 @@ $on-brand:  var(--text-inverse);
   @media (max-width: 480px) { padding: 12px 20px; font-size: 0.93rem; }
 
   &:hover {
-    background: $amber-dk;
+    background: var(--ed-cta-bg-hover, #{$amber-dk});
     transform: translateY(-2px);
     box-shadow: 0 8px 22px rgba(224, 134, 43, 0.32);
   }
@@ -1318,9 +1323,9 @@ $on-brand:  var(--text-inverse);
   bottom: 0;
   left: 0;
   right: 0;
-  background: $bg-card;
-  border-top: 1px solid $border;
-  box-shadow: 0 -4px 20px rgba(30, 28, 24, 0.1);
+  background: var(--ed-bar-bg, #{$bg-card});
+  border-top: 1px solid var(--ed-card-border-color, #{$border});
+  box-shadow: var(--ed-bar-shadow, 0 -4px 20px rgba(30, 28, 24, 0.1));
   z-index: 200;
   padding: 10px 0;
 

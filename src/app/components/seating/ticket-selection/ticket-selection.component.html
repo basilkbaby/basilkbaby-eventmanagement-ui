@@ -1,5 +1,5 @@
-<div class="ts-page">
-  <div class="ts-header" *ngIf="event">
+<div class="ts-page" [class.ts-embedded]="embedded">
+  <div class="ts-header" *ngIf="event && !embedded">
     <a [routerLink]="['/events', eventId]" class="ts-back">← Back</a>
     <h1 class="ts-title">{{ event.title }}</h1>
     <p class="ts-date" *ngIf="event.startDate">{{ event.startDate | date:'EEEE, MMMM d, yyyy' }}</p>

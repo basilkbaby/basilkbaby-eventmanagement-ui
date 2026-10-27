@@ -173,7 +173,7 @@
 // Checkout Form
 .checkout-form-column {
   .form-section {
-    background: #ffffff;
+    background: var(--co-card-bg, #ffffff);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
@@ -245,8 +245,9 @@
     border-radius: var(--radius-md);
     font-size: 1rem;
     transition: all 0.2s ease;
-    background: #ffffff;
-    
+    background: var(--co-input-bg, #ffffff);
+    color: var(--co-input-fg, inherit);
+
     &:focus {
       outline: none;
       border-color: var(--primary-500);
@@ -424,7 +425,7 @@
 // Order Summary
 .order-summary-column {
   .order-summary-card {
-    background: #ffffff;
+    background: var(--co-card-bg, #ffffff);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
@@ -722,7 +723,8 @@
     border-radius: var(--radius-md);
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    background: #ffffff;
+    background: var(--co-input-bg, #ffffff);
+    color: var(--co-input-fg, inherit);
 
     &:focus {
       outline: none;

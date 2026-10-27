@@ -14,11 +14,12 @@ import { OrganizationType } from '../../core/models/Enums/event.enums';
 import { OrganizationFilterPipe } from '../../core/pipes/custom/organization-filter.pipe';
 import { FormatTimePipe } from '../../core/pipes/common/time-format.pipe';
 import { DurationPipe } from '../../core/pipes/common/duration.pipe';
+import { TicketSelectionComponent } from '../seating/ticket-selection/ticket-selection.component';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormatDatePipe, OrganizationFilterPipe, FormatTimePipe, DurationPipe],
+  imports: [CommonModule, RouterModule, FormatDatePipe, OrganizationFilterPipe, FormatTimePipe, DurationPipe, TicketSelectionComponent],
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.scss']
 })
@@ -82,11 +83,17 @@ export class EventDetailsComponent implements OnInit {
       });
   }
 
+  // General-admission events (SeatingMode = 2) have no seat map — tickets are picked inline
+  // on this page instead of on a separate seat-selection screen.
+  get isGeneralAdmission(): boolean {
+    return (this.event as any)?.seatingMode === 2;
+  }
+
   navigateToSeatSelection(): void {
     if (this.event && !this.event.isPast) {
-      // General-admission events (SeatingMode = 2) have no seat map — go to ticket selection.
-      if ((this.event as any).seatingMode === 2) {
-        this.router.navigate(['/events', this.event.id, 'tickets']);
+      if (this.isGeneralAdmission) {
+        // No seat map: jump to the inline ticket picker further down the page.
+        this.scrollToSection('ed-tickets');
       } else {
         this.router.navigate(['/events', this.event.id, 'seatmap']); //seatstheatre
       }

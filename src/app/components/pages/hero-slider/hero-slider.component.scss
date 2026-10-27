@@ -3,28 +3,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$bg:         #F8F5F1;
-$bg-card:    #FFFFFF;
-$border:     #E8DED6;
+// Each token reads a namespaced CSS var whose FALLBACK is the original light hex,
+// so the default/v4 build renders exactly as before. The CrowdPass/Manickath build
+// defines these vars (styles.crowdpass.scss) to flip the whole featured-events hero
+// to the dark + gold site theme.
+$bg:         var(--hero-bg, #F8F5F1);
+$bg-card:    var(--hero-card, #FFFFFF);
+$border:     var(--hero-border, #E8DED6);
 
-$terra:      #C25A3C;
-$terra-dk:   #A04830;
-$terra-lt:   #D97A5E;
-$terra-dim:  rgba(194,90,60,0.09);
+$terra:      var(--hero-accent, #C25A3C);
+$terra-dk:   var(--hero-accent-dk, #A04830);
+$terra-lt:   var(--hero-accent-lt, #D97A5E);
+$terra-dim:  var(--hero-accent-dim, rgba(194,90,60,0.09));
 
-$sage:       #6B9470;
-$sage-lt:    #8BB491;
-$sage-dim:   rgba(107,148,112,0.10);
+$sage:       var(--hero-sage, #6B9470);
+$sage-lt:    var(--hero-sage-lt, #8BB491);
+$sage-dim:   var(--hero-sage-dim, rgba(107,148,112,0.10));
 
-$amber:      #E0862B;
-$amber-dk:   #C06B18;
-$amber-dim:  rgba(224,134,43,0.10);
+$amber:      var(--hero-amber, #E0862B);
+$amber-dk:   var(--hero-amber-dk, #C06B18);
+$amber-dim:  var(--hero-amber-dim, rgba(224,134,43,0.10));
 
-$ink:        #1E1C18;
-$body:       #5A5650;
-$muted:      #9A948C;
+$ink:        var(--hero-ink, #1E1C18);
+$body:       var(--hero-body, #5A5650);
+$muted:      var(--hero-muted, #9A948C);
 
-$white:      #FFFFFF;
+$white:      var(--hero-white, #FFFFFF);
 $r-sm:   8px;
 $r-md:   12px;
 $r-lg:   20px;
@@ -371,8 +375,10 @@ $r-pill: 999px;
   align-items: center;
   gap: 8px;
   padding: 15px 30px;
-  background: $amber;
-  color: $white;
+  // Namespaced vars so the CrowdPass/Manickath build can make the hero "Get Tickets"
+  // button brand-gold (styles.crowdpass.scss); fallbacks keep default/v4 unchanged.
+  background: var(--hero-cta-bg, #{$amber});
+  color: var(--hero-cta-fg, #{$white});
   border: none;
   border-radius: $r-pill;
   font-family: 'DM Sans', sans-serif;
@@ -386,10 +392,10 @@ $r-pill: 999px;
   svg { transition: transform .2s; }
 
   &:hover {
-    background: $amber-dk;
+    background: var(--hero-cta-bg-hover, #{$amber-dk});
     box-shadow: 0 10px 32px rgba(224,134,43,0.50);
     transform: translateY(-2px);
-    color: $white;
+    color: var(--hero-cta-fg, #{$white});
     svg { transform: translateX(4px); }
   }
 
