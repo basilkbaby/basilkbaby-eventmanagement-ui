@@ -125,7 +125,10 @@
                 }
               ],
               "outputHashing": "all",
-              "index": "src/index.manickath.html",
+              "index": {
+                "input": "src/index.manickath.html",
+                "output": "index.html"
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
