@@ -1,21 +1,25 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$terra:    #C25A3C;
-$terra-d:  #A04830;
+// Repointed at the themeable design-system CSS variables so the component follows
+// each deployment's theme (default light / CrowdPass dark+gold). Translucent tints
+// stay literal. $on-brand = correct text colour on a brand-coloured fill.
+$terra:    var(--primary-500);
+$terra-d:  var(--primary-600);
 $terra-dim: rgba(194,90,60,0.09);
-$sage:     #6B9470;
+$sage:     var(--secondary-500);
 $sage-dim: rgba(107,148,112,0.10);
-$amber:    #E0862B;
-$amber-d:  #C06B18;
-$surface:  #ffffff;
-$bg:       #F8F5F1;
-$border:   #E8DED6;
-$border-s: #F0E8E0;
-$t1:       #1E1C18;
-$t2:       #5A5650;
-$t3:       #9A948C;
-$red:      #ef4444;
-$btn:      #E0862B;
-$btn-h:    #C06B18;
+$amber:    var(--accent);
+$amber-d:  var(--accent-hover);
+$surface:  var(--surface-card);
+$bg:       var(--bg-primary);
+$border:   var(--border-light);
+$border-s: var(--border-light);
+$t1:       var(--text-primary);
+$t2:       var(--text-secondary);
+$t3:       var(--text-tertiary);
+$red:      var(--error);
+$btn:      var(--accent);
+$btn-h:    var(--accent-hover);
+$on-brand: var(--text-inverse);
 $font:     'DM Sans','Helvetica Neue',sans-serif;
 $ease:     cubic-bezier(0.4,0,0.2,1);
 
@@ -85,7 +89,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   height: 24px;
   padding: 0 7px;
   background: $t1;
-  color: #fff;
+  color: $bg;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
@@ -333,7 +337,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   font-size: 14px;
   font-weight: 600;
   background: $btn;
-  color: #fff;
+  color: $on-brand;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(15,23,42,0.18);
   transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
@@ -357,8 +361,8 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
 
 .cart-checkout-btn__spinner {
   width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.25);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, $on-brand 25%, transparent);
+  border-top-color: $on-brand;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -447,7 +451,7 @@ $ease:     cubic-bezier(0.4,0,0.2,1);
   font-size: 14px;
   font-weight: 600;
   background: $btn;
-  color: #fff;
+  color: $on-brand;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(15,23,42,0.18);
   transition: background 0.1s, transform 0.1s;

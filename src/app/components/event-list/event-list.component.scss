@@ -1,18 +1,25 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$terra:     #C25A3C;
-$terra-d:   #A04830;
+// Repointed at the themeable design-system CSS variables (see styles.scss /
+// styles.crowdpass.scss) so this component adapts to each deployment's theme
+// (light terracotta by default, dark + gold for CrowdPass) instead of being
+// locked to static hexes. Translucent tints stay literal (no themeable token).
+$terra:     var(--primary-500);
+$terra-d:   var(--primary-600);
 $terra-dim: rgba(194,90,60,0.09);
-$sage:      #6B9470;
-$amber:     #E0862B;
-$amber-d:   #C06B18;
-$surface:   #ffffff;
-$bg:        #F8F5F1;
-$border:    #E8DED6;
-$border-s:  #F0E8E0;
-$t1:        #1E1C18;
-$t2:        #5A5650;
-$t3:        #9A948C;
-$red:       #ef4444;
+$sage:      var(--secondary-500);
+$amber:     var(--accent);
+$amber-d:   var(--accent-hover);
+$surface:   var(--surface-card);
+$bg:        var(--bg-primary);
+$border:    var(--border-light);
+$border-s:  var(--border-light);
+$t1:        var(--text-primary);
+$t2:        var(--text-secondary);
+$t3:        var(--text-tertiary);
+$red:       var(--error);
+// Text that sits on a brand-coloured fill: white on terracotta (default), dark on
+// gold (CrowdPass). --text-inverse handles both so contrast stays correct.
+$on-brand:  var(--text-inverse);
 $font:      'DM Sans','Helvetica Neue',sans-serif;
 $ease:      cubic-bezier(0.4,0,0.2,1);
 
@@ -50,7 +57,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 .el-filters {
   position: relative;
   z-index: 50;
-  background: rgba(248,245,241,0.88);
+  background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid $border;
@@ -152,7 +159,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 
   &--active {
     background: $terra;
-    color: #fff;
+    color: $on-brand;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(194,90,60,0.28);
   }
@@ -210,7 +217,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
   border: none;
   border-radius: 9999px;
   background: $terra;
-  color: #fff;
+  color: $on-brand;
   font-family: $font;
   font-size: 13.5px;
   font-weight: 600;
@@ -382,7 +389,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 .el-card__datebub-day {
   font-size: 17px;
   font-weight: 800;
-  color: #fff;
+  color: $on-brand;
   line-height: 1;
   letter-spacing: -0.5px;
 }
@@ -390,7 +397,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
 .el-card__datebub-mon {
   font-size: 8.5px;
   font-weight: 700;
-  color: rgba(255,255,255,0.78);
+  color: color-mix(in srgb, var(--text-inverse) 80%, transparent);
   letter-spacing: 0.08em;
   margin-top: 1px;
 }
@@ -553,7 +560,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
   border-radius: 20px;
   border: 1.5px solid $terra;
   background: $terra;
-  color: #fff;
+  color: $on-brand;
   font-family: $font;
   font-size: 12px;
   font-weight: 700;
@@ -617,7 +624,7 @@ $ease:      cubic-bezier(0.4,0,0.2,1);
   border: none;
   border-radius: 9999px;
   background: $terra;
-  color: #fff;
+  color: $on-brand;
   font-family: $font;
   font-size: 13.5px;
   font-weight: 600;

@@ -1,20 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 // ── Palette ──────────────────────────────────────────────────────────────────
-$bg:        #F8F5F1;
-$bg-card:   #FFFFFF;
-$border:    #E8DED6;
-$terra:     #C25A3C;
-$terra-dk:  #A04830;
-$terra-lt:  #D97A5E;
+// Repointed at the themeable design-system CSS variables so the component follows
+// each deployment's theme (default light / CrowdPass dark+gold). Translucent tints
+// stay literal. $on-brand = correct text colour on a brand-coloured fill.
+$bg:        var(--bg-primary);
+$bg-card:   var(--surface-card);
+$border:    var(--border-light);
+$terra:     var(--primary-500);
+$terra-dk:  var(--primary-600);
+$terra-lt:  var(--primary-400);
 $terra-dim: rgba(194, 90, 60, 0.09);
-$sage:      #6B9470;
+$sage:      var(--secondary-500);
 $sage-dim:  rgba(107, 148, 112, 0.10);
-$amber:     #E0862B;
-$amber-dk:  #C06B18;
-$ink:       #1E1C18;
-$body:      #5A5650;
-$muted:     #9A948C;
+$amber:     var(--accent);
+$amber-dk:  var(--accent-hover);
+$ink:       var(--text-primary);
+$body:      var(--text-secondary);
+$muted:     var(--text-tertiary);
+$on-brand:  var(--text-inverse);
 
 // ── Typography helpers ────────────────────────────────────────────────────────
 %font-title { font-family: 'Oswald', sans-serif; }
@@ -41,7 +45,7 @@ $muted:     #9A948C;
   left: 16px;
   z-index: 9999;
   background: $ink;
-  color: #fff;
+  color: $bg;
   padding: 10px 18px;
   border-radius: 0 0 8px 8px;
   font-size: 0.9rem;
@@ -905,7 +909,7 @@ $muted:     #9A948C;
     height: 40px;
     border-radius: 50%;
     background: $terra;
-    color: #fff;
+    color: $on-brand;
     font-family: 'Oswald', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
@@ -1246,7 +1250,7 @@ $muted:     #9A948C;
   justify-content: center;
   gap: 10px;
   background: $amber;
-  color: #fff;
+  color: $on-brand;
   border: none;
   border-radius: 10px;
   padding: 14px 28px;
@@ -1564,7 +1568,7 @@ $muted:     #9A948C;
   align-items: center;
   justify-content: center;
   background: $amber;
-  color: #fff;
+  color: $on-brand;
   padding: 13px 28px;
   border-radius: 10px;
   font-weight: 700;

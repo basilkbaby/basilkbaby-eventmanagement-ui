@@ -62,6 +62,81 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "v4": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.v4.ts"
+                }
+              ]
+            },
+            "crowdpass": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
+                }
+              ],
+              "outputHashing": "all",
+              "index": "src/index.crowdpass.html",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.crowdpass.ts"
+                }
+              ],
+              "styles": [
+                "src/styles.scss",
+                "@angular/material/prebuilt-themes/azure-blue.css",
+                "src/styles.crowdpass.scss"
+              ]
+            },
+            "manickath": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
+                }
+              ],
+              "outputHashing": "all",
+              "index": "src/index.manickath.html",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.manickath.ts"
+                }
+              ],
+              "styles": [
+                "src/styles.scss",
+                "@angular/material/prebuilt-themes/azure-blue.css",
+                "src/styles.crowdpass.scss"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -74,6 +149,15 @@
             },
             "development": {
               "buildTarget": "TicketSystem-Client:build:development"
+            },
+            "v4": {
+              "buildTarget": "TicketSystem-Client:build:v4"
+            },
+            "crowdpass": {
+              "buildTarget": "TicketSystem-Client:build:crowdpass"
+            },
+            "manickath": {
+              "buildTarget": "TicketSystem-Client:build:manickath"
             }
           },
           "defaultConfiguration": "development"

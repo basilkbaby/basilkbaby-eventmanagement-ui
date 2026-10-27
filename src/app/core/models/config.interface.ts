@@ -7,6 +7,9 @@ export interface HeaderConfig {
       backgroundColor: string;
       sublabel: string;
     };
+    logoImage?: string;   // path to the brand logo image (header)
+    favicon?: string;     // path to the brand favicon
+
     primaryColor: string;
     secondaryColor: string;
     accentColor: string;

@@ -1,10 +1,14 @@
 // ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
+// Routed through namespaced --ec-* vars (hex fallback => default unchanged;
+// styles.crowdpass.scss overrides to dark + gold). $white stays literal.
+$slate:      var(--ec-accent, #1E293B);
+$slate-mid:  var(--ec-accent-2, #334155);
+$slate-pale: var(--ec-surface-2, #F1F5F9);
 
 $white:      #FFFFFF;
-$border:     #E2E8F0;
+$card:       var(--ec-surface, #FFFFFF);
+$on-accent:  var(--ec-on-accent, #FFFFFF);
+$border:     var(--ec-border, #E2E8F0);
 
 $r-sm:   8px;
 $r-pill: 999px;
@@ -84,7 +88,7 @@ $r-pill: 999px;
   justify-content: center;
   width: 34px; height: 34px;
   border-radius: $r-sm;
-  background: $white;
+  background: $card;
   border: 1px solid $border;
   color: #64748B;
   text-decoration: none;
@@ -93,7 +97,7 @@ $r-pill: 999px;
   &:hover {
     background: $slate;
     border-color: $slate;
-    color: $white;
+    color: $on-accent;
   }
 }
 

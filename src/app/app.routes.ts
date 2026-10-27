@@ -35,6 +35,10 @@ export const routes: Routes = [
     title: 'Group'
   },
   {
+    path: 'events/:id/tickets',
+    loadComponent: () => import('./components/seating/ticket-selection/ticket-selection.component').then(m => m.TicketSelectionComponent),
+  },
+  {
     path: 'events/:id/seatmap',
     loadComponent: () => import('./components/seating/svg-seatmap/svg-seatmap.component').then(m => m.SVGSeatmapComponent),
     title : 'Seat Selection'

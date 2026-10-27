@@ -1,15 +1,17 @@
 // ── Tokens (mirrors svg-seatmap design system) ─────────────────────────────
-$green:    #22C55E;
+// Repointed at the themeable design-system CSS variables (default light /
+// CrowdPass dark+gold). Semantic success/warning + translucent tints stay literal.
+$green:    var(--success);
 $green-d:  #16A34A;
 $green-bg: rgba(34, 197, 94, 0.07);
-$surface:  #ffffff;
-$bg:       #f2f4f8;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$red:      #ef4444;
+$surface:  var(--surface-card);
+$bg:       var(--bg-primary);
+$border:   var(--border-light);
+$border-s: var(--border-light);
+$t1:       var(--text-primary);
+$t2:       var(--text-secondary);
+$t3:       var(--text-tertiary);
+$red:      var(--error);
 $amber-bg: rgba(234, 179, 8, 0.07);
 $amber-br: rgba(234, 179, 8, 0.28);
 $amber-t:  #92400e;

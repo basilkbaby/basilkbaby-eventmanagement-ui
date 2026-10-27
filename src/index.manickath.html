@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Meta Pixel loader only (no init/PageView here). Pixels are per-event and are
+       initialised at runtime by PixelService via fbq('init', <eventPixelId>). -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  </script>
+  <!-- End Meta Pixel loader -->
+
+  <meta charset="utf-8">
+  <title>Manickath Global</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- Brand colours + dark page background baked in so the very first paint is dark (no light flash
+       before the CSS bundle loads). The full palette lives in styles.crowdpass.scss (reused). -->
+  <style>
+    :root{--brand-primary:#0D0D0F;--brand-secondary:#FFD60A;--brand-accent:#F59E0B;}
+    html,body{background-color:#0D0D0F;color:#F5F5F7;}
+  </style>
+
+  <link rel="icon" href="https://eventmanagementimages.blob.core.windows.net/crowdpass/events/manickath/Manickathlogo.jpg.jpeg">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <meta name="author" content="Manickath Global">
+  <meta property="og:site_name" content="Manickath Global">
+  <meta property="og:title" content="Miss &amp; Mrs Asia Global UK 2026 &amp; Asian Global Excellence Awards 2026">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Manickath Global">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

@@ -1,17 +1,21 @@
 // ─── Shared tokens ───────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
+// Routed through namespaced --ec-* vars (hex fallback => default unchanged;
+// styles.crowdpass.scss overrides to dark + gold). $white stays literal.
+$slate:      var(--ec-accent, #1E293B);
+$slate-mid:  var(--ec-accent-2, #334155);
+$slate-pale: var(--ec-surface-2, #F1F5F9);
+$slate-tint: var(--ec-border, #CBD5E1);
 
-$ink:        #0F172A;
-$ink-2:      #334155;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
+$ink:        var(--ec-text, #0F172A);
+$ink-2:      var(--ec-text-2, #334155);
+$ink-3:      var(--ec-text-3, #64748B);
+$ink-4:      var(--ec-text-4, #94A3B8);
 
 $white:      #FFFFFF;
-$border:     #E2E8F0;
-$surface:    #F8FAFC;
+$card:       var(--ec-surface, #FFFFFF);
+$on-accent:  var(--ec-on-accent, #FFFFFF);
+$border:     var(--ec-border, #E2E8F0);
+$surface:    var(--ec-surface-2, #F8FAFC);
 
 $green:      #10B981;
 $green-pale: #ECFDF5;
@@ -32,7 +36,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
 
 // ─── Section ─────────────────────────────────────────────────────
 .venues {
-  background: $white;
+  background: $card;
   border-top: 1px solid $border;
   padding: 36px 0 48px;
   font-family: 'DM Sans', sans-serif;
@@ -108,7 +112,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: $white;
+  background: $card;
   border: 1.5px solid $border;
   border-radius: $r-sm;
   cursor: pointer;
@@ -118,7 +122,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
 
   &:hover {
     border-color: $slate-tint;
-    box-shadow: 0 4px 14px rgba($slate, .08);
+    box-shadow: 0 4px 14px color-mix(in srgb, $slate 8%, transparent);
     transform: translateX(2px);
 
     .tab-arrow { opacity: 1; transform: translateX(0); }
@@ -127,7 +131,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
   &.active {
     background: $slate;
     border-color: $slate;
-    box-shadow: 0 6px 20px rgba($slate, .22);
+    box-shadow: 0 6px 20px color-mix(in srgb, $slate 22%, transparent);
 
     .tab-index { color: rgba($white, .5); }
     .tab-city  { color: $white; }
@@ -194,7 +198,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
 // ─── VENUE DETAIL (right column) — horizontal split ──────────────
 .venue-detail {
   display: flex;
-  background: $white;
+  background: $card;
   border: 1.5px solid $border;
   border-radius: $r-lg;
   overflow: hidden;
@@ -243,7 +247,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
   &--location {
     bottom: 14px;
     left: 16px;
-    background: $white;
+    background: $card;
     color: $ink;
     border: 1px solid $border;
   }
@@ -252,7 +256,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
     top: 14px;
     right: 16px;
     background: $slate;
-    color: $white;
+    color: $on-accent;
   }
 }
 
@@ -359,7 +363,7 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
   align-items: center;
   gap: 6px;
   padding: 9px 16px;
-  background: $white;
+  background: $card;
   color: $ink;
   border: 1.5px solid $border;
   border-radius: $r-pill;
@@ -383,21 +387,21 @@ $sh-lg:  0 16px 48px rgba(0,0,0,.09), 0 4px 12px rgba(0,0,0,.05);
   gap: 7px;
   padding: 9px 20px;
   background: $slate;
-  color: $white;
+  color: $on-accent;
   border: none;
   border-radius: $r-pill;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba($slate, .22);
+  box-shadow: 0 4px 14px color-mix(in srgb, $slate 22%, transparent);
   transition: all .2s ease;
 
   svg { transition: transform .2s; }
 
   &:hover:not(:disabled) {
     background: $slate-mid;
-    box-shadow: 0 6px 20px rgba($slate, .32);
+    box-shadow: 0 6px 20px color-mix(in srgb, $slate 32%, transparent);
     transform: translateY(-2px);
     svg { transform: translateX(3px); }
   }

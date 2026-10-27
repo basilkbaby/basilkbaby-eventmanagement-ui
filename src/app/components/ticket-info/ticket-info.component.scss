@@ -1,18 +1,21 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$terra:    #C25A3C;
-$terra-d:  #A04830;
+// Repointed at the themeable design-system CSS variables (default light /
+// CrowdPass dark+gold). Semantic success green + translucent tints stay literal.
+$terra:    var(--primary-500);
+$terra-d:  var(--primary-600);
 $terra-dim: rgba(194,90,60,0.09);
-$amber:    #E0862B;
-$amber-d:  #C06B18;
-$sage:     #6B9470;
-$surface:  #ffffff;
-$bg:       #F8F5F1;
-$border:   #E8DED6;
-$border-s: #F0E8E0;
-$t1:       #1E1C18;
-$t2:       #5A5650;
-$t3:       #9A948C;
-$green:    #22C55E;
+$amber:    var(--accent);
+$amber-d:  var(--accent-hover);
+$sage:     var(--secondary-500);
+$surface:  var(--surface-card);
+$bg:       var(--bg-primary);
+$border:   var(--border-light);
+$border-s: var(--border-light);
+$t1:       var(--text-primary);
+$t2:       var(--text-secondary);
+$t3:       var(--text-tertiary);
+$green:    var(--success);
+$on-brand: var(--text-inverse);
 $font:     'DM Sans','Helvetica Neue',sans-serif;
 $ease:     cubic-bezier(0.4,0,0.2,1);
 

@@ -1,57 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { CompanyConfig, HeaderConfig } from '../models/config.interface';
+import { BehaviorSubject } from 'rxjs';
+import { HeaderConfig } from '../models/config.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private configSubject = new BehaviorSubject<HeaderConfig | null>(null);
+  // Seed synchronously from the build-time theme so branding is correct before first render
+  // (no runtime fetch of companies.json -> no default-theme flash on slow loads).
+  private configSubject = new BehaviorSubject<HeaderConfig | null>(
+    environment.theme as unknown as HeaderConfig
+  );
   public config$ = this.configSubject.asObservable();
 
-  private currentCompany: string = 'default';
+  private currentCompany: string = (environment.theme as any)?.id ?? 'default';
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
-  async loadConfig(companyId: string = 'v4entertainments'): Promise<HeaderConfig> {
-    try {
-      const companies = await this.http.get<CompanyConfig[]>('/assets/config/companies.json').toPromise();
-      
-      if (!companies) {
-        throw new Error('No companies configuration found');
-      }
-
-      // Try to find company by domain first, then by ID
-      const currentDomain = this.getCurrentDomain();
-      let companyConfig = companies.find(company => company.domain === currentDomain);
-      
-      if (!companyConfig) {
-        companyConfig = companies.find(company => company.id === companyId);
-      }
-
-      if (!companyConfig) {
-        companyConfig = companies.find(company => company.id === 'default');
-      }
-
-      if (companyConfig) {
-        this.configSubject.next(companyConfig);
-        this.currentCompany = companyConfig.id;
-        return companyConfig;
-      } else {
-        throw new Error('No suitable configuration found');
-      }
-    } catch (error) {
-      console.error('Error loading configuration:', error);
-      throw error;
-    }
+  /**
+   * Kept async for call-site compatibility, but resolves immediately from the baked-in
+   * environment.theme — the deployment (via angular.json fileReplacements) decides the theme,
+   * not an app-load fetch.
+   */
+  async loadConfig(_companyId: string = 'v4entertainments'): Promise<HeaderConfig> {
+    const cfg = environment.theme as unknown as HeaderConfig;
+    this.configSubject.next(cfg);
+    this.currentCompany = (cfg as any)?.id ?? 'default';
+    return cfg;
   }
 
   getConfig(): HeaderConfig | null {
     return this.configSubject.value;
-  }
-
-  private getCurrentDomain(): string {
-    return window.location.hostname;
   }
 }

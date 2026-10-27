@@ -1,16 +1,20 @@
 // ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
+// Routed through namespaced --ec-* vars (hex fallback => default unchanged;
+// styles.crowdpass.scss overrides to dark + gold). $white stays literal.
+$slate:      var(--ec-accent, #1E293B);
+$slate-mid:  var(--ec-accent-2, #334155);
+$slate-pale: var(--ec-surface-2, #F1F5F9);
+$slate-tint: var(--ec-border, #CBD5E1);
 
-$ink:        #0F172A;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
+$ink:        var(--ec-text, #0F172A);
+$ink-3:      var(--ec-text-3, #64748B);
+$ink-4:      var(--ec-text-4, #94A3B8);
 
 $white:      #FFFFFF;
-$border:     #E2E8F0;
-$surface:    #F8FAFC;
+$card:       var(--ec-surface, #FFFFFF);
+$on-accent:  var(--ec-on-accent, #FFFFFF);
+$border:     var(--ec-border, #E2E8F0);
+$surface:    var(--ec-surface-2, #F8FAFC);
 
 $r-sm:   10px;
 $r-md:   16px;
@@ -24,7 +28,8 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
 
 // ─── Section ─────────────────────────────────────────────────────
 .contact-section {
-  background: $slate;
+  // Large dark section surface (NOT the gold accent) — own var so CrowdPass keeps it dark.
+  background: var(--ec-section-dark, #1E293B);
   padding: 72px 0 80px;
   font-family: 'DM Sans', sans-serif;
   position: relative;
@@ -104,7 +109,7 @@ $sh-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   align-items: center;
   gap: 9px;
   padding: 14px 28px;
-  background: $white;
+  background: $card;
   color: $slate;
   border: none;
   border-radius: $r-pill;

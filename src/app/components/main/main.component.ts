@@ -12,6 +12,7 @@ import { SocialMediaFeedComponent } from '../pages/social-media-feed/social-medi
 import { EventService } from '../../core/services/event.service';
 import { EventDto } from '../../core/models/DTOs/event.DTO.model';
 import { filter } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-main',
@@ -83,7 +84,9 @@ private checkCurrentRoute(url: string): void {
 
   loadEvents(): void {
     this.isLoading = true;
-    this.eventService.getEvents().subscribe({
+    // Per-organizer deployments set environment.organizerId to show only that organizer's events.
+    const eventFilter = environment.organizerId ? { organizerId: environment.organizerId } : undefined;
+    this.eventService.getEvents(eventFilter).subscribe({
       next: (events) => {
         this.events = [...events];
         this.isLoading = false;

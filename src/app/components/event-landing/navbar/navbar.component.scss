@@ -1,15 +1,20 @@
 // ─── Tokens ──────────────────────────────────────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
+// Routed through namespaced --ec-* vars (hex fallback => default slate look is
+// unchanged; styles.crowdpass.scss overrides them to dark + gold). $card = panel
+// surface, $on-accent = text on the accent fill.
+$slate:      var(--ec-accent, #1E293B);
+$slate-mid:  var(--ec-accent-2, #334155);
+$slate-pale: var(--ec-surface-2, #F1F5F9);
+$slate-tint: var(--ec-border, #CBD5E1);
 
-$ink:        #0F172A;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
+$ink:        var(--ec-text, #0F172A);
+$ink-3:      var(--ec-text-3, #64748B);
+$ink-4:      var(--ec-text-4, #94A3B8);
 
 $white:      #FFFFFF;
-$border:     #E2E8F0;
+$card:       var(--ec-surface, #FFFFFF);
+$on-accent:  var(--ec-on-accent, #FFFFFF);
+$border:     var(--ec-border, #E2E8F0);
 
 $r-pill: 999px;
 $r-sm:   8px;
@@ -21,7 +26,7 @@ $r-sm:   8px;
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba($white, .92);
+  background: color-mix(in srgb, $card 92%, transparent);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-bottom: 1px solid transparent;
@@ -29,7 +34,7 @@ $r-sm:   8px;
   font-family: 'DM Sans', sans-serif;
 
   &--scrolled {
-    background: rgba($white, .98);
+    background: color-mix(in srgb, $card 98%, transparent);
     border-bottom-color: $border;
     box-shadow: 0 1px 12px rgba(0,0,0,.07);
   }
@@ -134,14 +139,14 @@ $r-sm:   8px;
   gap: 7px;
   padding: 9px 20px;
   background: $slate;
-  color: $white;
+  color: $on-accent;
   border: none;
   border-radius: $r-pill;
   font-family: 'DM Sans', sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba($slate, .22);
+  box-shadow: 0 2px 10px color-mix(in srgb, $slate 22%, transparent);
   transition: all .18s ease;
   white-space: nowrap;
 
@@ -149,7 +154,7 @@ $r-sm:   8px;
 
   &:hover {
     background: $slate-mid;
-    box-shadow: 0 4px 16px rgba($slate, .3);
+    box-shadow: 0 4px 16px color-mix(in srgb, $slate 30%, transparent);
     svg { transform: translateX(3px); }
   }
 }
@@ -223,7 +228,7 @@ $r-sm:   8px;
     margin-top: 12px;
     padding: 11px;
     background: $slate;
-    color: $white;
+    color: $on-accent;
     border: none;
     border-radius: $r-pill;
     font-family: 'DM Sans', sans-serif;

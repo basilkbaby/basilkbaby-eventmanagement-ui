@@ -1,17 +1,23 @@
 // ─── Design Tokens ───────────────────────────────────────────────
-$slate:        #1E293B;   // primary accent (was indigo)
-$slate-mid:    #334155;   // slightly lighter slate
-$slate-pale:   #F1F5F9;   // very light slate tint
-$slate-tint:   #CBD5E1;   // border/tint
+// Routed through namespaced --ec-* vars (hex fallback => default slate look is
+// unchanged; styles.crowdpass.scss overrides them to dark + gold). $white stays
+// literal (it's also used as text over images / in rgba); $card = panel surface,
+// $on-accent = text on the accent fill.
+$slate:        var(--ec-accent, #1E293B);   // primary accent (gold on CrowdPass)
+$slate-mid:    var(--ec-accent-2, #334155);
+$slate-pale:   var(--ec-surface-2, #F1F5F9);
+$slate-tint:   var(--ec-border, #CBD5E1);
 
-$ink:          #0F172A;
-$ink-2:        #334155;
-$ink-3:        #64748B;
-$ink-4:        #94A3B8;
+$ink:          var(--ec-text, #0F172A);
+$ink-2:        var(--ec-text-2, #334155);
+$ink-3:        var(--ec-text-3, #64748B);
+$ink-4:        var(--ec-text-4, #94A3B8);
 
 $white:        #FFFFFF;
-$border:       #E2E8F0;
-$surface:      #F8FAFC;
+$card:         var(--ec-surface, #FFFFFF);
+$on-accent:    var(--ec-on-accent, #FFFFFF);
+$border:       var(--ec-border, #E2E8F0);
+$surface:      var(--ec-surface-2, #F8FAFC);
 
 $r-sm:   10px;
 $r-md:   16px;
@@ -30,7 +36,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 // ─── Base ────────────────────────────────────────────────────────
 .hero {
   position: relative;
-  background: $white;
+  background: $card;
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
   // padding-top: var(--navbar-height, 72px);
@@ -180,7 +186,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .venue-chip {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 9px 15px;
-  background: $white;
+  background: $card;
   border: 1.5px solid $border;
   border-radius: $r-md;
   cursor: pointer;
@@ -193,12 +199,12 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   &:hover {
     border-color: $slate-tint;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba($slate, .1);
+    box-shadow: 0 6px 16px color-mix(in srgb, $slate 10%, transparent);
   }
 
   &.active {
     background: $slate; border-color: $slate;
-    box-shadow: 0 6px 20px rgba($slate, .28);
+    box-shadow: 0 6px 20px color-mix(in srgb, $slate 28%, transparent);
     transform: translateY(-2px);
     .chip-city { color: $white; }
     .chip-date { color: rgba($white, .6); }
@@ -207,7 +213,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 // Venue card
 .venue-card {
-  background: $white; border: 1.5px solid $border;
+  background: $card; border: 1.5px solid $border;
   border-radius: $r-lg; padding: 16px 18px;
   margin-bottom: 22px; box-shadow: $sh-md;
   animation: popIn .2s ease both;
@@ -245,18 +251,18 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 13px 26px;
-  background: $slate; color: $white;
+  background: $slate; color: $on-accent;
   border: none; border-radius: $r-pill;
   font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 22px rgba($slate, .28);
+  box-shadow: 0 6px 22px color-mix(in srgb, $slate 28%, transparent);
   transition: all .2s ease;
 
   svg { transition: transform .2s; }
 
   &:hover {
     background: $slate-mid;
-    box-shadow: 0 8px 28px rgba($slate, .38);
+    box-shadow: 0 8px 28px color-mix(in srgb, $slate 38%, transparent);
     transform: translateY(-2px);
     svg { transform: translateX(3px); }
   }
@@ -325,13 +331,13 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
   position: absolute; top: 50%; transform: translateY(-50%);
   z-index: 3; width: 38px; height: 38px;
   border-radius: 50%; border: 1.5px solid $border;
-  background: $white; box-shadow: $sh-md;
+  background: $card; box-shadow: $sh-md;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: $ink-2; transition: all .18s ease;
 
   &:hover {
-    background: $slate; border-color: $slate; color: $white;
-    box-shadow: 0 4px 14px rgba($slate, .25);
+    background: $slate; border-color: $slate; color: $on-accent;
+    box-shadow: 0 4px 14px color-mix(in srgb, $slate 25%, transparent);
   }
 
   &--prev { left: -16px; }
@@ -356,7 +362,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 .float-badge {
   position: absolute; top: -14px; left: 20px; z-index: 4;
   display: inline-flex; align-items: center; gap: 7px;
-  background: $white; border: 1.5px solid $border;
+  background: $card; border: 1.5px solid $border;
   border-radius: $r-pill; padding: 7px 14px 7px 10px;
   box-shadow: $sh-md; font-size: 13px; font-weight: 600; color: $ink;
   animation: floatY 3.2s ease-in-out infinite;
@@ -369,7 +375,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
 .float-stats {
   position: absolute; bottom: -14px; right: 20px; z-index: 4;
-  display: flex; background: $white;
+  display: flex; background: $card;
   border: 1.5px solid $border; border-radius: $r-lg;
   box-shadow: $sh-md; overflow: hidden;
   animation: floatY 3.2s ease-in-out infinite reverse;
@@ -431,7 +437,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
     width: 70px;
     height: 70px;
     border-radius: $r-sm;
-    background: $white;
+    background: $card;
     border: 1px solid $border;
     display: flex;
     align-items: center;
@@ -458,7 +464,7 @@ $sh-lg: 0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
 
   &:hover &__logo {
     border-color: $slate-tint;
-    box-shadow: 0 2px 10px rgba($slate, .08);
+    box-shadow: 0 2px 10px color-mix(in srgb, $slate 8%, transparent);
   }
 
   &__initials {

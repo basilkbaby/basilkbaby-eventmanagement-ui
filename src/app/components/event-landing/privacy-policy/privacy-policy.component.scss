@@ -1,12 +1,14 @@
 // ── Tokens — kept consistent with the rest of the app ────────────────────────
-$t1:       #0f172a;
-$t2:       #475569;
-$t3:       #94a3b8;
-$border:   #e4e8ef;
-$border-s: #f0f3f8;
-$bg:       #f4f6f9;
-$surface:  #ffffff;
-$green:    #22C55E;
+// Repointed at the themeable design-system CSS variables (default light /
+// CrowdPass dark+gold). Semantic success green + translucent tint stay literal.
+$t1:       var(--text-primary);
+$t2:       var(--text-secondary);
+$t3:       var(--text-tertiary);
+$border:   var(--border-light);
+$border-s: var(--border-light);
+$bg:       var(--bg-primary);
+$surface:  var(--surface-card);
+$green:    var(--success);
 $green-d:  #16A34A;
 $green-bg: rgba(34,197,94,0.07);
 $font:     'DM Sans','Helvetica Neue',sans-serif;

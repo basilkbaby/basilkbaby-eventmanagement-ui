@@ -1,17 +1,21 @@
 // ─── Shared tokens (keep in sync with hero) ──────────────────────
-$slate:      #1E293B;
-$slate-mid:  #334155;
-$slate-pale: #F1F5F9;
-$slate-tint: #CBD5E1;
+// Routed through namespaced --ec-* vars (hex fallback => default unchanged;
+// styles.crowdpass.scss overrides to dark + gold). $white stays literal.
+$slate:      var(--ec-accent, #1E293B);
+$slate-mid:  var(--ec-accent-2, #334155);
+$slate-pale: var(--ec-surface-2, #F1F5F9);
+$slate-tint: var(--ec-border, #CBD5E1);
 
-$ink:        #0F172A;
-$ink-2:      #334155;
-$ink-3:      #64748B;
-$ink-4:      #94A3B8;
+$ink:        var(--ec-text, #0F172A);
+$ink-2:      var(--ec-text-2, #334155);
+$ink-3:      var(--ec-text-3, #64748B);
+$ink-4:      var(--ec-text-4, #94A3B8);
 
 $white:      #FFFFFF;
-$border:     #E2E8F0;
-$surface:    #F8FAFC;
+$card:       var(--ec-surface, #FFFFFF);
+$on-accent:  var(--ec-on-accent, #FFFFFF);
+$border:     var(--ec-border, #E2E8F0);
+$surface:    var(--ec-surface-2, #F8FAFC);
 
 $r-sm:   10px;
 $r-md:   16px;
@@ -90,7 +94,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   align-items: center;
   gap: 7px;
   padding: 10px 20px;
-  background: $white;
+  background: $card;
   color: $ink;
   border: 1.5px solid $border;
   border-radius: $r-pill;
@@ -122,7 +126,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 
 // ─── Artist card ─────────────────────────────────────────────────
 .artist-card {
-  background: $white;
+  background: $card;
   border: 1px solid $border;
   border-radius: $r-md;
   overflow: hidden;
@@ -133,7 +137,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba($slate, .12), 0 2px 8px rgba(0,0,0,.04);
+    box-shadow: 0 8px 28px color-mix(in srgb, $slate 12%, transparent), 0 2px 8px rgba(0,0,0,.04);
     border-color: $slate-tint;
 
     .artist-overlay { opacity: 1; }
@@ -166,7 +170,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 // Hover overlay
 .artist-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(160deg, transparent 40%, rgba($slate, .55) 100%);
+  background: linear-gradient(160deg, transparent 40%, color-mix(in srgb, $slate 55%, transparent) 100%);
   display: flex; align-items: flex-end; justify-content: flex-end;
   padding: 10px;
   opacity: 0;
@@ -176,7 +180,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 .overlay-icon {
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: $white;
+  background: $card;
   color: $slate;
   display: flex; align-items: center; justify-content: center;
   box-shadow: $sh-sm;
@@ -188,7 +192,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
   top: 8px; right: 8px;
   width: 28px; height: 28px;
   border-radius: 50%;
-  background: $white;
+  background: $card;
   color: #E1306C;
   display: flex; align-items: center; justify-content: center;
   text-decoration: none;
@@ -204,7 +208,7 @@ $sh-card:0 2px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 // Info strip
 .artist-info {
   padding: 10px 12px 12px;
-  background: $white;
+  background: $card;
 }
 
 .artist-name {
