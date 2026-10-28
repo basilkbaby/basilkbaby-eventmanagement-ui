@@ -12,7 +12,9 @@
       <div *ngIf="loading" class="ts-muted">Loading tickets…</div>
       <div *ngIf="!loading && tickets.length === 0" class="ts-muted">No tickets are currently on sale for this event.</div>
 
-      <div class="ts-ticket" *ngFor="let t of tickets" [class.soldout]="t.soldOut || maxFor(t) <= 0">
+      <div class="ts-ticket" *ngFor="let t of tickets"
+           [class.soldout]="t.soldOut || maxFor(t) <= 0"
+           [class.ts-selected]="t.qty > 0">
         <div class="ts-ticket-info">
           <div class="ts-ticket-name">{{ t.name }}</div>
           <div class="ts-ticket-desc" *ngIf="t.description">{{ t.description }}</div>
@@ -36,7 +38,7 @@
           <span>£{{ (t.qty * t.price) | number:'1.2-2' }}</span>
         </ng-container>
       </div>
-      <div class="ts-line" *ngIf="totalQty > 0">
+      <div class="ts-line" *ngIf="totalQty > 0 && serviceFee > 0">
         <span>Service fee</span>
         <span>£{{ serviceFee | number:'1.2-2' }}</span>
       </div>

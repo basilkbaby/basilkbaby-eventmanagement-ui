@@ -91,7 +91,7 @@
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" stroke="currentColor" stroke-width="2"/>
               </svg>
-              {{ isGeneralAdmission ? 'Get Tickets' : 'Select Seats & Buy Tickets' }}
+              {{ isGeneralAdmission ? 'Book Tickets' : 'Select Seats & Buy Tickets' }}
             </button>
           </div>
           <div class="ed-hero__discount" *ngFor="let coupon of automaticCoupons">
@@ -488,7 +488,8 @@
         </section>
 
         <!-- Get Your Tickets -->
-        <section class="ed-card" id="ed-tickets" aria-labelledby="booking-heading">
+        <section class="ed-card" id="ed-tickets" aria-labelledby="booking-heading"
+                 [class.ed-card--tickets]="isGeneralAdmission && !event.isPast">
           <div class="ed-card__header">
             <h2 class="ed-card__heading" id="booking-heading">Get Your Tickets</h2>
             <p class="ed-card__subtitle">
@@ -597,7 +598,7 @@
         <div class="ed-bar__actions">
           <button class="ed-btn-primary" (click)="navigateToSeatSelection()"
                   [attr.aria-label]="(isGeneralAdmission ? 'Get tickets for ' : 'Select seats for ') + event.title">
-            {{ isGeneralAdmission ? 'Get Tickets' : 'Select Seats' }}
+            {{ isGeneralAdmission ? 'Book Tickets' : 'Select Seats' }}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"/>
             </svg>

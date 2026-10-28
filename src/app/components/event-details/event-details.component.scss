@@ -1285,6 +1285,17 @@ $on-brand:  var(--text-inverse);
   width: 100%;
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// "GET YOUR TICKETS" CARD — emphasised so the booking action stands out
+// (general-admission inline picker). Fallbacks = the normal card look (v4 safe);
+// the themed build gives it an accent ring + stronger lift via the vars.
+// ════════════════════════════════════════════════════════════════════════════
+.ed-card--tickets {
+  border-color: var(--ed-tickets-border, var(--ed-card-border-color, #{$border}));
+  box-shadow: var(--ed-tickets-shadow, var(--ed-card-shadow, 0 2px 12px rgba(194, 90, 60, 0.06)));
+  scroll-margin-top: 84px;
+}
+
 // Smaller variant for the hero CTA
 .ed-btn-primary--sm {
   padding: 10px 20px;

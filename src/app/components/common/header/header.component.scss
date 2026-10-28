@@ -300,7 +300,11 @@
   display: flex; align-items: center;
   text-decoration: none; cursor: pointer; flex-shrink: 0; user-select: none;
   &__img {
-    height: 44px; width: auto; max-width: 180px; object-fit: contain;
+    /* Height/width read from vars so only the crowdpass/manickath build (which
+       defines them in styles.crowdpass.scss) enlarges the logo; v4/default fall
+       back to the original 44px/180px and are unchanged. */
+    height: var(--nav-logo-height, 44px); width: auto;
+    max-width: var(--nav-logo-max-width, 180px); object-fit: contain;
     display: block;
   }
 }

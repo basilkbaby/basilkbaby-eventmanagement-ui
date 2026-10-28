@@ -26,6 +26,16 @@
   border: 1px solid var(--ts-border, #e5e7eb); border-radius: 12px;
   padding: 16px 18px; margin-bottom: 12px;
   background: var(--ts-ticket-bg, transparent);
+  box-shadow: var(--ts-ticket-shadow, none);
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+/* Hover + "has quantity" states. Fallbacks resolve back to the base border/background,
+   so the default/v4 build shows no change; the themed build makes them stand out. */
+.ts-ticket:hover { border-color: var(--ts-ticket-hover-border, var(--ts-border, #e5e7eb)); }
+.ts-ticket.ts-selected {
+  border-color: var(--ts-selected-border, var(--ts-border, #e5e7eb));
+  background: var(--ts-selected-bg, var(--ts-ticket-bg, transparent));
+  box-shadow: var(--ts-selected-ring, none);
 }
 .ts-ticket.soldout { opacity: 0.6; }
 .ts-ticket-name { font-weight: 700; font-size: 16px; color: var(--ts-text, inherit); }
@@ -40,6 +50,12 @@
   border: 1px solid var(--ts-stepper-border, #d1d5db);
   background: var(--ts-stepper-bg, #fff); color: var(--ts-text, inherit);
   font-size: 20px; cursor: pointer; line-height: 1;
+}
+/* Make the "+" (increase) control read as the primary action. */
+.ts-stepper button:last-child {
+  border-color: var(--ts-plus-border, var(--ts-stepper-border, #d1d5db));
+  background: var(--ts-plus-bg, var(--ts-stepper-bg, #fff));
+  color: var(--ts-plus-fg, var(--ts-text, inherit));
 }
 .ts-stepper button:disabled { opacity: 0.4; cursor: default; }
 .ts-qty { min-width: 20px; text-align: center; font-weight: 600; color: var(--ts-text, inherit); }
@@ -64,3 +80,61 @@
   font-weight: 700; font-size: 15px; cursor: pointer;
 }
 .ts-cta:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Embedded picker (inside the event-details "Get Your Tickets" card) ────────
+   A richer, unmistakably-selectable presentation. These rules only apply when the
+   picker is embedded (general-admission), so the standalone page and v4 are untouched.
+   Colours come from the themed vars; geometry is embedded-only. */
+.ts-embedded .ts-list h2 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--ts-muted, #6b7280);
+  margin: 0 0 14px;
+}
+
+.ts-embedded .ts-ticket {
+  position: relative;
+  gap: 16px;
+  padding: 18px 20px 18px 24px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+/* Left accent bar marks each row as its own selectable card. */
+.ts-embedded .ts-ticket::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--ts-accent-bar, transparent);
+  transition: background .15s ease;
+}
+.ts-embedded .ts-ticket.ts-selected::before { background: var(--ts-selected-border, transparent); }
+
+.ts-embedded .ts-ticket-name  { font-size: 17px; }
+.ts-embedded .ts-ticket-desc  { font-size: 13px; margin: 3px 0 0; }
+.ts-embedded .ts-ticket-price {
+  font-size: 19px;
+  font-weight: 800;
+  margin-top: 8px;
+  color: var(--ts-price, inherit);
+}
+
+/* Stepper as an enclosed pill control so it clearly reads as "choose quantity". */
+.ts-embedded .ts-stepper {
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--ts-stepper-wrap-bg, transparent);
+}
+.ts-embedded .ts-stepper button { width: 38px; height: 38px; font-size: 22px; }
+.ts-embedded .ts-qty { min-width: 26px; font-size: 16px; }
+
+/* Order summary reads as a distinct, slightly raised panel. */
+.ts-embedded .ts-summary {
+  border-width: 1.5px;
+  box-shadow: var(--ts-ticket-shadow, none);
+}
+.ts-embedded .ts-total { font-size: 19px; }

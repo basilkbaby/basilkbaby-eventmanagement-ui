@@ -92,6 +92,11 @@
   --nav-bar-border-scrolled: rgba(230, 210, 168, 0.30);
   --nav-accent:              #d9bd83;                   /* active underline + cart badge */
 
+  /* Logo sizing — the Manickath mark is a square emblem, illegible at the default
+     44px. Enlarge it within the 64px bar (v4 falls back to 44px/180px, unchanged). */
+  --nav-logo-height:    56px;
+  --nav-logo-max-width: 220px;
+
   /* Header CTA button — champagne fill, deep-navy readable text */
   --nav-cta-bg:       #d9bd83;   /* champagne */
   --nav-cta-bg-hover: #e6d2a8;   /* soft champagne on hover */
@@ -131,17 +136,31 @@
   --ts-muted:          #c3cad8;
   --ts-line:           #d2d9e3;
   --ts-price:          #e6d2a8;
-  --ts-border:         rgba(230, 210, 168, 0.14);
-  --ts-ticket-bg:      rgba(255, 255, 255, 0.03);
-  --ts-summary-bg:     rgba(220, 192, 138, 0.07);
+  --ts-border:         rgba(230, 210, 168, 0.28);          /* clearer row outline */
+  --ts-ticket-bg:      #22304a;                            /* solid, lifts off the card */
+  --ts-ticket-shadow:  0 6px 18px rgba(0, 0, 0, 0.38);     /* depth so rows separate */
+  --ts-accent-bar:     rgba(217, 189, 131, 0.55);          /* champagne left bar per ticket */
+  --ts-ticket-hover-border: #e6d2a8;                       /* champagne on hover */
+  --ts-selected-border:     #d9bd83;                       /* chosen row */
+  --ts-selected-bg:         rgba(220, 192, 138, 0.14);
+  --ts-selected-ring:       0 0 0 1px #d9bd83;
+  --ts-summary-bg:     rgba(220, 192, 138, 0.10);
   --ts-stepper-bg:     #1e2a40;
-  --ts-stepper-border: rgba(230, 210, 168, 0.22);
+  --ts-stepper-border: rgba(230, 210, 168, 0.30);
+  --ts-plus-bg:        #d9bd83;                             /* "+" = primary action */
+  --ts-plus-fg:        #10192a;
+  --ts-plus-border:    #d9bd83;
   --ts-left:           #9bb0cc;
   --ts-sold:           #ff8a8a;
   --ts-error-bg:       rgba(239, 68, 68, 0.12);
   --ts-error-fg:       #ff9b9b;
   --ts-cta-bg:         #d9bd83;
   --ts-cta-fg:         #10192a;
+  /* "Get Your Tickets" card — champagne ring so the booking zone stands out */
+  --ed-tickets-border: rgba(230, 210, 168, 0.45);
+  --ed-tickets-shadow:
+      0 0 0 1px rgba(230, 210, 168, 0.28),
+      0 18px 44px rgba(0, 0, 0, 0.55);
 
   /* ── Checkout — cards/inputs were hardcoded #fff (invisible light-on-light) ── */
   --co-card-bg:        #161f30;

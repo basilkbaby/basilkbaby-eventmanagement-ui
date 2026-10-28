@@ -28,7 +28,9 @@ export class TicketSelectionComponent implements OnInit {
   adding = false;
   error = '';
 
-  private readonly serviceFeePerTicket = 1; // matches backend PerSeatServiceFee
+  // GA tickets fold any fee into the ticket price, so no separate per-ticket fee is added
+  // (matches the backend: Cart.cs charges the flat fee on seated units only).
+  private readonly serviceFeePerTicket = 0;
 
   constructor(
     private route: ActivatedRoute,
