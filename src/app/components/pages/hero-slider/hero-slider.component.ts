@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, Chang
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventDto } from '../../../core/models/DTOs/event.DTO.model';
+import { EventStatus } from '../../../core/models/Enums/event.enums';
 import { FormatDatePipe } from '../../../core/pipes/format-date.pipe';
 import { FormatTimePipe } from '../../../core/pipes/common/time-format.pipe';
 
@@ -42,7 +43,7 @@ export class HeroSliderComponent implements OnChanges {
    * stand alone as their own single-event group. Order is preserved.
    */
   private buildGroups(): void {
-    const featured = (this.events || []).filter(e => e.featured);
+    const featured = (this.events || []).filter(e => e.featured && this.isLiveFeatured(e));
     const byId = new Map<string, EventDto[]>();
     const groups: EventDto[][] = [];
 
@@ -62,6 +63,19 @@ export class HeroSliderComponent implements OnChanges {
 
     this.groups = groups;
     this.selectedIndices = groups.map(() => 0);
+  }
+
+  /**
+   * A featured event belongs in the hero only while it is still live — i.e. it hasn't ended
+   * and isn't completed/cancelled. `isPast` is the backend truth (EndDate < now), so a finished
+   * event drops out of the hero automatically once its end date passes, even if still flagged
+   * Featured. (The event list below can still show past events via its own "past" filter.)
+   */
+  private isLiveFeatured(e: EventDto): boolean {
+    if (!e) return false;
+    if (e.isPast) return false;
+    if (e.status === EventStatus.COMPLETED || e.status === EventStatus.CANCELLED) return false;
+    return true;
   }
 
   selectedEvent(groupIndex: number): EventDto | null {
