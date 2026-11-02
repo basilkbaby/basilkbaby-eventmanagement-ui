@@ -18,7 +18,10 @@
         <div class="ts-ticket-info">
           <div class="ts-ticket-name">{{ t.name }}</div>
           <div class="ts-ticket-desc" *ngIf="t.description">{{ t.description }}</div>
-          <div class="ts-ticket-price">{{ t.price === 0 ? 'Free' : ('£' + (t.price | number:'1.2-2')) }}</div>
+          <div class="ts-ticket-price">
+            {{ t.price === 0 ? 'Free' : ('£' + (t.price | number:'1.2-2')) }}
+            <span class="ts-ticket-fee" *ngIf="t.serviceFee > 0">+ £{{ t.serviceFee | number:'1.2-2' }} fee</span>
+          </div>
           <div class="ts-ticket-left" *ngIf="!t.soldOut && t.available <= 10">Only {{ t.available }} left</div>
           <div class="ts-ticket-left sold" *ngIf="t.soldOut || maxFor(t) <= 0">Sold out</div>
         </div>
@@ -26,6 +29,30 @@
           <button (click)="dec(t)" [disabled]="t.qty === 0" aria-label="decrease">−</button>
           <span class="ts-qty">{{ t.qty }}</span>
           <button (click)="inc(t)" [disabled]="t.qty >= maxFor(t)" aria-label="increase">+</button>
+        </div>
+      </div>
+
+      <!-- Access code: reveals hidden (access-code-only) ticket categories -->
+      <div class="ts-access" *ngIf="!loading">
+        <button type="button" class="ts-access-toggle" *ngIf="!showAccessCodeBox && !appliedAccessCode"
+                (click)="showAccessCodeBox = true">
+          Have an access code?
+        </button>
+
+        <div class="ts-access-box" *ngIf="showAccessCodeBox && !appliedAccessCode">
+          <label class="ts-access-label">Access code</label>
+          <div class="ts-access-row">
+            <input type="text" [(ngModel)]="accessCodeInput" placeholder="Enter code"
+                   (keyup.enter)="applyAccessCode()" autocomplete="off" />
+            <button (click)="applyAccessCode()" [disabled]="checkingCode">
+              {{ checkingCode ? 'Checking…' : 'Apply' }}
+            </button>
+          </div>
+          <div class="ts-access-error" *ngIf="accessCodeError">{{ accessCodeError }}</div>
+        </div>
+
+        <div class="ts-access-applied" *ngIf="appliedAccessCode">
+          <span>✓ Access code applied — exclusive tickets unlocked.</span>
         </div>
       </div>
     </div>

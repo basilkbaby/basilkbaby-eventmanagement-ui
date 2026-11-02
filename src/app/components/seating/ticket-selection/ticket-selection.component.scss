@@ -138,3 +138,31 @@
   box-shadow: var(--ts-ticket-shadow, none);
 }
 .ts-embedded .ts-total { font-size: 19px; }
+
+/* Per-ticket service fee hint */
+.ts-ticket-fee { font-weight: 500; font-size: 12px; color: var(--ts-muted, #6b7280); margin-left: 6px; }
+
+/* Access code (reveals access-code-only categories) */
+.ts-access { margin-top: 14px; }
+.ts-access-toggle {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--ts-accent, #4f46e5); font: 600 14px/1 inherit; text-decoration: underline;
+}
+.ts-access-box {
+  border: 1px dashed var(--ts-border, #e5e7eb); border-radius: 12px;
+  padding: 14px; background: var(--ts-summary-bg, #fafafa);
+}
+.ts-access-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ts-text, inherit); }
+.ts-access-row { display: flex; gap: 8px; }
+.ts-access-row input {
+  flex: 1; padding: 9px 11px; font: inherit;
+  border: 1px solid var(--ts-stepper-border, #d1d5db); border-radius: 8px;
+  background: var(--ts-stepper-bg, #fff); color: var(--ts-text, inherit); box-sizing: border-box;
+}
+.ts-access-row button {
+  padding: 0 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+  background: var(--ts-cta-bg, #4f46e5); color: var(--ts-cta-fg, #fff);
+}
+.ts-access-row button:disabled { opacity: .6; cursor: default; }
+.ts-access-error { color: var(--ts-error-fg, #991b1b); font-size: 13px; margin-top: 8px; }
+.ts-access-applied { color: var(--ts-sold, #15803d); font-size: 14px; font-weight: 600; margin-top: 6px; }

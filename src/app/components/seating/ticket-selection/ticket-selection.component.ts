@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TicketTypeService, PublicTicketType } from '../../../core/services/ticket-type.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -12,7 +13,7 @@ interface SelectableTicket extends PublicTicketType {
 @Component({
   selector: 'app-ticket-selection',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './ticket-selection.component.html',
   styleUrls: ['./ticket-selection.component.scss']
 })
@@ -28,9 +29,12 @@ export class TicketSelectionComponent implements OnInit {
   adding = false;
   error = '';
 
-  // GA tickets fold any fee into the ticket price, so no separate per-ticket fee is added
-  // (matches the backend: Cart.cs charges the flat fee on seated units only).
-  private readonly serviceFeePerTicket = 0;
+  // ── Shared access code (reveals access-code-gated categories) ──────────────
+  accessCodeInput = '';
+  appliedAccessCode = '';
+  checkingCode = false;
+  accessCodeError = '';
+  showAccessCodeBox = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,12 +53,39 @@ export class TicketSelectionComponent implements OnInit {
       error: () => {}
     });
 
-    this.ticketTypeService.getForEvent(this.eventId).subscribe({
+    this.reloadTickets();
+  }
+
+  /** (Re)loads ticket categories, preserving current quantities. Passes the applied access code
+   *  so revealed (gated) categories are included. */
+  private reloadTickets(): void {
+    this.ticketTypeService.getForEvent(this.eventId, this.appliedAccessCode || undefined).subscribe({
       next: (items) => {
-        this.tickets = items.map(t => ({ ...t, qty: 0 }));
+        const prevQty = new Map(this.tickets.map(t => [t.id, t.qty]));
+        this.tickets = items.map(t => ({ ...t, qty: prevQty.get(t.id) ?? 0 }));
         this.loading = false;
       },
       error: () => { this.error = 'Could not load tickets. Please try again.'; this.loading = false; }
+    });
+  }
+
+  /** Validates the entered code; on success re-fetches so gated categories appear. */
+  applyAccessCode(): void {
+    const code = this.accessCodeInput?.trim();
+    if (!code) { this.accessCodeError = 'Enter a code.'; return; }
+    this.checkingCode = true;
+    this.accessCodeError = '';
+    this.ticketTypeService.validateAccessCode(this.eventId, code).subscribe({
+      next: (valid) => {
+        this.checkingCode = false;
+        if (valid) {
+          this.appliedAccessCode = code;
+          this.reloadTickets();
+        } else {
+          this.accessCodeError = 'That code is not valid for this event.';
+        }
+      },
+      error: () => { this.checkingCode = false; this.accessCodeError = 'Could not verify the code. Try again.'; }
     });
   }
 
@@ -79,7 +110,8 @@ export class TicketSelectionComponent implements OnInit {
   }
 
   get serviceFee(): number {
-    return this.totalQty * this.serviceFeePerTicket;
+    // Per-ticket service fee is configured per category by the admin.
+    return this.tickets.reduce((s, t) => s + t.qty * (t.serviceFee || 0), 0);
   }
 
   get total(): number {
@@ -103,7 +135,7 @@ export class TicketSelectionComponent implements OnInit {
 
     this.error = '';
     this.adding = true;
-    this.cartService.addTicketsToCart(this.eventId, selected).subscribe({
+    this.cartService.addTicketsToCart(this.eventId, selected, this.appliedAccessCode || undefined).subscribe({
       next: (res) => {
         this.adding = false;
         if (res.success) {

@@ -81,9 +81,9 @@ export class CartService {
 
 
   // General-admission: add ticket categories with quantities (creates the cart).
-  addTicketsToCart(eventId: string, tickets: { ticketTypeId: string; quantity: number }[]): Observable<CartDetailsResponse> {
+  addTicketsToCart(eventId: string, tickets: { ticketTypeId: string; quantity: number }[], accessCode?: string): Observable<CartDetailsResponse> {
     const sessionId = this.getOrCreateSessionId();
-    const request = { eventId, sessionId, tickets };
+    const request = { eventId, sessionId, tickets, accessCode: accessCode || null };
 
     return this.http.post<CartDetailsResponse>(`${this.baseUrl}/cart/tickets`, request)
       .pipe(
