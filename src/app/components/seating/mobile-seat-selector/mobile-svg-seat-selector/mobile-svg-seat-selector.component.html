@@ -179,8 +179,9 @@
       </div>
       
       <!-- ADD MORE BUTTON -->
-      <button class="add-more-standing-btn" (click)="addAnotherStandingTicket()">
-        + Add Another Standing Ticket
+      <button class="add-more-standing-btn" (click)="addAnotherStandingTicket()"
+              [disabled]="isStandingAddDisabled()">
+        {{ isStandingAddDisabled() ? 'Sold out' : '+ Add Another Standing Ticket' }}
       </button>
     </div>
 

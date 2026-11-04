@@ -19,6 +19,13 @@
     @if (venueSection) {
       <p class="ga-head__sub">{{ venueSection.sectionLabel || venueSection.name }}</p>
     }
+    @if (isLimited) {
+      @if (isSoldOut) {
+        <span class="ga-soldout-pill">Sold out</span>
+      } @else {
+        <span class="ga-remaining">{{ remaining }} ticket{{ remaining === 1 ? '' : 's' }} left</span>
+      }
+    }
   </div>
 
   <!-- Info notice -->
@@ -30,8 +37,19 @@
     <span>Standing room only — no allocated seats</span>
   </div>
 
+  <!-- Sold-out notice -->
+  @if (isSoldOut) {
+    <div class="ga-soldout">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>This standing section is sold out.</span>
+    </div>
+  }
+
   <!-- Ticket options -->
-  <div class="ga-options">
+  <div class="ga-options" [class.ga-options--disabled]="isSoldOut">
     @for (option of gaOptions; track option.id) {
       <div class="ga-option">
         <div class="ga-option__meta">
@@ -74,8 +92,10 @@
   <div class="ga-actions">
     <button class="ga-btn-add"
       (click)="addToSelection()"
-      [disabled]="totalQuantity === 0">
-      @if (totalQuantity === 0) {
+      [disabled]="totalQuantity === 0 || isSoldOut">
+      @if (isSoldOut) {
+        Sold out
+      } @else if (totalQuantity === 0) {
         Select tickets to continue
       } @else {
         Add {{ totalQuantity }} Standing Ticket{{ totalQuantity !== 1 ? 's' : '' }}

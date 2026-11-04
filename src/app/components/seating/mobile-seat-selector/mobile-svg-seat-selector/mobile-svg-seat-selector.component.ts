@@ -701,6 +701,26 @@ hasStandingTickets(): boolean {
   return this.selectedSeats.some(seat => seat.isStandingArea);
 }
 
+// Tickets still available in a standing section: capacity − already sold − currently selected.
+// Returns Infinity when the organiser set no limit (unlimited).
+getStandingRemaining(section: VenueSection | null | undefined): number {
+  if (!section) return Infinity;
+  const cap = section.standingCapacity;
+  if (cap == null || cap <= 0) return Infinity;
+  const sold = section.standingSold || 0;
+  const selectedForSection = this.selectedSeats.filter(
+    s => s.isStandingArea && s.sectionId === section.id).length;
+  return Math.max(0, cap - sold - selectedForSection);
+}
+
+// Disables the "add another standing ticket" button once the section's limit is reached.
+isStandingAddDisabled(): boolean {
+  const standingSeat = this.selectedSeats.find(s => s.isStandingArea);
+  if (!standingSeat) return false;
+  const section = this.venueData?.sections.find(s => s.id === standingSeat.sectionId);
+  return this.getStandingRemaining(section) <= 0;
+}
+
 // Method to add another standing ticket
 addAnotherStandingTicket(): void {
   // Find the first standing ticket in selected seats
@@ -714,6 +734,13 @@ addAnotherStandingTicket(): void {
   // Find the section
   const section = this.venueData?.sections.find(s => s.id === originalStandingSeat.sectionId);
   if (!section) return;
+
+  // Standing stock cap: stop adding once the section's limit is reached.
+  if (this.getStandingRemaining(section) <= 0) {
+    this.selectionError = 'This standing section is sold out';
+    setTimeout(() => { this.selectionError = null; this.cdRef.detectChanges(); }, 3000);
+    return;
+  }
 
   // Generate a new seat ID
   const newSeatId = this.generateStandingTicketId(section);
@@ -854,6 +881,15 @@ generateStandingTicketId(section: any): string {
           this.cdRef.detectChanges();
         }, 3000);
         return;
+      }
+      // Standing stock cap: refuse once the section's limit is reached.
+      if (seat.isStandingArea) {
+        const section = this.venueData?.sections.find(s => s.id === seat.sectionId);
+        if (this.getStandingRemaining(section) <= 0) {
+          this.selectionError = 'This standing section is sold out';
+          setTimeout(() => { this.selectionError = null; this.cdRef.detectChanges(); }, 3000);
+          return;
+        }
       }
       this.selectSeat(seat);
     }

@@ -159,6 +159,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           if (message.includes('SEATS_ALREADY_SOLD')) {
             const seats = message.split(':')[1] || '';
             message = `Sorry — these seats were just taken by another customer${seats ? ' (' + seats + ')' : ''}. Your payment has been received.`;
+          } else if (message.includes('STANDING_SOLD_OUT')) {
+            const section = message.split(':')[1] || '';
+            message = `Sorry — the ${section ? section + ' standing area' : 'standing area'} sold out before we could confirm your order. Your payment has been received.`;
           }
           // We only get here after the payment succeeded, so money was taken — always give the
           // customer a reference so support can locate and refund the charge.

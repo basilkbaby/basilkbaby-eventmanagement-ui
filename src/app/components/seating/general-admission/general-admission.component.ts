@@ -64,9 +64,44 @@ export class GeneralAdmissionComponent implements OnInit, OnChanges {
     this.gaOptions.forEach(o => { this.selections[o.id] = 0; });
   }
 
+  // ── Standing capacity (per section) ───────────────────────────────────────
+  // null = unlimited (no limit set by the organiser). When a limit is set, the
+  // whole section shares it: total selected across options can't exceed what's left.
+  get sectionCapacity(): number | null {
+    const cap = this.venueSection?.standingCapacity;
+    return cap != null && cap > 0 ? cap : null;
+  }
+
+  get sectionSold(): number {
+    return this.venueSection?.standingSold || 0;
+  }
+
+  get isLimited(): boolean {
+    return this.sectionCapacity != null;
+  }
+
+  /** Tickets still available in this section (Infinity when unlimited). */
+  get remaining(): number {
+    return this.isLimited ? Math.max(0, (this.sectionCapacity as number) - this.sectionSold) : Infinity;
+  }
+
+  get isSoldOut(): boolean {
+    return this.isLimited && this.remaining <= 0;
+  }
+
   increment(optionId: string) {
     const option = this.gaOptions.find(o => o.id === optionId);
     if (!option) return;
+
+    // Section-wide stock cap takes priority over the per-order max.
+    if (this.totalQuantity >= this.remaining) {
+      this.notificationService.showWarning(
+        this.remaining <= 0
+          ? 'This section is sold out'
+          : `Only ${this.remaining} ticket${this.remaining === 1 ? '' : 's'} remaining`);
+      return;
+    }
+
     const current = this.selections[optionId] || 0;
     if (current < option.maxPerOrder) {
       this.selections[optionId] = current + 1;
@@ -82,7 +117,9 @@ export class GeneralAdmissionComponent implements OnInit, OnChanges {
 
   canIncrement(optionId: string): boolean {
     const option = this.gaOptions.find(o => o.id === optionId);
-    return !!option && (this.selections[optionId] || 0) < option.maxPerOrder;
+    if (!option) return false;
+    if (this.totalQuantity >= this.remaining) return false; // section cap reached
+    return (this.selections[optionId] || 0) < option.maxPerOrder;
   }
 
   get totalQuantity(): number {
@@ -98,6 +135,12 @@ export class GeneralAdmissionComponent implements OnInit, OnChanges {
   addToSelection() {
     if (this.totalQuantity === 0) {
       this.notificationService.showWarning('Please select at least one ticket');
+      return;
+    }
+
+    if (this.isLimited && this.totalQuantity > this.remaining) {
+      this.notificationService.showWarning(
+        this.remaining <= 0 ? 'This section is sold out' : `Only ${this.remaining} tickets remaining`);
       return;
     }
 

@@ -252,3 +252,43 @@ $ease:     cubic-bezier(0.4, 0, 0.2, 1);
   &.busy { opacity: .8; }
 }
 
+
+// ── Standing capacity: remaining / sold-out ─────────────────────────────────
+.ga-remaining {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $amber-ic;
+}
+
+.ga-soldout-pill {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  color: $red;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.ga-soldout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: $red;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ga-options--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

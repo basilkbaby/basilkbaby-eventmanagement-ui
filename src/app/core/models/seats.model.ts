@@ -41,6 +41,8 @@ export interface VenueSection {
   blockGap?: number;               // aisle width (columns) between blocks (default 2)
   barrierSides?: string | null;    // CSV: Left,Right,Top,Bottom — crowd barrier edges
   barrierLabel?: string | null;
+  standingCapacity?: number | null; // STANDING only: stock cap (null/0 = unlimited)
+  standingSold?: number;            // STANDING only: tickets already sold for this section
   numberingDirection ? : string;
   rowConfigs: SectionRowConfig[];
   rowNumberingType?: RowNumberingType;
