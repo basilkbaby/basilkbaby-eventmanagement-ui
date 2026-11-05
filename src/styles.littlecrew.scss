@@ -1,0 +1,212 @@
+/* Little Crew theme overrides — Royal Purple & Magenta (live-show / concert energy).
+   Loaded AFTER styles.scss for the littlecrew build ONLY (angular.json styles array),
+   so these :root values win over the default light terracotta palette. Compiled into
+   the bundle => no runtime fetch, no theme flash. Maps onto the REAL design-system
+   variables (the ones components actually use) plus the namespaced component vars whose
+   fallbacks keep the default/v4 build identical.
+
+   Palette: deep aubergine canvas, plum surfaces, magenta primary (buttons/accents),
+   violet accent, warm-white text. White text sits on magenta/violet fills (they are
+   saturated mid-tones, unlike champagne). To retheme again, change this one file. */
+
+:root {
+  /* Primary — Magenta */
+  --primary-50:  #fdeaf5;
+  --primary-100: #fbcfe7;
+  --primary-200: #f7a6d1;
+  --primary-300: #f27cba;   /* light magenta */
+  --primary-400: #ee5fa8;
+  --primary-500: #e9499a;   /* brand magenta (buttons/accents) */
+  --primary-600: #d6327f;   /* deeper magenta (hover/darker) */
+  --primary-700: #b02368;
+  --primary-800: #82194c;
+  --primary-900: #541031;
+
+  /* Accent — Violet */
+  --accent-50:  #f3ecfd;
+  --accent-100: #e4d2fb;
+  --accent-200: #ceadf6;
+  --accent-300: #b888f0;
+  --accent-400: #b06cf2;
+  --accent-500: #b06cf2;
+  --accent-600: #9850d8;
+  --accent:       #b06cf2;
+  --accent-hover: #c389f5;
+
+  /* Gradients — magenta / violet */
+  --gradient-primary:   linear-gradient(135deg, #b06cf2 0%, #e9499a 100%);
+  --gradient-secondary: linear-gradient(135deg, #e9499a 0%, #d6327f 100%);
+  --gradient-sage:      linear-gradient(135deg, #e9499a 0%, #b06cf2 100%);
+
+  /* Surfaces — aubergine / plum */
+  --surface-bg:          #140b1f;
+  --surface-card:        #1e1230;
+  --surface-card-border: rgba(233, 73, 154, 0.20);
+  --surface-card-alt:    #2a1a3f;
+
+  /* Backgrounds — deep aubergine */
+  --bg-primary:   #140b1f;
+  --bg-secondary: #1e1230;
+  --bg-tertiary:  #2a1a3f;
+
+  /* Text — warm white */
+  --text-primary:   #f4eef9;
+  --text-secondary: #cdbfdd;
+  --text-tertiary:  #9a86b3;
+  --text-inverse:   #ffffff;   /* white text on magenta/violet buttons/badges */
+
+  /* Neutral ramp — INVERTED + purple-tinted so "light gray" fills become dark and
+     "dark gray" text becomes light. */
+  --gray-50:  #1a1028;
+  --gray-100: #241634;
+  --gray-200: #332146;
+  --gray-300: #46305d;
+  --gray-400: #67527f;
+  --gray-500: #8c76a6;
+  --gray-600: #b7a6cc;
+  --gray-700: #d8cce6;
+  --gray-800: #ece4f3;
+  --gray-900: #f7f3fb;
+
+  /* Borders — magenta-tinted on aubergine */
+  --border-light:  rgba(233, 73, 154, 0.10);
+  --border-medium: rgba(233, 73, 154, 0.16);
+  --border-dark:   rgba(233, 73, 154, 0.26);
+
+  /* Shadows — deeper for dark surfaces */
+  --shadow-sm:   0 1px 2px 0 rgba(0,0,0,0.5);
+  --shadow-base: 0 1px 3px 0 rgba(0,0,0,0.6), 0 1px 2px 0 rgba(0,0,0,0.5);
+  --shadow-md:   0 4px 6px -1px rgba(0,0,0,0.6), 0 2px 4px -1px rgba(0,0,0,0.5);
+  --shadow-lg:   0 10px 15px -3px rgba(0,0,0,0.6), 0 4px 6px -2px rgba(0,0,0,0.5);
+  --shadow-xl:   0 20px 40px -8px rgba(0,0,0,0.7), 0 8px 16px -4px rgba(0,0,0,0.6);
+
+  /* Hero/dark surface — plum, magenta border */
+  --surface-dark:        #1e1230;
+  --surface-dark-2:      #2a1a3f;
+  --surface-dark-border: rgba(233, 73, 154, 0.24);
+
+  /* Header (minimal navbar) surface + accents — follow the site theme */
+  --nav-bar-bg:              rgba(20, 11, 31, 0.94);    /* aubergine, glassy  */
+  --nav-bar-bg-scrolled:     rgba(20, 11, 31, 0.98);
+  --nav-bar-border:          rgba(233, 73, 154, 0.20);  /* magenta hairline   */
+  --nav-bar-border-scrolled: rgba(233, 73, 154, 0.32);
+  --nav-accent:              #e9499a;                   /* active underline + cart badge */
+
+  /* Logo sizing — the Little Crew mark is a square-ish emblem; enlarge within the
+     64px bar (v4 falls back to 44px/180px, unchanged). */
+  --nav-logo-height:    56px;
+  --nav-logo-max-width: 220px;
+
+  /* Header CTA button — magenta fill, white readable text */
+  --nav-cta-bg:       #e9499a;
+  --nav-cta-bg-hover: #f27cba;
+  --nav-cta-fg:       #ffffff;
+
+  /* ── Primary CTAs — magenta with white text ────────────────────────────────
+     These namespaced vars only exist in this build; shared components fall back
+     to their original colours on default/v4. */
+  --hero-cta-bg:       #e9499a;  /* homepage hero "Get Tickets"  */
+  --hero-cta-bg-hover: #f27cba;
+  --hero-cta-fg:       #ffffff;
+
+  /* ── Featured-events hero palette (was a hardcoded light cream theme) ─────── */
+  --hero-bg:         #140b1f;                   /* section background        */
+  --hero-card:       #1e1230;                   /* stat strip, chips, rings  */
+  --hero-border:     rgba(233, 73, 154, 0.14);
+  --hero-accent:     #f27cba;                   /* title / chips / labels    */
+  --hero-accent-dk:  #e9499a;
+  --hero-accent-lt:  #f9b6da;
+  --hero-accent-dim: rgba(233, 73, 154, 0.14);
+  --hero-sage:       #b06cf2;                   /* secondary accent → violet */
+  --hero-sage-lt:    #c79af5;
+  --hero-sage-dim:   rgba(176, 108, 242, 0.16);
+  --hero-amber:      #f27cba;                   /* "from" price value → magenta-pink */
+  --hero-amber-dk:   #e9499a;
+  --hero-amber-dim:  rgba(233, 73, 154, 0.12);
+  --hero-ink:        #f4eef9;                   /* headings / values         */
+  --hero-body:       #cdbfdd;
+  --hero-muted:      #9a86b3;
+  --hero-white:      #1e1230;                   /* was #fff surfaces (badge) → plum */
+  --ed-cta-bg:         #e9499a;  /* event-details primary buttons */
+  --ed-cta-bg-hover:   #f27cba;
+  --ed-cta-fg:         #ffffff;
+
+  /* ── General-admission ticket picker (ticket-selection.component) ─────────── */
+  --ts-text:           #f4eef9;
+  --ts-muted:          #cdbfdd;
+  --ts-line:           #d8cce6;
+  --ts-price:          #f9b6da;
+  --ts-border:         rgba(233, 73, 154, 0.28);          /* clearer row outline */
+  --ts-ticket-bg:      #2c1c44;                           /* solid, lifts off the card */
+  --ts-ticket-shadow:  0 6px 18px rgba(0, 0, 0, 0.38);    /* depth so rows separate */
+  --ts-accent-bar:     rgba(233, 73, 154, 0.55);          /* magenta left bar per ticket */
+  --ts-ticket-hover-border: #f27cba;                      /* light magenta on hover */
+  --ts-selected-border:     #e9499a;                      /* chosen row */
+  --ts-selected-bg:         rgba(233, 73, 154, 0.14);
+  --ts-selected-ring:       0 0 0 1px #e9499a;
+  --ts-summary-bg:     rgba(233, 73, 154, 0.10);
+  --ts-stepper-bg:     #2a1a3f;
+  --ts-stepper-border: rgba(233, 73, 154, 0.30);
+  --ts-plus-bg:        #e9499a;                            /* "+" = primary action */
+  --ts-plus-fg:        #ffffff;
+  --ts-plus-border:    #e9499a;
+  --ts-left:           #c79af5;
+  --ts-sold:           #ff8a8a;
+  --ts-error-bg:       rgba(239, 68, 68, 0.12);
+  --ts-error-fg:       #ff9b9b;
+  --ts-cta-bg:         #e9499a;
+  --ts-cta-fg:         #ffffff;
+  /* "Get Your Tickets" card — magenta ring so the booking zone stands out */
+  --ed-tickets-border: rgba(233, 73, 154, 0.45);
+  --ed-tickets-shadow:
+      0 0 0 1px rgba(233, 73, 154, 0.28),
+      0 18px 44px rgba(0, 0, 0, 0.55);
+
+  /* ── Checkout — cards/inputs were hardcoded #fff (invisible light-on-light) ── */
+  --co-card-bg:        #1e1230;
+  --co-input-bg:       #140b1f;
+  --co-input-fg:       #f4eef9;
+
+  /* ── Event-details depth (plum cards, magenta glow, poster ring) ─────────── */
+  --ed-page-bg:
+      radial-gradient(1100px 460px at 50% -6%, rgba(233, 73, 154, 0.10), transparent 60%),
+      #140b1f;
+  --ed-hero-bg:
+      radial-gradient(620px 320px at 82% 18%, rgba(176, 108, 242, 0.12), transparent 70%);
+  --ed-card-bg:            linear-gradient(180deg, #241634 0%, #180e26 100%);
+  --ed-card-border-color:  rgba(233, 73, 154, 0.18);
+  --ed-card-shadow:
+      0 12px 34px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --ed-poster-shadow:
+      0 20px 54px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(233, 73, 154, 0.26),
+      0 0 46px rgba(176, 108, 242, 0.18);
+  --ed-bar-bg:     linear-gradient(180deg, #201433 0%, #140b1f 100%);
+  --ed-bar-shadow: 0 -8px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Page background so the shell itself is dark (covers areas not painted by a component). */
+html, body {
+  background-color: #140b1f;
+  color: var(--text-primary);
+}
+
+/* ── Event-landing microsite overrides (--ec-*) ──────────────────────────────────
+   The per-event landing components use their own slate palette via namespaced
+   --ec-* variables that fall back to their original hexes. Defining them here (and
+   ONLY here, in the littlecrew build) flips that microsite to aubergine + magenta
+   while the default build, where these are undefined, keeps its original slate look. */
+:root {
+  --ec-accent:    #e9499a;             /* was slate — now magenta */
+  --ec-accent-2:  #f27cba;
+  --ec-on-accent: #ffffff;             /* white text on a magenta fill */
+  --ec-surface:   #1e1230;             /* cards / panels (was #fff) */
+  --ec-surface-2: #2a1a3f;             /* section / pale backgrounds */
+  --ec-text:      #f4eef9;
+  --ec-text-2:    #d8cce6;
+  --ec-text-3:    #cdbfdd;
+  --ec-text-4:    #9a86b3;
+  --ec-border:    rgba(233, 73, 154, 0.14);
+  --ec-section-dark: #140b1f;          /* large dark section surfaces (e.g. contact) */
+}

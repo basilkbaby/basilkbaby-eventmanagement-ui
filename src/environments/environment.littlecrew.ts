@@ -1,8 +1,8 @@
 // Build-time config for the LITTLECREW subdomain (a per-organizer site on the CrowdPass platform).
 //   ng build --configuration littlecrew   |   ng serve --configuration littlecrew
 // Runs against the SAME CrowdPass backend/DB as crowdpass; only the branding + organizer filter
-// differ. Theme reuses the CrowdPass dark+gold look (styles.crowdpass.scss, wired in angular.json
-// for this config), so there is no separate stylesheet to maintain.
+// differ. Theme is Little Crew's own Royal Purple & Magenta dark look (styles.littlecrew.scss,
+// wired in angular.json for this config) — separate from the crowdpass/manickath palette.
 //
 // organizerId scopes this subdomain to one organizer (the backend applies the filter). It MUST
 // match the OrganizerId stamped on the Little Crew event in the DB
@@ -26,12 +26,12 @@ export const environment = {
     domain: 'littlecrew.crowdpass.co.uk',
     company: {
       name: 'Little Crew & Co',
-      logo: { text: 'LITTLE CREW', sublabel: '& CO', color: '#D9BD83', backgroundColor: '#0D1320' },
-      logoImage: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/littlecrew/little_crew_logo_uk-removebg-preview.png',
-      favicon: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/littlecrew/little_crew_logo_uk-removebg-preview.png',
-      primaryColor: '#0D1320',
-      secondaryColor: '#D9BD83',
-      accentColor: '#E6D2A8',
+      logo: { text: 'LITTLE CREW', sublabel: '& CO', color: '#E9499A', backgroundColor: '#140B1F' },
+      logoImage: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/littlecrew/littlecrew-logo.png',
+      favicon: 'https://eventmanagementimages.blob.core.windows.net/crowdpass/events/littlecrew/littlecrew-logo.png',
+      primaryColor: '#140B1F',
+      secondaryColor: '#E9499A',
+      accentColor: '#B06CF2',
       contact: { phone: '07388390443', email: 'hello@littlecrewco.com', address: 'Maidstone Leisure Centre, Mote Park, Maidstone, Kent, ME15 7RN' }
     },
     navigation: {
@@ -45,12 +45,12 @@ export const environment = {
       showCart: true
     },
     theme: {
-      backgroundColor: '#0D1320',
-      textColor: '#F2F1EA',
-      buttonColor: '#D9BD83',
-      buttonTextColor: '#10192A',
+      backgroundColor: '#140B1F',
+      textColor: '#F4EEF9',
+      buttonColor: '#E9499A',
+      buttonTextColor: '#FFFFFF',
       glassBackground: 'rgba(255, 255, 255, 0.05)',
-      glassBorder: 'rgba(230, 210, 168, 0.22)',
+      glassBorder: 'rgba(233, 73, 154, 0.22)',
       headerStyle: 'minimal'
     },
     features: { enableAuth: true, enableCart: true, enableSearch: false, showContactInfo: true }
