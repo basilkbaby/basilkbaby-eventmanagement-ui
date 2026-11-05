@@ -143,6 +143,36 @@
                 "@angular/material/prebuilt-themes/azure-blue.css",
                 "src/styles.crowdpass.scss"
               ]
+            },
+            "littlecrew": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
+                }
+              ],
+              "outputHashing": "all",
+              "index": {
+                "input": "src/index.littlecrew.html",
+                "output": "index.html"
+              },
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.littlecrew.ts"
+                }
+              ],
+              "styles": [
+                "src/styles.scss",
+                "@angular/material/prebuilt-themes/azure-blue.css",
+                "src/styles.crowdpass.scss"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -164,6 +194,9 @@
             },
             "manickath": {
               "buildTarget": "TicketSystem-Client:build:manickath"
+            },
+            "littlecrew": {
+              "buildTarget": "TicketSystem-Client:build:littlecrew"
             }
           },
           "defaultConfiguration": "development"
